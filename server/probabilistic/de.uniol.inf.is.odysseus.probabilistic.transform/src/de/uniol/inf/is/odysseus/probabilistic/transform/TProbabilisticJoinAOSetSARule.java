@@ -94,9 +94,7 @@ public class TProbabilisticJoinAOSetSARule extends AbstractTransformationRule<Jo
         Objects.requireNonNull(transformConfig);
         if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && operator.getInputSchema(0).hasMetatype(ITimeInterval.class)
         		&& operator.getInputSchema(1).hasMetatype(ITimeInterval.class)) {
-            if (operator.getAreas() == null) {
-                return true;
-            }
+            return !operator.isAreasSet();
         }
         return false;
     }

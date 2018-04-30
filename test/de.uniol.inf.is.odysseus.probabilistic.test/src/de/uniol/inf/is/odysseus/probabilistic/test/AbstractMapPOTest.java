@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -48,9 +49,10 @@ public class AbstractMapPOTest extends AbstractOperatorTest {
         }
     }
 
-    protected void givenProbabilisticMapPO() {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void givenProbabilisticMapPO() {
         this.operator = Optional.of(new ProbabilisticMapPO<IProbabilistic>(this.schema.orElse(null), this.expressions.orElse(null), true));
-        this.operator.get().connectSink(new TestableSink(new ITestableSinkListener<IStreamObject<IProbabilistic>>() {
+        this.operator.get().connectSink((ISink)new TestableSink(new ITestableSinkListener<IStreamObject<IProbabilistic>>() {
 
             @Override
             public void onPunctuation(final IPunctuation punctuation, final int port) {

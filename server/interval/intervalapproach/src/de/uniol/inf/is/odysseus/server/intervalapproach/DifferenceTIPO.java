@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -19,13 +18,11 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractPipe<T, T>
 		implements IStatefulOperator {
 
 	private static final int LEFT = 0;
-	private static final int RIGHT = 1;
 	private final ITimeIntervalSweepArea<T> leftSA;
 	private final ITimeIntervalSweepArea<T> rightSA;
 
@@ -53,14 +50,12 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		transferArea.sendPunctuation(punctuation);
 	}
 
 	@Override
 	public PointInTime getLatestEndTimestamp() {
-		// TODO Auto-generated method stub
-		return null;
+		return transferArea.getWatermark();
 	}
 
 	@Override
@@ -69,7 +64,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() {
 		transferArea.init(this, 2);
 		leftSA.clear();
 		rightSA.clear();
@@ -90,7 +85,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	// internal processing methods
 	// ---------------------------------------------------
 
-	private void processLeft(T object) {
+	private synchronized void processLeft(T object) {
 		rightSA.purgeElements(object, null);
 		Iterator<T> matchingElements = rightSA.query(object, Order.LeftRight);
 		ArrayList<ITimeInterval> intervalsRight = this.extractTimeIntervals(matchingElements);
@@ -98,13 +93,13 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 				intervalsRight);
 
 		if (!remainingIntervalsLeft.isEmpty()) {
-			ArrayList<T> replacements = new ArrayList<T>();
+			ArrayList<T> replacements = new ArrayList<>();
 			this.projectElementToTimeIntervals(object, remainingIntervalsLeft, replacements);
 			leftSA.insertAll(replacements);
 		}
 	}
 
-	private void processRight(T object) {
+	private synchronized void processRight(T object) {
 		Iterator<T> output = leftSA.extractElementsBefore(object.getMetadata().getStart());
 
 		while (output.hasNext()) {
@@ -114,7 +109,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		
 		Iterator<T> leftElements = leftSA.queryCopy(object, Order.RightLeft, true);
 
-		ArrayList<T> replacements = new ArrayList<T>();
+		ArrayList<T> replacements = new ArrayList<>();
 
 		while (leftElements.hasNext()) {
 			T currentLeftElem = leftElements.next();
@@ -136,7 +131,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	private ArrayList<ITimeInterval> extractTimeIntervals(Iterator<T> matchingElements) {
-		ArrayList<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
+		ArrayList<ITimeInterval> intervals = new ArrayList<>();
 
 		while (matchingElements.hasNext()) {
 			T elem = matchingElements.next();

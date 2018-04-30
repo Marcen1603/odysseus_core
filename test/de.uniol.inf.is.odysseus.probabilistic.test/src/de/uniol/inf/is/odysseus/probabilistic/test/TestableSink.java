@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.test;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class TestableSink extends AbstractSink<IStreamObject<IProbabilistic>> {
+public class TestableSink extends AbstractSink<IStreamObject<IProbabilistic>> implements ISink<IStreamObject<IProbabilistic>>{
     private final ITestableSinkListener<IStreamObject<IProbabilistic>> listener;
 
     public TestableSink(final ITestableSinkListener<IStreamObject<IProbabilistic>> listener) {

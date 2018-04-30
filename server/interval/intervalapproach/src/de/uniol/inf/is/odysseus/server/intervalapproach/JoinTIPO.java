@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -55,12 +55,10 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 /**
- * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von
- * Daten- und Metadatenmodell betrachtet werden. Die Logik des in dieser Klasse
- * implementierten Operators entspricht jedoch der Logik eines JoinOperators im
- * Intervallansatz.
+* Join operator to process elements with time interval semantivs
  *
  * @author Jonas Jacobi, abolles, jan steinke
+ * @author Marco Grawunder
  *
  * @param <K>
  *            Metadatentyp
@@ -69,26 +67,20 @@ import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractPipe<T, T>
 		implements IHasPredicate, IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
-	private static Logger _logger = null;
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(JoinTIPO.class);;
 
-	private static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(JoinTIPO.class);
-		}
-		return _logger;
-	}
-
-	protected IPredicate<? super T> joinPredicate;
+	protected IPredicate<T> joinPredicate;
 
 	protected IDataMergeFunction<T, K> dataMerge;
-	final protected IMetadataMergeFunction<K> metadataMerge;
+	protected final IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferArea<T, T> transferFunction;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	protected boolean inOrder = true;
 	protected Cardinalities card = null;
 
-	protected String sweepAreaName[];
+	protected String[] sweepAreaName;
 
 	// For the element join (internal element window)
 	protected int[] elementSize;
@@ -103,7 +95,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	/**
 	 * This object will be used as fallback grouping key.
 	 */
-	protected final Serializable defaultGroupingKey = "";
+	protected static final Serializable DEFAULT_GROUPING_KEY = "";
+	
 	protected boolean keepEndtimestamp = false;
 
 	// ------------------------------------------------------------------------------------
@@ -113,7 +106,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.elementSize = new int[2];
 		this.sweepAreaName = new String[2];
 		this.groupingIndices = new int[2][];
-		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
+		this.groups = new ArrayList<>(2);
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort1 = new HashMap<>();
 		this.groups.add(groupsPort0);
@@ -121,53 +114,18 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	}
 
 	public JoinTIPO(IDataMergeFunction<T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge,
-			ITransferArea<T, T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
+			ITransferArea<T, T> transferFunction) {
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 		this.elementSize = new int[2];
-		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
+		this.groups = new ArrayList<>(2);
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort1 = new HashMap<>();
 		this.groups.add(groupsPort0);
 		this.groups.add(groupsPort1);
 		this.sweepAreaName = new String[2];
 		this.groupingIndices = new int[2][];
-	}
-
-	public JoinTIPO(JoinTIPO<K, T> join) {
-		super(join);
-		this.joinPredicate = join.joinPredicate.clone();
-		this.dataMerge = join.dataMerge.clone();
-		dataMerge.init();
-
-		this.metadataMerge = join.metadataMerge.clone();
-		metadataMerge.init();
-		this.transferFunction = join.transferFunction.clone();
-		this.transferFunction.init(this, getSubscribedToSource().size());
-		this.creationFunction = join.creationFunction.clone();
-		this.card = join.card;
-		this.sweepAreaName = join.sweepAreaName.clone();
-		this.sweepAreaName[0] = join.sweepAreaName[0];
-		this.sweepAreaName[1] = join.sweepAreaName[1];
-
-		this.useInstanceInseadOfName = join.useInstanceInseadOfName;
-		// Copy empty instances of the SweepAreas
-		for (Map<Object, ITimeIntervalSweepArea<T>> oldGroup : join.groups) {
-			Map<Object, ITimeIntervalSweepArea<T>> newGroup = new HashMap<>();
-
-			for (Object oldKey : oldGroup.keySet()) {
-				newGroup.put(oldKey, oldGroup.get(oldKey).clone());
-			}
-			this.groups.add(newGroup);
-		}
-
-		this.elementSize = join.elementSize.clone();
-		this.elementSize[0] = join.elementSize[0];
-		this.elementSize[1] = join.elementSize[1];
-
-		this.groupingIndices = join.groupingIndices;
-		this.keepEndtimestamp = join.keepEndtimestamp;
 	}
 
 	public IDataMergeFunction<T, K> getDataMerge() {
@@ -196,10 +154,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			if (port > 1) {
 				break;
 			}
-			this.groups.get(port).put(this.defaultGroupingKey, areas[port]);
+			this.groups.get(port).put(DEFAULT_GROUPING_KEY, areas[port]);
 			if (this.joinPredicate != null) {
-				this.groups.get(port).get(this.defaultGroupingKey).setQueryPredicate(this.joinPredicate.clone());
-				this.groups.get(port).get(this.defaultGroupingKey).setAreaName(this.getName());
+				this.groups.get(port).get(DEFAULT_GROUPING_KEY).setQueryPredicate(this.joinPredicate.clone());
+				this.groups.get(port).get(DEFAULT_GROUPING_KEY).setAreaName(this.getName());
 			}
 		}
 
@@ -207,17 +165,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.useInstanceInseadOfName = true;
 	}
 
-	public IPredicate<? super T> getJoinPredicate() {
+	public IPredicate<T> getJoinPredicate() {
 		return joinPredicate;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public IPredicate getPredicate() {
+	public IPredicate<T> getPredicate() {
 		return getJoinPredicate();
 	}
 
-	public void setJoinPredicate(IPredicate<? super T> joinPredicate) {
+	public void setJoinPredicate(IPredicate<T> joinPredicate) {
 		this.joinPredicate = joinPredicate;
 	}
 
@@ -234,7 +191,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.sweepAreaName[1] = port1;
 		this.useInstanceInseadOfName = false;
 	}
-	
+
 	public void setKeepEndTimestamp(boolean keepEndTimestamp) {
 		this.keepEndtimestamp = keepEndTimestamp;
 	}
@@ -311,35 +268,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		transferFunction.newElement(object, port);
 
 		if (isDone()) {
-			/*
-			 * TODO bei den sources abmelden ??
-			 * 
-			 * MG: Warum?? propagateDone gemeint?
-			 * 
-			 * JJ: weil man schon fertig sein kann, wenn ein strom keine elemente liefert,
-			 * der andere aber noch, dann muss man von dem anderen keine eingaben mehr
-			 * verarbeiten, was dazu fuehren kann, dass ein kompletter teilplan nicht mehr
-			 * ausgefuehrt werden muss, man also ressourcen spart
-			 */
+			callCloseOnSources(port);
 			return;
 		}
-		if (getLogger().isDebugEnabled()) {
-			if (!isOpen()) {
-				getLogger().error(
-						"process next called on non opened operator " + this + " with " + object + " from " + port);
-				return;
-			}
-		}
+
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
-		Iterator<T> qualifies;
 
-		if (inOrder && object.isTimeProgressMarker()) {
-			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(otherport).values()) {
-				sweepArea.purgeElements(object, order);
-			}
-			this.tryEarlyCleanup(object.getMetadata().getStart(), port);
-		}
+		earlyCleanUp(object, port, otherport, order);
 
 		// status could change, if the other port was done and
 		// its sweeparea is now empty after purging
@@ -348,6 +284,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			return;
 		}
 
+		boolean hit = processOutput(object, port, otherport, order);
+
+		Object groupKey = getGroupKey(object, this.groupingIndices[port]);
+		insertElement(object, port, hit, groupKey);
+
+		createHeartbeats(port, otherport);
+	}
+
+	private boolean processOutput(T object, int port, int otherport, Order order) {
+		Iterator<T> qualifies;
 		/*
 		 * depending on card, delete hits from areas
 		 * 
@@ -408,10 +354,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				transferFunction.transfer(newElement);
 			}
 		}
+		return hit;
+	}
 
-		Object groupKey = getGroupKey(object, this.groupingIndices[port]);
-		insertElement(object, port, hit, groupKey);
-
+	private void createHeartbeats(int port, int otherport) {
 		PointInTime a = getMinStartTs(port);
 		PointInTime b = getMinStartTs(otherport);
 		PointInTime heartbeat = PointInTime.max(a, b);
@@ -419,6 +365,23 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			transferFunction.newHeartbeat(heartbeat, port);
 			transferFunction.newHeartbeat(heartbeat, otherport);
 		}
+	}
+
+	private void earlyCleanUp(T object, int port, int otherport, Order order) {
+		if (inOrder && object.isTimeProgressMarker()) {
+			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(otherport).values()) {
+				sweepArea.purgeElements(object, order);
+			}
+			this.tryEarlyCleanup(port);
+		}
+	}
+
+	private void callCloseOnSources(int port) {
+		for (IOperatorOwner owner : getOwner()) {
+			this.getSubscribedToSource(port).getSource().close(owner);
+			this.getSubscribedToSource(port ^ 1).getSource().close(owner);
+		}
+		return;
 	}
 
 	private boolean useElementRestriction(int port) {
@@ -459,7 +422,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 					 * We need to copy it by ourself as we did not get the name but the instance we
 					 * shall use or the type of SweepArea cannot be created using the registry.
 					 */
-					ISweepArea<T> newInstance = groups.get(port).get(this.defaultGroupingKey).newInstance(null);
+					ISweepArea<T> newInstance = groups.get(port).get(DEFAULT_GROUPING_KEY).newInstance(null);
 					if (newInstance instanceof ITimeIntervalSweepArea) {
 						sa = (ITimeIntervalSweepArea<T>) newInstance;
 					} else {
@@ -475,13 +438,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 			return sa;
 		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			LOGGER.error("Error accessing sweep area",e);
 		}
 		return null;
 	}
 
 	protected Object getGroupKey(final T object, final int[] groupingAttributeIndices) {
-		return getGroupKey(object, groupingAttributeIndices, this.defaultGroupingKey);
+		return getGroupKey(object, groupingAttributeIndices, DEFAULT_GROUPING_KEY);
 	}
 
 	/**
@@ -503,7 +466,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 
 		if (object.isSchemaLess()) {
-			return this.defaultGroupingKey;
+			return DEFAULT_GROUPING_KEY;
 		}
 
 		if (object instanceof Tuple) {
@@ -515,23 +478,23 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			return Arrays.asList(tuple.restrict(groupingAttributeIndices, true).getAttributes());
 		}
 
-		return this.defaultGroupingKey;
+		return DEFAULT_GROUPING_KEY;
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() {
 
 		if (this.useInstanceInseadOfName) {
 			// We cannot throw away our default SweepAreas
-			ITimeIntervalSweepArea<T> defaultSweepAreaPort0 = this.groups.get(0).get(this.defaultGroupingKey);
+			ITimeIntervalSweepArea<T> defaultSweepAreaPort0 = this.groups.get(0).get(DEFAULT_GROUPING_KEY);
 			defaultSweepAreaPort0.clear();
 
-			ITimeIntervalSweepArea<T> defaultSweepAreaPort1 = this.groups.get(1).get(this.defaultGroupingKey);
+			ITimeIntervalSweepArea<T> defaultSweepAreaPort1 = this.groups.get(1).get(DEFAULT_GROUPING_KEY);
 			defaultSweepAreaPort1.clear();
 
 			this.createNewEmptySweepAreaGroups();
-			this.groups.get(0).put(defaultGroupingKey, defaultSweepAreaPort0);
-			this.groups.get(1).put(defaultGroupingKey, defaultSweepAreaPort1);
+			this.groups.get(0).put(DEFAULT_GROUPING_KEY, defaultSweepAreaPort0);
+			this.groups.get(1).put(DEFAULT_GROUPING_KEY, defaultSweepAreaPort1);
 
 		} else {
 			this.createNewEmptySweepAreaGroups();
@@ -543,7 +506,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	}
 
 	private void createNewEmptySweepAreaGroups() {
-		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
+		this.groups = new ArrayList<>(2);
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort1 = new HashMap<>();
 		this.groups.add(groupsPort0);
@@ -560,11 +523,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		for (Map<Object, ITimeIntervalSweepArea<T>> groups : this.groups) {
 			groups.values().forEach(sweepArea -> sweepArea.clear());
 		}
-	}
-
-	@Override
-	protected synchronized void process_done() {
-
 	}
 
 	@Override
@@ -609,7 +567,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	 * @param hit
 	 */
 	public void insertElement(T object, int port, boolean hit) {
-		this.insertElement(object, port, hit, this.defaultGroupingKey);
+		this.insertElement(object, port, hit, DEFAULT_GROUPING_KEY);
 	}
 
 	// Depending on card insert elements into sweep area
@@ -650,28 +608,15 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 	}
 
-	public List<Map<Object, ITimeIntervalSweepArea<T>>> getAreas() {
-		/*
-		 * This method is used to decide if transformation rules are executable. If the
-		 * areas are null (not yet set), they are. If they are set, they are not
-		 * executable. As these are legacy implementations, we want to stay compatible
-		 * to this behavior.
-		 */
-
-		boolean sweepAreasSet = false;
+	public boolean isAreasSet() {
 
 		for (Map<Object, ITimeIntervalSweepArea<T>> group : this.groups) {
-			if (group.get(this.defaultGroupingKey) != null) {
-				sweepAreasSet = true;
-				break;
+			if (group.get(DEFAULT_GROUPING_KEY) != null) {
+				return true;
 			}
 		}
-
-		if (!sweepAreasSet) {
-			return null;
-		}
-
-		return this.groups;
+		
+		return false;
 	}
 
 	public ITransferArea<T, T> getTransferFunction() {
@@ -697,7 +642,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 
 			// Maybe some more elements can be removed based on the start timestamp
-			this.tryEarlyCleanup(punctuation.getTime(), port);
+			this.tryEarlyCleanup(port);
 		}
 		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
@@ -707,13 +652,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	 * If the element restriction is used, the SweepAreas can be cleaned earlier
 	 * based on the start timestamps / age of the elements. The SweepAreas can be
 	 * reduced to the n newest elements. If this is possible, it is done here.
-	 * 
-	 * @param latestTimeOnPort
-	 *            The latest timestamp of the "port", e.g., from a heartbeat.
+	 *
 	 * @param port
 	 *            The port where the timestamp is from.
 	 */
-	private void tryEarlyCleanup(PointInTime latestTimeOnPort, int port) {
+	private void tryEarlyCleanup(int port) {
 		int otherport = port ^ 1;
 
 		if (this.elementSize[otherport] < 0) {
@@ -754,11 +697,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 
 		// Vergleichen des Join-Predicates und des Output-Schemas
-		if (this.getJoinPredicate().equals(jtipo.getJoinPredicate())
-				&& this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
-			return true;
-		}
-		return false;
+		return (this.getJoinPredicate().equals(jtipo.getJoinPredicate())
+				&& this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -780,10 +720,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 
 		// Vergleichen des Join-Predicates
-		if (this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate())) {
-			return true;
-		}
-		return false;
+		return (this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate()));
 	}
 
 	/**
@@ -833,7 +770,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@Override
 	public IOperatorState getState() {
-		JoinTIPOState<K, T> state = new JoinTIPOState<K, T>();
+		JoinTIPOState<K, T> state = new JoinTIPOState<>();
 		state.setGroups(this.groups);
 		state.setTransferArea(transferFunction);
 		return state;
@@ -882,7 +819,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			this.transferFunction = state.getTransferArea();
 			this.transferFunction.setTransfer(this);
 		} catch (Exception e) {
-			_logger.error("Error setting state for JoinTIPO. Error: " + e);
+			LOGGER.error("Error setting state for JoinTIPO. Error: ", e);
 		}
 	}
 
@@ -894,8 +831,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		map.put("Left Area Size", getElementsStored1() + "");
 		map.put("Right Area Size", getElementsStored2() + "");
 
-		ITimeIntervalSweepArea<T> sampleSweepAreaPort0 = this.getSweepArea(0, this.defaultGroupingKey);
-		ITimeIntervalSweepArea<T> sampleSweepAreaPort1 = this.getSweepArea(1, this.defaultGroupingKey);
+		ITimeIntervalSweepArea<T> sampleSweepAreaPort0 = this.getSweepArea(0, DEFAULT_GROUPING_KEY);
+		ITimeIntervalSweepArea<T> sampleSweepAreaPort1 = this.getSweepArea(1, DEFAULT_GROUPING_KEY);
 		if (sampleSweepAreaPort0 instanceof AbstractTISweepArea
 				&& sampleSweepAreaPort1 instanceof AbstractTISweepArea) {
 			map.put("Left Area Has End TS Order", ((AbstractTISweepArea<?>) sampleSweepAreaPort0).hasEndTsOrder() + "");
