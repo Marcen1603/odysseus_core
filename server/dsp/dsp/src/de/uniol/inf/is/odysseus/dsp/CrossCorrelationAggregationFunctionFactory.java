@@ -11,14 +11,23 @@ public class CrossCorrelationAggregationFunctionFactory implements IAggregationF
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		return true;
+		final boolean checkInputLength = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
+				attributeResolver, 0, false).length == 2;
+		final boolean checkInputOutputLength = AggregationFunctionParseOptionsHelper
+				.checkInputAttributesLengthEqualsOutputAttributesLength(parameters, attributeResolver);
+		final boolean checkNumericInput = AggregationFunctionParseOptionsHelper.checkNumericInput(parameters,
+				attributeResolver);
+		return checkInputLength && checkInputOutputLength && checkNumericInput;
 	}
 
 	@Override
 	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		final int[] inputAttributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters, attributeResolver);
-		
-		return new CrossCorrelation<>(inputAttributes);
+		final int[] inputAttributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
+				attributeResolver, 0, false);
+		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters,
+				attributeResolver);
+
+		return new CrossCorrelation<>(inputAttributes, outputNames);
 	}
 
 	@Override

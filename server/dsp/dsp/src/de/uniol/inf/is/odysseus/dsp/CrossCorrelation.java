@@ -17,8 +17,8 @@ public class CrossCorrelation<M extends ITimeInterval, T extends Tuple<M>>
 
 	private static final long serialVersionUID = -4967537349862834000L;
 
-	public CrossCorrelation(final int[] attributes) {
-		super(attributes, new String[] { "m", "r" });
+	public CrossCorrelation(final int[] attributes, final String[] outputAttributeNames) {
+		super(attributes, outputAttributeNames);
 	}
 
 	@Override
