@@ -35,15 +35,26 @@ public class FIRFilter<M extends ITimeInterval, T extends Tuple<M>>
 	}
 
 	private double filter(final double[] inputs) {
-		double sum = 0;
 
-		if (inputs.length < coefficients.length) {
-			return sum;
-		}
+		final double[] paddedValues = padLeftWithZeros(inputs, coefficients.length);
+
+		double sum = 0;
 		for (int i = 0; i < coefficients.length; i++) {
-			sum += coefficients[i] * inputs[coefficients.length - 1 - i];
+			sum += coefficients[i] * paddedValues[coefficients.length - 1 - i];
 		}
 		return sum;
+	}
+
+	private static double[] padLeftWithZeros(final double[] values, final int newLength) {
+		final int difference = newLength - values.length;
+		if (difference <= 0) {
+			return values;
+		}
+		final double[] paddedValues = new double[newLength];
+		for (int i = 0; i < values.length; i++) {
+			paddedValues[i + difference] = values[i];
+		}
+		return paddedValues;
 	}
 
 	@Override
