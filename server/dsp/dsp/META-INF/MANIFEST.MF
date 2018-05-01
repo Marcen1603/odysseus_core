@@ -11,6 +11,7 @@ Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.aggregation.functions.factory,
  de.uniol.inf.is.odysseus.complexnumber,
  org.apache.commons.math3.complex;version="3.6.1",
- org.apache.commons.math3.transform;version="3.6.1"
+ org.apache.commons.math3.transform;version="3.6.1",
+ org.apache.commons.math3.util;version="3.6.1"
 Service-Component: OSGI-INF/*
 Bundle-ActivationPolicy: lazy

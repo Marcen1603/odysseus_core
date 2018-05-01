@@ -9,7 +9,7 @@ import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
-
+import org.apache.commons.math3.util.ArithmeticUtils;
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.complexnumber.ComplexNumber;
 import de.uniol.inf.is.odysseus.complexnumber.SDFComplexNumberDatatype;
@@ -31,29 +31,43 @@ public class FFT<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNo
 
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
-
 		final List<Object> result = new ArrayList<>();
-
 		for (final int inputAttributeIndex : inputAttributeIndices) {
 			final double[] values = elements.stream()
 					.mapToDouble(element -> (Double) getAttributes(element)[inputAttributeIndex]).toArray();
-
 			result.add(evaluate(values));
 		}
-
 		return result.stream().toArray();
 	}
 
 	private List<ComplexNumber> evaluate(final double[] values) {
-
 		final Complex[] transform = fastFourierTransform(values);
 
 		return Arrays.stream(transform).map(complex -> new ComplexNumber(complex.getReal(), complex.getImaginary()))
 				.collect(Collectors.toList());
 	}
 
-	private Complex[] fastFourierTransform(final double[] values) {
-		return fastFourierTransformer.transform(values, TransformType.FORWARD);
+	private static Complex[] fastFourierTransform(final double[] values) {
+		final double[] paddedValues = padRightWithZeros(values, nextPowerOf2(values.length));
+		return fastFourierTransformer.transform(paddedValues, TransformType.FORWARD);
+	}
+
+	private static double[] padRightWithZeros(final double[] values, final int newLength) {
+		if (values.length == newLength) {
+			return values;
+		}
+		return Arrays.copyOf(values, newLength);
+	}
+
+	private static int nextPowerOf2(final int n) {
+		if (ArithmeticUtils.isPowerOfTwo(n)) {
+			return n;
+		}
+		int p = 1;
+		while (p < n) {
+			p <<= 1;
+		}
+		return p;
 	}
 
 	@Override
