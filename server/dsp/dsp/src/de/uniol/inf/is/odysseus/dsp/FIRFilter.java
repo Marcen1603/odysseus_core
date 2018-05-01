@@ -1,44 +1,49 @@
 package de.uniol.inf.is.odysseus.dsp;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
+import de.uniol.inf.is.odysseus.complexnumber.SDFComplexNumberDatatype;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class FIRFilter<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractNonIncrementalAggregationFunction<M, T> {
 
 	private static final long serialVersionUID = -4090136616976263206L;
 
-	// Simple Low pass filter
-	private static final double[] h = new double[] { -0.008835451, 0.074140008, 0.506826540, 0.506826540, 0.074140008,
-			-0.008835451 };
+	private final double[] coefficients;
 
-	public FIRFilter(int[] attributes) {
-		super(attributes, new String[] { "value" });
+	public FIRFilter(final int[] attributes, final String[] outputAttributeNames, final double[] coefficients) {
+		super(attributes, outputAttributeNames);
+		this.coefficients = coefficients;
 	}
 
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
+		final List<Object> result = new ArrayList<>();
+		for (final int inputAttributeIndex : inputAttributeIndices) {
+			final double[] values = elements.stream()
+					.mapToDouble(element -> (Double) getAttributes(element)[inputAttributeIndex]).toArray();
+			result.add(filter(values));
+		}
+		return result.stream().toArray();
+	}
 
-		final double[] inputs = elements.stream().mapToDouble(e -> (Double) getAttributes(e)[0]).toArray();
-		
+	private double filter(final double[] inputs) {
 		double sum = 0;
-		
-		if (inputs.length < h.length) {
-			return new Object[] { sum };
-		}
-		
-		for (int i = 0; i < h.length; i++) {
-			sum += h[i] * inputs[h.length - 1 - i];
-		}
 
-		return new Object[] { sum };
+		if (inputs.length < coefficients.length) {
+			return sum;
+		}
+		for (int i = 0; i < coefficients.length; i++) {
+			sum += coefficients[i] * inputs[coefficients.length - 1 - i];
+		}
+		return sum;
 	}
 
 	@Override
@@ -48,7 +53,11 @@ public class FIRFilter<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0], SDFDatatype.DOUBLE));
+		final List<SDFAttribute> outputAttributes = new ArrayList<>();
+		for (final String outputAttributeName : outputAttributeNames) {
+			outputAttributes.add(new SDFAttribute(null, outputAttributeName, SDFComplexNumberDatatype.DOUBLE));
+		}
+		return outputAttributes;
 	}
 
 }
