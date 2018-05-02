@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.temporaltypes.types;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 
 /**
  * A generic class for temporal types. As it is not possible to create a nice
@@ -89,6 +92,24 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	 */
 	public SortedMap<PointInTime, T> getValues() {
 		return this.values;
+	}
+
+	/**
+	 * Removes all elements from the map which are not within the valid times
+	 * 
+	 * @param validTimes
+	 *            The valid times which are needed. Others can be removed
+	 */
+	public void trim(IValidTimes validTimes) {
+
+		List<PointInTime> toRemove = new ArrayList<>();
+
+		for (PointInTime point : this.values.keySet()) {
+			if (!validTimes.includes(point)) {
+				toRemove.add(point);
+			}
+		}
+		toRemove.stream().forEach(e -> this.values.remove(e));
 	}
 
 	@Override

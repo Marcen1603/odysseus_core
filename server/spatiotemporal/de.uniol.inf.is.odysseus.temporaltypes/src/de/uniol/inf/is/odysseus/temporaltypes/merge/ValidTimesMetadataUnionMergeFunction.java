@@ -72,7 +72,7 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 
 	@Override
 	public IInlineMetadataMergeFunction<? super IValidTimes> clone() {
-		return new ValidTimesIntersectionMetadataMergeFunction();
+		return new ValidTimesMetadataUnionMergeFunction();
 	}
 
 	@Override
