@@ -79,6 +79,7 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 	protected final boolean onEqualScoreNewestOnTop;
 	private int[] scoringAttributes;
 	protected final boolean descending;
+	protected final boolean alwaysOutput;
 
 	public TopK() {
 		super();
@@ -91,6 +92,7 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 		this.removeLowerEqualsThan = null;
 		this.uniqueAttributeIndices = null;
 		this.descending = true;
+		this.alwaysOutput = false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,11 +109,12 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 				: (T) other.removeLowerEqualsThan.clone();
 		this.scoringAttributes = Arrays.copyOf(other.scoringAttributes, other.scoringAttributes.length);
 		this.descending = other.descending;
+		this.alwaysOutput = other.alwaysOutput;
 	}
 
 	public TopK(final int k, final int[] attributes, final String outputAttributeName, final SDFSchema subSchema,
 			final boolean onEqualScoreNewestOnTop, final T removeLowerEqualsThan, final int[] uniqueAttributeIndices,
-			final int[] scoringAttributes, boolean descending) {
+			final int[] scoringAttributes, boolean descending, boolean alwaysOutput) {
 		super(attributes, true, new String[] { outputAttributeName });
 		this.k = k;
 		// TODO: This comparator is not consistent with equals as
@@ -130,6 +133,7 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 		this.uniqueAttributeIndices = Arrays.copyOf(uniqueAttributeIndices, uniqueAttributeIndices.length);
 		this.scoringAttributes = Arrays.copyOf(scoringAttributes, scoringAttributes.length);
 		this.descending = descending;
+		this.alwaysOutput = alwaysOutput;
 	}
 
 	/*
@@ -227,7 +231,7 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 				lastTopKOutput.remove(j);
 			}
 		}
-		if (sameAsLastOutput) {
+		if (sameAsLastOutput && !this.alwaysOutput) {
 			return new Object[] { null };
 		}
 		return new Object[] { topKList };
@@ -289,6 +293,8 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 	private final static String UNIQUE_ATTR = "UNIQUE_ATTR";
 	private final static String SCORING_ATTRIBUTES = "SCORING_ATTRIBUTES";
 	private final static String DESCENDING = "DESCENDING";
+	// No null-values if same output as before
+	private final static String ALWAYS_OUTPUT = "ALWAYS_OUTPUT";
 
 	@Override
 	public IAggregationFunction createInstance(final Map<String, Object> parameters,
@@ -303,19 +309,30 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 				attributeResolver, SCORING_ATTRIBUTES);
 		final boolean descending = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters,
 				DESCENDING, true);
+		final boolean alwaysOutput = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters,
+				ALWAYS_OUTPUT, false);
 		String outputAttributeName = getOutputAttributeName(parameters);
 
 		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
 				attributeResolver, 0, false);
 
+		final SDFSchema outputSchema = getTupleOutputSchema(attributes, attributeResolver);
+		return new TopK<>(k, attributes, outputAttributeName, outputSchema, newestOnTop, removeLowerEqualsThan,
+				uniqueAttributeIndices, scoringAttributes, descending, alwaysOutput);
+	}
+
+	/**
+	 * Calculates the output schema for the tuples (could be a subschema or the
+	 * whole schema)
+	 */
+	private SDFSchema getTupleOutputSchema(int[] attributes, IAttributeResolver attributeResolver) {
+		final SDFSchema outputSchema;
 		if (attributes == null) {
-			return new TopK<>(k, attributes, outputAttributeName, attributeResolver.getSchema().get(0), newestOnTop,
-					removeLowerEqualsThan, uniqueAttributeIndices, scoringAttributes, descending);
+			outputSchema = attributeResolver.getSchema().get(0);
 		} else {
-			final SDFSchema subSchema = createSubSchemaForOutputAttributes(attributes, attributeResolver);
-			return new TopK<>(k, attributes, outputAttributeName, subSchema, newestOnTop, removeLowerEqualsThan,
-					uniqueAttributeIndices, scoringAttributes, descending);
+			outputSchema = createSubSchemaForOutputAttributes(attributes, attributeResolver);
 		}
+		return outputSchema;
 	}
 
 	/**

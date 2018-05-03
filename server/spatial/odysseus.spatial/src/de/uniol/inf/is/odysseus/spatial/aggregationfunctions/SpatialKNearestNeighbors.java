@@ -71,12 +71,20 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 	@Override
 	public void addNew(T newElement) {
 		Object uniqueAttrKey = AggregationPO.getGroupKey(newElement, idAttributeIndexes, defaultGroupingKey);
+
+		// Remove last element from index if available
 		T e = mapByUniqueAttributes.get(uniqueAttrKey);
 		if (e != null) {
 			this.index.remove(e);
 		}
 
-		this.index.add(newElement);
+		/*
+		 * Don't put the center in the index -> We don't want to have the center in the
+		 * results.
+		 */
+		if (!uniqueAttrKey.equals(this.centerId)) {
+			this.index.add(newElement);
+		}
 		this.mapByUniqueAttributes.put(uniqueAttrKey, newElement);
 	}
 
@@ -97,13 +105,15 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		List<T> kNearestNeighbors = this.index.getKNearestNeighbors(this.mapByUniqueAttributes.get(this.centerId),
 				this.k);
 		List<Object> outputList = new ArrayList<>();
-		for (T tuple : kNearestNeighbors) {
-			if (subSchema.size() == 1) {
-				e = getFirstAttribute(tuple);
-			} else {
-				e = getAttributesAsTuple(tuple);
+		if (kNearestNeighbors != null) {
+			for (T tuple : kNearestNeighbors) {
+				if (subSchema.size() == 1) {
+					e = getFirstAttribute(tuple);
+				} else {
+					e = getAttributesAsTuple(tuple);
+				}
+				outputList.add(e);
 			}
-			outputList.add(e);
 		}
 
 		return outputList.toArray();
@@ -151,7 +161,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		}
 		return spatialKNearestNeighbors;
 	}
-	
+
 	/**
 	 * Creates a schema which is used as the subschema for the output tuples
 	 */
