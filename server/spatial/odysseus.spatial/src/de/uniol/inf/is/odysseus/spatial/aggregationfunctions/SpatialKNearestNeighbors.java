@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.spatial.aggregationfunctions;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
@@ -18,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.spatial.index.SpatialIndex2;
 import de.uniol.inf.is.odysseus.spatial.index.VPTreeIndex;
 
@@ -34,7 +37,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 	private final int pointAttributeIndex;
 	private final Object centerId;
 	private final int[] idAttributeIndexes;
-	
+
 	protected final Map<Object, T> mapByUniqueAttributes = new HashMap<>();
 
 	public SpatialKNearestNeighbors() {
@@ -67,13 +70,12 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 
 	@Override
 	public void addNew(T newElement) {
-		Object uniqueAttrKey = AggregationPO.getGroupKey(newElement, idAttributeIndexes,
-				defaultGroupingKey);
+		Object uniqueAttrKey = AggregationPO.getGroupKey(newElement, idAttributeIndexes, defaultGroupingKey);
 		T e = mapByUniqueAttributes.get(uniqueAttrKey);
 		if (e != null) {
 			this.index.remove(e);
 		}
-		
+
 		this.index.add(newElement);
 		this.mapByUniqueAttributes.put(uniqueAttrKey, newElement);
 	}
@@ -87,10 +89,24 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		if (this.mapByUniqueAttributes.get(this.centerId) != null) {
-			return this.index.getKNearestNeighbors(this.mapByUniqueAttributes.get(this.centerId), this.k).toArray();
+		if (this.mapByUniqueAttributes.get(this.centerId) == null) {
+			return null;
 		}
-		return null;
+
+		Object e;
+		List<T> kNearestNeighbors = this.index.getKNearestNeighbors(this.mapByUniqueAttributes.get(this.centerId),
+				this.k);
+		List<Object> outputList = new ArrayList<>();
+		for (T tuple : kNearestNeighbors) {
+			if (subSchema.size() == 1) {
+				e = getFirstAttribute(tuple);
+			} else {
+				e = getAttributesAsTuple(tuple);
+			}
+			outputList.add(e);
+		}
+
+		return outputList.toArray();
 	}
 
 	@Override
@@ -127,12 +143,25 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 
 		SpatialKNearestNeighbors<M, T> spatialKNearestNeighbors = null;
 		if (attributes != null && pointAttributeIndexes.length > 0 && centerIdAttributeIndexes.length > 0) {
+			SDFSchema subSchema = createSubSchemaForOutputAttributes(attributes, attributeResolver);
 			spatialKNearestNeighbors = new SpatialKNearestNeighbors<>(pointAttributeIndexes[0], k, centerId,
-					centerIdAttributeIndexes, attributeResolver.getSchema().get(0), attributes);
+					centerIdAttributeIndexes, subSchema, attributes);
 		} else {
-			throw new RuntimeException("Is the point attributes correct?");
+			throw new RuntimeException("Is the point attribute correct?");
 		}
 		return spatialKNearestNeighbors;
+	}
+	
+	/**
+	 * Creates a schema which is used as the subschema for the output tuples
+	 */
+	private SDFSchema createSubSchemaForOutputAttributes(int[] attributes, IAttributeResolver attributeResolver) {
+		final List<SDFAttribute> attr = new ArrayList<>();
+		for (final int idx : attributes) {
+			attr.add(attributeResolver.getSchema().get(0).getAttribute(idx).clone());
+		}
+		final SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("", attr);
+		return subSchema;
 	}
 
 	@Override
