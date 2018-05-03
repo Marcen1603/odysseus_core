@@ -30,7 +30,7 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	}
 
 	public GenericTemporalType(GenericTemporalType<T> other) {
-		this.values = other.getValues();
+		this.values = other.copyMap();
 	}
 
 	/**
@@ -94,6 +94,10 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 		return this.values;
 	}
 
+	public SortedMap<PointInTime, T> copyMap() {
+		return new TreeMap<PointInTime, T>(this.values);
+	}
+
 	/**
 	 * Removes all elements from the map which are not within the valid times
 	 * 
@@ -113,7 +117,7 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	}
 
 	@Override
-	public IClone clone() {
+	public GenericTemporalType<?> clone() {
 		return new GenericTemporalType<>(this);
 	}
 
