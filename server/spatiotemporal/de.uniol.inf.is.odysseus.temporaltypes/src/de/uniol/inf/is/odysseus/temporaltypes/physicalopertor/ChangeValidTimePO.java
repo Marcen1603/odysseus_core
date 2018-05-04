@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
  */
 public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
+	private boolean copyTimeInterval;
 	private TimeValueItem valueToAddStart;
 	private TimeValueItem valueToAddEnd;
 	private TimeUnit streamBaseTimeUnit;
@@ -37,6 +38,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		this.valueToAddStart = ao.getValueToAddStart();
 		this.valueToAddEnd = ao.getValueToAddEnd();
 		this.streamBaseTimeUnit = ao.getBaseTimeUnit();
+		this.copyTimeInterval = ao.isCopyTimeInterval();
 	}
 
 	@Override
@@ -51,26 +53,52 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 
 	@Override
 	protected void process_next(T object, int port) {
+		if (this.copyTimeInterval) {
+			object = copyTimeInterval(object);
+		} else {
+			object = setTimeInterval(object, valueToAddStart, valueToAddEnd);
+		}
+		transfer(object);
+	}
+	
+	private T copyTimeInterval(T object) {
+		IMetaAttribute metadata = object.getMetadata();
+		if (metadata instanceof ITimeInterval) {
+			// Use the stream time as the starting point for the calculations
+			ITimeInterval streamTime = (ITimeInterval) metadata;
+			PointInTime newValidStart = streamTime.getStart();
+			PointInTime newValidEnd = streamTime.getEnd();
+			changeValidTime(metadata, newValidStart, newValidEnd);
+		}
+		return object;
+	}
+	
+	private T setTimeInterval(T object, TimeValueItem addToStart, TimeValueItem addToEnd) {
 		IMetaAttribute metadata = object.getMetadata();
 		if (metadata instanceof ITimeInterval) {
 			// Use the stream time as the starting point for the calculations
 			ITimeInterval streamTime = (ITimeInterval) metadata;
 
-			long convertedValueToAddStart = streamBaseTimeUnit.convert(valueToAddStart.getTime(),
-					valueToAddStart.getUnit());
-			long convertedValueToAddEnd = streamBaseTimeUnit.convert(valueToAddEnd.getTime(), valueToAddEnd.getUnit());
+			long convertedValueToAddStart = streamBaseTimeUnit.convert(addToStart.getTime(),
+					addToStart.getUnit());
+			long convertedValueToAddEnd = streamBaseTimeUnit.convert(addToEnd.getTime(), addToEnd.getUnit());
 
 			PointInTime newValidStart = streamTime.getStart().plus(convertedValueToAddStart);
 			PointInTime newValidEnd = streamTime.getStart().plus(convertedValueToAddEnd);
-			if (metadata instanceof IValidTimes) {
-				// Use the calculated start and end timestamps for the ValidTime
-				IValidTimes validTime = (IValidTimes) metadata;
-				validTime.clear();
-				IValidTime newTime = new ValidTime();
-				newTime.setValidStartAndEnd(newValidStart, newValidEnd);
-				validTime.addValidTime(newTime);
-			}
+			changeValidTime(metadata, newValidStart, newValidEnd);
 		}
-		transfer(object);
+		return object;
+	}
+	
+	private IMetaAttribute changeValidTime(IMetaAttribute metadata, PointInTime newValidStart, PointInTime newValidEnd) {
+		if (metadata instanceof IValidTimes) {
+			// Use the calculated start and end timestamps for the ValidTime
+			IValidTimes validTime = (IValidTimes) metadata;
+			validTime.clear();
+			IValidTime newTime = new ValidTime();
+			newTime.setValidStartAndEnd(newValidStart, newValidEnd);
+			validTime.addValidTime(newTime);
+		}
+		return metadata;
 	}
 }

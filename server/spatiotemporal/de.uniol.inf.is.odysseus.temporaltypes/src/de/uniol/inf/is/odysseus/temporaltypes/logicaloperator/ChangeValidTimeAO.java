@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
@@ -27,6 +28,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 
 	private TimeValueItem valueToAddStart;
 	private TimeValueItem valueToAddEnd;
+	private boolean copyTimeInterval;
 
 	public ChangeValidTimeAO() {
 
@@ -36,14 +38,24 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		super(other);
 		this.valueToAddStart = other.getValueToAddStart();
 		this.valueToAddEnd = other.getValueToAddEnd();
+		this.copyTimeInterval = other.isCopyTimeInterval();
 	}
 
-	@Parameter(name = "addToStartValue", doc = "The value that is added to the start timestamp of the stream time to create the start timestamp of the ValidTime.", type = TimeParameter.class, optional = false)
+	@Parameter(name = "copyTimeInterval", doc = "Set to true if the ValidTimes shall equal the TimeInterval.", type = BooleanParameter.class, optional = true)
+	public void setCopyTimeInterval(boolean copyTimeInterval) {
+		this.copyTimeInterval = copyTimeInterval;
+	}
+
+	public boolean isCopyTimeInterval() {
+		return this.copyTimeInterval;
+	}
+
+	@Parameter(name = "addToStartValue", doc = "The value that is added to the start timestamp of the stream time to create the start timestamp of the ValidTime.", type = TimeParameter.class, optional = true)
 	public void setAddStartValue(TimeValueItem valueToAddStart) {
 		this.valueToAddStart = valueToAddStart;
 	}
 
-	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create end end timestamp of the ValidTime.", type = TimeParameter.class, optional = false)
+	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create end end timestamp of the ValidTime.", type = TimeParameter.class, optional = true)
 	public void setAddEndValue(TimeValueItem valueToAddEnd) {
 		this.valueToAddEnd = valueToAddEnd;
 	}
