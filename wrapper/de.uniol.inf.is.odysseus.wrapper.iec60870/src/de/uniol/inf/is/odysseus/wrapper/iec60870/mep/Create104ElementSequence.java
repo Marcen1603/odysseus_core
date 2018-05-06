@@ -57,7 +57,7 @@ public class Create104ElementSequence extends AbstractFunction<InformationElemen
 			return null;
 		} else if ((ielist = (List<?>) getInputValue(1)) != null && !ielist.isEmpty()
 				&& !(ielist.get(0) instanceof IInformationElement)) {
-			logger.error("'{}' is not a list of information element sequences!", ielist);
+			logger.error("'{}' is not a list of information elements!", ielist);
 			return null;
 		} else if (!(getInputValue(2) instanceof Class) || !ITimeTag.class.isAssignableFrom(getInputValue(2))) {
 			logger.error("'{}' is not a time tag class!", (Object) getInputValue(2));
