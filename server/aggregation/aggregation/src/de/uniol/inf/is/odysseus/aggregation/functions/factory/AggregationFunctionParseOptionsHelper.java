@@ -212,7 +212,7 @@ public class AggregationFunctionParseOptionsHelper {
 			if (outAttr instanceof String) {
 				return new String[] { (String) outAttr };
 			} else if (outAttr instanceof Collection) {
-				return (String[]) ((Collection<String>) outAttr).toArray();
+				return ((Collection<String>) outAttr).toArray(new String[0]);
 			}
 			throw new IllegalArgumentException("Could not parse attribute " + OUTPUT_ATTRIBUTES + ".");
 		} else {
