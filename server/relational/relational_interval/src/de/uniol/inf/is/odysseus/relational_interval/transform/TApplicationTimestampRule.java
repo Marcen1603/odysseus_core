@@ -110,7 +110,8 @@ public class TApplicationTimestampRule extends AbstractRelationalIntervalTransfo
 	private int onlyOneAttributeInExpression(SDFExpression expression, SDFSchema schema) {
 		List<SDFAttribute> attributes = expression.getAllAttributes();
 
-		if (attributes.size() == 1) {
+		if (expression.getMEPExpression().isVariable() && attributes.size() == 1) {
+			
 			SDFAttribute attr = schema.findAttribute(attributes.get(0).getAttributeName());
 			if (attr != null) {
 				return schema.indexOf(attr);

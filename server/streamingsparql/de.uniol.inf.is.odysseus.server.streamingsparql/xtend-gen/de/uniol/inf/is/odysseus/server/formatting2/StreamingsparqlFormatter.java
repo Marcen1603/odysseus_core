@@ -24,11 +24,13 @@ import org.eclipse.xtext.xbase.lib.Extension;
 @SuppressWarnings("all")
 public class StreamingsparqlFormatter extends AbstractFormatter2 {
   protected void _format(final Base base, @Extension final IFormattableDocument document) {
-    document.<IRI>format(base.getIref());
+    IRI _iref = base.getIref();
+    document.<IRI>format(_iref);
   }
   
   protected void _format(final SelectQuery selectQuery, @Extension final IFormattableDocument document) {
-    document.<Base>format(selectQuery.getBase());
+    Base _base = selectQuery.getBase();
+    document.<Base>format(_base);
     EList<Prefix> _prefixes = selectQuery.getPrefixes();
     for (final Prefix prefix : _prefixes) {
       document.<Prefix>format(prefix);
@@ -41,10 +43,14 @@ public class StreamingsparqlFormatter extends AbstractFormatter2 {
     for (final Variable variable : _variables) {
       document.<Variable>format(variable);
     }
-    document.<WhereClause>format(selectQuery.getWhereClause());
-    document.<Filterclause>format(selectQuery.getFilterclause());
-    document.<Aggregate>format(selectQuery.getAggregateClause());
-    document.<Filesinkclause>format(selectQuery.getFilesinkclause());
+    WhereClause _whereClause = selectQuery.getWhereClause();
+    document.<WhereClause>format(_whereClause);
+    Filterclause _filterclause = selectQuery.getFilterclause();
+    document.<Filterclause>format(_filterclause);
+    Aggregate _aggregateClause = selectQuery.getAggregateClause();
+    document.<Aggregate>format(_aggregateClause);
+    Filesinkclause _filesinkclause = selectQuery.getFilesinkclause();
+    document.<Filesinkclause>format(_filesinkclause);
   }
   
   public void format(final Object selectQuery, final IFormattableDocument document) {

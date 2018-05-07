@@ -35,8 +35,10 @@ public class QDLGenerator extends AbstractIQLGenerator<IQDLGeneratorContext, IQD
     if ((_inner instanceof QDLQuery)) {
       JvmGenericType _inner_1 = element.getInner();
       QDLQuery query = ((QDLQuery) _inner_1);
+      String _simpleName = query.getSimpleName();
       IIQLGeneratorContext _cleanCopy = this.context.cleanCopy();
-      this.generateJavaFile(element, fsa, outputFolder, query.getSimpleName(), this.compiler.compile(query, ((IQDLGeneratorContext) _cleanCopy)));
+      String _compile = this.compiler.compile(query, ((IQDLGeneratorContext) _cleanCopy));
+      this.generateJavaFile(element, fsa, outputFolder, _simpleName, _compile);
     } else {
       super.doGenerate(element, fsa, outputFolder);
     }

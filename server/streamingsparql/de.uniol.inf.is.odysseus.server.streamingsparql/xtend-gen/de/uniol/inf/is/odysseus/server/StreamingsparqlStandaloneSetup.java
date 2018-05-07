@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.server.StreamingsparqlStandaloneSetupGenerated;
 @SuppressWarnings("all")
 public class StreamingsparqlStandaloneSetup extends StreamingsparqlStandaloneSetupGenerated {
   public static void doSetup() {
-    new StreamingsparqlStandaloneSetup().createInjectorAndDoEMFRegistration();
+    StreamingsparqlStandaloneSetup _streamingsparqlStandaloneSetup = new StreamingsparqlStandaloneSetup();
+    _streamingsparqlStandaloneSetup.createInjectorAndDoEMFRegistration();
   }
 }

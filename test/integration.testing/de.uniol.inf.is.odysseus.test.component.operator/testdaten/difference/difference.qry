@@ -13,7 +13,7 @@ wind0 = Project({attributes = ['speed', 'direction', 'name', 'location']}, ACCES
 		['filename', '${PATH}\inputLeft.csv'],
 		['csv.delimiter', ';'],
 		['csv.trim', 'true'],
-		['delay', '200']
+		['delay', '0']
 	], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'],

@@ -1,2 +1,0 @@
-operator_1=RENAME({aliases=['timestamp','B.timestamp','auction','B.auction','bidder','B.bidder','datetime','B.datetime','price','B.price'],pairs='true'},stream1)
-operator_2=MAP({expressions=['B.timestamp','B.auction','B.bidder','B.datetime','B.price']},operator_1)

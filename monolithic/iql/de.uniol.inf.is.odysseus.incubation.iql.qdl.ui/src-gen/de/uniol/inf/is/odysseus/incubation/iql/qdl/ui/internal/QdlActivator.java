@@ -72,7 +72,7 @@ public class QdlActivator extends AbstractUIPlugin {
 		}
 	}
 	
-	protected static Module getRuntimeModule(String grammar) {
+	protected Module getRuntimeModule(String grammar) {
 		if (DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL.equals(grammar)) {
 			return new QDLRuntimeModule();
 		}

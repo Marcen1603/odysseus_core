@@ -24,7 +24,9 @@ public class ECAQuickfixProvider extends DefaultQuickfixProvider {
     final IModification _function = (IModificationContext context) -> {
       final IXtextDocument xtextDocument = context.getXtextDocument();
       final String newState = "INACTIVE";
-      xtextDocument.replace((issue.getOffset()).intValue(), (issue.getLength()).intValue(), newState);
+      Integer _offset = issue.getOffset();
+      Integer _length = issue.getLength();
+      xtextDocument.replace((_offset).intValue(), (_length).intValue(), newState);
     };
     acceptor.accept(issue, "Change to INACTIVE !QuickFix not working!", "Use compatible state.", "upcase.png", _function);
   }
@@ -34,13 +36,17 @@ public class ECAQuickfixProvider extends DefaultQuickfixProvider {
     final IModification _function = (IModificationContext context) -> {
       final IXtextDocument xtextDocument = context.getXtextDocument();
       final String newState = "RUNNING";
-      xtextDocument.replace((issue.getOffset()).intValue(), (issue.getLength()).intValue(), newState);
+      Integer _offset = issue.getOffset();
+      Integer _length = issue.getLength();
+      xtextDocument.replace((_offset).intValue(), (_length).intValue(), newState);
     };
     acceptor.accept(issue, "Change to RUNNING", "Use compatible state.", "upcase.png", _function);
     final IModification _function_1 = (IModificationContext context) -> {
       final IXtextDocument xtextDocument = context.getXtextDocument();
       final String newState = "PARTIAL";
-      xtextDocument.replace((issue.getOffset()).intValue(), (issue.getLength()).intValue(), newState);
+      Integer _offset = issue.getOffset();
+      Integer _length = issue.getLength();
+      xtextDocument.replace((_offset).intValue(), (_length).intValue(), newState);
     };
     acceptor.accept(issue, "Change to PARTIAL", "Use compatible state.", "upcase.png", _function_1);
   }

@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSelectPO;
 
@@ -28,10 +29,11 @@ import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSele
  *
  */
 public class AbstractSelectPOTest extends AbstractOperatorTest {
-    protected void givenProbabilisticSelectPO() {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void givenProbabilisticSelectPO() {
         this.operator = Optional
                 .of(new ProbabilisticSelectPO<IProbabilistic>(this.schema.orElse(null), this.predicate.orElse(null)));
-        this.operator.get().connectSink(new TestableSink(new ITestableSinkListener<IStreamObject<IProbabilistic>>() {
+        this.operator.get().connectSink((ISink)new TestableSink(new ITestableSinkListener<IStreamObject<IProbabilistic>>() {
 
             @Override
             public void onPunctuation(final IPunctuation punctuation, final int port) {

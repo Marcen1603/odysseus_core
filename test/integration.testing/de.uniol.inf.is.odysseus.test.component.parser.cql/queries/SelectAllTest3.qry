@@ -1,3 +1,0 @@
-#PARSER CQL
-#QUERY
-SELECT * FROM bid, person AS P, category WHERE auction > 2 AND P.name = 'Max Mustermann';

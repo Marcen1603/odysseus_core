@@ -2,7 +2,8 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.iec60870.feature"
       label="IEC60870 Wrapper Feature"
-      version="1.0.0.qualifier">
+      version="0.0.1.qualifier"
+      provider-name="University of Oldenburg">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -17,10 +18,22 @@
    </license>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.iec62056"
+         id="de.uniol.inf.is.odysseus.wrapper.iec60870"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.ei.oj104"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

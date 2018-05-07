@@ -15,10 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.rcp;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
@@ -107,9 +111,30 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 		imageManager.register("role", "icons/tick-small-circle.png");
 		imageManager.register("function", "icons/function.png");
 
+		// load default icon sets from bundle
+		imageManager.registerImageSet("white", "operator-images/icons_white.xml");
+		imageManager.registerImageSet("black", "operator-images/icons_black.xml");
+		imageManager.registerImageSet("default", "operator-images/icons_default.xml");
+		
+		// load external icon sets from Odysseus home
+		File iconSetDir = new File(OdysseusBaseConfiguration.getHomeDir() + "/icons");
+		if (iconSetDir.isDirectory()){
+			FilenameFilter filter = new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File dir, String name) {
+					return new File(dir,name).isFile() && name.endsWith(".xml");
+				}
+			};
+			File[] files = iconSetDir.listFiles(filter);
+			for (File file : files) {
+				imageManager.registerExternalImageSet(file);
+			}
+		}
+
 		instance = this;
 	}
-
+	
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);

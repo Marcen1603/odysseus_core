@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -61,32 +62,11 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		joinPO.setCardinalities(joinAO.getCard());
 		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
 
-		// This is "bullsh*" The is no need for a window. The elements could
-		// already have start and end timestamps!
-
-		// if in both input paths there is no window, we
-		// use a persistent sweep area
-		// check the paths
-		// boolean windowFound=false;
-		// for(int port = 0; port<2; port++){
-		// if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
-		// windowFound = true;
-		// break;
-		// }
-		// }
-		//
-		// if(!windowFound){
-		// joinPO.setTransferFunction(new PersistentTransferArea());
-		// }
-		// // otherwise we use a LeftJoinTISweepArea
-		// else{
-
 		if (joinAO.isAssureOrder() == null || joinAO.isAssureOrder()) {
 			joinPO.setTransferFunction(new TITransferArea());
 		} else {
 			joinPO.setTransferFunction(new DirectTransferArea());
 		}
-		// }
 		
 		if (joinAO.getInputSchema(0).isInOrder() && joinAO.getInputSchema(1).isInOrder()) {
 			joinPO.setOutOfOrder(false);
@@ -95,12 +75,30 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		}
 
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
+		
+		// For the internal element window approach
+		joinPO.setElementSizes(joinAO.getElementSizePort1(), joinAO.getElementSizePort2());
+		
+		final List<SDFAttribute> groupingAttributesPort0 = joinAO.getGroupingAttributesPort0();
+		final int[] groupingAttributesIndicesPort0 = new int[groupingAttributesPort0.size()];
+		for (int i = 0; i < groupingAttributesPort0.size(); ++i) {
+			groupingAttributesIndicesPort0[i] = joinAO.getInputSchema(0).indexOf(groupingAttributesPort0.get(i));
+		}
+		
+		final List<SDFAttribute> groupingAttributesPort1 = joinAO.getGroupingAttributesPort1();
+		final int[] groupingAttributesIndicesPort1 = new int[groupingAttributesPort1.size()];
+		for (int i = 0; i < groupingAttributesPort1.size(); ++i) {
+			groupingAttributesIndicesPort1[i] = joinAO.getInputSchema(1).indexOf(groupingAttributesPort1.get(i));
+		}
+		
+		joinPO.setGroupingIndices(groupingAttributesIndicesPort0, groupingAttributesIndicesPort1);
+		joinPO.setKeepEndTimestamp(joinAO.keepEndTimestamp());
+		
 
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
 		if (isCross && !joinAO.isNameSet()) {
 			joinPO.setName("Crossproduct");
 		}
-
 	}
 
 	protected void setJoinPredicate(JoinTIPO joinPO, JoinAO joinAO) {

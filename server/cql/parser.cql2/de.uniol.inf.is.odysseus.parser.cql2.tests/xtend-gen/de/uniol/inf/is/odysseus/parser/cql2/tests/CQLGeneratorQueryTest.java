@@ -13,6 +13,8 @@ public class CQLGeneratorQueryTest {
   public ExpectedException thrown = ExpectedException.none();
   
   public String format(final String s) {
-    return s.replaceAll("\\s*[\\r\\n]+\\s*", "").trim().replace(" ", "");
+    String _replaceAll = s.replaceAll("\\s*[\\r\\n]+\\s*", "");
+    String _trim = _replaceAll.trim();
+    return _trim.replace(" ", "");
   }
 }

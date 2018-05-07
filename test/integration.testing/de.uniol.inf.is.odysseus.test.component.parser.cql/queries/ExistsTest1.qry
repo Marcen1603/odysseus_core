@@ -1,4 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B.bidder FROM bid AS B 
-WHERE EXISTS(SELECT P.id FROM person AS P WHERE P.id!= B.bidder);

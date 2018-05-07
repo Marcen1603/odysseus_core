@@ -17,10 +17,9 @@
 <Symbols xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="symbolSchema.xsd">
 	
 	<Default>
-		<Size width="160" height="27"/>
+		<Size width="150" height="27"/>
 		<SymbolElement type="ownerRectangle"/>
 		<SymbolElement type="ownerText"/>
 	</Default>
-	
 			
 </Symbols>

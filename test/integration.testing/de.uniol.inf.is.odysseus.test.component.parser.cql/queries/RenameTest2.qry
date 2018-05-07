@@ -1,9 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B.bidder AS auctioneer, C.email
-FROM bid AS B, person AS C
-WHERE auction=id;
-#RUNQUERY
-SELECT B.bidder AS auctioneer, C.email
-FROM bid AS B, person AS C
-WHERE auction=C.id;

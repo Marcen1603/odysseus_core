@@ -1,0 +1,17 @@
+#PARSER CQL
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
+
+#QUERY
+CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65442', 'host' 'localhost')
+
+#QUERY
+SELECT B.price 
+FROM bid AS B
+WHERE B.price > ALL (SELECT B2.price FROM bid AS B2);

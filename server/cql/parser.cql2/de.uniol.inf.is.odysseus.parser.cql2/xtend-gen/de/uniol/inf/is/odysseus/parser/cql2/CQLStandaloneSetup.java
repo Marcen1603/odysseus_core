@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.CQLStandaloneSetupGenerated;
 @SuppressWarnings("all")
 public class CQLStandaloneSetup extends CQLStandaloneSetupGenerated {
   public static void doSetup() {
-    new CQLStandaloneSetup().createInjectorAndDoEMFRegistration();
+    CQLStandaloneSetup _cQLStandaloneSetup = new CQLStandaloneSetup();
+    _cQLStandaloneSetup.createInjectorAndDoEMFRegistration();
   }
 }

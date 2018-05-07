@@ -16,7 +16,7 @@ public class ToDateFromStringFunction extends AbstractFunction<Date> {
 
 	private static final long serialVersionUID = 6255887477026357429L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			new SDFDatatype[] { SDFDatatype.STRING },
+			new SDFDatatype[] { SDFDatatype.STRING, SDFDatatype.START_TIMESTAMP_STRING },
 			new SDFDatatype[] { SDFDatatype.STRING } };
 
 	public ToDateFromStringFunction() {

@@ -27,7 +27,8 @@ Require-Bundle: org.eclipse.equinox.common,
  com.google.guava,
  org.eclipse.xtext,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ javax.validation;bundle-version="1.1.0"
 Import-Package: org.apache.log4j,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.parser.cql2.server

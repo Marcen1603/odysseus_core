@@ -1,5 +1,0 @@
-#PARSER CQL
-#QUERY
-SELECT B.auction, B.bidder, C.email, C.id
-FROM bid AS B, person AS C
-WHERE B.auction=C.id;

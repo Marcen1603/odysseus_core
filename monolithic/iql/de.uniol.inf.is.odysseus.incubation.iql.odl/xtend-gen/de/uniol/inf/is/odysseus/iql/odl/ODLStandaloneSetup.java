@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.iql.odl.ODLStandaloneSetupGenerated;
 @SuppressWarnings("all")
 public class ODLStandaloneSetup extends ODLStandaloneSetupGenerated {
   public static void doSetup() {
-    new ODLStandaloneSetup().createInjectorAndDoEMFRegistration();
+    ODLStandaloneSetup _oDLStandaloneSetup = new ODLStandaloneSetup();
+    _oDLStandaloneSetup.createInjectorAndDoEMFRegistration();
   }
 }

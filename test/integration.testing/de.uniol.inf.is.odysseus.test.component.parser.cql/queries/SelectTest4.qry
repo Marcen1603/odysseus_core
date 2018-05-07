@@ -1,3 +1,0 @@
-#PARSER CQL
-#QUERY
-SELECT auction, price FROM bid WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87;

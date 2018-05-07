@@ -15,42 +15,38 @@
   */
 package de.uniol.inf.is.odysseus.spatial.functions;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author abolles
  *
  */
-public class SpatialWithin extends AbstractFunction<Boolean>{
+public class SpatialWithin extends AbstractFunction<Boolean> {
 
-	
 	private static final long serialVersionUID = -3065295061101334497L;
 
 	public SpatialWithin() {
-		super("SpatialWithin",2,accTypes,SDFDatatype.BOOLEAN);
+		super("SpatialWithin", 2, accTypes, SDFDatatype.BOOLEAN);
 	}
 
-    public static final SDFDatatype[] accTypes1 = new SDFDatatype[]{
-    	SDFSpatialDatatype.SPATIAL_POINT, 
-    	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
-    	SDFSpatialDatatype.SPATIAL_POLYGON,
-    	SDFSpatialDatatype.SPATIAL_MULTI_POINT,
-    	SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING, 
-    	SDFSpatialDatatype.SPATIAL_MULTI_POLYGON, 
-    	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
-    	SDFSpatialDatatype.SPATIAL_GEOMETRY 
-	};
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{accTypes1,accTypes1};
-	
-	/* (non-Javadoc)
+	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFSpatialDatatype.SPATIAL_POINT,
+			SDFSpatialDatatype.SPATIAL_LINE_STRING, SDFSpatialDatatype.SPATIAL_POLYGON,
+			SDFSpatialDatatype.SPATIAL_MULTI_POINT, SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
+			SDFSpatialDatatype.SPATIAL_MULTI_POLYGON, SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
+			SDFSpatialDatatype.SPATIAL_GEOMETRY };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { accTypes1, accTypes1 };
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
 	public Boolean getValue() {
-		return ((Geometry)this.getInputValue(0)).within((Geometry)this.getInputValue(1));
+		return ((GeometryWrapper) this.getInputValue(0)).getGeometry()
+				.within(((GeometryWrapper) this.getInputValue(1)).getGeometry());
 	}
 }

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.mep;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -8,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -96,6 +98,12 @@ public abstract class AbstractExpression<T> implements IMepExpression<T> {
 	@Override
 	public boolean determineTypeFromInput() {
 		return false;
+	}
+	
+	@Override
+	public Collection<SDFConstraint> getConstraintsToAdd() {
+		// In the default case, no constraints are added
+		return new ArrayList<SDFConstraint>(0);
 	}
 
 }

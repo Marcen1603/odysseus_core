@@ -1,4 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT auction, bidder, P.id, C.id 
-FROM bid [SIZE 5 TUPLE], person [SIZE 5 MINUTES TIME] AS P, category AS C;
