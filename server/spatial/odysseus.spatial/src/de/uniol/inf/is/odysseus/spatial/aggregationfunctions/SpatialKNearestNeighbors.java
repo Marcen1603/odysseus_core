@@ -24,6 +24,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.spatial.index.SpatialIndex2;
 import de.uniol.inf.is.odysseus.spatial.index.VPTreeIndex;
 
+/**
+ * Aggregation function to find the k nearest neighbors of a certain point. Uses
+ * a spatial index.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <M> The metadata
+ * @param <T> The tuple
+ */
 public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
