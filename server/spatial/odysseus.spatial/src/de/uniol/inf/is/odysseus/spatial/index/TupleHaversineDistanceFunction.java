@@ -6,6 +6,12 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
+/**
+ * A distance function (in meters) for tuples with a spatial point.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TupleHaversineDistanceFunction<T extends Tuple<?>> implements DistanceFunction<T> {
 
 	private final int POINT_ATTR;

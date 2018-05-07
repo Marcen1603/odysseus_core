@@ -7,6 +7,11 @@ import com.eatthepath.jvptree.VPTree;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
+/**
+ * A spatial index based on the VP tree.
+ * 
+ * @author Tobias Brandt
+ */
 public class VPTreeIndex<T extends Tuple<?>> implements SpatialIndex2<T> {
 
 	private VPTree<T, T> index;
@@ -21,7 +26,7 @@ public class VPTreeIndex<T extends Tuple<?>> implements SpatialIndex2<T> {
 	public void add(T object) {
 		this.index.add(object);
 	}
-	
+
 	public boolean remove(T object) {
 		return this.index.remove(object);
 	}
