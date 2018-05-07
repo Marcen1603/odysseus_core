@@ -66,34 +66,30 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected Serializable defaultGroupingKey = "";
 
 	/**
-	 * A map of points in time where elements get invalid to a set of grouping
-	 * keys of these groups that has elements that become invalid at this point
-	 * in time.
+	 * A map of points in time where elements get invalid to a set of grouping keys
+	 * of these groups that has elements that become invalid at this point in time.
 	 */
 	protected TreeMap<PointInTime, Set<Object>> outdatingGroups = new TreeMap<>();
 
 	/**
-	 * A map of group keys to a sweep area that holds the elements of each
-	 * group.
+	 * A map of group keys to a sweep area that holds the elements of each group.
 	 */
 	protected Map<Object, IAggregationSweepArea<M, T>> groups = new HashMap<>();
 
 	/**
 	 * This flag will be set to true when an element with end TS arrives this
-	 * operator. Otherwise this is false and we do not need to check for
-	 * outdating tuples because all tuples are valid forever.
+	 * operator. Otherwise this is false and we do not need to check for outdating
+	 * tuples because all tuples are valid forever.
 	 */
 	protected boolean hasOutdatingElements = false;
 
 	/**
-	 * The attribute indices of the incoming elements that form the grouping
-	 * key.
+	 * The attribute indices of the incoming elements that form the grouping key.
 	 */
 	protected final int[] groupingAttributesIndices;
 
 	/**
-	 * The attribute indices of the outgoing elements that form the grouping
-	 * key.
+	 * The attribute indices of the outgoing elements that form the grouping key.
 	 */
 	protected final int[] groupingAttributesIndicesOutputSchema;
 
@@ -104,8 +100,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions;
 
 	/**
-	 * A list of functions that calculate the aggregation incrementally. They
-	 * get only updates (new or outdated elements).
+	 * A list of functions that calculate the aggregation incrementally. They get
+	 * only updates (new or outdated elements).
 	 */
 	protected final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions;
 
@@ -121,37 +117,36 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected final boolean hasIncrementalFunctions;
 
 	/**
-	 * This flag is set if this operator has non-incremental functions. Shortcut
-	 * for !nonIncrementalFunctions.isEmpty().
+	 * This flag is set if this operator has non-incremental functions. Shortcut for
+	 * !nonIncrementalFunctions.isEmpty().
 	 */
 	protected final boolean hasNonIncrementalFunctions;
 
 	/**
 	 * There are sweep areas that return the valid tuples
-	 * {@link IAggregationSweepArea#getValidTuples()} in start TS order and
-	 * others don't. If we have at least one non-incremental function that needs
-	 * start TS order
-	 * {@link INonIncrementalAggregationFunction#needsOrderedElements()}, this
+	 * {@link IAggregationSweepArea#getValidTuples()} in start TS order and others
+	 * don't. If we have at least one non-incremental function that needs start TS
+	 * order {@link INonIncrementalAggregationFunction#needsOrderedElements()}, this
 	 * flag ist {@code true}.
 	 */
 	protected final boolean hasFunctionsThatNeedStartTsOrder;
 
 	/**
-	 * This flag is set if this operator should output new elements when
-	 * elements get outdated.
+	 * This flag is set if this operator should output new elements when elements
+	 * get outdated.
 	 */
 	protected final boolean evaluateAtOutdatingElements;
 	protected final boolean evaluateBeforeRemovingOutdatingElements;
 
 	/**
-	 * This flag is set if this operator should output new elements when
-	 * elements get valid.
+	 * This flag is set if this operator should output new elements when elements
+	 * get valid.
 	 */
 	protected final boolean evaluateAtNewElement;
 
 	/**
-	 * This flag is set if this operator should output the last output element
-	 * at done. This can be used when you want only the final aggr. value in an
+	 * This flag is set if this operator should output the last output element at
+	 * done. This can be used when you want only the final aggr. value in an
 	 * evaluation. E. g., the final AVG of the latency.
 	 */
 	protected final boolean evaluateAtDone;
@@ -181,6 +176,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected final boolean supressFullMetaDataHandling;
 
 	protected final IMetadataMergeFunction<M> metadataMergeFunc;
+	
+	/* Fill the SweepArea independently of the existence of a non-incremental 
+	 * function (e.g., to have metadata handling for multiple metadatas) */
+	protected final boolean alwaysUseSweepArea;
 
 	/**
 	 * Constructor.
@@ -190,23 +189,24 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @param incrementalFunctions
 	 *            A list of all incremental functions.
 	 * @param evaluateAtOutdatingElements
-	 *            True if this operator should output new elements when elements
-	 *            get outdated.
+	 *            True if this operator should output new elements when elements get
+	 *            outdated.
 	 * @param evaluateAtNewElement
 	 *
-	 *            True, if this operator should output new elements when
-	 *            elements get valid.
+	 *            True, if this operator should output new elements when elements
+	 *            get valid.
 	 * @param evaluateAtDone
-	 *            True, if this operator should output the last output element
-	 *            at done. This can be used when you want only the final aggr.
-	 *            value in an evaluation. E. g., the final AVG of the latency.
+	 *            True, if this operator should output the last output element at
+	 *            done. This can be used when you want only the final aggr. value in
+	 *            an evaluation. E. g., the final AVG of the latency.
 	 * @param outputSchema
 	 *            The output schema of this operator.
 	 * @param groupingAttributesIdx
 	 *            The indices that form the grouping attributes.
 	 * @param groupingAttributesIdxOutputSchema
-	 *            The indices that form the grouping attributes on the output
-	 *            schema
+	 *            The indices that form the grouping attributes on the output schema
+	 * @param alwaysUseSweepArea Fill the SweepArea independently of the existence of a non-incremental 
+	 * function (e.g., to have metadata handling for multiple metadatas)
 	 */
 	public AggregationPO(final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions,
@@ -214,7 +214,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
 			final int[] groupingAttributesIdxOutputSchema, final boolean supressFullMetaDataHandling,
-			final IMetadataMergeFunction<M> mmf) {
+			final IMetadataMergeFunction<M> mmf, boolean alwaysUseSweepArea) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
 		this.incrementalFunctions = Collections.unmodifiableList(incrementalFunctions);
@@ -238,6 +238,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				.anyMatch(e -> e.needsOrderedElements());
 		this.supressFullMetaDataHandling = supressFullMetaDataHandling;
 		this.metadataMergeFunc = mmf;
+		
+		this.alwaysUseSweepArea = alwaysUseSweepArea;
 	}
 
 	/**
@@ -261,6 +263,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndicesOutputSchema = other.groupingAttributesIndicesOutputSchema;
 		this.supressFullMetaDataHandling = other.supressFullMetaDataHandling;
 		this.metadataMergeFunc = other.metadataMergeFunc;
+		
+		this.alwaysUseSweepArea = other.alwaysUseSweepArea;
 	}
 
 	@Override
@@ -286,8 +290,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.physicaloperator.ISink#processPunctuation(
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.ISink#processPunctuation(
 	 * de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation, int)
 	 */
 	@Override
@@ -401,8 +404,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	}
 
 	/**
-	 * Processes the outdated elements of a group for a specific point in time
-	 * and transfers the result.
+	 * Processes the outdated elements of a group for a specific point in time and
+	 * transfers the result.
 	 *
 	 * @param sweepArea
 	 *            The sweep area of the group.
@@ -457,17 +460,16 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			}
 
 			/*
-			 * ODY-1107: Moved retrieval of outdated elements outside the
-			 * if-clause (evaluate || hasIncrementalFunctions), because it does
-			 * more than getting the outdated tuples, it removes them from SA.
-			 * That is also necessary for non-incremental functions.
+			 * ODY-1107: Moved retrieval of outdated elements outside the if-clause
+			 * (evaluate || hasIncrementalFunctions), because it does more than getting the
+			 * outdated tuples, it removes them from SA. That is also necessary for
+			 * non-incremental functions.
 			 *
-			 * ODY-1422: Moved retrieval of outdated elements below the
-			 * if-clause (evaluate && hasNonIncrementalFunctions &&
-			 * evaluateBeforeRemovingOutdatingElements), because
-			 * sweepArea.getValidTuples() would return an empty list. That is
-			 * because the outdated elements would have been removed from sa
-			 * with the following line.
+			 * ODY-1422: Moved retrieval of outdated elements below the if-clause (evaluate
+			 * && hasNonIncrementalFunctions && evaluateBeforeRemovingOutdatingElements),
+			 * because sweepArea.getValidTuples() would return an empty list. That is
+			 * because the outdated elements would have been removed from sa with the
+			 * following line.
 			 */
 			final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
@@ -514,6 +516,14 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			if (!isTriggerGroup) {
 				removeGroupIfEmpty(sweepArea, groupKey);
 			}
+		} else {
+			/*
+			 * At least, we need to remove the outdated elements because if we don't, we
+			 * have these old elements from decades ago in the memory and will never get rid
+			 * of them. This can not only cause memory overflows, but also wrong metadata
+			 * merge. See ODY-1492 for an example.
+			 */
+			sweepArea.getOutdatedTuples(pointInTime, true);
 		}
 	}
 
@@ -542,7 +552,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// element gets invalid (than we need to know the invalid elements even
 		// we have only incremental functions to invoke them with the outdated
 		// elements).
-		if (hasNonIncrementalFunctions || !object.getMetadata().getEnd().isInfinite()) {
+		if (alwaysUseSweepArea || hasNonIncrementalFunctions || !object.getMetadata().getEnd().isInfinite()) {
 			sa = getSweepArea(groupKey);
 
 			// If we have non-incremental functions we need to save all elements
@@ -743,28 +753,35 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		if (output) {
 			M meta = null;
+			M mergedMeta = null;
 
 			if (!supressFullMetaDataHandling) {
 				final IAggregationSweepArea<M, T> sa = getSweepArea(groupKey);
 				final Iterator<T> iter = sa.getValidTuples().iterator();
 
 				if (iter.hasNext()) {
-					meta = (M)iter.next().getMetadata().clone();
+					T next = iter.next();
+					meta = (M) next.getMetadata().clone();
+					mergedMeta = meta;
 					while (iter.hasNext()) {
-						meta = this.metadataMergeFunc.mergeMetadata(meta, iter.next().getMetadata());
+						mergedMeta = this.metadataMergeFunc.mergeMetadata(mergedMeta, iter.next().getMetadata());
 					}
 				}
 
 			}
 
-			if (meta == null) {
+			if (mergedMeta == null) {
 				// TODO if handling of incremental meta data changes
-				meta = (M) new TimeInterval();
+				if (sampleOfGroup != null) {
+					mergedMeta = (M) sampleOfGroup.getMetadata().createInstance();
+				} else {
+					mergedMeta = (M) new TimeInterval();
+				}
 			}
 
-			meta.setEnd(PointInTime.INFINITY);
-			meta.setStart(startTs);
-			result.setMetadata(meta);
+			mergedMeta.setEnd(PointInTime.INFINITY);
+			mergedMeta.setStart(startTs);
+			result.setMetadata(mergedMeta);
 			transfer(result);
 		}
 	}
@@ -862,8 +879,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#isDone
-	 * ()
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#isDone ()
 	 */
 	@Override
 	public boolean isDone() {
@@ -949,8 +965,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
 	 * process_isSemanticallyEqual(de.uniol.inf.is.odysseus.core.
 	 * physicaloperator.IPhysicalOperator)
 	 */
@@ -976,8 +991,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO#getState()
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO#getState()
 	 */
 	@Override
 	public IOperatorState getState() {

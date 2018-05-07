@@ -48,20 +48,6 @@ public class StartTsTimeOrderedAggregationSweepArea<M extends ITimeInterval, T e
 	 */
 	@Override
 	public Collection<T> getOutdatedTuples(final PointInTime pointInTime, final boolean remove) {
-		// Cave with elements.removeAll(result):
-		// removeAll() uses equals() to remove elements. As long as
-		// Tuple.equals()
-		// does not consider meta data, elements with same attributes but
-		// different metadata (= different elements) will be removed.
-
-		// final Collection<T> result = remove ?
-		// outdatingElements.removeAll(pointInTime)
-		// : outdatingElements.get(pointInTime);
-		// if (remove) {
-		// elements.removeAll(result);
-		// }
-		// return Collections.unmodifiableCollection(result);
-
 		if (remove) {
 			elements.removeIf(e -> e.getMetadata().getEnd().equals(pointInTime));
 		}
