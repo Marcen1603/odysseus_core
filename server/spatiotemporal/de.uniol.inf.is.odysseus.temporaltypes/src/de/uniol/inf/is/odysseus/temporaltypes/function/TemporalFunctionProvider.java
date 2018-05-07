@@ -12,6 +12,7 @@ public class TemporalFunctionProvider implements IFunctionProvider {
 	public List<IMepFunction<?>> getFunctions() {
 		final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 		functions.add(new TemporalizeIntegerFunction());
+		functions.add(new TrimFunction());
 		return functions;
 	}
 
