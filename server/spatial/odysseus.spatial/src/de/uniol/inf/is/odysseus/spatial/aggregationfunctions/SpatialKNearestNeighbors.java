@@ -30,8 +30,10 @@ import de.uniol.inf.is.odysseus.spatial.index.VPTreeIndex;
  * 
  * @author Tobias Brandt
  *
- * @param <M> The metadata
- * @param <T> The tuple
+ * @param <M>
+ *            The metadata
+ * @param <T>
+ *            The tuple
  */
 public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
@@ -44,7 +46,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 
 	private final int k;
 	private final int pointAttributeIndex;
-	private final Object centerId;
+	private final List<?> centerIds;
 	private final int[] idAttributeIndexes;
 
 	protected final Map<Object, T> mapByUniqueAttributes = new HashMap<>();
@@ -52,16 +54,16 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 	public SpatialKNearestNeighbors() {
 		this.k = 0;
 		this.pointAttributeIndex = 0;
-		this.centerId = "";
+		this.centerIds = new ArrayList<>();
 		this.idAttributeIndexes = new int[0];
 	}
 
-	public SpatialKNearestNeighbors(int pointAttributeIndex, int k, Object centerId, int[] idAttributeIndexes,
+	public SpatialKNearestNeighbors(int pointAttributeIndex, int k, List<?> centerId, int[] idAttributeIndexes,
 			SDFSchema subSchema, int[] attributes) {
 		super(attributes, true, new String[] { OUTPUT_NAME });
 		this.k = k;
 		this.pointAttributeIndex = pointAttributeIndex;
-		this.centerId = centerId;
+		this.centerIds = centerId;
 		this.idAttributeIndexes = idAttributeIndexes;
 		this.index = new VPTreeIndex<>(pointAttributeIndex);
 		this.subSchema = subSchema.clone();
@@ -71,7 +73,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		super(copy);
 		this.k = copy.k;
 		this.pointAttributeIndex = copy.pointAttributeIndex;
-		this.centerId = copy.centerId;
+		this.centerIds = copy.centerIds;
 		this.idAttributeIndexes = copy.idAttributeIndexes;
 		this.index = new VPTreeIndex<>(copy.pointAttributeIndex);
 		this.subSchema = copy.subSchema.clone();
@@ -91,9 +93,9 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		 * Don't put the center in the index -> We don't want to have the center in the
 		 * results.
 		 */
-		if (!uniqueAttrKey.equals(this.centerId)) {
-			this.index.add(newElement);
-		}
+		// if (!uniqueAttrKey.equals(this.centerId)) {
+		this.index.add(newElement);
+		// }
 		this.mapByUniqueAttributes.put(uniqueAttrKey, newElement);
 	}
 
@@ -106,24 +108,38 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		List<Object> outputList = new ArrayList<>();
-		if (this.mapByUniqueAttributes.get(this.centerId) == null) {
-			return outputList.toArray();
+
+		Map<Object,List<?>> results = new HashMap<>();
+
+		for (Object centerId : this.centerIds) {
+			results.put(centerId, evaluateForCenter(centerId));
 		}
 
-		Object[] outputArray = new Object[1];
-		List<T> kNearestNeighbors = this.index.getKNearestNeighbors(this.mapByUniqueAttributes.get(this.centerId),
-				this.k);
+		return new Object[] { results };
+	}
+
+	private List<?> evaluateForCenter(Object centerId) {
+		List<?> output = new ArrayList<>();
+		if (this.mapByUniqueAttributes.get(centerId) == null) {
+			return output;
+		}
+
+		List<T> kNearestNeighbors = this.index.getKNearestNeighbors(this.mapByUniqueAttributes.get(centerId),
+				this.k + 1);
+
+		// Filter out the same element (it should be the one with the shortest distance)
+		kNearestNeighbors.remove(0);
+
 		if (kNearestNeighbors != null) {
 			if (subSchema.size() == 1) {
-				outputArray[0] = this.getNeighborsAttributes(kNearestNeighbors);
+				output = this.getNeighborsAttributes(kNearestNeighbors);
 			} else {
-				outputArray[0] = this.getNeighborsTuples(kNearestNeighbors);
+				output = this.getNeighborsTuples(kNearestNeighbors);
 			}
 		}
-		return outputArray;
+		return output;
 	}
-	
+
 	private List<T> getNeighborsTuples(List<T> kNearestNeighbors) {
 		List<T> outputList = new ArrayList<>();
 		for (T tuple : kNearestNeighbors) {
@@ -131,7 +147,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		}
 		return outputList;
 	}
-	
+
 	private List<Object> getNeighborsAttributes(List<T> kNearestNeighbors) {
 		List<Object> outputList = new ArrayList<>();
 		for (T tuple : kNearestNeighbors) {
@@ -150,7 +166,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 
 	private final static String K = "K";
 	private final static String POINT_ATTRIBUTE = "point_attribute_name";
-	private final static String ID = "center_id";
+	private final static String CENTER_ID = "center_id";
 	private final static String ID_ATTRIBUTE = "id_attribute_names";
 
 	@Override
@@ -170,12 +186,16 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 				attributeResolver, ID_ATTRIBUTE);
 		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
 				attributeResolver, 0, false);
-		Object centerId = AggregationFunctionParseOptionsHelper.getFunctionParameter(parameters, ID);
+		Object centerId = AggregationFunctionParseOptionsHelper.getFunctionParameter(parameters, CENTER_ID);
+		List<?> centerIds = null;
+		if (centerId instanceof List) {
+			centerIds = (List<?>) centerId;
+		}
 
 		SpatialKNearestNeighbors<M, T> spatialKNearestNeighbors = null;
 		if (attributes != null && pointAttributeIndexes.length > 0 && centerIdAttributeIndexes.length > 0) {
 			SDFSchema subSchema = createSubSchemaForOutputAttributes(attributes, attributeResolver);
-			spatialKNearestNeighbors = new SpatialKNearestNeighbors<>(pointAttributeIndexes[0], k, centerId,
+			spatialKNearestNeighbors = new SpatialKNearestNeighbors<>(pointAttributeIndexes[0], k, centerIds,
 					centerIdAttributeIndexes, subSchema, attributes);
 		} else {
 			throw new RuntimeException("Is the point attribute correct?");
