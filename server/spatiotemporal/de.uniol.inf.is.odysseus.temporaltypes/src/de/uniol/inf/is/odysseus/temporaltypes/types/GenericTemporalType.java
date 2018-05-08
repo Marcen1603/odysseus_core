@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.temporaltypes.types;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -135,31 +136,19 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 			}
 			builder.append(time + " = ");
 			Object value = this.values.get(time);
-			if (value instanceof Object[]) {
-				Object[] values = (Object[]) value;
-				builder.append(arrayToString(values));
-			} else {
-				builder.append(value);
-			}
+			builder.append(objectToString(value));
 		}
 
 		return builder.toString();
 	}
 
-	private String arrayToString(Object[] array) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		boolean first = true;
-		for (int i = 0; i < array.length; i++) {
-			if (!first) {
-				builder.append(", ");
-			} else {
-				first = false;
-			}
-			builder.append(array[i]);
+	private String objectToString(Object value) {
+		if (value instanceof Object[]) {
+			Object[] values = (Object[]) value;
+			return Arrays.deepToString(values);
+		} else {
+			return value.toString();
 		}
-		builder.append("]");
-		return builder.toString();
 	}
 
 }
