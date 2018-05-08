@@ -10,15 +10,6 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
  * Provides the MEP functions that depend on the IEC 60870-5-104 protocol
  * handlers (and the oj104 library). Provided MEP functions are: <br />
  * <ul>
- * <li>{@link Create104ElementSequence}</li>
- * <li>{@link Get104ElementSequences}</li>
- * <li>{@link Get104TimeTagClass}</li>
- * <li>{@link Get104TimeTagFromTimestamp}</li>
- * <li>{@link GetTimestampFrom104TimeTag}</li>
- * <li>{@link Is104TimeTagInvalid}</li>
- * <li>{@link Is104TimeTagSubstituted}</li>
- * <li>{@link Set104ElementSequences}</li>
- * <li>{@link Split104ElementSequence}</li>
  * </ul>
  *
  * @author Michael Brand (michael.brand@uol.de)
@@ -29,10 +20,7 @@ public class IEC104MEPFunctionProvider implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IMepFunction<?>[] functions = new IMepFunction[] { new Get104ElementSequences(),
-			new Split104ElementSequence(), new Get104TimeTagFromTimestamp(), new Is104TimeTagInvalid(),
-			new Is104TimeTagSubstituted(), new Get104TimeTagClass(), new GetTimestampFrom104TimeTag(),
-			new Create104ElementSequence(), new Set104ElementSequences() };
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
