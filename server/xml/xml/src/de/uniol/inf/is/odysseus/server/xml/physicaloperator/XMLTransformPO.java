@@ -153,7 +153,7 @@ public class XMLTransformPO<T extends IMetaAttribute> extends AbstractPipe<XMLSt
 
 			XMLStreamObject<T> output = (XMLStreamObject<T>) xsoHandler.readData(sw.toString());
 			if (output != null && !output.isEmpty()) {
-				if (output.getMetadata() != null) {
+				if (object.getMetadata() != null) {
 					output.setMetadata((T) object.getMetadata().clone());
 				}
 				transfer(output);

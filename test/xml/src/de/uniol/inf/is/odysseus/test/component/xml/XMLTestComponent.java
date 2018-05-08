@@ -16,16 +16,16 @@ public class XMLTestComponent extends AbstractQueryExpectedOutputTestComponent<B
 	public List<ExpectedOutputTestSet> createTestSets(BasicTestContext context) {
 		List<ExpectedOutputTestSet> sets = new ArrayList<>();
 		String[] tests = new String[] { 
-//				"enrich", 
+				"enrich", 
 				"map",
-//				"split",
+				"split",
 //				"toTuple",
-//				"toXML1",
-//				"toXML2",
-//				"toXML3",
-//				"toXML4",
-//				"toXML5",
-//				"transform"
+				"toXML1",
+				"toXML2",
+				"toXML3",
+				"toXML4",
+				"toXML5",
+				"transform"
 		};
 		for (String t : tests) {
 			URL query = getURL(t + ".qry");

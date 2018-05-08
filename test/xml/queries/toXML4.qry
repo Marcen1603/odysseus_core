@@ -3,6 +3,7 @@
 #DROPALLSINKS
 #PARSER PQL
 #DEFINE filename toXML4
+#METADATA TimeInterval
 #ADDQUERY
 input = ACCESS({
             source='source4',
@@ -10,6 +11,7 @@ input = ACCESS({
             transport='File',
             wrapper='GenericPull',
             datahandler='Tuple',
+            METAATTRIBUTE = 'TimeInterval',
             options=[
               ['filename', '${BUNDLE-ROOT}/queries/document2.xml'],
               ['nickname', '/users/user/nickname'],
@@ -53,41 +55,38 @@ transform1 = TOXML({
             
 transform2 = XMLTOTUPLE({
 expressions = [
-                  ['id', '/user/@id'],
                   ['nickname','/user/nickname'],
                   ['fname', '/user/fname'],
                   ['lname', '/user/lname'],
                   ['email', '/user/email'],
-                  ['role1', '/user/roles/role[1]'],
-                  ['role2', '/user/roles/role[2]'],
-                  ['role3', '/user/roles/role[3]'],
+                  ['role', '/user/roles/role'],
                   ['age', '/user/age']
                   ],
-                  schema = [
-                  ['id', 'String'] ,             
+                  schema = [              
                   ['nickname','String'],
                   ['fname', 'String'],
                   ['lname', 'String'],
                   ['email', 'String'],
-                  ['role1', 'String'],
-                  ['role2', 'String'],
-                  ['role3', 'String'],
-                  ['age', 'Integer']
+                  ['role', 'String'],
+                  ['age', 'String']
                   ]
                 },
-                transform1
-              )
+               TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']},  transform1)  
+              )   
               
 ///outputXML2 = SENDER({
 ///                  sink='csvOutput',
-///                  protocol='CSV',
+///                  protocol='SimpleCSV',
 ///                  transport='File',
 ///                  wrapper='GenericPull',
 ///                  datahandler='Tuple',
+///                  writemetadata = 'true',
 ///                  options=[
-///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ]
-///                  ]                   
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
 ///                },
 ///                transform2
 ///              )              
-            
+///            

@@ -3,6 +3,7 @@
 #DROPALLSINKS
 #PARSER PQL
 #DEFINE filename toTuple1
+#METADATA TimeInterval
 #ADDQUERY
 input = ACCESS({
             source='joinxmlexample8',
@@ -37,3 +38,19 @@ transform1 = XMLTOTUPLE({
                 },
                 input
               )
+              
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='SimpleCSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  writemetadata = 'true',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
+///                },
+///                transform1
+///              )         

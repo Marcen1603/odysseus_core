@@ -2,6 +2,7 @@
 #DROPALLSOURCES
 #DROPALLSINKS
 #DEFINE filename transform
+#METADATA TimeInterval
 #PARSER PQL
 #ADDQUERY
 
@@ -66,19 +67,22 @@ transform2 = XMLTOTUPLE({
                   ['artist','String']
                   ]
                 },
-                trans1
+                 TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, trans1)
               )      
       
 ///outputXML2 = SENDER({
 ///                  sink='csvOutput',
-///                  protocol='CSV',
+///                  protocol='SimpleCSV',
 ///                  transport='File',
 ///                  wrapper='GenericPull',
 ///                  datahandler='Tuple',
+///		          writemetadata = 'True',
 ///                  options=[
-///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ]
-///                  ]                   
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
 ///                },
 ///                transform2
-///              )         
-      
+///              )       
+///      

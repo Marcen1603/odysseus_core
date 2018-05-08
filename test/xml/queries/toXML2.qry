@@ -3,6 +3,7 @@
 #DROPALLSINKS
 #PARSER PQL
 #DEFINE filename toXML2
+#METADATA TimeInterval
 #ADDQUERY
 input = ACCESS({
             source='source1',
@@ -30,6 +31,7 @@ input = ACCESS({
           }                                                                                                                  
         )
              
+win = TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, input)
               
 transform1 = TOXML({
                 rootelement = 'user',
@@ -54,7 +56,7 @@ transform1 = TOXML({
 							  </xs:element>
 							</xs:schema>'             
               },
-              input
+              win
             )
             
 transform2 = XMLTOTUPLE({
@@ -72,10 +74,25 @@ expressions = [
                   ['lname', 'String'],
                   ['email', 'String'],
                   ['role', 'String'],
-                  ['age', 'Integer']
+                  ['age', 'String']
                   ]
                 },
                 transform1
               )
-                
+
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='SimpleCSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  writemetadata = 'true',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
+///                },
+///                transform2
+///              )    
             

@@ -3,8 +3,8 @@
 #DROPALLSINKS
 #PARSER PQL
 #DEFINE filename enrich
+#METADATA TimeInterval
 #ADDQUERY
-/// if you use the root element as tag, nothing will be stripped
 input = ACCESS({
             source='joinxmlexample8',
             protocol='XML3',
@@ -31,12 +31,15 @@ enrichment = ACCESS({
                 }                                                                                                                                                        
               )        
         
+///win1 = TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, enrichment)        
+win2 = TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, input)        
+        
 transform1 = XMLENRICH({
                   target = '/user',
                   predicate = 'true'///'/user/@id != /roles/@id'        
                 },
                 enrichment,
-                input
+                win2
               )        
      
 transform2 = XMLTOTUPLE({
@@ -58,8 +61,24 @@ transform2 = XMLTOTUPLE({
                     ['role1', 'String'],
                     ['role2', 'String'],
                     ['role3', 'String'],
-                    ['age', 'Integer']
+                    ['age', 'String']
                   ]                
                 },
                 transform1
               )
+
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='SimpleCSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  writemetadata = 'True',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
+///                },
+///                transform2
+///              )    

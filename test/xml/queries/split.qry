@@ -1,7 +1,8 @@
 #DROPALLQUERIES
 #DROPALLSOURCES
 #DROPALLSINKS
-#DEFINE filename project
+#DEFINE filename split
+#METADATA TimeInterval
 #PARSER PQL
 #ADDQUERY
 /// if you use the root element as tag, nothing will be stripped
@@ -22,26 +23,27 @@ transform1 = XMLSPLIT({EXPRESSIONS = ['/user/roles', '/user/fname']}, input)
 
 transform2 = XMLTOTUPLE({
                   expressions = [
-                  ['role','/roles/role[1]'],
-                  ['fname','/fname']
+                  ['role','/roles/role[1]']
                   ],
                   schema = [
-                  ['role', 'String'],
-                  ['fname', 'String']
+                  ['role', 'String']
                   ]
                 },
-                transform1
+                TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, transform1)
               )
               
 ///outputXML2 = SENDER({
 ///                  sink='csvOutput',
-///                  protocol='CSV',
+///                  protocol='SimpleCSV',
 ///                  transport='File',
 ///                  wrapper='GenericPull',
 ///                  datahandler='Tuple',
+///                  writemetadata = 'True',
 ///                  options=[
-///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ]
-///                  ]                   
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
 ///                },
 ///                transform2
 ///              )  

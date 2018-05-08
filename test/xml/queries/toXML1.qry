@@ -3,6 +3,7 @@
 #DROPALLSINKS
 #PARSER PQL
 #DEFINE filename toXML1
+#METADATA TimeInterval
 #ADDQUERY
 input = ACCESS({
             source='source1',
@@ -25,17 +26,19 @@ input = ACCESS({
               ['lname', 'String'],
               ['email', 'String'],
               ['role', 'String'],
-              ['age', 'Integer']
+              ['age', 'String']
             ]                                                                                                                                              
           }                                                                                                                  
-        )
+        )         
+        
+win = TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, input)        
               
 transform1 = TOXML({
                   rootelement = 'user',
                   xsdfile = '${BUNDLE-ROOT}/queries/schema.xsd'                        
                 },
-                input
-              )
+                win
+              )                        
             
 transform2 = XMLTOTUPLE({
 expressions = [
@@ -52,8 +55,24 @@ expressions = [
                   ['lname', 'String'],
                   ['email', 'String'],
                   ['role', 'String'],
-                  ['age', 'Integer']
+                  ['age', 'String']
                   ]
                 },
                 transform1
               )        
+              
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='SimpleCSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  writemetadata = 'True',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
+///                },
+///                transform2
+///              )                

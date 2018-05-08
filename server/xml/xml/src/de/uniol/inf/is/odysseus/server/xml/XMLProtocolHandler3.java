@@ -155,14 +155,15 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 		// if no tag was provided, return the complete document
 		if (tagToStrip == null) {
 			try {
-				getTransfer().transfer(getDataHandler().readData(input));
+				result.add(getDataHandler().readData(input));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			builder.splitDocument(input, tagToStrip).forEach(d -> {
+				result.add(getDataHandler().readData(d));
+			});
 		}
-		builder.splitDocument(input, tagToStrip).forEach(d -> {
-			result.add(getDataHandler().readData(d));
-		});
 		
 		if (result.size() > 0) {
 			return result.remove(0);

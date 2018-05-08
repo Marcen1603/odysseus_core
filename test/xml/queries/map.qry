@@ -36,7 +36,7 @@ transform2 = XMLTOTUPLE({
                     ['nickname','String'],
                     ['fname', 'String'],
                     ['lname', 'String'],
-                    ['age', 'Integer']
+                    ['age', 'String']
                   ],
                   expressions = [
                     ['nickname', '/user/nickname'],
@@ -47,3 +47,20 @@ transform2 = XMLTOTUPLE({
                 },
                 transform1
               )
+
+              
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='SimpleCSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  writemetadata = 'true',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
+///                },
+///                transform2
+///              )  
