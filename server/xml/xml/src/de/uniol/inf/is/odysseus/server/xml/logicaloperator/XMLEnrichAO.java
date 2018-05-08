@@ -86,14 +86,14 @@ public class XMLEnrichAO extends BinaryLogicalOp implements IHasPredicate {
 		return predicate;
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public synchronized SDFSchema getOutputSchemaIntern(int pos) {
-		Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
-		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),
-				(Class<? extends IStreamObject<?>>) XMLStreamObject.class, emptyAttributes);
-		setOutputSchema(newOutputSchema);
-		return newOutputSchema;
-	}
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public synchronized SDFSchema getOutputSchemaIntern(int pos) {
+//		Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
+//		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),
+//				(Class<? extends IStreamObject<?>>) XMLStreamObject.class, emptyAttributes);
+//		setOutputSchema(newOutputSchema);
+//		return newOutputSchema;
+//	}
 
 }

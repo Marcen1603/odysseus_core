@@ -80,7 +80,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     private int nanodelay;
     private final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private final List<String> xpaths = new ArrayList<String>();
-    private List<T> result = new LinkedList<>();
+    private List<T> result = null;
     private boolean reverse;
     private boolean prettyprint = true;
 
@@ -172,6 +172,11 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     @Override
     public boolean hasNext() throws IOException {
         try {
+        	
+        	if (result == null) {
+        		result = new LinkedList<>();
+        	}
+        	
             return result.size() > 0 || this.input.available() > 0;
         }
         catch (Throwable t) {
@@ -283,6 +288,11 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         return parseXml(input);
     }
 
+	@Override
+	public boolean isDone() {
+		return  this.result != null && this.result.size() == 0;
+	}
+    
     @Override
     public void write(final T object) throws IOException {
         final StringBuilder sb = new StringBuilder();
