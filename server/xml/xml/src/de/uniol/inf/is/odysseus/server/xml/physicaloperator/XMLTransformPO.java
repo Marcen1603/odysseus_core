@@ -19,13 +19,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.DOMImplementationLS;
 
-import com.ganesh.transformer.DynamicXMLBuilder;
-
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.server.xml.DynamicXMLBuilder;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObjectDataHandler;
 
