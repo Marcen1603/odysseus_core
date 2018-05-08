@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * Implementation of map operator for key value objects. Adapted from relational
@@ -44,16 +45,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
  *
  * @param <T>
  */
-abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T extends INamedAttributeStreamObject<K>> extends AbstractPipe<T, T> {
+abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T extends INamedAttributeStreamObject<K>>
+		extends AbstractPipe<T, T> {
 
 	static private Logger logger = LoggerFactory.getLogger(AbstractNamedAttributeMapPO.class);
 
-	private final SDFSchema inputSchema;
-	private final boolean allowNull;
-	
-	private String[][] variables; // Expression.Index
+	protected String[][] variables; // Expression.Index
 	private boolean[] pathExpression;
 	private List<NamedExpression> expressions;
+	private final SDFSchema inputSchema;
+	final private boolean allowNull;
 
 	public AbstractNamedAttributeMapPO(MapAO mapAO) {
 		this.inputSchema = mapAO.getInputSchema();
@@ -66,7 +67,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	final public void process_next(T object, int port) {
+	final protected void process_next(T object, int port) {
 		if (object != null) {
 
 			T outputVal = createInstance();
@@ -141,17 +142,17 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 	}
 
 	protected abstract T createInstance();
-	
-	final protected void initExpressions(List<NamedExpression> exprToInit) {
+
+	protected void initExpressions(List<NamedExpression> exprToInit) {
 		this.variables = new String[exprToInit.size()][];
 		this.pathExpression = new boolean[exprToInit.size()];
 		this.expressions = new ArrayList<>(exprToInit.size());
 		int i = 0;
 		for (NamedExpression expression : exprToInit) {
 
-			// A little hack to allow path expressions in MAP, too.
+			// A little hack to allow path expressions in MAP, too
 			String expString = expression.expression.getExpressionString();
-			if (expString.startsWith("\"path")) { //|| expString.contains("/")) {
+			if (expString.startsWith("\"path")) {
 				this.pathExpression[i] = true;
 				String path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
 				String[] newArray = new String[1];
@@ -166,7 +167,8 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 				for (SDFAttribute a : exprAttributes) {
 					Pair<Integer, Integer> pos = getInputSchema().indexOfMetaAttribute(a.getURI());
 					if (pos != null) {
-						neededAttributes.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
+						neededAttributes
+								.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
 						changedSchema = true;
 					} else {
 						neededAttributes.add(a);
