@@ -106,26 +106,38 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
+		List<Object> outputList = new ArrayList<>();
 		if (this.mapByUniqueAttributes.get(this.centerId) == null) {
-			return null;
+			return outputList.toArray();
 		}
 
-		Object e;
+		Object[] outputArray = new Object[1];
 		List<T> kNearestNeighbors = this.index.getKNearestNeighbors(this.mapByUniqueAttributes.get(this.centerId),
 				this.k);
-		List<Object> outputList = new ArrayList<>();
 		if (kNearestNeighbors != null) {
-			for (T tuple : kNearestNeighbors) {
-				if (subSchema.size() == 1) {
-					e = getFirstAttribute(tuple);
-				} else {
-					e = getAttributesAsTuple(tuple);
-				}
-				outputList.add(e);
+			if (subSchema.size() == 1) {
+				outputArray[0] = this.getNeighborsAttributes(kNearestNeighbors);
+			} else {
+				outputArray[0] = this.getNeighborsTuples(kNearestNeighbors);
 			}
 		}
-
-		return outputList.toArray();
+		return outputArray;
+	}
+	
+	private List<T> getNeighborsTuples(List<T> kNearestNeighbors) {
+		List<T> outputList = new ArrayList<>();
+		for (T tuple : kNearestNeighbors) {
+			outputList.add(getAttributesAsTuple(tuple));
+		}
+		return outputList;
+	}
+	
+	private List<Object> getNeighborsAttributes(List<T> kNearestNeighbors) {
+		List<Object> outputList = new ArrayList<>();
+		for (T tuple : kNearestNeighbors) {
+			outputList.add(getFirstAttribute(tuple));
+		}
+		return outputList;
 	}
 
 	@Override
