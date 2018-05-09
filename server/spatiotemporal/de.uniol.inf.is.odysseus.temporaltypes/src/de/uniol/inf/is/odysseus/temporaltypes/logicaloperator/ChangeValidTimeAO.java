@@ -28,6 +28,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 
 	private TimeValueItem valueToAddStart;
 	private TimeValueItem valueToAddEnd;
+	private boolean alignAtEnd = false;
 	private boolean copyTimeInterval;
 
 	public ChangeValidTimeAO() {
@@ -39,6 +40,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.valueToAddStart = other.getValueToAddStart();
 		this.valueToAddEnd = other.getValueToAddEnd();
 		this.copyTimeInterval = other.isCopyTimeInterval();
+		this.alignAtEnd = other.isAlignAtEnd();
 	}
 
 	@Parameter(name = "copyTimeInterval", doc = "Set to true if the ValidTimes shall equal the TimeInterval.", type = BooleanParameter.class, optional = true)
@@ -78,9 +80,18 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		return this.valueToAddEnd;
 	}
 
+	public boolean isAlignAtEnd() {
+		return alignAtEnd;
+	}
+
+	@Parameter(name = "alignAtEnd", doc = "The values set as the ValidTime are aligned at the end timestamp of the streamtime. Default: false..", type = BooleanParameter.class, optional = true)
+	public void setAlignAtEnd(boolean alignAtEnd) {
+		this.alignAtEnd = alignAtEnd;
+	}
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new ChangeValidTimeAO(this);
 	}
+
 
 }
