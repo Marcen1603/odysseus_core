@@ -47,6 +47,8 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 	private final int k;
 	private final int pointAttributeIndex;
 	private final List<?> centerIds;
+	// True, if all elements shall be observed
+	private final boolean allCenter;
 	private final int[] idAttributeIndexes;
 
 	protected final Map<Object, T> mapByUniqueAttributes = new HashMap<>();
@@ -56,14 +58,16 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		this.pointAttributeIndex = 0;
 		this.centerIds = new ArrayList<>();
 		this.idAttributeIndexes = new int[0];
+		this.allCenter = false;
 	}
 
-	public SpatialKNearestNeighbors(int pointAttributeIndex, int k, List<?> centerId, int[] idAttributeIndexes,
-			SDFSchema subSchema, int[] attributes) {
+	public SpatialKNearestNeighbors(int pointAttributeIndex, int k, List<?> centerId, boolean allCenter,
+			int[] idAttributeIndexes, SDFSchema subSchema, int[] attributes) {
 		super(attributes, true, new String[] { OUTPUT_NAME });
 		this.k = k;
 		this.pointAttributeIndex = pointAttributeIndex;
 		this.centerIds = centerId;
+		this.allCenter = allCenter;
 		this.idAttributeIndexes = idAttributeIndexes;
 		this.index = new VPTreeIndex<>(pointAttributeIndex);
 		this.subSchema = subSchema.clone();
@@ -74,6 +78,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		this.k = copy.k;
 		this.pointAttributeIndex = copy.pointAttributeIndex;
 		this.centerIds = copy.centerIds;
+		this.allCenter = copy.allCenter;
 		this.idAttributeIndexes = copy.idAttributeIndexes;
 		this.index = new VPTreeIndex<>(copy.pointAttributeIndex);
 		this.subSchema = copy.subSchema.clone();
@@ -89,13 +94,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 			this.index.remove(e);
 		}
 
-		/*
-		 * Don't put the center in the index -> We don't want to have the center in the
-		 * results.
-		 */
-		// if (!uniqueAttrKey.equals(this.centerId)) {
 		this.index.add(newElement);
-		// }
 		this.mapByUniqueAttributes.put(uniqueAttrKey, newElement);
 	}
 
@@ -109,13 +108,22 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
 
-		Map<Object,List<?>> results = new HashMap<>();
-
-		for (Object centerId : this.centerIds) {
-			results.put(centerId, evaluateForCenter(centerId));
+		Map<Object, List<?>> results;
+		if (this.allCenter) {
+			results = evaluateForIds(this.mapByUniqueAttributes.keySet());
+		} else {
+			results = evaluateForIds(this.centerIds);
 		}
 
 		return new Object[] { results };
+	}
+
+	private Map<Object, List<?>> evaluateForIds(Collection<?> ids) {
+		Map<Object, List<?>> results = new HashMap<>();
+		for (Object centerId : ids) {
+			results.put(centerId, evaluateForCenter(centerId));
+		}
+		return results;
 	}
 
 	private List<?> evaluateForCenter(Object centerId) {
@@ -167,6 +175,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 	private final static String K = "K";
 	private final static String POINT_ATTRIBUTE = "point_attribute_name";
 	private final static String CENTER_ID = "center_id";
+	private final static String ALL_CENTER = "eval_for_all";
 	private final static String ID_ATTRIBUTE = "id_attribute_names";
 
 	@Override
@@ -187,6 +196,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
 				attributeResolver, 0, false);
 		Object centerId = AggregationFunctionParseOptionsHelper.getFunctionParameter(parameters, CENTER_ID);
+		boolean allCenter = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters, ALL_CENTER, false);
 		List<?> centerIds = null;
 		if (centerId instanceof List) {
 			centerIds = (List<?>) centerId;
@@ -195,7 +205,7 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		SpatialKNearestNeighbors<M, T> spatialKNearestNeighbors = null;
 		if (attributes != null && pointAttributeIndexes.length > 0 && centerIdAttributeIndexes.length > 0) {
 			SDFSchema subSchema = createSubSchemaForOutputAttributes(attributes, attributeResolver);
-			spatialKNearestNeighbors = new SpatialKNearestNeighbors<>(pointAttributeIndexes[0], k, centerIds,
+			spatialKNearestNeighbors = new SpatialKNearestNeighbors<>(pointAttributeIndexes[0], k, centerIds, allCenter,
 					centerIdAttributeIndexes, subSchema, attributes);
 		} else {
 			throw new RuntimeException("Is the point attribute correct?");
