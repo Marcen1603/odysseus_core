@@ -24,7 +24,7 @@ public class TAdjust104TimeTagsToBaslineAORule extends AbstractTransformationRul
 			throws RuleException {
 		Adjust104TimeTagsToBaselinePO po = new Adjust104TimeTagsToBaselinePO(
 				operator.getInputSchema().indexOf(operator.getIosAttribute()), operator.getAcceleration(),
-				operator.getBaseline());
+				operator.hasDelay(), operator.getBaseline());
 		defaultExecute(operator, po, config, true, true);
 	}
 

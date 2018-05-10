@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -57,6 +58,8 @@ public class Adjust104TimeTagsToBaselineAO extends UnaryLogicalOp {
 
 	private double acceleration = 1;
 
+	private boolean delay = false;
+
 	public Adjust104TimeTagsToBaselineAO() {
 		super();
 	}
@@ -98,6 +101,15 @@ public class Adjust104TimeTagsToBaselineAO extends UnaryLogicalOp {
 	@Parameter(type = DoubleParameter.class, name = "Acceleration", optional = true, isList = false, doc = "The acceleration: <1 increases the time shift between messages; >1 decreases the time shift between messages. Must be greater than 0. Default = 1")
 	public void setAcceleration(double acceleration) {
 		this.acceleration = acceleration;
+	}
+
+	public boolean hasDelay() {
+		return delay;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "Delay", optional = true, isList = false, doc = "True: Output gets delayed according to difference in current time tag and time tag of previous tuple.")
+	public void setDelay(boolean delay) {
+		this.delay = delay;
 	}
 
 }

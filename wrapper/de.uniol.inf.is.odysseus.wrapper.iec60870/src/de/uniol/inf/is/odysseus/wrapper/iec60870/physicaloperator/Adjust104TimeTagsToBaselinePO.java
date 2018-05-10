@@ -46,8 +46,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * Example with acceleration: <br />
  * First and only original time tag (in ms) in the first tuple is 0. First and
  * only original time tag (in ms) in the second tuple is 2. The given time stamp
- * (baseline) is 1000 and the acceleration factor is 2.0. Then, the new time tag in the first tuple is 1000 and the
- * new time tag in the second tuple is 1001.
+ * (baseline) is 1000 and the acceleration factor is 2.0. Then, the new time tag
+ * in the first tuple is 1000 and the new time tag in the second tuple is 1001.
  * 
  * @author Michael Brand (michael.brand@uol.de)
  *
@@ -60,6 +60,8 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 
 	private final double acceleration;
 
+	private final boolean delay;
+
 	// initialized with the baseline argument
 	private long previousBaselinedTS;
 
@@ -69,15 +71,17 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 
 	private long newPreviousOriginalTS = -1;
 
-	public Adjust104TimeTagsToBaselinePO(int iosAttributePos, double acceleration, long baseline) {
+	public Adjust104TimeTagsToBaselinePO(int iosAttributePos, double acceleration, boolean delay, long baseline) {
 		this.iosAttributePos = iosAttributePos;
 		this.acceleration = acceleration;
+		this.delay = delay;
 		this.previousBaselinedTS = baseline;
 	}
 
 	public Adjust104TimeTagsToBaselinePO(Adjust104TimeTagsToBaselinePO other) {
 		iosAttributePos = other.iosAttributePos;
 		acceleration = other.acceleration;
+		delay = other.delay;
 		previousBaselinedTS = other.previousBaselinedTS;
 		previousOriginalTS = other.previousOriginalTS;
 		newPreviousBaselinedTS = other.newPreviousBaselinedTS;
@@ -108,10 +112,12 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		previousBaselinedTS = newPreviousBaselinedTS == -1 ? previousBaselinedTS : newPreviousBaselinedTS;
 
 		// sleep to simulate the timeshift between the messages
-		try {
-			Thread.sleep(timebetweenBaselines);
-		} catch (InterruptedException e) {
-			logger.error("Error while sleeping to simulate the timeshift between the messages", e);
+		if (delay) {
+			try {
+				Thread.sleep(timebetweenBaselines);
+			} catch (InterruptedException e) {
+				logger.error("Error while sleeping to simulate the timeshift between the messages", e);
+			}
 		}
 
 		transfer(object);
