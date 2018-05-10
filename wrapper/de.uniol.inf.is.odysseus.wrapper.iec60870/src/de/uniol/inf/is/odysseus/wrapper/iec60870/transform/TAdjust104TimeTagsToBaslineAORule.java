@@ -16,17 +16,18 @@ public class TAdjust104TimeTagsToBaslineAORule extends AbstractTransformationRul
 	@Override
 	public void execute(Adjust104TimeTagsToBaselineAO operator, TransformationConfiguration config)
 			throws RuleException {
-		Adjust104TimeTagsToBaselinePO po = new Adjust104TimeTagsToBaselinePO(operator.getIosAttributePos(),
-				operator.getAcceleration(), operator.getBaseline());
+		Adjust104TimeTagsToBaselinePO po = new Adjust104TimeTagsToBaselinePO(
+				operator.getInputSchema().indexOf(operator.getIosAttribute()), operator.getAcceleration(),
+				operator.getBaseline());
 		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override
 	public boolean isExecutable(Adjust104TimeTagsToBaselineAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet() && operator.getInputSchema().getType() == Tuple.class
-				&& operator.getInputSchema().size() > operator.getIosAttributePos() && operator.getInputSchema()
-						.getAttribute(operator.getIosAttributePos()).getDatatype().equals(SDFDatatype.LIST)
-				&& operator.getBaseline() >= 0 && operator.getAcceleration() > 0;
+				&& operator.getInputSchema().contains(operator.getIosAttribute())
+				&& operator.getIosAttribute().getDatatype().equals(SDFDatatype.LIST) && operator.getBaseline() >= 0
+				&& operator.getAcceleration() > 0;
 	}
 
 	@Override

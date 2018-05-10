@@ -1,12 +1,13 @@
 package de.uniol.inf.is.odysseus.wrapper.iec60870.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 // TODO javaDoc
 // TODO operatorDoc
@@ -16,7 +17,7 @@ public class Adjust104TimeTagsToBaselineAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -721510855629321746L;
 
-	private int iosAttributePos;
+	private SDFAttribute iosAttribute;
 
 	private long baseline;
 
@@ -28,7 +29,7 @@ public class Adjust104TimeTagsToBaselineAO extends UnaryLogicalOp {
 
 	public Adjust104TimeTagsToBaselineAO(Adjust104TimeTagsToBaselineAO other) {
 		super(other);
-		iosAttributePos = other.iosAttributePos;
+		iosAttribute = other.iosAttribute;
 		baseline = other.baseline;
 		acceleration = other.acceleration;
 	}
@@ -38,13 +39,13 @@ public class Adjust104TimeTagsToBaselineAO extends UnaryLogicalOp {
 		return new Adjust104TimeTagsToBaselineAO(this);
 	}
 
-	public int getIosAttributePos() {
-		return iosAttributePos;
+	public SDFAttribute getIosAttribute() {
+		return iosAttribute;
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "IOsAttributePosition", optional = false, isList = false, doc = "The position of the attribute that contains the list of information objects.")
-	public void setIosAttributePos(int iosAttributePos) {
-		this.iosAttributePos = iosAttributePos;
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "IOsAttribute", optional = false, isList = false, doc = "The attribute that contains the list of information objects.")
+	public void setIosAttribute(SDFAttribute iosAttribute) {
+		this.iosAttribute = iosAttribute;
 	}
 
 	public long getBaseline() {
