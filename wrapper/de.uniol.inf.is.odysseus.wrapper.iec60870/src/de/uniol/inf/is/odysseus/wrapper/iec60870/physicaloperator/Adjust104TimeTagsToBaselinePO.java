@@ -20,20 +20,51 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-// TODO javaDoc
+/**
+ * Physical operator as a black box solution to do the following with 104
+ * messages (see OJ104 library). <br />
+ * <br />
+ * It changes all {@link ITimeTag}s in a list of {@link IInformationObject}.
+ * This list must be a attribute of the input tuples. For the first time tag in
+ * the first tuple, it sets the time tag to a given time stamp. For all other
+ * time tags in the same list of information objects or in subsequent tuples, it
+ * sets the time tag so that the original difference between the time tags is
+ * preserved. <br />
+ * <br />
+ * Example: <br />
+ * First and only original time tag (in ms) in the first tuple is 0. First and
+ * only original time tag (in ms) in the second tuple is 2. The given time stamp
+ * (baseline) is 1000. Then, the new time tag in the first tuple is 1000 and the
+ * new time tag in the second tuple is 1002. <br />
+ * <br />
+ * Further it can delay the transmission of the results according to the
+ * difference in the first time tags of the current tuple and the previous one.
+ * With this behavior, the original delay of the messages can be preserved.
+ * Another option is to accelerate the messages by using an acceleration factor.
+ * It influences the new time tags as well as the delay. <br />
+ * <br />
+ * Example with acceleration: <br />
+ * First and only original time tag (in ms) in the first tuple is 0. First and
+ * only original time tag (in ms) in the second tuple is 2. The given time stamp
+ * (baseline) is 1000 and the acceleration factor is 2.0. Then, the new time tag in the first tuple is 1000 and the
+ * new time tag in the second tuple is 1001.
+ * 
+ * @author Michael Brand (michael.brand@uol.de)
+ *
+ */
 public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttribute>, Tuple<IMetaAttribute>> {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(Adjust104TimeTagsToBaselinePO.class);
 
 	private final int iosAttributePos;
-	
+
 	private final double acceleration;
 
 	// initialized with the baseline argument
 	private long previousBaselinedTS;
 
 	private long previousOriginalTS = -1;
-	
+
 	private long newPreviousBaselinedTS = -1;
 
 	private long newPreviousOriginalTS = -1;
@@ -66,7 +97,7 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		}
 
 		@SuppressWarnings("unchecked")
-		List<IInformationObject> ios = (List<IInformationObject>) object.getAttribute(iosAttributePos);		
+		List<IInformationObject> ios = (List<IInformationObject>) object.getAttribute(iosAttributePos);
 		newPreviousOriginalTS = -1;
 		newPreviousBaselinedTS = -1;
 		ios.forEach(io -> adjustTimeTags(io));
@@ -99,8 +130,7 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		if (io instanceof SingleInformationObject) {
 			adjustTimeTags((InformationElementSequence) io);
 		} else if (io instanceof SequenceInformationObject) {
-			((SequenceInformationObject) io).getInformationElementSequences()
-					.forEach(ies -> adjustTimeTags(ies));
+			((SequenceInformationObject) io).getInformationElementSequences().forEach(ies -> adjustTimeTags(ies));
 		}
 	}
 
@@ -114,7 +144,8 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 
 		// difference to original timestamp of the first information element sequence of
 		// the last tuple
-		long diffToPreviousBaselinedTS = previousOriginalTS == -1 ? 0 : (long) (Math.abs(originalTS - previousOriginalTS) / acceleration);
+		long diffToPreviousBaselinedTS = previousOriginalTS == -1 ? 0
+				: (long) (Math.abs(originalTS - previousOriginalTS) / acceleration);
 
 		// new baselined timestamp is the baselined timestamp of the previous tuple +
 		// the calculated difference

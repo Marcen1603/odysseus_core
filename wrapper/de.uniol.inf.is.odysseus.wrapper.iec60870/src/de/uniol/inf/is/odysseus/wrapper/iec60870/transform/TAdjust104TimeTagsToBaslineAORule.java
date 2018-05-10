@@ -10,7 +10,13 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wrapper.iec60870.logicaloperator.Adjust104TimeTagsToBaselineAO;
 import de.uniol.inf.is.odysseus.wrapper.iec60870.physicaloperator.Adjust104TimeTagsToBaselinePO;
 
-// TODO javaDoc
+/**
+ * Rule to transform an {@link Adjust104TimeTagsToBaselineAO} into an
+ * {@link Adjust104TimeTagsToBaselinePO}.
+ * 
+ * @author Michael Brand (michael.brand@uol.de)
+ *
+ */
 public class TAdjust104TimeTagsToBaslineAORule extends AbstractTransformationRule<Adjust104TimeTagsToBaselineAO> {
 
 	@Override
