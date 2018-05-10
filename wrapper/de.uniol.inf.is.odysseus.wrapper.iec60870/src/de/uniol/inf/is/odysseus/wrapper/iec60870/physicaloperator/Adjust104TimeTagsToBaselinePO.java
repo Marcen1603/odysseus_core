@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.ei.oj104.model.IInformationObject;
 import de.uniol.inf.ei.oj104.model.ITimeTag;
 import de.uniol.inf.ei.oj104.model.InformationElementSequence;
@@ -19,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 // TODO javaDoc
 public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttribute>, Tuple<IMetaAttribute>> {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Adjust104TimeTagsToBaselinePO.class);
 
 	private final int iosAttributePos;
 
@@ -61,15 +66,18 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		newPreviousOriginalTS = -1;
 		newPreviousBaselinedTS = -1;
 		ios.forEach(io -> adjustTimeTags(io));
-//		for(IInformationObject io : ios) {
-//			adjustTimeTags(io, newPreviousOriginalTS, newPreviousBaselinedTS);
-//		}
 
 		// set previousOriginalTS and previousBaselinedTS
+		long timebetweenBaselines = previousBaselinedTS == -1 ? 0 : newPreviousBaselinedTS - previousBaselinedTS;
 		previousOriginalTS = newPreviousOriginalTS == -1 ? previousOriginalTS : newPreviousOriginalTS;
 		previousBaselinedTS = newPreviousBaselinedTS == -1 ? previousBaselinedTS : newPreviousBaselinedTS;
 
-		// TODO sleep
+		// sleep to simulate the timeshift between the messages
+		try {
+			Thread.sleep(timebetweenBaselines);
+		} catch (InterruptedException e) {
+			logger.error("Error while sleeping to simulate the timeshift between the messages", e);
+		}
 
 		transfer(object);
 	}
@@ -89,9 +97,6 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		} else if (io instanceof SequenceInformationObject) {
 			((SequenceInformationObject) io).getInformationElementSequences()
 					.forEach(ies -> adjustTimeTags(ies));
-//			for(InformationElementSequence ies : ((SequenceInformationObject) io).getInformationElementSequences()) {
-//				adjustTimeTags(ies, newPreviousOriginalTS, newPreviousBaselinedTS);
-//			}
 		}
 	}
 
