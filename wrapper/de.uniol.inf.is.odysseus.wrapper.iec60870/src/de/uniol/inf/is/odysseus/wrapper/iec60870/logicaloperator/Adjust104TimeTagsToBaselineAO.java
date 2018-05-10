@@ -80,7 +80,7 @@ public class Adjust104TimeTagsToBaselineAO extends UnaryLogicalOp {
 		return iosAttribute;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "IOsAttribute", optional = false, isList = false, doc = "The attribute that contains the list of information objects.")
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "InformationObjects", optional = false, isList = false, doc = "The attribute that contains the list of information objects.")
 	public void setIosAttribute(SDFAttribute iosAttribute) {
 		this.iosAttribute = iosAttribute;
 	}
