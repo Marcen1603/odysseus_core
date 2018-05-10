@@ -26,6 +26,8 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 	private static final Logger logger = LoggerFactory.getLogger(Adjust104TimeTagsToBaselinePO.class);
 
 	private final int iosAttributePos;
+	
+	private final double acceleration;
 
 	// initialized with the baseline argument
 	private long previousBaselinedTS;
@@ -36,13 +38,15 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 
 	private long newPreviousOriginalTS = -1;
 
-	public Adjust104TimeTagsToBaselinePO(int iosAttributePos, long baseline) {
+	public Adjust104TimeTagsToBaselinePO(int iosAttributePos, double acceleration, long baseline) {
 		this.iosAttributePos = iosAttributePos;
+		this.acceleration = acceleration;
 		this.previousBaselinedTS = baseline;
 	}
 
 	public Adjust104TimeTagsToBaselinePO(Adjust104TimeTagsToBaselinePO other) {
 		iosAttributePos = other.iosAttributePos;
+		acceleration = other.acceleration;
 		previousBaselinedTS = other.previousBaselinedTS;
 		previousOriginalTS = other.previousOriginalTS;
 		newPreviousBaselinedTS = other.newPreviousBaselinedTS;
@@ -110,7 +114,7 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 
 		// difference to original timestamp of the first information element sequence of
 		// the last tuple
-		long diffToPreviousBaselinedTS = previousOriginalTS == -1 ? 0 : Math.abs(originalTS - previousOriginalTS);
+		long diffToPreviousBaselinedTS = previousOriginalTS == -1 ? 0 : (long) (Math.abs(originalTS - previousOriginalTS) / acceleration);
 
 		// new baselined timestamp is the baselined timestamp of the previous tuple +
 		// the calculated difference
