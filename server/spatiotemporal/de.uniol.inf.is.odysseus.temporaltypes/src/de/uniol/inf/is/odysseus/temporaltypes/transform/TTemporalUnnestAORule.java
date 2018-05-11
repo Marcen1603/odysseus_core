@@ -13,6 +13,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * In case that the attribute to unnest is a temporal attribute, use a temporal
+ * unnest operator.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TTemporalUnnestAORule extends AbstractTransformationRule<UnNestAO> {
 
 	@Override

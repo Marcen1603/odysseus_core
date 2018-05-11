@@ -7,6 +7,11 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
+/**
+ * This operator unnests every tuple for every valid point in time.
+ * 
+ * @author Tobias Brandt
+ */
 public class TemporalRelationalUnnestPO<T extends IValidTimes> extends RelationalUnNestPO<T> {
 
 	public TemporalRelationalUnnestPO(RelationalUnNestPO<T> po) {
@@ -21,14 +26,19 @@ public class TemporalRelationalUnnestPO<T extends IValidTimes> extends Relationa
 			for (IValidTime validTime : tuple.getMetadata().getValidTimes()) {
 				for (PointInTime time = validTime.getValidStart(); time
 						.before(validTime.getValidEnd()); time = time.plus(1)) {
-					Object[] nonTempAttributeArray = (Object[]) tempType.getValue(time);
-					Object nonTempAttribute = nonTempAttributeArray[0];
-					Tuple<T> nonTemporalTuple = tuple.clone();
-					nonTemporalTuple.setAttribute(this.nestedAttributePos, nonTempAttribute);
+					Tuple<T> nonTemporalTuple = getNonTemporalTuple(tuple, time, tempType);
 					unnestTuple(nonTemporalTuple);
 				}
 			}
 		}
+	}
+
+	private Tuple<T> getNonTemporalTuple(Tuple<T> tuple, PointInTime time, TemporalType<?> temporalAttribute) {
+		Object[] nonTempAttributeArray = (Object[]) temporalAttribute.getValue(time);
+		Object nonTempAttribute = nonTempAttributeArray[0];
+		Tuple<T> nonTemporalTuple = tuple.clone();
+		nonTemporalTuple.setAttribute(this.nestedAttributePos, nonTempAttribute);
+		return nonTemporalTuple;
 	}
 
 }
