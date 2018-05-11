@@ -33,8 +33,8 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 		 * Only use this rule if there is at least one expression with a temporal
 		 * attribute.
 		 */
-		return operator.isAllPhysicalInputSet()
-				&& this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
+		return operator.isAllPhysicalInputSet() && this
+				.containsExpressionWithTemporalAttribute(operator.getExpressionList(), operator.getInputSchema());
 	}
 
 	@Override
@@ -56,9 +56,9 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	 * @return True, if at least one expression has a temporal attribute, false
 	 *         otherwise
 	 */
-	protected boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions) {
+	protected boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions, SDFSchema inputSchema) {
 		for (SDFExpression expression : expressions) {
-			if (expressionHasTemporalAttribute(expression)) {
+			if (expressionHasTemporalAttribute(expression, inputSchema)) {
 				return true;
 			}
 		}
@@ -72,13 +72,24 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	 *            The expression to check
 	 * @return True, if is has a temporal attribute, false otherwise
 	 */
-	protected boolean expressionHasTemporalAttribute(SDFExpression expression) {
+	protected boolean expressionHasTemporalAttribute(SDFExpression expression, SDFSchema inputSchema) {
 		for (SDFAttribute attribute : expression.getAllAttributes()) {
-			if (TemporalDatatype.isTemporalAttribute(attribute)) {
+
+			SDFAttribute attributeFromSchema = getAttributeFromSchema(inputSchema, attribute);
+			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	protected SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
+		for (SDFAttribute attribute : inputSchema.getAttributes()) {
+			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
+				return attribute;
+			}
+		}
+		return attributeToSearch;
 	}
 
 }

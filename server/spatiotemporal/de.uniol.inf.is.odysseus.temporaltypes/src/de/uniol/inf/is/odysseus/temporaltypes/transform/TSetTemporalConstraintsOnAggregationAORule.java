@@ -4,37 +4,47 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.aggregation.functions.IIncrementalAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.temporaltypes.aggregationfunctions.TemporalIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
-/**
- * This rule checks if there are temporal attributes in an expression. If so,
- * the output of the expression is a temporal type, too. Creates a new output
- * schema to add the constraints needed to mark attributes as temporal.
- * 
- * @author Tobias Brandt
- *
- */
-public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
+public class TSetTemporalConstraintsOnAggregationAORule extends TTemporalAggregationAORule {
 
 	@Override
-	public void execute(MapAO operator, TransformationConfiguration config) throws RuleException {
-		/*
-		 * Create a new output schema so that the attributes contain the temporal
-		 * constraint if at least one input attribute of an expression also has a
-		 * temporal constraint (is a temporal type).
-		 */
+	public void execute(final AggregationAO operator, final TransformationConfiguration config) throws RuleException {
+		updateOutputSchema(operator);
+	}
 
+	protected void updateOutputSchema(AggregationAO operator) {
+
+		List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> temporalIncrementalFunction = getIncrementalFunction(operator.getAggregations());
+
+		List<Integer> attributesToChange = new ArrayList<>();
+
+		for (IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>> incrementalFunction : temporalIncrementalFunction) {
+			if (incrementalFunction instanceof TemporalIncrementalAggregationFunction) {
+				int[] temporalOutputAttributeIndices = incrementalFunction.getOutputAttributeIndices();
+				for (int i = 0; i < temporalOutputAttributeIndices.length; i++) {
+					if (!attributesToChange.contains(temporalOutputAttributeIndices[i])) {
+						attributesToChange.add(temporalOutputAttributeIndices[i]);
+					}
+				}
+			}
+		}
+
+		// Add the temporal constraint
 		// The new attributes for the new output schema
 		List<SDFAttribute> newAttributes = new ArrayList<>();
 
@@ -50,18 +60,8 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 
 			// Is this attribute made by an expression and if so, is it temporal?
 			SDFAttribute currentOutputAttribute = operator.getOutputSchema().getAttribute(outputSchemaPosition);
-			List<NamedExpression> expressionForAttribute = new ArrayList<>();
-			for (NamedExpression namedExpression : operator.getExpressions()) {
-				for (SDFAttribute expressionAttribute : namedExpression.expression.getAllAttributes()) {
-					if (expressionAttribute.getAttributeName().equals(currentOutputAttribute.getAttributeName())) {
-						expressionForAttribute.add(namedExpression);
-					}
-				}
-			}
 
-			// Names should be unique, so at maximum one result
-			if (expressionForAttribute.size() == 1 && containsTemporalAttribute(
-					expressionForAttribute.get(0).expression.getAllAttributes(), operator.getInputSchema())) {
+			if (attributesToChange.contains(outputSchemaPosition)) {
 				SDFAttribute newAttribute = addTemporalConstraintToAttribute(currentOutputAttribute);
 				newAttributes.add(newAttribute);
 			} else {
@@ -93,51 +93,23 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 		// Create a new attribute from the old and add the new constraints
 		return new SDFAttribute(attribute, newConstraints);
 	}
-
-	/**
-	 * Checks if at least one attribute is temporal
-	 * 
-	 * @param attributes
-	 *            The list of attributes to check
-	 * @return true, if at least one attribute is temporal, false otherwise
-	 */
-	protected boolean containsTemporalAttribute(List<SDFAttribute> attributes, SDFSchema inputSchema) {
-		for (SDFAttribute attribute : attributes) {
-
-			SDFAttribute attributeFromSchema = getAttributeFromSchema(inputSchema, attribute);
-			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	protected SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
-		for (SDFAttribute attribute : inputSchema.getAttributes()) {
-			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
-				return attribute;
-			}
-		}
-		return attributeToSearch;
-	}
-
+	
 	@Override
-	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(AggregationAO operator, TransformationConfiguration config) {
 		// Only use this rule if the map has temporal expressions
 		boolean hasValidTime = operator.getInputSchema().hasMetatype(IValidTimes.class);
-		boolean hasTemporalExpression = this.containsExpressionWithTemporalAttribute(operator.getExpressionList(),
-				operator.getInputSchema());
-		return hasValidTime && hasTemporalExpression;
-	}
-
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.INIT;
+		boolean inputContainsTemporal = inputSchemaContainsTemporalAttribute(operator.getInputSchema());
+		return hasValidTime && inputContainsTemporal;
 	}
 
 	@Override
 	public int getPriority() {
 		return 1;
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.INIT;
 	}
 
 }

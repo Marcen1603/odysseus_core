@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
  */
 public class TTemporalAggregationAORule extends TAggregationAORule {
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> getNonIncrementalFunction(
@@ -50,7 +49,7 @@ public class TTemporalAggregationAORule extends TAggregationAORule {
 		return operator.isAllPhysicalInputSet() && inputSchemaContainsTemporalAttribute(operator.getInputSchema());
 	}
 
-	private boolean inputSchemaContainsTemporalAttribute(SDFSchema schema) {
+	protected boolean inputSchemaContainsTemporalAttribute(SDFSchema schema) {
 		long numberOfTemporalAttributes = schema.getAttributes().stream()
 				.filter(attribute -> TemporalDatatype.isTemporalAttribute(attribute)).count();
 		return numberOfTemporalAttributes > 0;
