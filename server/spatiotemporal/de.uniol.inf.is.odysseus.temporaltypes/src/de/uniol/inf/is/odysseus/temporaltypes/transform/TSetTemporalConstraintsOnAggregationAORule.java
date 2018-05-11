@@ -20,6 +20,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
+/**
+ * Sets the temporal constraints to the output schema of an aggregation
+ * operation if necessary.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TSetTemporalConstraintsOnAggregationAORule extends TTemporalAggregationAORule {
 
 	@Override
@@ -29,22 +36,23 @@ public class TSetTemporalConstraintsOnAggregationAORule extends TTemporalAggrega
 
 	protected void updateOutputSchema(AggregationAO operator) {
 
-		List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> temporalIncrementalFunction = getIncrementalFunction(operator.getAggregations());
-
-		List<Integer> attributesToChange = new ArrayList<>();
-
-		for (IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>> incrementalFunction : temporalIncrementalFunction) {
-			if (incrementalFunction instanceof TemporalIncrementalAggregationFunction) {
-				int[] temporalOutputAttributeIndices = incrementalFunction.getOutputAttributeIndices();
-				for (int i = 0; i < temporalOutputAttributeIndices.length; i++) {
-					if (!attributesToChange.contains(temporalOutputAttributeIndices[i])) {
-						attributesToChange.add(temporalOutputAttributeIndices[i]);
-					}
-				}
-			}
-		}
+		List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> temporalIncrementalFunction = getIncrementalFunction(
+				operator.getAggregations());
+		List<Integer> attributesToChange = collectAttributesToAddTemporalConstraint(temporalIncrementalFunction);
 
 		// Add the temporal constraint
+		List<SDFAttribute> newAttributes = createNewAttributes(attributesToChange, operator);
+
+		// Create and set the new schema
+		SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(operator.getOutputSchema(), newAttributes);
+		operator.setOutputSchema(newSchema);
+	}
+
+	/**
+	 * Creates new attributes if a temporal constraint needs to be added or uses the
+	 * old one if not. Can be used for a new schema.
+	 */
+	private List<SDFAttribute> createNewAttributes(List<Integer> attributesToChange, AggregationAO operator) {
 		// The new attributes for the new output schema
 		List<SDFAttribute> newAttributes = new ArrayList<>();
 
@@ -69,10 +77,32 @@ public class TSetTemporalConstraintsOnAggregationAORule extends TTemporalAggrega
 				newAttributes.add(operator.getOutputSchema().get(outputSchemaPosition));
 			}
 		}
+		return newAttributes;
+	}
 
-		// Create and set the new schema
-		SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(operator.getOutputSchema(), newAttributes);
-		operator.setOutputSchema(newSchema);
+	/**
+	 * Collects the attributes which are affected by a temporal function
+	 */
+	private List<Integer> collectAttributesToAddTemporalConstraint(
+			List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> temporalIncrementalFunction) {
+		List<Integer> attributesToChange = new ArrayList<>();
+
+		for (IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>> incrementalFunction : temporalIncrementalFunction) {
+			/*
+			 * In case that this is a temporal function, a temporal constraint needs to be
+			 * added.
+			 */
+			if (incrementalFunction instanceof TemporalIncrementalAggregationFunction) {
+				int[] temporalOutputAttributeIndices = incrementalFunction.getOutputAttributeIndices();
+				for (int i = 0; i < temporalOutputAttributeIndices.length; i++) {
+					// The temporal function affects certain output attributes -> remember these
+					if (!attributesToChange.contains(temporalOutputAttributeIndices[i])) {
+						attributesToChange.add(temporalOutputAttributeIndices[i]);
+					}
+				}
+			}
+		}
+		return attributesToChange;
 	}
 
 	/**
@@ -93,7 +123,7 @@ public class TSetTemporalConstraintsOnAggregationAORule extends TTemporalAggrega
 		// Create a new attribute from the old and add the new constraints
 		return new SDFAttribute(attribute, newConstraints);
 	}
-	
+
 	@Override
 	public boolean isExecutable(AggregationAO operator, TransformationConfiguration config) {
 		// Only use this rule if the map has temporal expressions
