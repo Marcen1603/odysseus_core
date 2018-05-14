@@ -222,6 +222,11 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 	public void process(Tuple<IMetaAttribute> message, int port) {
 		process(message);
 	}
+	
+	@Override
+	public void write(Tuple<IMetaAttribute> object) throws IOException {
+		process(object);
+	}
 
 	@Override
 	public Optional<ASDU> handleASDU(ASDU asdu) {
