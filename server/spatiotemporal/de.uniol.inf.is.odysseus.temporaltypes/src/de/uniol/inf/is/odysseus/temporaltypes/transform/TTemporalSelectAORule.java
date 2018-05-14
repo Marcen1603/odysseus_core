@@ -43,7 +43,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		 * Only use this rule if there is at least one temporal attribute in the
 		 * predicate.
 		 */
-		return operator.isAllPhysicalInputSet() && predicateContaintsTemporalAttribute(operator);
+		return operator.isAllPhysicalInputSet() && predicateContainsTemporalAttribute(operator);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 	 * @param operator
 	 * @return
 	 */
-	private boolean predicateContaintsTemporalAttribute(SelectAO operator) {
+	private boolean predicateContainsTemporalAttribute(SelectAO operator) {
 
 		/*
 		 * Loop through all attributes of the predicates to compare them to the input

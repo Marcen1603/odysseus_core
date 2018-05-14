@@ -52,10 +52,13 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 			SDFAttribute currentOutputAttribute = operator.getOutputSchema().getAttribute(outputSchemaPosition);
 			List<NamedExpression> expressionForAttribute = new ArrayList<>();
 			for (NamedExpression namedExpression : operator.getExpressions()) {
-				for (SDFAttribute expressionAttribute : namedExpression.expression.getAllAttributes()) {
-					if (expressionAttribute.getAttributeName().equals(currentOutputAttribute.getAttributeName())) {
-						expressionForAttribute.add(namedExpression);
-					}
+				String name = namedExpression.name;
+				if (name.isEmpty()) {
+					name = namedExpression.expression.getExpressionString();
+				}
+				if (currentOutputAttribute.getAttributeName().equals(name)) {
+					expressionForAttribute.add(namedExpression);
+					break;
 				}
 			}
 
