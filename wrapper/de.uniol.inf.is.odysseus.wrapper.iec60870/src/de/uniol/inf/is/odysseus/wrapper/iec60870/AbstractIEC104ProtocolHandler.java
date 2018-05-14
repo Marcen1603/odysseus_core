@@ -172,7 +172,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		// It can handle the following tuple schemes: (1) one attribute, an ASDU; (2)
 		// two attributes, first DataUnitIdentifier and second List of
 		// IInformationObjects
-		Object firstAttribute = null, secondAttribute;
+		Object firstAttribute, secondAttribute;
 		switch (message.getAttributes().length) {
 		case 1:
 			// ASDU
@@ -183,39 +183,37 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 				} catch (IEC608705104ProtocolException | IOException e) {
 					getLogger().error("Error while building and sending ASDU from {}", firstAttribute);
 				}
-				break;
-			} else if (!(firstAttribute instanceof DataUnitIdentifier)) {
-				getLogger().error("Mal formatted tuple: first attribute must be an ASDU or a DataUnitIdentifier!");
-				break;
+			} else {
+				getLogger().error("Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
 			}
-			// else no break; use firstAttribute (DataUnitIdentifier) in snd. case
+			break;
 		case 2:
 			// DataUnitIdentifier + List<IInformationObject>
+			firstAttribute = message.getAttribute(0);
 			secondAttribute = message.getAttribute(1);
-			if (secondAttribute instanceof List) {
-				List<IInformationObject> ioList = ((List<?>) secondAttribute).stream().map(object -> {
-					if (object instanceof IInformationObject) {
-						return (IInformationObject) object;
-					} else {
-						getLogger()
-								.error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
-						return null;
-					}
-				}).collect(Collectors.toList());
-				try {
-					apduHandler.buildAndSendAPDU(new ASDU((DataUnitIdentifier) firstAttribute, ioList));
-				} catch (IEC608705104ProtocolException | IOException e) {
-					getLogger().error("Error while building and sending ASDU from {} and {}", firstAttribute,
-							secondAttribute);
-				}
-				break;
-			} else {
-				getLogger().error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
+			if (!(firstAttribute instanceof DataUnitIdentifier) || !(secondAttribute instanceof List)) {
+				getLogger().error("Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
 				break;
 			}
+			
+			List<IInformationObject> ioList = ((List<?>) secondAttribute).stream().map(object -> {
+				if (object instanceof IInformationObject) {
+					return (IInformationObject) object;
+				} else {
+					getLogger()
+							.error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
+					return null;
+				}
+			}).collect(Collectors.toList());
+			try {
+				apduHandler.buildAndSendAPDU(new ASDU((DataUnitIdentifier) firstAttribute, ioList));
+			} catch (IEC608705104ProtocolException | IOException e) {
+				getLogger().error("Error while building and sending ASDU from {} and {}", firstAttribute,
+						secondAttribute);
+			}
+			break;
 		default:
-			getLogger().error(
-					"Mal formatted tuple: first attribute must be an ASDU or a DataUnitIdentifier; second attribute must be a list of IInformationObjects if first is a DataUnitIdentifier!");
+			getLogger().error("Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
 			break;
 		}
 	}

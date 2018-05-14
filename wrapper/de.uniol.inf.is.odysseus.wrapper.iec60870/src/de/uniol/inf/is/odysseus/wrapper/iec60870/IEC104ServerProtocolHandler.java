@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.iec60870;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +75,11 @@ public class IEC104ServerProtocolHandler extends AbstractIEC104ProtocolHandler {
 	@Override
 	protected Logger getLogger() {
 		return LoggerFactory.getLogger(IEC104ServerProtocolHandler.class);
+	}
+	
+	@Override
+	public void write(Tuple<IMetaAttribute> object) throws IOException {
+		process(object);
 	}
 
 }
