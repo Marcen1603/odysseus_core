@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.temporaltypes.transform;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
@@ -51,12 +50,18 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 
 			// Is this attribute made by an expression and if so, is it temporal?
 			SDFAttribute currentOutputAttribute = operator.getOutputSchema().getAttribute(outputSchemaPosition);
-			List<NamedExpression> expressionForAttribute = operator.getExpressions().stream()
-					.filter(e -> e.name.equals(currentOutputAttribute.getAttributeName())).collect(Collectors.toList());
+			List<NamedExpression> expressionForAttribute = new ArrayList<>();
+			for (NamedExpression namedExpression : operator.getExpressions()) {
+				for (SDFAttribute expressionAttribute : namedExpression.expression.getAllAttributes()) {
+					if (expressionAttribute.getAttributeName().equals(currentOutputAttribute.getAttributeName())) {
+						expressionForAttribute.add(namedExpression);
+					}
+				}
+			}
 
 			// Names should be unique, so at maximum one result
-			if (expressionForAttribute.size() == 1
-					&& containsTemporalAttribute(expressionForAttribute.get(0).expression.getAllAttributes())) {
+			if (expressionForAttribute.size() == 1 && containsTemporalAttribute(
+					expressionForAttribute.get(0).expression.getAllAttributes(), operator.getInputSchema())) {
 				SDFAttribute newAttribute = addTemporalConstraintToAttribute(currentOutputAttribute);
 				newAttributes.add(newAttribute);
 			} else {
@@ -96,20 +101,38 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 	 *            The list of attributes to check
 	 * @return true, if at least one attribute is temporal, false otherwise
 	 */
-	protected boolean containsTemporalAttribute(List<SDFAttribute> attributes) {
+	protected boolean containsTemporalAttribute(List<SDFAttribute> attributes, SDFSchema inputSchema) {
 		for (SDFAttribute attribute : attributes) {
-			if (TemporalDatatype.isTemporalAttribute(attribute)) {
+
+			SDFAttribute attributeFromSchema = getAttributeFromSchema(inputSchema, attribute);
+			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	/**
+	 * The search needs to be done on the input schema, because the temporal
+	 * constraints are added to the input schema, not to the attributes in the
+	 * expression. That's why this method searches for the same attribute in the
+	 * schema.
+	 */
+	protected SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
+		for (SDFAttribute attribute : inputSchema.getAttributes()) {
+			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
+				return attribute;
+			}
+		}
+		return attributeToSearch;
+	}
+
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
 		// Only use this rule if the map has temporal expressions
 		boolean hasValidTime = operator.getInputSchema().hasMetatype(IValidTimes.class);
-		boolean hasTemporalExpression = this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
+		boolean hasTemporalExpression = this.containsExpressionWithTemporalAttribute(operator.getExpressionList(),
+				operator.getInputSchema());
 		return hasValidTime && hasTemporalExpression;
 	}
 
