@@ -50,17 +50,8 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 
 			// Is this attribute made by an expression and if so, is it temporal?
 			SDFAttribute currentOutputAttribute = operator.getOutputSchema().getAttribute(outputSchemaPosition);
-			List<NamedExpression> expressionForAttribute = new ArrayList<>();
-			for (NamedExpression namedExpression : operator.getExpressions()) {
-				String name = namedExpression.name;
-				if (name.isEmpty()) {
-					name = namedExpression.expression.getExpressionString();
-				}
-				if (currentOutputAttribute.getAttributeName().equals(name)) {
-					expressionForAttribute.add(namedExpression);
-					break;
-				}
-			}
+			List<NamedExpression> expressionForAttribute = findExpressionForOutputAttribute(operator,
+					currentOutputAttribute);
 
 			// Names should be unique, so at maximum one result
 			if (expressionForAttribute.size() == 1 && containsTemporalAttribute(
@@ -76,6 +67,26 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 		// Create and set the new schema
 		SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(operator.getOutputSchema(), newAttributes);
 		operator.setOutputSchema(newSchema);
+	}
+
+	private List<NamedExpression> findExpressionForOutputAttribute(MapAO operator,
+			SDFAttribute currentOutputAttribute) {
+		List<NamedExpression> expressionForAttribute = new ArrayList<>();
+		for (NamedExpression namedExpression : operator.getExpressions()) {
+			/*
+			 * The expression could be named or not. If it's not named, the name is empty.
+			 * In that case, the String of the expression is used.
+			 */
+			String name = namedExpression.name;
+			if (name.isEmpty()) {
+				name = namedExpression.expression.getExpressionString();
+			}
+			if (currentOutputAttribute.getAttributeName().equals(name)) {
+				expressionForAttribute.add(namedExpression);
+				break;
+			}
+		}
+		return expressionForAttribute;
 	}
 
 	/**
