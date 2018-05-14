@@ -32,11 +32,13 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 	private boolean copyTimeInterval;
 	private TimeValueItem valueToAddStart;
 	private TimeValueItem valueToAddEnd;
+	private boolean alingAtStreamEnd;
 	private TimeUnit streamBaseTimeUnit;
 
 	public ChangeValidTimePO(ChangeValidTimeAO ao) {
 		this.valueToAddStart = ao.getValueToAddStart();
 		this.valueToAddEnd = ao.getValueToAddEnd();
+		this.alingAtStreamEnd = ao.isAlignAtEnd();
 		this.streamBaseTimeUnit = ao.getBaseTimeUnit();
 		this.copyTimeInterval = ao.isCopyTimeInterval();
 	}
@@ -53,10 +55,10 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 
 	@Override
 	protected void process_next(T object, int port) {
-		if (this.copyTimeInterval) {
+		if (copyTimeInterval) {
 			object = copyTimeInterval(object);
 		} else {
-			object = setTimeInterval(object, valueToAddStart, valueToAddEnd);
+			object = setTimeInterval(object, valueToAddStart, valueToAddEnd, alingAtStreamEnd);
 		}
 		transfer(object);
 	}
@@ -73,7 +75,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		return object;
 	}
 	
-	private T setTimeInterval(T object, TimeValueItem addToStart, TimeValueItem addToEnd) {
+	private T setTimeInterval(T object, TimeValueItem addToStart, TimeValueItem addToEnd, boolean alignAtStreamEnd) {
 		IMetaAttribute metadata = object.getMetadata();
 		if (metadata instanceof ITimeInterval) {
 			// Use the stream time as the starting point for the calculations
@@ -83,8 +85,14 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 					addToStart.getUnit());
 			long convertedValueToAddEnd = streamBaseTimeUnit.convert(addToEnd.getTime(), addToEnd.getUnit());
 
-			PointInTime newValidStart = streamTime.getStart().plus(convertedValueToAddStart);
-			PointInTime newValidEnd = streamTime.getStart().plus(convertedValueToAddEnd);
+			PointInTime baseTime;
+			if (!alignAtStreamEnd) {
+				baseTime = streamTime.getStart();
+			} else {
+				baseTime = streamTime.getEnd();
+			}
+			PointInTime newValidStart = baseTime.plus(convertedValueToAddStart);
+			PointInTime newValidEnd = baseTime.plus(convertedValueToAddEnd);				
 			changeValidTime(metadata, newValidStart, newValidEnd);
 		}
 		return object;
