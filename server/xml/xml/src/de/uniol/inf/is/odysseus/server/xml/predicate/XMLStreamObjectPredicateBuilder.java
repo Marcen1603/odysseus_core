@@ -15,12 +15,10 @@ public class XMLStreamObjectPredicateBuilder<M extends IMetaAttribute> extends A
 	public IPredicate<XMLStreamObject<M>> createPredicate(IAttributeResolver resolver, String predicate) {
 		predicate = predicate.replaceAll("/", XMLStreamObject.SLASH_REPLACEMENT_STRING);
 		predicate = predicate.replaceAll("@", XMLStreamObject.AT_REPLACEMENT_STRING);
-		/*
-		predicate = predicate.replaceAll("(", XMLStreamObject.LEFT_BRACE_REPLACEMENT_STRING);
-		predicate = predicate.replaceAll(")", XMLStreamObject.RIGHT_BRACE_REPLACEMENT_STRING);
-		*/
+
 		SDFExpression expression = new SDFExpression("", predicate, null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		IPredicate<XMLStreamObject<M>> pred = new XMLStreamObjectPredicate<>(expression, resolver.getSchema());
 		return pred;
 	}
+	
 }

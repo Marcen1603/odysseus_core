@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
+import java.io.IOException;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -14,19 +16,23 @@ public class TToXMLRule extends AbstractTransformationRule<ToXMLAO>{
 
 	@Override
 	public int getPriority() {
-		return 10;
+		return 0;
 	}
 
 	@Override
 	public void execute(ToXMLAO operator, TransformationConfiguration config) throws RuleException {
-		ToXMLPO<?> toxmlPO = new ToXMLPO<IMetaAttribute>(operator.getExpressions(), operator.getAttributes());
-		defaultExecute(operator, toxmlPO, config, true, false);
+		ToXMLPO<?> toxmlPO;
+		try {
+			toxmlPO = new ToXMLPO<IMetaAttribute>(operator.getRootElement(), operator.getRootAttribute(),operator.getXsdFile(), operator.getXsdString(), operator.getXsdAttribute(), operator.getXPathAttributes(), operator.getOptionsMap());
+			defaultExecute(operator, toxmlPO, config, true, false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public boolean isExecutable(ToXMLAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == Tuple.class ) &&
-				operator.isAllPhysicalInputSet()) {
+		if ((operator.getInputSchema().getType() == Tuple.class) && operator.isAllPhysicalInputSet()) {
 			return true;
 		}
 		return false;

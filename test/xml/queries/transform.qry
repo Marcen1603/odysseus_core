@@ -1,0 +1,88 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#DEFINE filename transform
+#METADATA TimeInterval
+#PARSER PQL
+#ADDQUERY
+
+input = ACCESS({
+            source='joinxmlexample8',
+            protocol='XML3',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='XMLStreamObject',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/xmlWithEmbeddedXLST.xml']
+            ]                                                       
+          }                            
+        )
+        
+trans1 = XMLTRANSFORM({
+			xsltstring='<?xml version="1.0"?>
+						<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+						    <xsl:template match="/">
+						        <html>
+						            <body>
+						                <h2>My CD Collection</h2>
+						                <table border="1">
+						                    <tr bgcolor="#9acd32">
+						                        <th>Title</th>
+						                        <th>Artist</th>
+						                    </tr>
+						                    <xsl:for-each select="catalog/cd">
+						                        <tr>
+						                            <td><xsl:value-of select="title"/></td>
+						                            <td><xsl:value-of select="artist"/></td>
+						                        </tr>
+						                    </xsl:for-each>
+						                </table>
+						            </body>
+						        </html>
+						    </xsl:template>
+						</xsl:stylesheet>'
+          },
+          input
+        )    
+        
+///trans2 = XMLTRANSFORM({
+///			xsltfile = '${BUNDLE-ROOT}/queries/transform.xslt'
+///			},
+///			input	
+///		  )
+///		  
+///trans3 = XMLTRANSFORM({
+///              dynamic = true			
+///            },
+///            input
+///          )   
+
+transform2 = XMLTOTUPLE({
+				expressions = [
+                  ['title', '/html/body/table/tr/td'],
+                  ['artist', '/html/body/table/tr/td']
+                  ],
+                  schema = [
+                  ['title', 'String'],             
+                  ['artist','String']
+                  ]
+                },
+                 TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, trans1)
+              )      
+      
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='SimpleCSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///		          writemetadata = 'True',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
+///                },
+///                transform2
+///              )       
+///      
