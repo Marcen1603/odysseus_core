@@ -146,9 +146,13 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	@Override
 	public void process(long callerId, ByteBuffer message) {
-		byte[] bytes = new byte[message.remaining()];
-		message.get(bytes);
-		process(bytes);
+		if(message.hasArray()) {
+			process(message.array());
+		} else {
+			byte[] bytes = new byte[message.remaining()];
+			message.get(bytes);
+			process(bytes);
+		}
 	}
 
 	@Override
