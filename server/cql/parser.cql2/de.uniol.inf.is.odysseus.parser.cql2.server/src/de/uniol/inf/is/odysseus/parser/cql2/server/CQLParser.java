@@ -16,9 +16,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.swing.plaf.metal.MetalIconFactory;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
@@ -32,6 +29,8 @@ import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
@@ -43,7 +42,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -81,13 +79,14 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Query;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.UserManagement;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class CQLParser implements IQueryParser {
 
 	private static final InfoService infoService = InfoServiceFactory.getInfoService(CQLParser.class);
+	private static final Logger logger = LoggerFactory.getLogger(CQLParser.class);
 
 	private static Map<String, String> databaseConnections = new HashMap<>();
 	private static Set<SDFSchema> currentSchema;
@@ -161,6 +160,7 @@ public class CQLParser implements IQueryParser {
 		} else {
 			tokens = new String[1];
 			infoService.warning("Could not read tokens!");
+			logger.warn("Could not read tokens");
 		}
 	}
 
@@ -220,6 +220,7 @@ public class CQLParser implements IQueryParser {
 								pqlString += "#ADDQUERY\n";
 								pqlString += e.getValue().toString();
 								infoService.info("Generated following PQL String:\n " + pqlString);
+								logger.info("Generated following PQL String:\n " + pqlString);
 								executorCommands.add(new AddQueryCommand(pqlString, "OdysseusScript", user, null,
 										context, new ArrayList<>(), false));
 							}
