@@ -116,9 +116,9 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				attributes[i] = dataHandlers[i].readData(inputStream);
 			} catch (Exception e) {
 				if (dataHandlers.length > i) {
-					logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
+					logger.trace("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
 				} else {
-					logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
+					logger.trace("Error parsing stream with no data handler defined " + e.getMessage());
 				}
 				attributes[i] = null;
 			}
@@ -144,7 +144,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				try {
 					tuple.setAttribute(i, this.dataHandlers[i].readData(nextElem));
 				} catch (Exception e) {
-					logger.warn("Error parsing " + nextElem + " with data handler " + dataHandlers[i] + ". Cause: "
+					logger.trace("Error parsing " + nextElem + " with data handler " + dataHandlers[i] + ". Cause: "
 							+ e.getMessage());
 					tuple.setAttribute(i, (Object) null);
 				}
@@ -182,10 +182,10 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 						attributes[i] = dataHandlers[i].readData(buffer);
 					} catch (Exception e) {
 						if (dataHandlers.length > i) {
-							logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage()
+							logger.trace("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage()
 									+ " " + e);
 						} else {
-							logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
+							logger.trace("Error parsing stream with no data handler defined " + e.getMessage());
 						}
 						attributes[i] = null;
 					}
@@ -209,7 +209,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				objects.add(dataHandlers[dhPos++].readData(tokens.nextToken()));
 			}
 			if (tokens.hasMoreTokens()) {
-				logger.warn("Ignoring additional part of " + string);
+				logger.trace("Ignoring additional part of " + string);
 			}
 			Tuple<?> tuple = new Tuple<IMetaAttribute>(objects, false);
 			return tuple;
