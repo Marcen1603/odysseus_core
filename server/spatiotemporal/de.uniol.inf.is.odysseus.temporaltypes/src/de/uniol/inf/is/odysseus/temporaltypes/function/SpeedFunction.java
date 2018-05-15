@@ -38,6 +38,8 @@ public class SpeedFunction extends AbstractFunction<GenericTemporalType<?>> impl
 					.before(validTime.getValidEnd()); currentTime = currentTime.plus(1)) {
 
 				if (prevTime == null) {
+					prevTime = currentTime;
+					result.setValue(currentTime, 0.0);
 					continue;
 				}
 

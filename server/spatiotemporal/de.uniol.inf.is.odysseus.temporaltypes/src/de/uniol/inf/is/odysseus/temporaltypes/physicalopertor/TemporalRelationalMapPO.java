@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
+import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
@@ -36,7 +37,7 @@ public class TemporalRelationalMapPO<T extends IValidTimes> extends RelationalMa
 			 * could lead to an unwanted conversion from a temporal function to a generic
 			 * temporal function.
 			 */
-			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i])) {
+			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i]) && !(expr[i].getMEPExpression() instanceof TemporalFunction)) {
 				this.expressions[i] = new TemporalRelationalExpression<>(expr[i]);
 			} else {
 				this.expressions[i] = new RelationalExpression<T>(expr[i]);
