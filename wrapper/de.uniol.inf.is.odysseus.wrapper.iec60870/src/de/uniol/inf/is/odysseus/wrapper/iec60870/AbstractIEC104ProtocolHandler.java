@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -117,6 +118,13 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 	}
 
 	protected abstract Logger getLogger();
+	
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+		getTransportHandler().processInOpen();
+		super.open();
+	}
 
 	private void process(byte[] message) {
 		try {
