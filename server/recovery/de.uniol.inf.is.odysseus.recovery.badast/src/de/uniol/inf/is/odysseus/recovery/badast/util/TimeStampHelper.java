@@ -90,7 +90,7 @@ public class TimeStampHelper {
 		if (fac.getStartAttrPos() != -1) {
 			return new RelationalTimestampAttributeTimeIntervalMFactory(fac.getStartAttrPos(), fac.getEndAttrPos(),
 					fac.isClearEnd(), fac.getDateFormat(), fac.getTimezone().getId(), fac.getLocale(), fac.getFactor(),
-					fac.getOffset());
+					fac.getOffset(),null,null);
 		}
 		return new RelationalTimestampAttributeTimeIntervalMFactory(fac.getStartTimestampYearPos(),
 				fac.getStartTimestampMonthPos(), fac.getStartTimestampDayPos(), fac.getStartTimestampHourPos(),

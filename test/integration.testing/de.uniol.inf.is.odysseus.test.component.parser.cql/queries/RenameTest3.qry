@@ -1,4 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B1.auction, B2.auction 
-FROM bid AS B1, bid AS B2;

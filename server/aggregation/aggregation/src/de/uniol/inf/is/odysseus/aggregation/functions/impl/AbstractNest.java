@@ -15,15 +15,20 @@
  */
 package de.uniol.inf.is.odysseus.aggregation.functions.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.INonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
+import de.uniol.inf.is.odysseus.aggregation.physicaloperator.AggregationPO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -46,11 +51,17 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	protected final boolean preserveOrderingOfElements;
 	protected final boolean sortElements;
 
+	// For the "unique_attr" element window
+	protected final int[] uniqueAttributeIndices;
+	protected final Map<Object, T> mapByUniqueAttributes = new HashMap<>();
+	protected Serializable defaultGroupingKey = "__DEFAULT_GROUPING_KEY";
+
 	public AbstractNest() {
 		super();
 		elements = null;
 		this.preserveOrderingOfElements = false;
 		this.sortElements = false;
+		uniqueAttributeIndices = null;
 	}
 
 	/**
@@ -63,13 +74,16 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 * @param preserveOrderingOfElements
 	 */
 	public AbstractNest(final Collection<T> elements, final int[] attributes, final String outputAttributeName,
-			final SDFSchema subSchema,
- final boolean preserveOrderingOfElements, final boolean sortElements) {
+			final SDFSchema subSchema, final boolean preserveOrderingOfElements, final boolean sortElements,
+			final int[] uniqueAttributeIndices) {
 		super(attributes, new String[] { outputAttributeName });
 		this.subSchema = subSchema.clone();
 		this.elements = elements;
 		this.preserveOrderingOfElements = preserveOrderingOfElements;
 		this.sortElements = sortElements;
+		this.uniqueAttributeIndices = uniqueAttributeIndices == null ? null
+				: Arrays.copyOf(uniqueAttributeIndices, uniqueAttributeIndices.length);
+
 	}
 
 	/**
@@ -80,12 +94,14 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 * @param preserveOrderingOfElements
 	 */
 	public AbstractNest(final String outputAttributeName, final SDFSchema subSchema,
-			final boolean preserveOrderingOfElements, final boolean sortElements) {
+			final boolean preserveOrderingOfElements, final boolean sortElements, final int[] uniqueAttributeIndices) {
 		super(null, new String[] { outputAttributeName });
 		this.subSchema = subSchema.clone();
 		this.elements = null;
 		this.preserveOrderingOfElements = preserveOrderingOfElements;
 		this.sortElements = sortElements;
+		this.uniqueAttributeIndices = uniqueAttributeIndices == null ? null
+				: Arrays.copyOf(uniqueAttributeIndices, uniqueAttributeIndices.length);
 	}
 
 	protected AbstractNest(final AbstractNest<M, T> other, final Collection<T> elements) {
@@ -94,8 +110,9 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 		this.preserveOrderingOfElements = other.preserveOrderingOfElements;
 		this.sortElements = other.sortElements;
 		this.elements = elements;
+		this.uniqueAttributeIndices = other.uniqueAttributeIndices == null ? null
+				: Arrays.copyOf(other.uniqueAttributeIndices, other.uniqueAttributeIndices.length);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -106,7 +123,27 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 */
 	@Override
 	public void addNew(final T newElement) {
-		elements.add(this.getAttributesAsTuple(newElement));
+		T elementToAdd = this.getAttributesAsTuple(newElement);
+		elements.add(elementToAdd);
+
+		// Use this internal element window?
+		if (uniqueAttributeIndices != null) {
+
+			// Group key for our the content of the attribute we want to group by
+			final Object uniqueAttrKey = AggregationPO.getGroupKey(newElement, uniqueAttributeIndices,
+					defaultGroupingKey);
+
+			// Get newest element from that group
+			final T e = mapByUniqueAttributes.get(uniqueAttrKey);
+
+			if (e != null) {
+				// There has been an older element in this group, remove it from the elements
+				elements.remove(this.getAttributesAsTuple(e));
+			}
+
+			// Put the new element with the same attribute to the map
+			mapByUniqueAttributes.put(uniqueAttrKey, newElement);
+		}
 	}
 
 	/*
@@ -120,6 +157,11 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	@Override
 	public void removeOutdated(final Collection<T> outdatedElements, final T trigger, final PointInTime pointInTime) {
 		elements.removeIf(e -> e.getMetadata().getEnd().beforeOrEquals(pointInTime));
+
+		// Clean up the "element window"
+		if (uniqueAttributeIndices != null) {
+			mapByUniqueAttributes.values().removeAll(outdatedElements);
+		}
 	}
 
 	/*
@@ -175,7 +217,6 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0], datatype, null, null, null));
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -221,6 +262,6 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 */
 	@Override
 	public boolean isIncremental() {
-		return inputAttributeIndices != null;
+		return (inputAttributeIndices != null || uniqueAttributeIndices != null);
 	}
 }

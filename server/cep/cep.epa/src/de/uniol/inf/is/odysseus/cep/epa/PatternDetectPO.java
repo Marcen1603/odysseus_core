@@ -63,25 +63,26 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerati
 public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<?>>
 		extends AbstractPipe<R, W> implements IProcessInternal<R> {
 
-	Logger logger = LoggerFactory.getLogger(PatternDetectPO.class);
+	static final Logger logger = LoggerFactory.getLogger(PatternDetectPO.class);
 
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 
 	/**
 	 * Factory zum erzeugen komplexer Events
 	 */
-	private IComplexEventFactory<R, W> complexEventFactory;
+	final private IComplexEventFactory<R, W> complexEventFactory;
+
 	/**
 	 * Referenz auf eine eventReader Implementierung zum
 	 * datenmodellunabhaengigen Auslesen von Events.
 	 */
-	private Map<Integer, IEventReader<R, R>> eventReader = new HashMap<Integer, IEventReader<R, R>>();
+	final private Map<Integer, IEventReader<R, R>> eventReader;
 
 	/**
 	 * Transferfunktion for reading and writing Elements
 	 */
-	protected IInputStreamSyncArea<R> inputStreamSyncArea;
-	protected ITransferArea<R, W> outputTransferArea;
+	final protected IInputStreamSyncArea<R> inputStreamSyncArea;
+	final protected ITransferArea<R, W> outputTransferArea;
 
 	/**
 	 * Liste aller Automaten-Instanzen, die gerade verarbeitet werden
@@ -148,10 +149,6 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 		this.complexEventFactory = complexEventFactory;
 		this.eventReader = eventReader;
-		smInstances = new HashMap<StateMachine<R>, LinkedList<StateMachineInstance<R>>>();
-		for (StateMachine<R> m : stateMachines) {
-			smInstances.put(m, new LinkedList<StateMachineInstance<R>>());
-		}
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferArea = outputTransferFunction;
 		this.onlyOneMatchPerInstance = onlyOneMatchPerInstance;
@@ -183,11 +180,14 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		super.process_open();
 		inputStreamSyncArea.init(this, getSubscribedToSource().size());
 		outputTransferArea.init(this, getSubscribedToSource().size());
+		smInstances = new HashMap<StateMachine<R>, LinkedList<StateMachineInstance<R>>>();
+		for (StateMachine<R> m : stateMachines) {
+			smInstances.put(m, new LinkedList<StateMachineInstance<R>>());
+		}
 	}
-
+	
 	/**
 	 * Verarbeitet ein übergebenes Event.
 	 */
@@ -687,17 +687,6 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		return complexEventFactory;
 	}
 
-	/**
-	 * Setzt die Factory für die komplexen Events und legt damit gleichzeitig
-	 * den Datentyp des Ausgabestroms fest.
-	 * 
-	 * @param complexEventFactory
-	 *            Das neue Factory-Objekt für komplexe Events, nicht null.
-	 */
-	public void setComplexEventFactory(
-			IComplexEventFactory<R, W> complexEventFactory) {
-		this.complexEventFactory = complexEventFactory;
-	}
 
 	/**
 	 * Liefert das Event-Reader-Objekt.
@@ -706,17 +695,6 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	 */
 	public Map<Integer, IEventReader<R, R>> getEventReader() {
 		return eventReader;
-	}
-
-	/**
-	 * Setzt das Event-Reader-Objekt und definiert damit gleichzeitig den
-	 * Datentyp des Eingabestroms.
-	 * 
-	 * @param eventReader
-	 *            Das neue Event-Reader-Objekt, nicht null.
-	 */
-	public void setEventReader(IEventReader<R, R> eventReader, int port) {
-		this.eventReader.put(port, eventReader);
 	}
 
 	/**

@@ -33,7 +33,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
     @SuppressWarnings("unused")
 	private static Logger   LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
-    private final int       nestedAttributePos;
+    protected final int       nestedAttributePos;
     private final SDFSchema inputSchema;
 
     private final boolean   isMultiValue;
@@ -74,46 +74,59 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
      * process_next(java.lang.Object,
      * int)
      */
-    @SuppressWarnings("unchecked")
+    
     @Override
     protected void process_next(final Tuple<T> tuple, final int port) {
-        if (this.isMultiValue) {
-            final int depth = ((List<?>) tuple.getAttribute(this.nestedAttributePos)).size();
-            for (int d = 0; d < depth; d++) {
-                final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), tuple.requiresDeepClone());
-                outputTuple.setMetadata((T) tuple.getMetadata().clone());
-                for (int i = 0; i < this.inputSchema.size(); i++) {
-                    if (i == this.nestedAttributePos) {
-                        final List<?> nestedTuple = (List<?>) tuple.getAttribute(this.nestedAttributePos);
-                        outputTuple.setAttribute(i, nestedTuple.get(d));
-                    }
-                    else {
-                        outputTuple.setAttribute(i, tuple.getAttribute(i));
-                    }
-                }
-                this.transfer(outputTuple);
-            }
-
+        unnestTuple(tuple);
+    }
+    
+    protected void unnestTuple(Tuple<T> tuple) {
+    	if (this.isMultiValue) {
+        	unnestMultiValue(tuple);
         }
         else {
-            final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), tuple.requiresDeepClone());
-            outputTuple.setMetadata((T) tuple.getMetadata().clone());
-            int pos = 0;
-            for (int i = 0; i < this.inputSchema.size(); i++) {
-                if (i == this.nestedAttributePos) {
-                    final Tuple<?> nestedTuple = (Tuple<?>) tuple.getAttribute(i);
-                    for (int j = 0; j < nestedTuple.size(); j++) {
-                        outputTuple.setAttribute(pos, nestedTuple.getAttribute(j));
-                        pos++;
-                    }
-                }
-                else {
-                    outputTuple.setAttribute(pos, tuple.getAttribute(i));
+            unnestNonMultiValue(tuple);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void unnestMultiValue(Tuple<T> tuple) {
+    	 final int depth = ((List<?>) tuple.getAttribute(this.nestedAttributePos)).size();
+         for (int d = 0; d < depth; d++) {
+             final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), tuple.requiresDeepClone());
+             outputTuple.setMetadata((T) tuple.getMetadata().clone());
+             for (int i = 0; i < this.inputSchema.size(); i++) {
+                 if (i == this.nestedAttributePos) {
+                     final List<?> nestedTuple = (List<?>) tuple.getAttribute(this.nestedAttributePos);
+                     outputTuple.setAttribute(i, nestedTuple.get(d));
+                 }
+                 else {
+                     outputTuple.setAttribute(i, tuple.getAttribute(i));
+                 }
+             }
+             this.transfer(outputTuple);
+         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void unnestNonMultiValue(Tuple<T> tuple) {
+    	final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), tuple.requiresDeepClone());
+        outputTuple.setMetadata((T) tuple.getMetadata().clone());
+        int pos = 0;
+        for (int i = 0; i < this.inputSchema.size(); i++) {
+            if (i == this.nestedAttributePos) {
+                final Tuple<?> nestedTuple = (Tuple<?>) tuple.getAttribute(i);
+                for (int j = 0; j < nestedTuple.size(); j++) {
+                    outputTuple.setAttribute(pos, nestedTuple.getAttribute(j));
                     pos++;
                 }
             }
-            this.transfer(outputTuple);
+            else {
+                outputTuple.setAttribute(pos, tuple.getAttribute(i));
+                pos++;
+            }
         }
+        this.transfer(outputTuple);
     }
     
 	@Override

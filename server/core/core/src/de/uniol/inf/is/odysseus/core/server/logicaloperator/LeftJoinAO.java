@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, doc = "Operator to combine two datastreams based on the predicate. All attributes from the first (left) source remain. If an element from the first source has no join partner, it will also be part of the output stream and the output schema contains null values for the missing fields.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/LeftJoin+operator", name = "LEFTJOIN", category = {
+@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, doc = "Operator to combine two datastreams based on the predicate. All attributes from the first (left) source remain. If an element from the first source has no join partner, it will also be part of the output stream and the output schema contains null values for the missing fields.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/LeftJoin+operator", name = "LEFTJOIN", category = {
 		LogicalOperatorCategory.BASE })
 public class LeftJoinAO extends JoinAO {
 

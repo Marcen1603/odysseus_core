@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class ListSubListFunction extends AbstractFunction<List<?>> {
 
 	private static final long serialVersionUID = -3114684384693799438L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS,
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists(),
 			SDFDatatype.DISCRETE_NUMBERS, SDFDatatype.DISCRETE_NUMBERS };
 
 	public ListSubListFunction() {

@@ -25,14 +25,15 @@ public class TKeyValueApplicationTimestampRule extends AbstractKeyValueIntervalT
 	public void execute(TimestampAO timestampAO,
 			TransformationConfiguration transformConfig) throws RuleException {
 		boolean clearEnd = timestampAO.isClearEnd();
-		String startKey = timestampAO.getStartTimestamp().getQualName();
+		// TODO: Expression could contains more than attributepath ...
+		String startKey = timestampAO.getStartExpression().toString();
 //		int pos = schema.indexOf(timestampAO.getStartTimestamp());
 
 		IMetadataUpdater mUpdater;
 		if (KeyValueObject.class
 				.isAssignableFrom(timestampAO.getInputSchema().getType())) {
 			if (startKey != null && startKey.length() > 0) {
-				String endKey = timestampAO.hasEndTimestamp() ? timestampAO.getEndTimestamp().getQualName() : null;
+				String endKey = timestampAO.hasEndTimestampExpression() ? timestampAO.getEndExpression().toString() : null;
 				mUpdater = new KeyValueTimestampAttributeTimeIntervalMFactory(
 						startKey, endKey, clearEnd, timestampAO.getDateFormat(),
 						timestampAO.getTimezone(), timestampAO.getLocale(),

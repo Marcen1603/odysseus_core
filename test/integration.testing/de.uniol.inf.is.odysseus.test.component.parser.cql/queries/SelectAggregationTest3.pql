@@ -1,3 +1,0 @@
-operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','bid.auction','Counter','Integer']]},JOIN(bid,person))
-operator_2 = SELECT({predicate='Counter>1000&&person.city!="NewYork"'},JOIN(operator_1,JOIN(bid,person)))
-operator_3 = MAP({expressions=['Counter','person.city']},operator_2)

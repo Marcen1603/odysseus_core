@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import java.util.List;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -41,21 +42,26 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
     if ((typeRef instanceof IQLArrayTypeRef)) {
       w = true;
       if ((nodeText != null)) {
-        nodeText = nodeText.replace("[", "").replace("]", "").trim();
+        String _replace = nodeText.replace("[", "");
+        String _replace_1 = _replace.replace("]", "");
+        String _trim = _replace_1.trim();
+        nodeText = _trim;
       }
       IQLArrayTypeRef arrayTypeRef = ((IQLArrayTypeRef) typeRef);
       JvmType _type = arrayTypeRef.getType();
       IQLArrayType arrayType = ((IQLArrayType) _type);
-      int _size = arrayType.getDimensions().size();
+      EList<String> _dimensions = arrayType.getDimensions();
+      int _size = _dimensions.size();
       boolean _greaterThan = (_size > 0);
       if (_greaterThan) {
-        int _size_1 = arrayType.getDimensions().size();
+        EList<String> _dimensions_1 = arrayType.getDimensions();
+        int _size_1 = _dimensions_1.size();
         ExclusiveRange _doubleDotLessThan = new ExclusiveRange(0, _size_1, true);
         for (final Integer i : _doubleDotLessThan) {
           String _result = result;
           StringConcatenation _builder_1 = new StringConcatenation();
           String _simpleName = List.class.getSimpleName();
-          _builder_1.append(_simpleName);
+          _builder_1.append(_simpleName, "");
           _builder_1.append("<");
           result = (_result + _builder_1);
         }
@@ -68,10 +74,12 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
       IQLArrayTypeRef arrayTypeRef_1 = ((IQLArrayTypeRef) typeRef);
       JvmType _type_1 = arrayTypeRef_1.getType();
       IQLArrayType arrayType_1 = ((IQLArrayType) _type_1);
-      int _size_2 = arrayType_1.getDimensions().size();
+      EList<String> _dimensions_2 = arrayType_1.getDimensions();
+      int _size_2 = _dimensions_2.size();
       boolean _greaterThan_1 = (_size_2 > 0);
       if (_greaterThan_1) {
-        int _size_3 = arrayType_1.getDimensions().size();
+        EList<String> _dimensions_3 = arrayType_1.getDimensions();
+        int _size_3 = _dimensions_3.size();
         ExclusiveRange _doubleDotLessThan_1 = new ExclusiveRange(0, _size_3, true);
         for (final Integer i_1 : _doubleDotLessThan_1) {
           String _result_2 = result;
@@ -79,7 +87,8 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
           _builder_2.append(">");
           result = (_result_2 + _builder_2);
         }
-        context.addImport(List.class.getCanonicalName());
+        String _canonicalName = List.class.getCanonicalName();
+        context.addImport(_canonicalName);
       }
     }
     return result;
@@ -91,11 +100,12 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
       JvmType innerType = this.typeUtils.getInnerType(typeRef, false);
       boolean _isImportNeeded = this.typeDictionary.isImportNeeded(innerType, nodeText);
       if (_isImportNeeded) {
-        context.addImport(this.typeDictionary.getImportName(innerType));
+        String _importName = this.typeDictionary.getImportName(innerType);
+        context.addImport(_importName);
       }
       StringConcatenation _builder = new StringConcatenation();
       String _simpleName = this.typeDictionary.getSimpleName(innerType, nodeText, wrapper, false);
-      _builder.append(_simpleName);
+      _builder.append(_simpleName, "");
       _xblockexpression = _builder.toString();
     }
     return _xblockexpression;

@@ -1,5 +1,0 @@
-operator_1 = RENAME({aliases=['price','B2.price','timestamp','B2.timestamp','auction','B2.auction','bidder','B2.bidder','datetime','B2.datetime'],pairs='true'},bid)
-operator_2 = MAP({expressions=['B2.price']},operator_1)
-operator_3 = RENAME({aliases=['price','B.price','timestamp','B.timestamp','auction','B.auction','bidder','B.bidder','datetime','B.datetime'],pairs='true'},bid)
-operator_4 = EXISTENCE({type='NOT_EXISTS',predicate='B.price<=B2_price'},operator_2,operator_3)
-operator_5 = MAP({expressions=['B.price']},JOIN(operator_4,operator_3))

@@ -33,7 +33,7 @@ public class ListMinusOperator extends AbstractBinaryOperator<List<?>> {
      * 
      */
     private static final long serialVersionUID = -7611903907765383322L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS, SDFDatatype.LISTS };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists(), SDFDatatype.getLists() };
 
     public ListMinusOperator() {
         super("-", accTypes, SDFDatatype.LIST);

@@ -25,10 +25,10 @@ import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.ImageFactory;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
@@ -41,7 +41,7 @@ public class OperatorNodeFigure extends Figure {
 	private Label toolTipLabel;
 	private ConnectionAnchor connectionAnchor;
 	private ImageData imageData;
-	private Label image;
+	private Label imageLabel;
 	static final int IMAGE_TEXT_SPACE = 3;
 
 	public OperatorNodeFigure(OperatorNode operatorNode) {
@@ -51,11 +51,15 @@ public class OperatorNodeFigure extends Figure {
 		// add(rectangle);
 		label = new Label();
 		toolTipLabel = new Label();
-		ImageDescriptor imageDesc = ImageFactory.createImageForOperator(operatorNode.getOperatorInformation().getOperatorName());
-		imageData = imageDesc.getImageData();
-		image = new Label();
-		image.setIcon(imageDesc.createImage());
-		add(image);
+		String imageID = "default." + operatorNode.getOperatorInformation().getOperatorName();
+		if (!OdysseusRCPPlugIn.getImageManager().isRegistered(imageID)){
+			imageID = "default.DEFAULT";
+		}
+		Image image = OdysseusRCPPlugIn.getImageManager().get(imageID);
+		imageData = image.getImageData();
+		imageLabel = new Label();
+		imageLabel.setIcon(image);
+		add(imageLabel);
 		add(label);
 	}
 
@@ -84,12 +88,12 @@ public class OperatorNodeFigure extends Figure {
 		Rectangle r = getBounds().getCopy();
 		Point center = new Point(r.width / 2, r.height / 2);
 		// setConstraint(rectangle, new Rectangle(0, 0, r.width, r.height));
-		setConstraint(image, new Rectangle(0, 0, r.width, imageData.height));
+		setConstraint(imageLabel, new Rectangle(0, 0, r.width, imageData.height));
 		Dimension d = label.getPreferredSize();
 		setConstraint(label, new Rectangle(center.x - d.width / 2, r.height - d.height, d.width, d.height));
 
 		// rectangle.invalidate();
-		image.invalidate();
+		imageLabel.invalidate();
 		label.invalidate();
 	}
 

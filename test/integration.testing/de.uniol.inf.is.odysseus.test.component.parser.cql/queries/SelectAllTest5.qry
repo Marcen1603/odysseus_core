@@ -1,3 +1,0 @@
-#PARSER CQL
-#QUERY
-SELECT B.* FROM bid as B

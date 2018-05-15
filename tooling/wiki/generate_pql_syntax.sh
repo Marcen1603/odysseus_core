@@ -10,7 +10,7 @@ cat > shBrushPql.js <<- EOF
 ;(function()
 {
 // CommonJS
-typeof(require) != 'undefined' ? SyntaxHighlighter = require('shCore').SyntaxHighlighter : null;
+SyntaxHighlighter = SyntaxHighlighter || (typeof(require) != 'undefined' ? SyntaxHighlighter = require('shCore').SyntaxHighlighter : null);
 
 function Brush()
 {	

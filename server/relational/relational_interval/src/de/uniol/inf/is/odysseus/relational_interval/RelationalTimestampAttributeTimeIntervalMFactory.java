@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
@@ -30,12 +31,16 @@ import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RelationalTimestampAttributeTimeIntervalMFactory extends
-		AbstractMetadataUpdater<ITimeInterval, Tuple<? extends ITimeInterval>> {
+public class RelationalTimestampAttributeTimeIntervalMFactory<M extends ITimeInterval>
+		extends AbstractMetadataUpdater<M, Tuple<M>> {
 
 	// Time is given in base format
 	final private int startAttrPos;
 	final private int endAttrPos;
+
+	final private RelationalExpression<M> startExpression;
+	final private RelationalExpression<M> endExpression;
+	
 	final private DateTimeFormatter df;
 	final private String df_string;
 	final private Locale loc;
@@ -54,11 +59,13 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private boolean clearEnd;
 	final private ZoneId timezone;
 
-	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
-			int endAttrPos, boolean clearEnd, String dateFormat,
-			String timezone, Locale locale, int factor, long offset) {
+	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos, int endAttrPos, boolean clearEnd,
+			String dateFormat, String timezone, Locale locale, int factor, long offset, RelationalExpression<M> startExpression,
+			RelationalExpression<M> endExpression) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
+		this.startExpression = startExpression;
+		this.endExpression = endExpression;
 
 		if (timezone != null) {
 			this.timezone = ZoneId.of(timezone);
@@ -72,7 +79,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			if (locale != null) {
 				df = DateTimeFormatter.ofPattern(dateFormat, locale);
 			} else {
-				df = DateTimeFormatter.ofPattern (dateFormat);
+				df = DateTimeFormatter.ofPattern(dateFormat);
 			}
 		} else {
 			df = null;
@@ -90,14 +97,14 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		this.clearEnd = clearEnd;
 	}
 
-	public RelationalTimestampAttributeTimeIntervalMFactory(
-			int startTimestampYear, int startTimestampMonth,
-			int startTimestampDay, int startTimestampHour,
-			int startTimestampMinute, int startTimestampSecond,
-			int startTimestampMillisecond, int factor, boolean clearEnd,
-			String timezone) {
+	public RelationalTimestampAttributeTimeIntervalMFactory(int startTimestampYear, int startTimestampMonth,
+			int startTimestampDay, int startTimestampHour, int startTimestampMinute, int startTimestampSecond,
+			int startTimestampMillisecond, int factor, boolean clearEnd, String timezone) {
 		this.startAttrPos = -1;
 		this.endAttrPos = -1;
+		
+		this.startExpression = null;
+		this.endExpression = null;
 
 		this.startTimestampYearPos = startTimestampYear;
 		this.startTimestampMonthPos = startTimestampMonth;
@@ -122,25 +129,20 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	}
 
 	@Override
-	public void updateMetadata(Tuple<? extends ITimeInterval> inElem) {
+	public void updateMetadata(Tuple<M> inElem) {
 		if (clearEnd) {
 			inElem.getMetadata().setEnd(PointInTime.getInfinityTime());
 		}
 
 		if (startTimestampYearPos >= 0) {
 
-			//LocalDateTime cal = Calendar.getInstance(this.timezone);
+			// LocalDateTime cal = Calendar.getInstance(this.timezone);
 			int year = inElem.getAttribute(startTimestampYearPos);
-			int month = (Integer) (startTimestampMonthPos > 0 ? inElem
-					.getAttribute(startTimestampMonthPos) : 1);
-			int day = (Integer) (startTimestampDayPos > 0 ? inElem
-					.getAttribute(startTimestampDayPos) : 1);
-			int hour = (Integer) (startTimestampHourPos > 0 ? inElem
-					.getAttribute(startTimestampHourPos) : 0);
-			int minute = (Integer) (startTimestampMinutePos > 0 ? inElem
-					.getAttribute(startTimestampMinutePos) : 0);
-			int second = (Integer) (startTimestampSecondPos > 0 ? inElem
-					.getAttribute(startTimestampSecondPos) : 0);
+			int month = (Integer) (startTimestampMonthPos > 0 ? inElem.getAttribute(startTimestampMonthPos) : 1);
+			int day = (Integer) (startTimestampDayPos > 0 ? inElem.getAttribute(startTimestampDayPos) : 1);
+			int hour = (Integer) (startTimestampHourPos > 0 ? inElem.getAttribute(startTimestampHourPos) : 0);
+			int minute = (Integer) (startTimestampMinutePos > 0 ? inElem.getAttribute(startTimestampMinutePos) : 0);
+			int second = (Integer) (startTimestampSecondPos > 0 ? inElem.getAttribute(startTimestampSecondPos) : 0);
 			LocalDateTime ldt = LocalDateTime.of(year, month, day, hour, minute, second);
 			ZonedDateTime zdt = ldt.atZone(timezone);
 			long ts = zdt.toInstant().toEpochMilli();
@@ -148,9 +150,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			ts = (ts / 1000) * 1000;
 
 			if (startTimestampMillisecondPos > 0) {
-				ts = ts
-						+ ((Long) inElem
-								.getAttribute(startTimestampMillisecondPos));
+				ts = ts + ((Long) inElem.getAttribute(startTimestampMillisecondPos));
 			}
 			if (factor > 0) {
 				ts *= factor;
@@ -170,25 +170,44 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 				PointInTime end = extractTimestamp(inElem, endAttrPos);
 				inElem.getMetadata().setEnd(end);
 			}
+			if (startExpression != null) {
+				try {
+					Object expr = startExpression.evaluate( inElem,null, null);
+					if (expr != null) {
+						inElem.getMetadata().setStart(new PointInTime(((Number)expr).longValue()));
+					}
+				} catch (Exception e) {
+					// Warn handling as in map
+				}
+			}
+			if (endExpression != null) {
+				try {
+					Object expr = endExpression.evaluate( inElem,null, null);
+					if (expr != null) {
+						inElem.getMetadata().setEnd(new PointInTime(((Number)expr).longValue()));
+					}
+				} catch (Exception e) {
+					// Warn handling as in map
+				}
+			}
+
 		}
 
 	}
 
-	private PointInTime extractTimestamp(Tuple<? extends ITimeInterval> inElem,
-			int attrPos) {
+	private PointInTime extractTimestamp(Tuple<? extends ITimeInterval> inElem, int attrPos) {
 		Number timeN;
 		if (df != null) {
 			String timeString = (String) inElem.getAttribute(attrPos);
 			try {
 				LocalDateTime ldt = LocalDateTime.parse(timeString, df);
-				ZonedDateTime zdt = ldt.atZone(timezone);		
-				
+				ZonedDateTime zdt = ldt.atZone(timezone);
+
 				timeN = zdt.toInstant().toEpochMilli();
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new RuntimeException("Date cannot be parsed! "
-						+ timeString + " with " + df);
+				throw new RuntimeException("Date cannot be parsed! " + timeString + " with " + df);
 			}
 		} else {
 			timeN = (Number) inElem.getAttribute(attrPos);
@@ -212,14 +231,17 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + (clearEnd ? 1231 : 1237);
 		result = prime * result + ((df == null) ? 0 : df.hashCode());
-		result = prime * result
-				+ ((timezone == null) ? 0 : timezone.hashCode());
+		result = prime * result + ((df_string == null) ? 0 : df_string.hashCode());
 		result = prime * result + endAttrPos;
+		result = prime * result + ((endExpression == null) ? 0 : endExpression.hashCode());
 		result = prime * result + factor;
+		result = prime * result + ((loc == null) ? 0 : loc.hashCode());
+		result = prime * result + (int) (offset ^ (offset >>> 32));
 		result = prime * result + startAttrPos;
+		result = prime * result + ((startExpression == null) ? 0 : startExpression.hashCode());
 		result = prime * result + startTimestampDayPos;
 		result = prime * result + startTimestampHourPos;
 		result = prime * result + startTimestampMillisecondPos;
@@ -227,14 +249,19 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		result = prime * result + startTimestampMonthPos;
 		result = prime * result + startTimestampSecondPos;
 		result = prime * result + startTimestampYearPos;
+		result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
 		return result;
 	}
 
+	
+
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -246,16 +273,33 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 				return false;
 		} else if (!df.equals(other.df))
 			return false;
-		if (timezone == null) {
-			if (other.timezone != null)
+		if (df_string == null) {
+			if (other.df_string != null)
 				return false;
-		} else if (!timezone.equals(other.timezone))
+		} else if (!df_string.equals(other.df_string))
 			return false;
 		if (endAttrPos != other.endAttrPos)
 			return false;
+		if (endExpression == null) {
+			if (other.endExpression != null)
+				return false;
+		} else if (!endExpression.equals(other.endExpression))
+			return false;
 		if (factor != other.factor)
 			return false;
+		if (loc == null) {
+			if (other.loc != null)
+				return false;
+		} else if (!loc.equals(other.loc))
+			return false;
+		if (offset != other.offset)
+			return false;
 		if (startAttrPos != other.startAttrPos)
+			return false;
+		if (startExpression == null) {
+			if (other.startExpression != null)
+				return false;
+		} else if (!startExpression.equals(other.startExpression))
 			return false;
 		if (startTimestampDayPos != other.startTimestampDayPos)
 			return false;
@@ -271,6 +315,11 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			return false;
 		if (startTimestampYearPos != other.startTimestampYearPos)
 			return false;
+		if (timezone == null) {
+			if (other.timezone != null)
+				return false;
+		} else if (!timezone.equals(other.timezone))
+			return false;
 		return true;
 	}
 
@@ -278,13 +327,13 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		String test = "2012-02-22T16:50:34.2669408+00:00";
 		String form = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSzzz";
 		DateTimeFormatter df = DateTimeFormatter.ofPattern(form);
-		
+
 		LocalDateTime ldt = LocalDateTime.parse(test, df);
-		ZonedDateTime zdt = ldt.atZone(ZoneId.of("UTC"));		
-		
+		ZonedDateTime zdt = ldt.atZone(ZoneId.of("UTC"));
+
 		long timeN = zdt.toInstant().toEpochMilli();
 		System.err.println(timeN);
-			
+
 	}
 
 	public int getStartTimestampYearPos() {
@@ -326,23 +375,23 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	public ZoneId getTimezone() {
 		return timezone;
 	}
-	
+
 	public int getStartAttrPos() {
 		return startAttrPos;
 	}
-	
+
 	public int getEndAttrPos() {
 		return endAttrPos;
 	}
-	
+
 	public String getDateFormat() {
 		return df_string;
 	}
-	
+
 	public Locale getLocale() {
 		return loc;
 	}
-	
+
 	public long getOffset() {
 		return offset;
 	}

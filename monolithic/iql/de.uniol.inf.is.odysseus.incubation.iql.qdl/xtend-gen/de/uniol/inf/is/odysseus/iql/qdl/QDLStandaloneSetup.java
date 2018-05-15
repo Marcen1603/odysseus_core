@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.QDLStandaloneSetupGenerated;
 @SuppressWarnings("all")
 public class QDLStandaloneSetup extends QDLStandaloneSetupGenerated {
   public static void doSetup() {
-    new QDLStandaloneSetup().createInjectorAndDoEMFRegistration();
+    QDLStandaloneSetup _qDLStandaloneSetup = new QDLStandaloneSetup();
+    _qDLStandaloneSetup.createInjectorAndDoEMFRegistration();
   }
 }

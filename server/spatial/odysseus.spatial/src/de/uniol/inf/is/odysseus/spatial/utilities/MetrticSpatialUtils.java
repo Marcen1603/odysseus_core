@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -51,13 +52,13 @@ public class MetrticSpatialUtils {
 
 	/**
 	 * WARNING: This formula gives results with only limited accuracy (but works
-	 * without additional libraries). Use "calculateDistance" instead if you
-	 * need better precision.
+	 * without additional libraries). Use "calculateDistance" instead if you need
+	 * better precision.
 	 * 
 	 * Calculates the distance between two points on the earth in km. Uses the
 	 * Haversine formula and therefore takes the curvature of the earth into
-	 * account. This is especially useful, if the distance between the two
-	 * points is long, therefore km instead of meters are used as output.
+	 * account. This is especially useful, if the distance between the two points is
+	 * long, therefore km instead of meters are used as output.
 	 * 
 	 * @param lat1
 	 *            Latitude value from the first point
@@ -86,8 +87,8 @@ public class MetrticSpatialUtils {
 	}
 
 	/**
-	 * Calculates the distance between two points in meters in the WGS84
-	 * coordinate reference system (e.g. for GPS coordinates).
+	 * Calculates the distance between two points in meters in the WGS84 coordinate
+	 * reference system (e.g. for GPS coordinates).
 	 * 
 	 * @param coord1
 	 *            One point for distance calculation.
@@ -100,9 +101,9 @@ public class MetrticSpatialUtils {
 	}
 
 	/**
-	 * Calculates the distance between two points in meters in the given
-	 * coordinate reference system. If CRS is null, WGS84 is used as default.
-	 * Uses the orthodromic distance from the JTS.
+	 * Calculates the distance between two points in meters in the given coordinate
+	 * reference system. If CRS is null, WGS84 is used as default. Uses the
+	 * orthodromic distance from the JTS.
 	 * 
 	 * @param crs
 	 *            The coordinate reference system. If null, WGS84 is used as
@@ -128,14 +129,38 @@ public class MetrticSpatialUtils {
 		}
 
 		return distance;
+	}
 
+	/**
+	 * Calculates the azimuth (direction)
+	 * 
+	 * @param crs
+	 *            if null, WGS84 is used
+	 * @param coordinate1
+	 *            starting point, x = latitude, y = longitude
+	 * @param coordinate2
+	 *            destination point, x = latitude, y = longitude
+	 * @return The azimuth (direction)
+	 */
+	public double calculateAzimuth(CoordinateReferenceSystem crs, Coordinate coordinate1, Coordinate coordinate2) {
+		if (crs == null) {
+			crs = defaultCrs;
+		}
+
+		org.geotools.referencing.GeodeticCalculator calculator = new GeodeticCalculator(crs);
+		calculator.setStartingGeographicPoint(coordinate1.y, coordinate1.x);
+		calculator.setDestinationGeographicPoint(coordinate2.y, coordinate2.x);
+		return calculator.getAzimuth();
 	}
 
 	public Envelope getEnvelopeForRadius(Coordinate center, double rangeMeters) {
+		return getEnvelopeForRadius(center.x, center.y, rangeMeters);
+	}
 
-		org.geotools.referencing.GeodeticCalculator calc = new org.geotools.referencing.GeodeticCalculator();
+	public Envelope getEnvelopeForRadius(double latitude, double longitude, double rangeMeters) {
+		GeodeticCalculator calc = new GeodeticCalculator();
 		// mind, this is lon/lat
-		calc.setStartingGeographicPoint(center.y, center.x);
+		calc.setStartingGeographicPoint(longitude, latitude);
 
 		// get upper left point
 		// go to the north
@@ -165,5 +190,4 @@ public class MetrticSpatialUtils {
 
 		return env;
 	}
-
 }

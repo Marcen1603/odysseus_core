@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.aggregation.functions.IIncrementalAggregationFun
 import de.uniol.inf.is.odysseus.aggregation.functions.INonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.physicaloperator.AggregationPO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -35,11 +36,13 @@ public class SAAggregationPO<M extends ITimeInterval, T extends Tuple<M>> extend
 	public SAAggregationPO(List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			List<IIncrementalAggregationFunction<M, T>> incrementalFunctions, boolean evaluateAtOutdatingElements,
 			boolean evaluateBeforeRemovingOutdatingElements, boolean evaluateAtNewElement, boolean evaluateAtDone,
-			boolean outputOnlyChanges, SDFSchema outputSchema, int[] groupingAttributesIndices, int[] groupingAttributeIndicesOutputSchema,
-			String tupleRangeAttribute, List<? extends IRole> roles) {
+			boolean outputOnlyChanges, SDFSchema outputSchema, int[] groupingAttributesIndices,
+			int[] groupingAttributeIndicesOutputSchema, String tupleRangeAttribute, List<? extends IRole> roles,
+			final IMetadataMergeFunction<M> mmf, boolean alwaysUseSweepArea) {
 		super(nonIncrementalFunctions, incrementalFunctions, evaluateAtOutdatingElements,
 				evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone, outputOnlyChanges,
-				outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema);
+				outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema, outputOnlyChanges, mmf,
+				alwaysUseSweepArea);
 		this.roles = new ArrayList<String>();
 		this.tupleRangeAttribute = tupleRangeAttribute;
 		addRoles(roles);

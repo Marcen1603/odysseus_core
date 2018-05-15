@@ -1,3 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT DolToEur(DolToEur(price)) FROM bid [SIZE 5 SECONDS TIME];

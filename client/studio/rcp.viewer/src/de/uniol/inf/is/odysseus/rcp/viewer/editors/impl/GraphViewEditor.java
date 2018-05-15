@@ -42,7 +42,8 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.IGraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.position.impl.SugiyamaPositioner;
+import de.uniol.inf.is.odysseus.rcp.viewer.position.INodePositioner;
+import de.uniol.inf.is.odysseus.rcp.viewer.position.impl.PositionerFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.select.ISelectListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.select.ISelector;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.render.SWTRenderManager;
@@ -105,7 +106,8 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 		canvasComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
 		canvasComposite.setLayout(new FillLayout());
 
-		renderManager = new SWTRenderManager<IPhysicalOperator>(canvasComposite, new SugiyamaPositioner(SYMBOL_FACTORY));
+		INodePositioner<IPhysicalOperator> positioner = PositionerFactory.newInstance(SYMBOL_FACTORY);
+		renderManager = new SWTRenderManager<IPhysicalOperator>(canvasComposite, positioner);
 		renderManager.setDisplayedGraph(input.getGraphView());
 		renderManager.resetPositions();
 		renderManager.getSelector().addSelectListener(this);

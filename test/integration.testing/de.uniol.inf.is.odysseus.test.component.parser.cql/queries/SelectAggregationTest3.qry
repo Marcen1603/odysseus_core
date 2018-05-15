@@ -1,6 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT COUNT(auction) AS Counter, city 
-FROM bid , person
-WHERE city != 'New York' 
-HAVING Counter > 1000;

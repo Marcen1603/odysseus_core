@@ -305,7 +305,7 @@ public class SensorFactory
 			  + "								['videoCodec', '34'],\n"			// FFV1
 			  + "								['frameRate', '27'],\n"
 			  + "								['videoQuality', '0'],\n"
-			  + "								['pixelformat', '30'],\n"			// BGRA must be supplied, but images written as RGBA. See http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/OptrisCamera+transport+handler
+			  + "								['pixelformat', '30'],\n"			// BGRA must be supplied, but images written as RGBA. See http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/OptrisCamera+transport+handler
 			  + "								['codec:preset', 'veryslow'],\n"
 			  + "								['frameSizeMultiple', '2']\n"
 			  + "                              ]},\n"

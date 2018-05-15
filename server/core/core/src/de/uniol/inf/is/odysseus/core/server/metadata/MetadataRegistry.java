@@ -111,7 +111,12 @@ public class MetadataRegistry {
 				List<IMetaAttribute> metaDataTypes = new ArrayList<>();
 				List<Class<? extends IMetaAttribute>> classList = new ArrayList<>();
 				for (String t : types) {
-					IMetaAttribute mt = getMetadataTypeByName(t);
+					SortedSet<String> toSearchFor = new TreeSet<>();
+					toSearchFor.add(t);
+					IMetaAttribute mt = combinedMetadataTypes.get(toSearchFor);
+					if (mt == null) {
+						mt = getMetadataTypeByName(t);
+					}
 					if (mt instanceof AbstractCombinedMetaAttribute) {
 						// TODO Handle
 						throw new IllegalArgumentException(

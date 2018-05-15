@@ -24,14 +24,14 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
 
 /**
  * Equals operator for continuous probabilistic values.
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class ProbabilisticEqualsVectorOperator extends AbstractProbabilisticCompareOperator {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3016679134461973157L;
 
@@ -40,7 +40,7 @@ public class ProbabilisticEqualsVectorOperator extends AbstractProbabilisticComp
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -60,7 +60,7 @@ public class ProbabilisticEqualsVectorOperator extends AbstractProbabilisticComp
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override

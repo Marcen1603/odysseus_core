@@ -52,6 +52,8 @@
    </plugins>
 
    <features>
+      <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
@@ -59,8 +61,12 @@
       <feature id="de.uniol.inf.is.odysseus.wrapper.pmml.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.kafka.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.iec62056.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.web.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.condition.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.nosql.mongodb.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.estream.topology.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

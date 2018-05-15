@@ -31,8 +31,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 /**
  * @author Jonas Jacobi
  */
-public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
-		ISweepArea<T>, Serializable {
+public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements ISweepArea<T>, Serializable {
 
 	private static final long serialVersionUID = 1054820871977159904L;
 
@@ -47,13 +46,13 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 	private transient IPredicate<? super T> queryPredicate;
 
 	private transient IPredicate<? super T> removePredicate;
-	
+
 	private String areaName;
 
 	/**
-	 * Creates query results on the fly by iterating over the elements and
-	 * applying the query predicate. Make sure, you don't modify the sweeparea
-	 * while iterating, otherwise you might get unexpected results.
+	 * Creates query results on the fly by iterating over the elements and applying
+	 * the query predicate. Make sure, you don't modify the sweeparea while
+	 * iterating, otherwise you might get unexpected results.
 	 * 
 	 * @author Jonas Jacobi
 	 */
@@ -101,7 +100,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 				}
 			} catch (NullPointerException e) {
 				// ignore null pointer could be when value in attribute is null
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 			this.currentElement = null;
 			return false;
@@ -133,27 +132,25 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 		elements = new FastArrayList<>();
 	}
 
-	public AbstractSweepArea(IFastList<T> elements,
-			Comparator<? super T> comparator) {
+	public AbstractSweepArea(IFastList<T> elements, Comparator<? super T> comparator) {
 		this.elements = elements;
 		this.comparator = comparator;
 		// this.saSupervisor = new SweepAreaSupervisor(this, 20000);
 		// this.saSupervisor.start();
 	}
-	
+
 	@Override
 	public void setAreaName(String name) {
 		this.areaName = name;
 	}
-	
+
 	@Override
 	public String getAreaName() {
 		return areaName;
 	}
 
 	@SuppressWarnings("unchecked")
-	public AbstractSweepArea(AbstractSweepArea<T> area)
-			throws InstantiationException, IllegalAccessException {
+	public AbstractSweepArea(AbstractSweepArea<T> area) throws InstantiationException, IllegalAccessException {
 		this.elements = area.elements.getClass().newInstance();
 		this.elements.addAll(area.elements);
 		this.getElements().addAll(area.getElements());
@@ -168,8 +165,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 			this.getElements().add(s);
 			return;
 		}
-		ListIterator<T> li = this.getElements().listIterator(
-				this.getElements().size());
+		ListIterator<T> li = this.getElements().listIterator(this.getElements().size());
 		// starts from end and inserts the element s if li.previous is at least
 		// equal (<=0) to s
 		// 0 instead of -1 ensures that the area is insertion safe
@@ -192,20 +188,34 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 	public Iterator<T> queryCopy(T element, Order order, boolean extract) {
 		LinkedList<T> result = new LinkedList<T>();
 		switch (order) {
-		case LeftRight:
-			for (T next : this.getElements()) {
+		case LeftRight: {
+			Iterator<T> iter = this.getElements().iterator();
+			while (iter.hasNext()) {
+				T next = iter.next();
 				if (queryPredicate.evaluate(element, next)) {
 					result.add(next);
+					if (extract) {
+						iter.remove();
+					}
 				}
 			}
-			break;
-		case RightLeft:
-			for (T next : this.getElements()) {
+		}
+		break;
+		
+		case RightLeft: {
+			Iterator<T> iter = this.getElements().iterator();
+			while (iter.hasNext()) {
+				T next = iter.next();
 				if (queryPredicate.evaluate(next, element)) {
 					result.add(next);
+					if (extract) {
+						iter.remove();
+					}
 				}
 			}
-			break;
+		}
+		break;
+		
 		}
 		return result.iterator();
 	}
@@ -329,16 +339,22 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 			return;
 		}
 		Collections.sort(toBeInserted, this.comparator);
-		T first = toBeInserted.get(0);
-		ListIterator<T> li = this.getElements().listIterator(
-				this.getElements().size());
-		while (li.hasPrevious()) {
-			if (this.comparator.compare(li.previous(), first) == -1) {
-				this.getElements().addAll(li.nextIndex(), toBeInserted);
-				return;
+
+		ListIterator<T> listToInsertInto = this.getElements().listIterator();
+		ListIterator<T> listToInsert = toBeInserted.listIterator();
+
+		// Merge sort
+		while (listToInsert.hasNext()) {
+			T currentToInsert = listToInsert.next();
+			boolean found = false;
+			while (listToInsertInto.hasNext() && !found) {
+				if (this.comparator.compare(currentToInsert, listToInsertInto.next()) == -1) {
+					listToInsertInto.previous();
+					found = true;
+				}
 			}
+			listToInsertInto.add(currentToInsert);
 		}
-		this.getElements().addAll(0, toBeInserted);
 	}
 
 	/**
@@ -354,12 +370,10 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
-				+ " Elems \n");
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
 		for (T element : getElements()) {
 			buf.append(element).append(" ");
-			buf.append("{META ").append(element.getMetadata().toString())
-					.append("}\n");
+			buf.append("{META ").append(element.getMetadata().toString()).append("}\n");
 		}
 		return buf.toString();
 	}

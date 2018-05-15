@@ -90,7 +90,7 @@ public class CreateUpdateExpressionsPunctuationPO<T extends Tuple<? extends ITim
 				if (object.getAttribute(attributePosition) instanceof Double) {
 					replacement = String.valueOf((Double) object.getAttribute(attributePosition));
 				} else {
-					replacement = String.valueOf(object.getAttribute(attributePosition));
+					replacement = object.getAttribute(attributePosition).toString();
 				}
 				expressionString = expressionString.replace(templateStyle, replacement);
 			}

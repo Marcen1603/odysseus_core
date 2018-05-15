@@ -60,15 +60,15 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		SDFSchema ownSchema = joinPO.getSubscribedToSource(0).getSchema();
 		SDFSchema otherSchema = joinPO.getSubscribedToSource(1).getSchema();
 		IPredicate predicate = joinPO.getPredicate();
-		
+
+		// Attention: side effect, areas are filled!
 		boolean check = JoinTransformationHelper.canBeUsedWithHashJoin(predicate, ownSchema, otherSchema, areas);
 
 		// Automatically set HashJoinSA if predicate is pure equals predicate
-		if (areaName.isEmpty() && check){
+		if (areaName.isEmpty() && check) {
 			areaName = HASH_JOIN_SA;
 		}
 
-		
 		// TMP-Hack
 		if (areaName.equalsIgnoreCase(HASH_JOIN_SA)) {
 			if (check == false) {
@@ -76,7 +76,8 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 						+ joinPO.getPredicate() + ". Only equals predicates are possible!");
 			}
 		} else {
-			// The user does not want to use a HashSweepArea but something else. As the areas are already created, we will remove them here
+			// The user does not want to use a HashSweepArea but something else. As the
+			// areas are already created, we will remove them here
 			areas[0] = null;
 			areas[1] = null;
 		}
@@ -99,28 +100,30 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		}
 
 		joinPO.setAreas(areas);
+		if (!areaName.equals(HASH_JOIN_SA)) {
+			/*
+			 * The hash join sa cannot be created by the SweepAreaRegistry so don't use the
+			 * name to create new instances.
+			 */
+			joinPO.setSweepAreaName(areaName);
+		}
 		/*
-		 * # no update, because otherwise # other rules may overwrite this rule
-		 * # example: rule with priority 5 setting the areas has been #
-		 * processed, update causes rule engine to search for other # rules
-		 * applicable for the updated object. The rule with # priority 5 cannot
-		 * be processed because of no-loop term, however # other rules with
-		 * lower priority could be used of the updated # objects fulfills the
-		 * when clause. However, these lower priority # rules should not be used
-		 * because of the high priority rule # # do not use retract also,
-		 * because # other fields of the object should still be modified
+		 * # no update, because otherwise # other rules may overwrite this rule #
+		 * example: rule with priority 5 setting the areas has been # processed, update
+		 * causes rule engine to search for other # rules applicable for the updated
+		 * object. The rule with # priority 5 cannot be processed because of no-loop
+		 * term, however # other rules with lower priority could be used of the updated
+		 * # objects fulfills the when clause. However, these lower priority # rules
+		 * should not be used because of the high priority rule # # do not use retract
+		 * also, because # other fields of the object should still be modified
 		 */
 
 	}
 
-
-
 	@Override
 	public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
 		if (operator.getOutputSchema().getType() == Tuple.class) {
-			if (operator.getAreas() == null) {
-				return true;
-			}
+			return !operator.isAreasSet();
 		}
 		return false;
 	}

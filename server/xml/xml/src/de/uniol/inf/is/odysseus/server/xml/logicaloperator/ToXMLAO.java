@@ -1,12 +1,16 @@
 package de.uniol.inf.is.odysseus.server.xml.logicaloperator;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -16,89 +20,146 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ToXML", doc = "Constructs an XML object from a tuple", category = {LogicalOperatorCategory.TRANSFORM})
-public class ToXMLAO extends UnaryLogicalOp
-{
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ToXML", doc = "Constructs an XML object from a tuple.", category = {LogicalOperatorCategory.TRANSFORM })
+public class ToXMLAO extends UnaryLogicalOp {
+	
 	private static final long serialVersionUID = -7878339457198812181L;
-	Logger LOG = LoggerFactory.getLogger(ToXMLAO.class);
-	private List<String> expressions = new ArrayList<>();
-	private List<SDFAttribute> attributes = new ArrayList<>();
+	
+	private OptionMap optionsMap = new OptionMap();
+	private List<Option> optionsList = new ArrayList<>();
+	private Path xsdFile;
+	private String xsdString;
+	private String xsdAttribute;
+	private String rootElement;
+	private String rootAttribute;
+	private Collection<String> xpathAttributes = new ArrayList<>(); 
 
-	public ToXMLAO()
-	{
+	public ToXMLAO() {
 		super();
 	}
 
-	public ToXMLAO(ToXMLAO ao)
-	{
+	public ToXMLAO(ToXMLAO ao) {
 		super(ao);
-		this.attributes = new ArrayList<>(ao.attributes);
-		this.expressions = new ArrayList<>(ao.expressions);
+		
+		this.optionsList = ao.getOptionsList();
+		this.optionsMap = ao.getOptionsMap();
+		this.xsdAttribute = ao.getXsdAttribute();
+		this.xsdFile = ao.getXsdFile();
+		this.xsdString = ao.getXsdString();
+		this.rootElement = ao.getRootElement();
+		this.rootAttribute = ao.getRootAttribute();
+		this.xpathAttributes = ao.getXPathAttributes();
+		
 	}
 
-	public @Override ToXMLAO clone()
-	{
+	public @Override ToXMLAO clone() {
 		return new ToXMLAO(this);
 	}
 
-		/*
-	@Override(non - Javadoc)
-	protected SDFSchema getOutputSchemaIntern(int pos)
-	{
-		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
-		attributeList.add(new SDFAttribute("XML Source", "XML", new SDFDatatype("STRING")));
-		final List<SDFMetaSchema> metaSchema;
-		metaSchema = getInputSchema().getMetaschema();
-
-		@SuppressWarnings("unchecked")
-		SDFSchema schema = SDFSchemaFactory.createNewSchema("ToXML", (Class<? extends IStreamObject<?>>) Tuple.class, attributeList, getInputSchema());
-		SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
-		return outputSchema;
-	}*/
-
-	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
+		
 		Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
-		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),
-				(Class<? extends IStreamObject<?>>) XMLStreamObject.class, emptyAttributes, getInputSchema());
+
+		@SuppressWarnings("unchecked")
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(
+				getInputSchema(pos).getURI(),
+				(Class<? extends IStreamObject<?>>) XMLStreamObject.class, 
+				emptyAttributes, 
+				getInputSchema()
+		);
+		
 		setOutputSchema(newOutputSchema);
 		return newOutputSchema;
 	}
 	
-	public IMetaAttribute getLocalMetaAttribute()
-	{
+	public IMetaAttribute getLocalMetaAttribute() {
 		return null;
 	}
 
-	public boolean readMetaData()
-	{
+	public boolean readMetaData() {
 		return false;
 	}
-
-	@Parameter(type = StringParameter.class, name = "expressions", optional = false, isList = true, doc = "A list of XPAthExpressions.")
-	public void setExpressions(List<String> expList)
-	{
-		expressions = expList;
+	
+	
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "xPathAttributes", isList = true, optional = true)
+	public void setXPathAttributes(List<SDFAttribute> attributes) {
+		this.xpathAttributes = attributes.stream().map(e -> e.getAttributeName()).collect(Collectors.toList());
+	}
+	
+	@Parameter(type = FileParameter.class, name = "xsdFile", optional = true)
+	public void setXSDFile(File xsdFile) throws IOException {
+		this.xsdFile = Paths.get(xsdFile.toURI());
+	}
+	
+	@Parameter(type = StringParameter.class, name = "xsdString", optional = true)
+	public void setXSDString(String xsdString) {
+		this.xsdString = xsdString;
+	}
+	
+	@Parameter(type = StringParameter.class, name = "xsdAttribute", optional = true)
+	public void setXSDAttribute(String xsdAttribute) {
+		this.xsdAttribute = xsdAttribute;
+	}
+	
+	@Parameter(type = StringParameter.class, name = "rootElement", optional = true)
+	public void setRootElement(String root) {
+		this.rootElement = root;
+	}
+	
+	@Parameter(type = StringParameter.class, name = "rootAttribute", optional = true)
+	public void setRootAttribute(String root) {
+		this.rootAttribute = root;
+	}
+	
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
+	public void setOptions(List<Option> value) {
+		if (value != null) {
+			for (Option option : value) {
+				if (value != null) {
+					optionsMap.setOption(option.getName(), option.getValue());
+				}
+			}
+			optionsList = value;
+		}
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "attributes", optional = false, isList = true, doc = "A list of Tupleattributes.")
-	public void setAttributes(List<SDFAttribute> outputSchema)
-	{
-		attributes = outputSchema;
+	public OptionMap getOptionsMap() {
+		return optionsMap;
 	}
 
-	public List<String> getExpressions()
-	{
-		return expressions;
+	public List<Option> getOptionsList() {
+		return optionsList;
 	}
 
-	public List<SDFAttribute> getAttributes()
-	{
-		return attributes;
+	public Path getXsdFile() {
+		return xsdFile;
 	}
+
+	public String getXsdString() {
+		return xsdString;
+	}	
+	
+	public String getXsdAttribute() {
+		return xsdAttribute;
+	}
+	
+	public String getRootElement() {
+		return rootElement;
+	}
+	
+	public String getRootAttribute() {
+		return rootAttribute;
+	}
+	
+	public Collection<String> getXPathAttributes() {
+		return xpathAttributes;
+	}
+	
 }

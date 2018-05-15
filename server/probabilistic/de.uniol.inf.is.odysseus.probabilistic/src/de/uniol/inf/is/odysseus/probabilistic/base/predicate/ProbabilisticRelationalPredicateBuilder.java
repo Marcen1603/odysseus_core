@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractExpressionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
@@ -35,6 +36,17 @@ public class ProbabilisticRelationalPredicateBuilder<M extends IMetaAttribute> e
         final SDFProbabilisticExpression expression = new SDFProbabilisticExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
         final ProbabilisticRelationalPredicate pred = new ProbabilisticRelationalPredicate(expression);
         return pred;
+    }
+    
+
+    @Override
+    public String getName() {
+    	return "PROBABILISTICRELATIONALPREDICATE";
+    }
+    
+    @Override
+    public String getAliasName() {
+    	return ProbabilisticTuple.class.getName();
     }
 
 }

@@ -142,6 +142,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		predicate.processPunctuation(punctuation);
+		sendPunctuation(punctuation);
 	}
 
 	public IDataMergeFunction<T, M> getDataMergeFunction() {

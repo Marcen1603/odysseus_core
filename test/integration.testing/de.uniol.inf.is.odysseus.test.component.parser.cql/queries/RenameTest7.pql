@@ -1,7 +1,0 @@
-operator_1 = RENAME({aliases=['bidder','auctioneer1','timestamp','B1.timestamp','auction','B1.auction','datetime','B1.datetime','price','B1.price'],pairs='true'},TIMEWINDOW({size=[5,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_2 = RENAME({aliases=['bidder','auctioneer11','timestamp','bid.timestamp#1','auction','bid.auction#1','datetime','bid.datetime#1','price','bid.price#1'],pairs='true'},TIMEWINDOW({size=[5,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_3 = RENAME({aliases=['bidder','auctioneer111','timestamp','bid.timestamp#2','auction','bid.auction#2','datetime','bid.datetime#2','price','bid.price#2'],pairs='true'},TIMEWINDOW({size=[5,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_4 = RENAME({aliases=['auction','B2.auction','bidder','auctioneer2','timestamp','B2.timestamp','datetime','B2.datetime','price','B2.price'],pairs='true'},TIMEWINDOW({size=[15,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_5 = RENAME({aliases=['bidder','auctioneer22','timestamp','bid.timestamp#3','auction','bid.auction#3','datetime','bid.datetime#3','price','bid.price#3'],pairs='true'},TIMEWINDOW({size=[15,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_6 = SELECT({predicate='auctioneer1==B2.auction'},JOIN(JOIN(operator_1,JOIN(operator_2,operator_3)),JOIN(operator_4,operator_5)))
-operator_7 = MAP({expressions=['auctioneer1','auctioneer11','auctioneer111','auctioneer2','auctioneer22','B2.auction']},operator_6)

@@ -1,6 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B2.price as price2
-FROM   (SELECT B1.price, COUNT(B1.auction) AS num
-        FROM bid [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS B1) AS B2
-WHERE num >= 200;

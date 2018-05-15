@@ -128,8 +128,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 
 		processOptions(inputPO, options);
 		if (!config.isVirtualTransformation()) {
-			getDataDictionary().putAccessPO(operator.getAccessAOName(), inputPO);
-			getDataDictionary().putAccessAO(operator);
+			putAccessOps(operator, inputPO);
 		}
 		List<String> unusedOptions = options.getUnreadOptions();
 		if (unusedOptions.size() > 0) {

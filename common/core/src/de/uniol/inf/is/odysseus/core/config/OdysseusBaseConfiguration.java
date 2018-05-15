@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.core.config;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,24 @@ public class OdysseusBaseConfiguration {
 
 	public static String getHomeDir(){
 		return homeDir;
+	}
+	
+	/**
+	 * Returns a URL for the specified path in the Odysseus home directory
+	 * @param path the path in the Odysseus home
+	 * @return A URL representing the given path, or null if the entry does not exist
+	 */
+	public static URL getEntry(String path){
+		URL url = null;
+		File homeDir = new File(getHomeDir());
+		
+		File fullPath = new File(homeDir, path);
+		try {
+			url = fullPath.toURI().toURL();
+		} catch (MalformedURLException e) {
+			LOG.error(e.getMessage());
+		}
+		return url;
 	}
 	
 	/**

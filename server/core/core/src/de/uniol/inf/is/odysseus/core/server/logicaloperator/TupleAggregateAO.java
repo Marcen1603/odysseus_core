@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "TupleAggregate", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.ADVANCED }, doc = "Select from all elements of a window on with the given method", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/TupleAggregate")
+@LogicalOperator(name = "TupleAggregate", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.ADVANCED }, doc = "Select from all elements of a window on with the given method", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/TupleAggregate")
 public class TupleAggregateAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 258769992760830658L;

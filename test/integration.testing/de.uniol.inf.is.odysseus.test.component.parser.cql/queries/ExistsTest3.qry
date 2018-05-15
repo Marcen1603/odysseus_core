@@ -1,4 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B.bidder FROM bid AS B 
-WHERE EXISTS(SELECT id, name FROM person WHERE id!= B.bidder AND name != 'Max') OR B.price > 1000;

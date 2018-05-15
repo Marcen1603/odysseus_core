@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 
-class CombinedMergeFunction<T extends IMetaAttribute> implements
+public class CombinedMergeFunction<T extends IMetaAttribute> implements
 		IMetadataMergeFunction<T>, IClone {
 
 	protected static Logger _logger = null;

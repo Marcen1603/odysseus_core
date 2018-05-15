@@ -197,5 +197,6 @@ public class DataHandlerRegistry {
 		registerDataHandler(new VectorDataHandler());
 		registerDataHandler(new MatrixDataHandler());
 		registerDataHandler(new TupleDataHandler());
+		registerDataHandler(new ObjectMapDataHandler());
 	}
 }

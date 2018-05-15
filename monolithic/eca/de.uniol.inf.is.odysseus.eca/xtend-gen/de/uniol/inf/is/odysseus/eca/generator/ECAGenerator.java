@@ -9,11 +9,13 @@ import de.uniol.inf.is.odysseus.eca.eCA.COMMANDACTION;
 import de.uniol.inf.is.odysseus.eca.eCA.Constant;
 import de.uniol.inf.is.odysseus.eca.eCA.DefinedEvent;
 import de.uniol.inf.is.odysseus.eca.eCA.EcaValue;
+import de.uniol.inf.is.odysseus.eca.eCA.Expression;
 import de.uniol.inf.is.odysseus.eca.eCA.FREECONDITION;
 import de.uniol.inf.is.odysseus.eca.eCA.MAPCONDITION;
 import de.uniol.inf.is.odysseus.eca.eCA.QUERYCONDITION;
 import de.uniol.inf.is.odysseus.eca.eCA.RNDQUERY;
 import de.uniol.inf.is.odysseus.eca.eCA.Rule;
+import de.uniol.inf.is.odysseus.eca.eCA.RuleSource;
 import de.uniol.inf.is.odysseus.eca.eCA.SOURCECONDITION;
 import de.uniol.inf.is.odysseus.eca.eCA.SYSTEMCONDITION;
 import de.uniol.inf.is.odysseus.eca.eCA.Source;
@@ -21,6 +23,9 @@ import de.uniol.inf.is.odysseus.eca.eCA.Timer;
 import de.uniol.inf.is.odysseus.eca.eCA.Window;
 import de.uniol.inf.is.odysseus.eca.plugin.EcaRuleObj;
 import java.util.ArrayList;
+import java.util.Iterator;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IFileSystemAccess2;
@@ -67,22 +72,30 @@ public class ECAGenerator implements IGenerator2 {
   private int timerIntervall = 1000;
   
   public void doGenerate(final Resource resource, final IFileSystemAccess fsa) {
+    TreeIterator<EObject> _allContents = resource.getAllContents();
+    Iterator<Window> _filter = Iterators.<Window>filter(_allContents, Window.class);
     final Procedure1<Window> _function = (Window it) -> {
       if ((it != null)) {
-        this.windowSize = it.getWindowValue();
+        int _windowValue = it.getWindowValue();
+        this.windowSize = _windowValue;
       }
     };
-    IteratorExtensions.<Window>forEach(Iterators.<Window>filter(resource.getAllContents(), Window.class), _function);
+    IteratorExtensions.<Window>forEach(_filter, _function);
+    TreeIterator<EObject> _allContents_1 = resource.getAllContents();
+    Iterator<Timer> _filter_1 = Iterators.<Timer>filter(_allContents_1, Timer.class);
     final Procedure1<Timer> _function_1 = (Timer it) -> {
       if ((it != null)) {
-        this.timerIntervall = it.getTimerIntervallValue();
+        int _timerIntervallValue = it.getTimerIntervallValue();
+        this.timerIntervall = _timerIntervallValue;
       }
     };
-    IteratorExtensions.<Timer>forEach(Iterators.<Timer>filter(resource.getAllContents(), Timer.class), _function_1);
+    IteratorExtensions.<Timer>forEach(_filter_1, _function_1);
+    TreeIterator<EObject> _allContents_2 = resource.getAllContents();
+    Iterator<Rule> _filter_2 = Iterators.<Rule>filter(_allContents_2, Rule.class);
     final Procedure1<Rule> _function_2 = (Rule it) -> {
       this.extract(it);
     };
-    IteratorExtensions.<Rule>forEach(Iterators.<Rule>filter(resource.getAllContents(), Rule.class), _function_2);
+    IteratorExtensions.<Rule>forEach(_filter_2, _function_2);
   }
   
   public void extract(final Rule rule) {
@@ -93,94 +106,158 @@ public class ECAGenerator implements IGenerator2 {
     String ruleName = rule.getName();
     String ruleSource = null;
     String ruleCondition = null;
-    DefinedEvent _defSource = rule.getSource().getDefSource();
+    RuleSource _source = rule.getSource();
+    DefinedEvent _defSource = _source.getDefSource();
     boolean _tripleEquals = (_defSource == null);
     boolean _not = (!_tripleEquals);
     if (_not) {
-      ruleSource = rule.getSource().getDefSource().getDefinedSource().getName();
+      RuleSource _source_1 = rule.getSource();
+      DefinedEvent _defSource_1 = _source_1.getDefSource();
+      Source _definedSource = _defSource_1.getDefinedSource();
+      String _name = _definedSource.getName();
+      ruleSource = _name;
       this.sourceCondCount++;
-      String _definedAttribute = rule.getSource().getDefSource().getDefinedAttribute();
+      RuleSource _source_2 = rule.getSource();
+      DefinedEvent _defSource_2 = _source_2.getDefSource();
+      String _definedAttribute = _defSource_2.getDefinedAttribute();
       String _plus = (_definedAttribute + " ");
-      String _definedOperator = rule.getSource().getDefSource().getDefinedOperator();
+      RuleSource _source_3 = rule.getSource();
+      DefinedEvent _defSource_3 = _source_3.getDefSource();
+      String _definedOperator = _defSource_3.getDefinedOperator();
       String _plus_1 = (_plus + _definedOperator);
       String _plus_2 = (_plus_1 + 
         " ");
       this.sourceCond.append(_plus_2);
-      Constant _constValue = rule.getSource().getDefSource().getDefinedValue().getConstValue();
+      RuleSource _source_4 = rule.getSource();
+      DefinedEvent _defSource_4 = _source_4.getDefSource();
+      EcaValue _definedValue = _defSource_4.getDefinedValue();
+      Constant _constValue = _definedValue.getConstValue();
       boolean _tripleNotEquals = (_constValue != null);
       if (_tripleNotEquals) {
-        this.sourceCond.append(rule.getSource().getDefSource().getDefinedValue().getConstValue());
+        RuleSource _source_5 = rule.getSource();
+        DefinedEvent _defSource_5 = _source_5.getDefSource();
+        EcaValue _definedValue_1 = _defSource_5.getDefinedValue();
+        Constant _constValue_1 = _definedValue_1.getConstValue();
+        this.sourceCond.append(_constValue_1);
       } else {
-        String _idValue = rule.getSource().getDefSource().getDefinedValue().getIdValue();
+        RuleSource _source_6 = rule.getSource();
+        DefinedEvent _defSource_6 = _source_6.getDefSource();
+        EcaValue _definedValue_2 = _defSource_6.getDefinedValue();
+        String _idValue = _definedValue_2.getIdValue();
         boolean _tripleNotEquals_1 = (_idValue != null);
         if (_tripleNotEquals_1) {
-          String _idValue_1 = rule.getSource().getDefSource().getDefinedValue().getIdValue();
+          RuleSource _source_7 = rule.getSource();
+          DefinedEvent _defSource_7 = _source_7.getDefSource();
+          EcaValue _definedValue_3 = _defSource_7.getDefinedValue();
+          String _idValue_1 = _definedValue_3.getIdValue();
           String _plus_3 = ("\"" + _idValue_1);
           String _plus_4 = (_plus_3 + "\"");
           this.sourceCond.append(_plus_4);
         } else {
-          String _stringValue = rule.getSource().getDefSource().getDefinedValue().getStringValue();
+          RuleSource _source_8 = rule.getSource();
+          DefinedEvent _defSource_8 = _source_8.getDefSource();
+          EcaValue _definedValue_4 = _defSource_8.getDefinedValue();
+          String _stringValue = _definedValue_4.getStringValue();
           boolean _tripleNotEquals_2 = (_stringValue != null);
           if (_tripleNotEquals_2) {
-            this.systemCond.append(rule.getSource().getDefSource().getDefinedValue().getStringValue());
+            RuleSource _source_9 = rule.getSource();
+            DefinedEvent _defSource_9 = _source_9.getDefSource();
+            EcaValue _definedValue_5 = _defSource_9.getDefinedValue();
+            String _stringValue_1 = _definedValue_5.getStringValue();
+            this.systemCond.append(_stringValue_1);
           } else {
-            double _doubleValue = rule.getSource().getDefSource().getDefinedValue().getDoubleValue();
+            RuleSource _source_10 = rule.getSource();
+            DefinedEvent _defSource_10 = _source_10.getDefSource();
+            EcaValue _definedValue_6 = _defSource_10.getDefinedValue();
+            double _doubleValue = _definedValue_6.getDoubleValue();
             boolean _greaterThan = (_doubleValue > 0);
             if (_greaterThan) {
-              this.sourceCond.append(rule.getSource().getDefSource().getDefinedValue().getDoubleValue());
+              RuleSource _source_11 = rule.getSource();
+              DefinedEvent _defSource_11 = _source_11.getDefSource();
+              EcaValue _definedValue_7 = _defSource_11.getDefinedValue();
+              double _doubleValue_1 = _definedValue_7.getDoubleValue();
+              this.sourceCond.append(_doubleValue_1);
             } else {
-              this.sourceCond.append(rule.getSource().getDefSource().getDefinedValue().getIntValue());
+              RuleSource _source_12 = rule.getSource();
+              DefinedEvent _defSource_12 = _source_12.getDefSource();
+              EcaValue _definedValue_8 = _defSource_12.getDefinedValue();
+              int _intValue = _definedValue_8.getIntValue();
+              this.sourceCond.append(_intValue);
             }
           }
         }
       }
     } else {
-      Source _newSource = rule.getSource().getNewSource();
+      RuleSource _source_13 = rule.getSource();
+      Source _newSource = _source_13.getNewSource();
       boolean _tripleEquals_1 = (_newSource == null);
       boolean _not_1 = (!_tripleEquals_1);
       if (_not_1) {
-        ruleSource = rule.getSource().getNewSource().getName();
+        RuleSource _source_14 = rule.getSource();
+        Source _newSource_1 = _source_14.getNewSource();
+        String _name_1 = _newSource_1.getName();
+        ruleSource = _name_1;
       } else {
-        String _preSource = rule.getSource().getPreSource();
+        RuleSource _source_15 = rule.getSource();
+        String _preSource = _source_15.getPreSource();
         boolean _tripleEquals_2 = (_preSource == null);
         boolean _not_2 = (!_tripleEquals_2);
         if (_not_2) {
-          ruleSource = rule.getSource().getPreSource();
+          RuleSource _source_16 = rule.getSource();
+          String _preSource_1 = _source_16.getPreSource();
+          ruleSource = _preSource_1;
         }
       }
     }
+    Expression _ruleActions = rule.getRuleActions();
+    TreeIterator<EObject> _eAllContents = _ruleActions.eAllContents();
+    Iterator<COMMANDACTION> _filter = Iterators.<COMMANDACTION>filter(_eAllContents, COMMANDACTION.class);
     final Procedure1<COMMANDACTION> _function = (COMMANDACTION it) -> {
       this.addActions(it);
     };
-    IteratorExtensions.<COMMANDACTION>forEach(Iterators.<COMMANDACTION>filter(rule.getRuleActions().eAllContents(), COMMANDACTION.class), _function);
+    IteratorExtensions.<COMMANDACTION>forEach(_filter, _function);
     this.subActionCount = 0;
+    Expression _ruleConditions = rule.getRuleConditions();
+    TreeIterator<EObject> _eAllContents_1 = _ruleConditions.eAllContents();
+    Iterator<SYSTEMCONDITION> _filter_1 = Iterators.<SYSTEMCONDITION>filter(_eAllContents_1, SYSTEMCONDITION.class);
     final Procedure1<SYSTEMCONDITION> _function_1 = (SYSTEMCONDITION it) -> {
       this.addSystemCondition(it);
     };
-    IteratorExtensions.<SYSTEMCONDITION>forEach(Iterators.<SYSTEMCONDITION>filter(rule.getRuleConditions().eAllContents(), SYSTEMCONDITION.class), _function_1);
+    IteratorExtensions.<SYSTEMCONDITION>forEach(_filter_1, _function_1);
     this.systemCondCount = 0;
+    Expression _ruleConditions_1 = rule.getRuleConditions();
+    TreeIterator<EObject> _eAllContents_2 = _ruleConditions_1.eAllContents();
+    Iterator<QUERYCONDITION> _filter_2 = Iterators.<QUERYCONDITION>filter(_eAllContents_2, QUERYCONDITION.class);
     final Procedure1<QUERYCONDITION> _function_2 = (QUERYCONDITION it) -> {
       this.addQueryCondition(it);
     };
-    IteratorExtensions.<QUERYCONDITION>forEach(Iterators.<QUERYCONDITION>filter(rule.getRuleConditions().eAllContents(), QUERYCONDITION.class), _function_2);
+    IteratorExtensions.<QUERYCONDITION>forEach(_filter_2, _function_2);
+    Expression _ruleConditions_2 = rule.getRuleConditions();
+    TreeIterator<EObject> _eAllContents_3 = _ruleConditions_2.eAllContents();
+    Iterator<SOURCECONDITION> _filter_3 = Iterators.<SOURCECONDITION>filter(_eAllContents_3, SOURCECONDITION.class);
     final Procedure1<SOURCECONDITION> _function_3 = (SOURCECONDITION it) -> {
       this.addSourceCondition(it);
     };
-    IteratorExtensions.<SOURCECONDITION>forEach(Iterators.<SOURCECONDITION>filter(rule.getRuleConditions().eAllContents(), SOURCECONDITION.class), _function_3);
+    IteratorExtensions.<SOURCECONDITION>forEach(_filter_3, _function_3);
     int _length = this.sourceCond.length();
     boolean _greaterThan_1 = (_length > 2);
     if (_greaterThan_1) {
-      ruleCondition = this.sourceCond.toString();
+      String _string = this.sourceCond.toString();
+      ruleCondition = _string;
       this.sourceCond.setLength(0);
       this.sourceCondCount = 0;
       EcaRuleObj _ecaRuleObj = new EcaRuleObj("source", ruleName, ruleSource, ruleCondition, this.systemList, this.queryCondList, this.actionList, 
         Integer.valueOf(this.windowSize), Integer.valueOf(this.timerIntervall));
       this.querySet.add(_ecaRuleObj);
     }
+    Expression _ruleConditions_3 = rule.getRuleConditions();
+    TreeIterator<EObject> _eAllContents_4 = _ruleConditions_3.eAllContents();
+    Iterator<MAPCONDITION> _filter_4 = Iterators.<MAPCONDITION>filter(_eAllContents_4, MAPCONDITION.class);
     final Procedure1<MAPCONDITION> _function_4 = (MAPCONDITION it) -> {
-      this.map.add(it.getMapCond());
+      String _mapCond = it.getMapCond();
+      this.map.add(_mapCond);
     };
-    IteratorExtensions.<MAPCONDITION>forEach(Iterators.<MAPCONDITION>filter(rule.getRuleConditions().eAllContents(), MAPCONDITION.class), _function_4);
+    IteratorExtensions.<MAPCONDITION>forEach(_filter_4, _function_4);
     for (int i = 0; (i < this.map.size()); i++) {
       String _get = this.map.get(i);
       EcaRuleObj _ecaRuleObj_1 = new EcaRuleObj("map", ruleName, ruleSource, _get, this.systemList, this.queryCondList, this.actionList, 
@@ -188,14 +265,18 @@ public class ECAGenerator implements IGenerator2 {
       this.querySet.add(_ecaRuleObj_1);
     }
     this.map.clear();
+    Expression _ruleConditions_4 = rule.getRuleConditions();
+    TreeIterator<EObject> _eAllContents_5 = _ruleConditions_4.eAllContents();
+    Iterator<FREECONDITION> _filter_5 = Iterators.<FREECONDITION>filter(_eAllContents_5, FREECONDITION.class);
     final Procedure1<FREECONDITION> _function_5 = (FREECONDITION it) -> {
       this.addFreeCondition(it);
     };
-    IteratorExtensions.<FREECONDITION>forEach(Iterators.<FREECONDITION>filter(rule.getRuleConditions().eAllContents(), FREECONDITION.class), _function_5);
+    IteratorExtensions.<FREECONDITION>forEach(_filter_5, _function_5);
     int _length_1 = this.freeCond.length();
     boolean _greaterThan_2 = (_length_1 > 2);
     if (_greaterThan_2) {
-      ruleCondition = this.freeCond.toString();
+      String _string_1 = this.freeCond.toString();
+      ruleCondition = _string_1;
       this.freeCond.setLength(0);
       this.freeCondCount = 0;
       EcaRuleObj _ecaRuleObj_1 = new EcaRuleObj("free", ruleName, ruleSource, ruleCondition, this.systemList, this.queryCondList, this.actionList, 
@@ -226,30 +307,44 @@ public class ECAGenerator implements IGenerator2 {
     String _plus_1 = (_plus + _operator);
     String _plus_2 = (_plus_1 + " ");
     this.sourceCond.append(_plus_2);
-    Constant _constValue = cond.getValue().getConstValue();
+    EcaValue _value = cond.getValue();
+    Constant _constValue = _value.getConstValue();
     boolean _tripleNotEquals = (_constValue != null);
     if (_tripleNotEquals) {
-      this.sourceCond.append(cond.getValue().getConstValue().getConstValue());
+      EcaValue _value_1 = cond.getValue();
+      Constant _constValue_1 = _value_1.getConstValue();
+      int _constValue_2 = _constValue_1.getConstValue();
+      this.sourceCond.append(_constValue_2);
     } else {
-      String _idValue = cond.getValue().getIdValue();
+      EcaValue _value_2 = cond.getValue();
+      String _idValue = _value_2.getIdValue();
       boolean _tripleNotEquals_1 = (_idValue != null);
       if (_tripleNotEquals_1) {
-        String _idValue_1 = cond.getValue().getIdValue();
+        EcaValue _value_3 = cond.getValue();
+        String _idValue_1 = _value_3.getIdValue();
         String _plus_3 = ("\"" + _idValue_1);
         String _plus_4 = (_plus_3 + "\"");
         this.sourceCond.append(_plus_4);
       } else {
-        String _stringValue = cond.getValue().getStringValue();
+        EcaValue _value_4 = cond.getValue();
+        String _stringValue = _value_4.getStringValue();
         boolean _tripleNotEquals_2 = (_stringValue != null);
         if (_tripleNotEquals_2) {
-          this.systemCond.append(cond.getValue().getStringValue());
+          EcaValue _value_5 = cond.getValue();
+          String _stringValue_1 = _value_5.getStringValue();
+          this.systemCond.append(_stringValue_1);
         } else {
-          double _doubleValue = cond.getValue().getDoubleValue();
+          EcaValue _value_6 = cond.getValue();
+          double _doubleValue = _value_6.getDoubleValue();
           boolean _greaterThan = (_doubleValue > 0);
           if (_greaterThan) {
-            this.sourceCond.append(cond.getValue().getDoubleValue());
+            EcaValue _value_7 = cond.getValue();
+            double _doubleValue_1 = _value_7.getDoubleValue();
+            this.sourceCond.append(_doubleValue_1);
           } else {
-            this.sourceCond.append(cond.getValue().getIntValue());
+            EcaValue _value_8 = cond.getValue();
+            int _intValue = _value_8.getIntValue();
+            this.sourceCond.append(_intValue);
           }
         }
       }
@@ -259,38 +354,60 @@ public class ECAGenerator implements IGenerator2 {
   public void addSystemCondition(final SYSTEMCONDITION cond) {
     StringBuffer tmp = new StringBuffer();
     this.systemCondCount++;
-    this.systemList.add(cond.getSystemAttribute());
-    this.systemList.add(cond.getOperator());
-    Constant _constValue = cond.getValue().getConstValue();
+    String _systemAttribute = cond.getSystemAttribute();
+    this.systemList.add(_systemAttribute);
+    String _operator = cond.getOperator();
+    this.systemList.add(_operator);
+    EcaValue _value = cond.getValue();
+    Constant _constValue = _value.getConstValue();
     boolean _tripleNotEquals = (_constValue != null);
     if (_tripleNotEquals) {
-      tmp.append(cond.getValue().getConstValue().getConstValue());
-      this.systemList.add(tmp.toString());
+      EcaValue _value_1 = cond.getValue();
+      Constant _constValue_1 = _value_1.getConstValue();
+      int _constValue_2 = _constValue_1.getConstValue();
+      tmp.append(_constValue_2);
+      String _string = tmp.toString();
+      this.systemList.add(_string);
       tmp.setLength(0);
     } else {
-      String _idValue = cond.getValue().getIdValue();
+      EcaValue _value_2 = cond.getValue();
+      String _idValue = _value_2.getIdValue();
       boolean _tripleNotEquals_1 = (_idValue != null);
       if (_tripleNotEquals_1) {
-        tmp.append(cond.getValue().getIdValue());
-        this.systemList.add(tmp.toString());
+        EcaValue _value_3 = cond.getValue();
+        String _idValue_1 = _value_3.getIdValue();
+        tmp.append(_idValue_1);
+        String _string_1 = tmp.toString();
+        this.systemList.add(_string_1);
         tmp.setLength(0);
       } else {
-        String _stringValue = cond.getValue().getStringValue();
+        EcaValue _value_4 = cond.getValue();
+        String _stringValue = _value_4.getStringValue();
         boolean _tripleNotEquals_2 = (_stringValue != null);
         if (_tripleNotEquals_2) {
-          tmp.append(cond.getValue().getStringValue());
-          this.systemList.add(tmp.toString());
+          EcaValue _value_5 = cond.getValue();
+          String _stringValue_1 = _value_5.getStringValue();
+          tmp.append(_stringValue_1);
+          String _string_2 = tmp.toString();
+          this.systemList.add(_string_2);
           tmp.setLength(0);
         } else {
-          double _doubleValue = cond.getValue().getDoubleValue();
+          EcaValue _value_6 = cond.getValue();
+          double _doubleValue = _value_6.getDoubleValue();
           boolean _greaterThan = (_doubleValue > 0);
           if (_greaterThan) {
-            tmp.append(cond.getValue().getDoubleValue());
-            this.systemList.add(tmp.toString());
+            EcaValue _value_7 = cond.getValue();
+            double _doubleValue_1 = _value_7.getDoubleValue();
+            tmp.append(_doubleValue_1);
+            String _string_3 = tmp.toString();
+            this.systemList.add(_string_3);
             tmp.setLength(0);
           } else {
-            tmp.append(cond.getValue().getIntValue());
-            this.systemList.add(tmp.toString());
+            EcaValue _value_8 = cond.getValue();
+            int _intValue = _value_8.getIntValue();
+            tmp.append(_intValue);
+            String _string_4 = tmp.toString();
+            this.systemList.add(_string_4);
             tmp.setLength(0);
           }
         }
@@ -299,7 +416,8 @@ public class ECAGenerator implements IGenerator2 {
   }
   
   public void addFreeCondition(final FREECONDITION cond) {
-    this.freeCond.append(cond.getFreeCondition());
+    String _freeCondition = cond.getFreeCondition();
+    this.freeCond.append(_freeCondition);
     this.freeCondCount++;
   }
   
@@ -307,40 +425,61 @@ public class ECAGenerator implements IGenerator2 {
     StringBuffer tmp = new StringBuffer();
     tmp.setLength(0);
     this.subActionCount++;
-    this.actionList.add(actions.getSubActname());
+    String _subActname = actions.getSubActname();
+    this.actionList.add(_subActname);
     EcaValue _actionValue = actions.getActionValue();
     boolean _tripleNotEquals = (_actionValue != null);
     if (_tripleNotEquals) {
-      Constant _constValue = actions.getActionValue().getConstValue();
+      EcaValue _actionValue_1 = actions.getActionValue();
+      Constant _constValue = _actionValue_1.getConstValue();
       boolean _tripleNotEquals_1 = (_constValue != null);
       if (_tripleNotEquals_1) {
-        tmp.append(actions.getActionValue().getConstValue().getConstValue());
-        this.actionList.add(tmp.toString());
+        EcaValue _actionValue_2 = actions.getActionValue();
+        Constant _constValue_1 = _actionValue_2.getConstValue();
+        int _constValue_2 = _constValue_1.getConstValue();
+        tmp.append(_constValue_2);
+        String _string = tmp.toString();
+        this.actionList.add(_string);
         tmp.setLength(0);
       } else {
-        String _idValue = actions.getActionValue().getIdValue();
+        EcaValue _actionValue_3 = actions.getActionValue();
+        String _idValue = _actionValue_3.getIdValue();
         boolean _tripleNotEquals_2 = (_idValue != null);
         if (_tripleNotEquals_2) {
-          tmp.append(actions.getActionValue().getIdValue());
-          this.actionList.add(tmp.toString());
+          EcaValue _actionValue_4 = actions.getActionValue();
+          String _idValue_1 = _actionValue_4.getIdValue();
+          tmp.append(_idValue_1);
+          String _string_1 = tmp.toString();
+          this.actionList.add(_string_1);
           tmp.setLength(0);
         } else {
-          String _stringValue = actions.getActionValue().getStringValue();
+          EcaValue _actionValue_5 = actions.getActionValue();
+          String _stringValue = _actionValue_5.getStringValue();
           boolean _tripleNotEquals_3 = (_stringValue != null);
           if (_tripleNotEquals_3) {
-            tmp.append(actions.getActionValue().getStringValue());
-            this.actionList.add(tmp.toString());
+            EcaValue _actionValue_6 = actions.getActionValue();
+            String _stringValue_1 = _actionValue_6.getStringValue();
+            tmp.append(_stringValue_1);
+            String _string_2 = tmp.toString();
+            this.actionList.add(_string_2);
             tmp.setLength(0);
           } else {
-            double _doubleValue = actions.getActionValue().getDoubleValue();
+            EcaValue _actionValue_7 = actions.getActionValue();
+            double _doubleValue = _actionValue_7.getDoubleValue();
             boolean _greaterThan = (_doubleValue > 0);
             if (_greaterThan) {
-              tmp.append(actions.getActionValue().getDoubleValue());
-              this.actionList.add(tmp.toString());
+              EcaValue _actionValue_8 = actions.getActionValue();
+              double _doubleValue_1 = _actionValue_8.getDoubleValue();
+              tmp.append(_doubleValue_1);
+              String _string_3 = tmp.toString();
+              this.actionList.add(_string_3);
               tmp.setLength(0);
             } else {
-              tmp.append(actions.getActionValue().getIntValue());
-              this.actionList.add(tmp.toString());
+              EcaValue _actionValue_9 = actions.getActionValue();
+              int _intValue = _actionValue_9.getIntValue();
+              tmp.append(_intValue);
+              String _string_4 = tmp.toString();
+              this.actionList.add(_string_4);
               tmp.setLength(0);
             }
           }
@@ -350,21 +489,33 @@ public class ECAGenerator implements IGenerator2 {
       RNDQUERY _functAction = actions.getFunctAction();
       boolean _tripleNotEquals_4 = (_functAction != null);
       if (_tripleNotEquals_4) {
-        String _sel = actions.getFunctAction().getSel();
+        RNDQUERY _functAction_1 = actions.getFunctAction();
+        String _sel = _functAction_1.getSel();
         boolean _tripleNotEquals_5 = (_sel != null);
         if (_tripleNotEquals_5) {
-          this.actionList.add(actions.getFunctAction().getSel());
+          RNDQUERY _functAction_2 = actions.getFunctAction();
+          String _sel_1 = _functAction_2.getSel();
+          this.actionList.add(_sel_1);
         } else {
           this.actionList.add("rnd");
         }
-        tmp.append(actions.getFunctAction().getPriOperator());
-        this.actionList.add(tmp.toString());
+        RNDQUERY _functAction_3 = actions.getFunctAction();
+        String _priOperator = _functAction_3.getPriOperator();
+        tmp.append(_priOperator);
+        String _string_5 = tmp.toString();
+        this.actionList.add(_string_5);
         tmp.setLength(0);
-        tmp.append(actions.getFunctAction().getPriVal());
-        this.actionList.add(tmp.toString());
+        RNDQUERY _functAction_4 = actions.getFunctAction();
+        int _priVal = _functAction_4.getPriVal();
+        tmp.append(_priVal);
+        String _string_6 = tmp.toString();
+        this.actionList.add(_string_6);
         tmp.setLength(0);
-        tmp.append(actions.getFunctAction().getStateName());
-        this.actionList.add(tmp.toString());
+        RNDQUERY _functAction_5 = actions.getFunctAction();
+        String _stateName = _functAction_5.getStateName();
+        tmp.append(_stateName);
+        String _string_7 = tmp.toString();
+        this.actionList.add(_string_7);
         tmp.setLength(0);
       } else {
         this.actionList.add(null);
@@ -382,14 +533,23 @@ public class ECAGenerator implements IGenerator2 {
     } else {
       this.queryCondList.add("exists");
     }
-    tmp.append(cond.getQueryFunct().getPriOperator());
-    this.queryCondList.add(tmp.toString());
+    RNDQUERY _queryFunct = cond.getQueryFunct();
+    String _priOperator = _queryFunct.getPriOperator();
+    tmp.append(_priOperator);
+    String _string = tmp.toString();
+    this.queryCondList.add(_string);
     tmp.setLength(0);
-    tmp.append(cond.getQueryFunct().getPriVal());
-    this.queryCondList.add(tmp.toString());
+    RNDQUERY _queryFunct_1 = cond.getQueryFunct();
+    int _priVal = _queryFunct_1.getPriVal();
+    tmp.append(_priVal);
+    String _string_1 = tmp.toString();
+    this.queryCondList.add(_string_1);
     tmp.setLength(0);
-    tmp.append(cond.getQueryFunct().getStateName());
-    this.queryCondList.add(tmp.toString());
+    RNDQUERY _queryFunct_2 = cond.getQueryFunct();
+    String _stateName = _queryFunct_2.getStateName();
+    tmp.append(_stateName);
+    String _string_2 = tmp.toString();
+    this.queryCondList.add(_string_2);
     tmp.setLength(0);
   }
   

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mep;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -140,7 +141,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 		if (argPos > arity) {
 			throw new IllegalArgumentException(symbol + " has only " + arity + " argument(s).");
 		}
-		return acceptedTypes[argPos];
+		return Arrays.copyOf(acceptedTypes[argPos], acceptedTypes[argPos].length);
 	}
 
 	@Override

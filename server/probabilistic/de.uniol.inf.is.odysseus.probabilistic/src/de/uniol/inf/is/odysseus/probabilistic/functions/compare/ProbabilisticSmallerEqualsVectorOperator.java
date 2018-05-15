@@ -15,69 +15,21 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
-import java.util.Arrays;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-
 /**
  * Smaller-Equals operator for continuous probabilistic values.
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-public class ProbabilisticSmallerEqualsVectorOperator extends AbstractProbabilisticCompareOperator {
+public class ProbabilisticSmallerEqualsVectorOperator extends ProbabilisticSmallerVectorOperator {
 
     /**
-	 * 
-	 */
+     *
+     */
     private static final long serialVersionUID = -9122605635777338549L;
 
     public ProbabilisticSmallerEqualsVectorOperator() {
-        this("<=");
+        super("<=", true);
     }
-
-    public ProbabilisticSmallerEqualsVectorOperator(final String symbol) {
-        super(symbol, ProbabilisticSmallerEqualsVectorOperator.ACC_TYPES);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final int getPrecedence() {
-        return 8;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final ProbabilisticBooleanResult getValue() {
-        final Object[] aVector = this.getInputValue(0);
-        final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) aVector[0]).clone();
-
-        final double[][] b = (double[][]) this.getInputValue(1);
-        final double[] lowerBound = new double[a.getDimension()];
-        Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        final double[] upperBound = new double[a.getDimension()];
-        Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-        System.arraycopy(b[0], 0, upperBound, 0, b[0].length);
-
-        return this.getValueInternal(a, lowerBound, upperBound);
-    }
-
-    /*
-     * 
-     * 
-     * 
-     * /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE },
-            { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
 }

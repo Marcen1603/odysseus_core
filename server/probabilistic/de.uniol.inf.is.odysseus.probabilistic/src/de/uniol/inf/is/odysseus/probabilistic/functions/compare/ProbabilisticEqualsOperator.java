@@ -24,14 +24,14 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
 
 /**
  * Equals operator for continuous probabilistic values.
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class ProbabilisticEqualsOperator extends AbstractProbabilisticCompareOperator {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3016679134461973157L;
 
@@ -40,14 +40,14 @@ public class ProbabilisticEqualsOperator extends AbstractProbabilisticCompareOpe
     }
 
     /*
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
     public final ProbabilisticBooleanResult getValue() {
         final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(0)).clone();
-        final int pos = this.getInputPosition(0);
-        final Double b = this.getNumericalInputValue(1);
+        final int pos = getInputPosition(0);
+        final Double b = getNumericalInputValue(1);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
         lowerBound[a.getDimension(pos)] = b;
@@ -59,7 +59,7 @@ public class ProbabilisticEqualsOperator extends AbstractProbabilisticCompareOpe
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override

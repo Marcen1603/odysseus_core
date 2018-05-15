@@ -29,7 +29,7 @@ public @interface LogicalOperator {
 	public String doc();
 	public String[] category();
 
-    public String url() default "http://wiki.odysseus.offis.uni-oldenburg.de/pages/viewpage.action?pageId=4587829";
+    public String url() default "http://wiki.odysseus.informatik.uni-oldenburg.de/pages/viewpage.action?pageId=4587829";
 	public boolean deprecation() default false;
 	public boolean hidden() default false;
 }

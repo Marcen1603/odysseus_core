@@ -68,7 +68,7 @@ abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
     public SDFDatatype determineType(IMepExpression<?>[] args) {
     	SDFDatatype subtype = args[0].getReturnType();
 
-//    	for(SDFDatatype datatype : SDFDatatype.LISTS) {
+//    	for(SDFDatatype datatype : SDFDatatype.getLists()) {
 //			if(datatype.getSubType().equals(subtype)) {
 //				return datatype;
 //			}

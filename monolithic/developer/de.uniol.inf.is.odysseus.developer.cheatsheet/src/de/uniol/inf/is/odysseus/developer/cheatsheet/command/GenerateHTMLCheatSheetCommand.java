@@ -666,8 +666,8 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 			sb.append(
 					"<abbr title='" + GenerateHTMLCheatSheetCommand.sanitize(Arrays.toString(SDFDatatype.LONG_NUMBERS))
 							+ "'>Long Numbers</abbr>");
-		} else if (types.equals(SDFDatatype.LISTS)) {
-			sb.append("<abbr title='" + GenerateHTMLCheatSheetCommand.sanitize(Arrays.toString(SDFDatatype.LISTS))
+		} else if (types.equals(SDFDatatype.getLists())) {
+			sb.append("<abbr title='" + GenerateHTMLCheatSheetCommand.sanitize(Arrays.toString(SDFDatatype.getLists()))
 					+ "'>Lists</abbr>");
 		} else if (types.equals(SDFDatatype.NUMBERS_OBJECT)) {
 			sb.append("<abbr title='"

@@ -1528,7 +1528,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	
 	private String getJiraUrl() {
 		return OdysseusConfiguration.instance.get("BUGREPORT_BASEURL",
-				"http://jira.odysseus.offis.uni-oldenburg.de/");
+				"https://jira.odysseus.informatik.uni-oldenburg.de/");
 	}
 	
 	

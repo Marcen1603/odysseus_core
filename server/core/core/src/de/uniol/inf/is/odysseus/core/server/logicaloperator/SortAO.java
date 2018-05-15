@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "SORT", category = { LogicalOperatorCategory.BASE }, doc = "Sort operator", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Sort")
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "SORT", category = { LogicalOperatorCategory.BASE }, doc = "Sort operator", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Sort")
 public class SortAO extends UnaryLogicalOp {
 
     private static final long serialVersionUID = 3251466434501011289L;

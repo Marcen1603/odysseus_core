@@ -32,8 +32,9 @@ public class CQLParserTest extends AbstractQueryTestComponent<BasicTestContext, 
 			for (File qf : queryFiles) {
 
 				QueryTestSet set = TestSetFactory.createQueryTestSetFromFile(qf.toURI().toURL(), bundleroot);
-				if (set != null)
+				if (set != null) {
 					testsets.add(set);
+				}
 			}
 		} catch (URISyntaxException e) {
 			e.printStackTrace();

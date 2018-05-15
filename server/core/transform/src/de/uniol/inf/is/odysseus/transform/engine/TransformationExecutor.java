@@ -194,6 +194,11 @@ public class TransformationExecutor implements ITransformation {
 						.removeOperator(r);
 			}
 		}
+		
+		// Operators that are not fully initialized need to be removed, too
+		((IDataDictionaryWritable) (((TransformationWorkingMemory) env
+				.getWorkingMemory()).getDataDictionary())).removeClosedSources();
+		
 	}
 
 	private void addLogicalOperator(ILogicalOperator op,

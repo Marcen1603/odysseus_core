@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuatio
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SAOperatorDelegate;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SPMap;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
 
@@ -37,8 +36,8 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	String tupleRangeAttribute;
 
 	public SAJoinPO(IDataMergeFunction<T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge,
-			ITransferArea<T, T> transferFunction, ITimeIntervalSweepArea<T>[] areas, String tupleRangeAttribute) {
-		super(dataMerge, metadataMerge, transferFunction, areas);
+			ITransferArea<T, T> transferFunction, String tupleRangeAttribute) {
+		super(dataMerge, metadataMerge, transferFunction);
 		this.tupleRangeAttribute = tupleRangeAttribute;
 		initLists();
 
@@ -99,7 +98,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 		Iterator<T> qualifies;
 		Order order = Order.fromOrdinal(port);
-		qualifies = areas[otherport].queryCopy(object, order, false);
+		qualifies = this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).queryCopy(object, order, false);
 		List<ISecurityPunctuation> intersectedSPs = new ArrayList<>();
 
 		// extracts the SPs of the matching Tuples from the other port and

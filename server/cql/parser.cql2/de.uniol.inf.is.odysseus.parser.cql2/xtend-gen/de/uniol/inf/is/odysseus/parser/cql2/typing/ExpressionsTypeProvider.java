@@ -198,9 +198,11 @@ public class ExpressionsTypeProvider {
         {
           String name = a.getAttributeName();
           Attribute _value = e.getValue();
-          boolean _equals = name.equals(((Attribute) _value).getName());
+          String _name = ((Attribute) _value).getName();
+          boolean _equals = name.equals(_name);
           if (_equals) {
-            return this.typeFor(a.getDatatype());
+            SDFDatatype _datatype = a.getDatatype();
+            return this.typeFor(_datatype);
           }
         }
       }
@@ -210,27 +212,24 @@ public class ExpressionsTypeProvider {
   
   protected ExpressionsType _typeFor(final SDFDatatype e) {
     ExpressionsType _switchResult = null;
-    String _upperCase = e.getURI().toUpperCase();
-    if (_upperCase != null) {
-      switch (_upperCase) {
-        case "INTEGER":
-          _switchResult = ExpressionsTypeProvider.intType;
-          break;
-        case "STRING":
-          _switchResult = ExpressionsTypeProvider.stringType;
-          break;
-        case "BOOLEAN":
-          _switchResult = ExpressionsTypeProvider.boolType;
-          break;
-        case "DOUBLE":
-          _switchResult = ExpressionsTypeProvider.floatType;
-          break;
-        default:
-          _switchResult = ExpressionsTypeProvider.stringType;
-          break;
-      }
-    } else {
-      _switchResult = ExpressionsTypeProvider.stringType;
+    String _uRI = e.getURI();
+    String _upperCase = _uRI.toUpperCase();
+    switch (_upperCase) {
+      case "INTEGER":
+        _switchResult = ExpressionsTypeProvider.intType;
+        break;
+      case "STRING":
+        _switchResult = ExpressionsTypeProvider.stringType;
+        break;
+      case "BOOLEAN":
+        _switchResult = ExpressionsTypeProvider.boolType;
+        break;
+      case "DOUBLE":
+        _switchResult = ExpressionsTypeProvider.floatType;
+        break;
+      default:
+        _switchResult = ExpressionsTypeProvider.stringType;
+        break;
     }
     return _switchResult;
   }

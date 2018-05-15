@@ -38,7 +38,7 @@ public class TSystemTimestampRule extends AbstractIntervalTransformationRule<Tim
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) throws RuleException {
-		if(timestampAO.hasEndTimestamp() || timestampAO.hasStartTimestamp()){
+		if(timestampAO.hasEndTimestampExpression() || timestampAO.hasStartTimestampExpression()){
 			throw new TransformationException("You cannot use start and end parameters for system time processing");
 		}
 		SystemTimeIntervalFactory<ITimeInterval, IStreamObject<ITimeInterval>> mUpdater = new SystemTimeIntervalFactory<ITimeInterval, IStreamObject<ITimeInterval>>();		

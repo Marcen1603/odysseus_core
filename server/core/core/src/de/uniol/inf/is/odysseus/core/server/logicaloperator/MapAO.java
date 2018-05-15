@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -41,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationExcepti
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Map+operator", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator", category = {
 		LogicalOperatorCategory.BASE })
 public class MapAO extends UnaryLogicalOp {
 
@@ -84,7 +86,7 @@ public class MapAO extends UnaryLogicalOp {
 
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		SDFSchema inputSchema = getInputSchema();
-		
+
 		if (keepInput) {
 			if (removeAttributes == null || removeAttributes.size() == 0) {
 				attrs.addAll(inputSchema.getAttributes());
@@ -97,115 +99,142 @@ public class MapAO extends UnaryLogicalOp {
 			}
 		}
 
-		if (namedExpressions != null) {
-			for (NamedExpression expr : namedExpressions) {
+		/*
+		 * The expressions are null, which should not happen, they should at least be an
+		 * empty list. Stop here.
+		 */
+		if (this.namedExpressions == null) {
+			return;
+		}
 
-				// TODO: Maybe here should an attribute resolver be used?
+		for (NamedExpression expr : namedExpressions) {
 
-				SDFAttribute attr = null;
-				IMepExpression<?> mepExpression = expr.expression
-						.getMEPExpression();
-				String exprString;
-				boolean isOnlyAttribute = false;
+			// TODO: Maybe an attribute resolver should be used here?
 
-				exprString = expr.expression.toString();
-				// Replace '(' and ')' so the expression will not be recognized
-				// as expression in the next operator (e.g. if it is a map)
-				exprString = SDFAttribute.replaceSpecialChars(exprString);
+			SDFAttribute attr = null;
+			IMepExpression<?> mepExpression = expr.expression.getMEPExpression();
+			String exprString;
+			boolean isOnlyAttribute = false;
 
-				// Variable could be source.name oder name, we are looking
-				// for
-				// name!
-				String lastString = null;
-				String toSplit;
+			exprString = expr.expression.toString();
+			// Replace '(' and ')' so the expression will not be recognized
+			// as expression in the next operator (e.g. if it is a map)
+			exprString = SDFAttribute.replaceSpecialChars(exprString);
 
-				toSplit = exprString;
+			// Variable could be source.name oder name, we are looking for name!
+			String lastString = null;
+			String toSplit;
 
-				String[] split = SDFElement.splitURI(toSplit);
-				final SDFElement elem;
-				if (split[1] != null && split[1].length() > 0) {
-					elem = new SDFElement(split[0], split[1]);
+			toSplit = exprString;
+
+			String[] split = SDFElement.splitURI(toSplit);
+			final SDFElement elem;
+			if (split[1] != null && split[1].length() > 0) {
+				elem = new SDFElement(split[0], split[1]);
+			} else {
+				elem = new SDFElement(null, split[0]);
+			}
+
+			// If expression is an attribute use this data type
+			List<SDFAttribute> inAttribs = expr.expression.getAllAttributes();
+			for (SDFAttribute attributeToCheck : inAttribs) {
+				SDFAttribute attribute;
+				String attributeURI = attributeToCheck.getURI();
+				if (attributeURI.startsWith("__")) {
+					String realAttributeName = attributeURI.substring(attributeURI.indexOf(".") + 1);
+					split = SDFElement.splitURI(realAttributeName);
+					if (split.length > 1) {
+						attribute = new SDFAttribute(split[0], split[1], attributeToCheck);
+					} else {
+						attribute = new SDFAttribute(null, split[0], attributeToCheck);
+					}
 				} else {
-					elem = new SDFElement(null, split[0]);
+					attribute = attributeToCheck;
 				}
-
-				// If expression is an attribute use this data type
-				List<SDFAttribute> inAttribs = expr.expression.getAllAttributes();
-				for (SDFAttribute attributeToCheck : inAttribs) {
-					SDFAttribute attribute;
-					String attributeURI = attributeToCheck.getURI();
-					if (attributeURI.startsWith("__")) {
-						String realAttributeName = attributeURI.substring(attributeURI.indexOf(".") + 1);
-						split = SDFElement.splitURI(realAttributeName);
-						if (split.length > 1) {
-							attribute = new SDFAttribute(split[0], split[1], attributeToCheck);
-						} else {
-							attribute = new SDFAttribute(null, split[0], attributeToCheck);
-						}
+				if (attribute.equalsCQL(elem)) {
+					if (lastString != null) {
+						String attrName = elem.getURIWithoutQualName() != null
+								? elem.getURIWithoutQualName() + "." + elem.getQualName()
+								: elem.getQualName();
+						attr = new SDFAttribute(lastString, attrName, attribute.getDatatype(), attribute.getUnit(),
+								attribute.getDtConstraints());
 					} else {
-						attribute = attributeToCheck;
+						attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(),
+								attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
 					}
-					if (attribute.equalsCQL(elem)) {
-						if (lastString != null) {
-							String attrName = elem.getURIWithoutQualName() != null
-									? elem.getURIWithoutQualName() + "." + elem.getQualName() : elem.getQualName();
-							attr = new SDFAttribute(lastString, attrName, attribute.getDatatype(), attribute.getUnit(),
-									attribute.getDtConstraints());
-						} else {
-							attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(),
-									attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
-						}
-						isOnlyAttribute = true;
-					}
+					isOnlyAttribute = true;
 				}
+			}
 
-				// Expression is an attribute and name is set --> keep Attribute
-				// type
-				if (isOnlyAttribute) {
-					if (!"".equals(expr.name)) {
-						if (attr != null && attr.getSourceName() != null && !attr.getSourceName().startsWith("__")) {
-							attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
-						} else {
-							attr = new SDFAttribute(null, expr.name, attr);
-						}
-					}
-				}
-
-				// else use the expression data type
-				if (attr == null) {
-					// Special Handling if return type if tuple
-					if (mepExpression.getReturnType() == SDFDatatype.TUPLE) {
-						int card = mepExpression.getReturnTypeCard();
-						for (int i = 0; i < card; i++) {
-							String name = !"".equals(expr.name) ? expr.name : exprString;
-							attr = new SDFAttribute(null, name + "_" + i, mepExpression.getReturnType(i), null, null,
-									null);
-							attrs.add(attr);
-						}
-
+			// Expression is an attribute and name is set --> keep attribute type
+			if (isOnlyAttribute) {
+				if (!"".equals(expr.name)) {
+					if (attr != null && attr.getSourceName() != null && !attr.getSourceName().startsWith("__")) {
+						attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
 					} else {
-						SDFDatatype retType = expr.datatype != null ? expr.datatype : mepExpression.getReturnType();
-						attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name : exprString, retType, null,
-								null, null);
+						attr = new SDFAttribute(null, expr.name, attr);
+					}
+				}
+			}
+
+			// else use the expression data type
+			if (attr == null) {
+				// Special handling if return type is tuple
+				if (mepExpression.getReturnType() == SDFDatatype.TUPLE) {
+					int card = mepExpression.getReturnTypeCard();
+					for (int i = 0; i < card; i++) {
+						String name = !"".equals(expr.name) ? expr.name : exprString;
+
+						// Calculate the constraints for the output
+						Collection<SDFConstraint> allConstraints = getExpressionConstraints(expr);
+
+						attr = new SDFAttribute(null, name + "_" + i, mepExpression.getReturnType(i), null,
+								allConstraints, null);
 						attrs.add(attr);
 					}
+
 				} else {
+					SDFDatatype retType = expr.datatype != null ? expr.datatype : mepExpression.getReturnType();
+
+					// Calculate the constraints for the output
+					Collection<SDFConstraint> allConstraints = getExpressionConstraints(expr);
+
+					attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name : exprString, retType, null,
+							allConstraints, null);
 					attrs.add(attr);
 				}
-
+			} else {
+				attrs.add(attr);
 			}
 
-			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory.createNewWithAttributes(attrs, inputSchema),
-					inputSchema.getURI(), false);
-			// check if all attributes are distinct
-			Set<String> amNames = s.checkNames();
-			if (amNames.size() > 0) {
-				throw new TransformationException("Output schema of " + this.getName()
-						+ " contains multiple occurences of attributes " + amNames);
-			}
-
-			setOutputSchema(s);
 		}
+
+		SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory.createNewWithAttributes(attrs, inputSchema),
+				inputSchema.getURI(), false);
+		// check if all attributes are distinct
+		Set<String> amNames = s.checkNames();
+		if (amNames.size() > 0) {
+			throw new TransformationException(
+					"Output schema of " + this.getName() + " contains multiple occurences of attributes " + amNames);
+		}
+
+		setOutputSchema(s);
+	}
+
+	/**
+	 * The constraints by the expression.
+	 * 
+	 * @param expression
+	 *            The expression from which the added constraints are needed
+	 * @return The constraints added by the expression
+	 */
+	private Collection<SDFConstraint> getExpressionConstraints(NamedExpression expression) {
+
+		/*
+		 * The expressions themselves can add constraints. For example to tell that
+		 * their output is a temporal type.
+		 */
+		return expression.expression.getMEPExpression().getConstraintsToAdd();
 	}
 
 	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", aliasname = "kvExpressions", isList = true, optional = false, doc = "A list of expressions.")
@@ -244,10 +273,10 @@ public class MapAO extends UnaryLogicalOp {
 
 	/**
 	 * Sets the number of threads used for processing the expressions. A value
-	 * greater than 1 indicates the number of simultaneous processing. A value
-	 * equal to 1 or 0 indicates that no threads should be used. And a value
-	 * lower than 0 indicates automatic threads number selection based on the
-	 * number of expressions and the number of available processors.
+	 * greater than 1 indicates the number of simultaneous processing. A value equal
+	 * to 1 or 0 indicates that no threads should be used. And a value lower than 0
+	 * indicates automatic threads number selection based on the number of
+	 * expressions and the number of available processors.
 	 *
 	 * @param threads
 	 *            The number of threads
@@ -328,7 +357,7 @@ public class MapAO extends UnaryLogicalOp {
 
 		return valid && super.isValid();
 	}
-	
+
 	/**
 	 * There should be no restriction for stateless operators
 	 */
@@ -336,6 +365,5 @@ public class MapAO extends UnaryLogicalOp {
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
 		return InputOrderRequirement.NONE;
 	}
-
 
 }

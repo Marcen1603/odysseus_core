@@ -25,11 +25,13 @@ import java.io.Serializable;
  */
 public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     /** Infinity interval. */
-    public static final Interval MAX = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    public static final Interval MAX = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    /** Empty interval. */
+    public static final Interval EMPTY = Interval.of(Double.NaN, Double.NaN);
 
     /**
-	 * 
-	 */
+     * 
+     */
     private static final long serialVersionUID = -6115929417128254867L;
     /** The infimum of the interval. */
     private final double inf;
@@ -43,10 +45,23 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The infimum
      * @param sup
      *            The supremum
+     * @return The interval
+     */
+    public static Interval of(final double inf, final double sup) {
+        return new Interval(inf, sup);
+    }
+
+    /**
+     * Creates a new interval with the given infimum and supremum.
+     * 
+     * @param inf
+     *            The infimum
+     * @param sup
+     *            The supremum
      */
     public Interval(final double inf, final double sup) {
-        this.inf = inf;
-        this.sup = sup;
+        this.inf = inf < sup ? inf : sup;
+        this.sup = inf < sup ? sup : inf;
     }
 
     /**
@@ -75,7 +90,11 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return <code>true</code> if this interval and the other intersects
      */
     public final boolean intersects(final Interval other) {
-        return ((!this.isEmpty()) && (!other.isEmpty()) && (other.inf <= this.sup) && (this.inf <= other.sup));
+        return ((!this.isEmpty()) && (!other.isEmpty()) && //
+                (//
+                 // [a,b] [c,d]
+                (other.inf <= this.sup) && (this.inf <= other.sup)//
+                ));
     }
 
     /**
@@ -84,7 +103,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return <code>true</code> if this interval is empty
      */
     public final boolean isEmpty() {
-        return !(this.inf <= this.sup);
+        return this.inf > this.sup;
     }
 
     /**
@@ -104,8 +123,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     public final double length() {
         if (!this.isEmpty()) {
             return this.sup - this.inf;
-        }
-        else {
+        } else {
             return 0.0;
         }
     }
@@ -113,34 +131,48 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     /**
      * Adds the other to this interval and returns the new interval.
      * 
+     * \f$ [a, b] + [c, d] = [a + c, b + d] \f$
+     * 
      * @param other
      *            The other interval
      * @return The result of the operation
      */
     public final Interval add(final Interval other) {
-        return new Interval(this.inf + other.inf, this.sup + other.sup);
+        double a = this.inf;
+        double b = this.sup;
+        double c = other.inf;
+        double d = other.sup;
+        return Interval.of(a + c, b + d);
     }
 
     /**
      * Adds the given value to this interval and returns the new interval.
      * 
-     * @param value
+     * @param v
      *            The value
      * @return The result of the operation
      */
-    public final Interval add(final double value) {
-        return new Interval(this.inf + value, this.sup + value);
+    public final Interval add(final double v) {
+        double a = this.inf;
+        double b = this.sup;
+        return Interval.of(a + v, b + v);
     }
 
     /**
      * Subtracts the other from this interval and returns the new interval.
+     * 
+     * \f$ [a, b] - [c, d] = [a - d, b - c] \f$
      * 
      * @param other
      *            The other interval
      * @return The result of the operation
      */
     public final Interval subtract(final Interval other) {
-        return new Interval(this.inf - other.sup, this.sup - other.inf);
+        double a = this.inf;
+        double b = this.sup;
+        double c = other.inf;
+        double d = other.sup;
+        return Interval.of(a - d, b - c);
     }
 
     /**
@@ -151,96 +183,119 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The value
      * @return The result of the operation
      */
-    public final Interval subtract(final double value) {
-        return new Interval(this.inf - value, this.sup - value);
+    public final Interval subtract(final double v) {
+        double a = this.inf;
+        double b = this.sup;
+        return Interval.of(a - v, b - v);
     }
 
     /**
      * Multiplies the other to this interval and returns the new interval.
+     * 
+     * \f$ [a, b] × [c, d] = [\min(a × c, a × d, b × c, b × d), \max(a × c, a ×
+     * d, b × c, b × d)] \f$
      * 
      * @param other
      *            The other interval
      * @return The result of the operation
      */
     public final Interval multiply(final Interval other) {
-        final double newInf = Math.min(Math.min(this.inf * other.inf, this.inf * other.sup), Math.min(this.sup * other.inf, this.sup * other.sup));
-        final double newSup = Math.max(Math.max(this.inf * other.inf, this.inf * other.sup), Math.max(this.sup * other.inf, this.sup * other.sup));
+        double a = this.inf;
+        double b = this.sup;
+        double c = other.inf;
+        double d = other.sup;
 
-        return new Interval(newInf, newSup);
+        if ((a >= 0) && (b >= 0)) {
+            return Interval.of(a * c, b * d);
+
+        }
+        double ac = a * c;
+        double ad = a * d;
+        double bc = b * c;
+        double bd = b * d;
+
+        return Interval.of(Math.min(Math.min(ac, ad), Math.min(bc, bd)), Math.max(Math.max(ac, ad), Math.max(bc, bd)));
     }
 
     /**
      * Multiplies the given value from this interval and returns the new
      * interval.
      * 
-     * @param value
+     * @param v
      *            The value
      * @return The result of the operation
      */
-    public final Interval multiply(final double value) {
-        return new Interval(Math.min(this.sup * value, this.inf * value), Math.max(this.sup * value, this.inf * value));
+    public final Interval multiply(final double v) {
+        double a = this.inf;
+        double b = this.sup;
+
+        return Interval.of(a * v, b * v);
     }
 
     /**
      * Divides this interval by the other and returns the new interval.
      * 
+     * The estimation of [a,b]/[c,d] is based of Ratz relational division
+     * operator: D. Ratz. On extended interval arithmetic and inclusion
+     * isotonicity. Institut für Angewandte Mathematik, Universität Karlsruhe,
+     * 1996.
+     * 
      * @param other
      *            The other interval
      * @return The result of the operation
-     * @throws IntervalArithmeticException
-     *             if the other interval contains zero
      */
-    public final Interval divide(final Interval other) {
-        if ((other.inf() == 0.0) && (other.sup() == 0.0)) {
-            return new Interval(Double.NaN, Double.NaN);
-        }
-        else if (0.0 <= other.inf()) {
-            final double inf = Math.min(Math.min(this.divide(this.inf(), other.inf()), this.divide(this.inf(), other.sup())),
-                    Math.min(this.divide(this.sup(), other.inf()), this.divide(this.sup(), other.sup())));
-            final double sup = Math.max(Math.max(this.divide(this.inf(), other.inf()), this.divide(this.inf(), other.sup())),
-                    Math.max(this.divide(this.sup(), other.inf()), this.divide(this.sup(), other.sup())));
-            return new Interval(inf, sup);
-        }
-        else if (other.sup() <= 0.0) {
-            return (new Interval(-this.sup(), -this.inf())).divide(new Interval(-other.sup(), -other.inf()));
-        }
-        else {
-            final Interval left = this.divide(new Interval(other.inf(), 0.0));
-            final Interval right = this.divide(new Interval(0.0, other.sup()));
-            return left.union(right);
-        }
-    }
+    public final Interval[] divide(final Interval other) {
+        double a = this.inf;
+        double b = this.sup;
+        double c = other.inf;
+        double d = other.sup;
 
-    private final double divide(final double a, final double b) {
-        if ((Double.isInfinite(a)) && (b == 0.0)) {
-            return 0.0;
+        if (!other.contains(0.0)) {
+            return new Interval[] { this.multiply(Interval.of(1.0 / d, 1.0 / c)) };
         }
-        else if ((a == 0.0) && (b == 0.0)) {
-            return 0.0;
+        if (b < 0.0 && c < d && d == 0.0) {
+            return new Interval[] { Interval.of(b / c, Double.POSITIVE_INFINITY) };
         }
-        else if (Double.isInfinite(b)) {
-            return 0.0;
+        if (b < 0.0 && c < 0.0 && 0.0 < d) {
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, b / d), Interval.of(b / c, Double.POSITIVE_INFINITY) };
         }
-        else if ((a > 0.0) && (b == 0.0)) {
-            return Double.POSITIVE_INFINITY;
+        if (b < 0.0 && c == 0.0 && c < d) {
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, b / d) };
         }
-        else if ((a < 0.0) && (b == 0.0)) {
-            return Double.NEGATIVE_INFINITY;
+        if (0.0 < a && c < d && d == 0.0) {
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, a / c) };
         }
-        else {
-            return a / b;
+        if (0.0 < a && c < 0.0 && 0.0 < d) {
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, a / c), Interval.of(a / d, Double.POSITIVE_INFINITY) };
         }
+        if (0.0 < a && c == 0.0 && c < d) {
+            return new Interval[] { Interval.of(a / d, Double.POSITIVE_INFINITY) };
+        }
+        if ((!this.contains(0.0)) && (c == 0.0) && (d == 0.0)) {
+            return new Interval[] { Interval.EMPTY };
+        }
+        if ((this.contains(0.0)) && (other.contains(0.0))) {
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY) };
+        }
+        return new Interval[] {};
     }
 
     /**
      * Divides this interval by the given value and returns the new interval.
      * 
-     * @param value
+     * @param v
      *            The value
      * @return The result of the operation
      */
-    public final Interval divide(final double value) {
-        return new Interval(Math.min(this.inf / value, this.sup / value), Math.max(this.inf / value, this.sup / value));
+    public final Interval divide(final double v) {
+        double a = this.inf;
+        double b = this.sup;
+
+        if (v != 0.0) {
+            return Interval.of(a / v, b / v);
+        }
+
+        return Interval.EMPTY;
     }
 
     /**
@@ -251,7 +306,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The result of the operation
      */
     public final Interval union(final Interval other) {
-        return new Interval(Math.min(this.inf, other.inf), Math.max(this.sup, other.sup));
+        return Interval.of(Math.min(this.inf, other.inf), Math.max(this.sup, other.sup));
     }
 
     /**
@@ -262,10 +317,10 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The result of the operation
      */
     public final Interval intersection(final Interval other) {
-        if ((this.isEmpty()) || (other.isEmpty()) || (!(other.inf <= this.sup)) || (!(this.inf <= other.sup))) {
-            return new Interval(Double.NaN, Double.NaN);
+        if (!intersects(other)) {
+            return EMPTY;
         }
-        return new Interval(Math.max(this.inf, other.inf), Math.min(this.sup, other.sup));
+        return Interval.of(Math.max(this.inf, other.inf), Math.min(this.sup, other.sup));
     }
 
     /**
@@ -277,18 +332,18 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     public final Interval[] difference(final Interval other) {
         if (!this.intersects(other)) {
-            return new Interval[] { new Interval(Double.NaN, Double.NaN) };
+            return new Interval[] { Interval.of(this.inf, this.sup) };
         }
         if ((other.inf >= this.inf) && (other.sup <= this.sup)) {
-            return new Interval[] { new Interval(this.inf, other.inf), new Interval(other.sup, this.sup) };
+            return new Interval[] { Interval.of(this.inf, other.inf), Interval.of(other.sup, this.sup) };
         }
         if ((other.inf <= this.inf) && (other.sup <= this.sup)) {
-            return new Interval[] { new Interval(other.sup, this.sup) };
+            return new Interval[] { Interval.of(other.sup, this.sup) };
         }
         if (other.inf >= this.inf) {
-            return new Interval[] { new Interval(this.inf, other.inf) };
+            return new Interval[] { Interval.of(this.inf, other.inf) };
         }
-        return new Interval[] { new Interval(Double.MAX_VALUE, Double.MIN_VALUE) };
+        return new Interval[] { EMPTY };
     }
 
     /**
@@ -316,7 +371,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         if (this.isEmpty()) {
             return false;
         }
-        return ((other.inf >= this.inf) && (other.sup <= this.sup));
+        return ((contains(other.inf)) && (contains(other.sup)));
     }
 
     /**
@@ -327,24 +382,11 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The resulting intervals
      */
     public final Interval[] split(final double value) {
-        final Interval[] intervals = new Interval[2];
-        if (this.isEmpty()) {
-            intervals[0] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
-            intervals[1] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
+        if ((this.isEmpty()) || (value < this.inf) || (value > this.sup)) {
+            return new Interval[] { this };
+        } else {
+            return new Interval[] { Interval.of(this.inf, value), Interval.of(value, this.sup) };
         }
-        else if (value < this.inf) {
-            intervals[0] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
-            intervals[1] = new Interval(value, value);
-        }
-        else if (value > this.sup) {
-            intervals[0] = new Interval(value, value);
-            intervals[1] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
-        }
-        else {
-            intervals[0] = new Interval(this.inf, value);
-            intervals[1] = new Interval(value, this.sup);
-        }
-        return intervals;
     }
 
     /**
@@ -355,23 +397,26 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The resulting intervals
      */
     public final Interval[] split(final Interval other) {
-        if (!this.intersects(other)) {
-            return new Interval[] { new Interval(Double.MAX_VALUE, Double.MIN_VALUE) };
-        }
         if (this.contains(other)) {
-            return new Interval[] { new Interval(this.inf, other.inf), new Interval(other.inf, other.sup), new Interval(other.sup, this.sup) };
-        }
-        else {
+            return new Interval[] { Interval.of(this.inf, other.inf), Interval.of(other.inf, other.sup), Interval.of(other.sup, this.sup) };
+        } else {
             if ((this.contains(other.inf)) && (this.sup != other.inf)) {
                 return this.split(other.inf);
-            }
-            else if ((this.contains(other.sup)) && (this.inf != other.sup)) {
+            } else if ((this.contains(other.sup)) && (this.inf != other.sup)) {
                 return this.split(other.sup);
-            }
-            else {
-                return new Interval[] { new Interval(this.inf, this.sup) };
+            } else {
+                return new Interval[] { this };
             }
         }
+    }
+
+    /**
+     * Estimate the midpoint of the interval
+     * 
+     * @return The midpoint
+     */
+    public final double midpoint() {
+        return (this.sup - this.inf) / 2.0;
     }
 
     /*
@@ -380,41 +425,43 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     @Override
     public final int compareTo(final Interval other) {
-        return Double.valueOf(this.inf).compareTo(Double.valueOf(other.inf)) + Double.valueOf(this.sup).compareTo(Double.valueOf(other.sup));
+        return Double.valueOf(this.inf + this.midpoint()).compareTo(Double.valueOf(other.inf + other.midpoint()));
     }
 
     /*
+     * (non-Javadoc)
      * 
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         long temp;
         temp = Double.doubleToLongBits(this.inf);
-        result = (prime * result) + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(this.sup);
-        result = (prime * result) + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
     /*
+     * (non-Javadoc)
      * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public final boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
         if (obj == null) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        final Interval other = (Interval) obj;
+        Interval other = (Interval) obj;
         if (Double.doubleToLongBits(this.inf) != Double.doubleToLongBits(other.inf)) {
             return false;
         }
@@ -430,7 +477,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     @Override
     public final Interval clone() {
-        return new Interval(this.inf, this.sup);
+        return Interval.of(this.inf, this.sup);
     }
 
     /*
@@ -443,15 +490,13 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         sb.append("[");
         if (this.inf == Double.NEGATIVE_INFINITY) {
             sb.append("-oo");
-        }
-        else {
+        } else {
             sb.append(this.inf);
         }
         sb.append(",");
         if (this.sup == Double.POSITIVE_INFINITY) {
             sb.append("oo");
-        }
-        else {
+        } else {
             sb.append(this.sup);
         }
         sb.append("]");

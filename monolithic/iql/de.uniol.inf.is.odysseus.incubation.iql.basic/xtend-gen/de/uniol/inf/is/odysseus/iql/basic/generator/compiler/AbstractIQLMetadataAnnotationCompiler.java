@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
+import java.util.List;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -39,11 +41,13 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   
   public String compile(final IQLMetadataList o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
+    EList<IQLMetadata> _elements = o.getElements();
     final Function1<IQLMetadata, String> _function = (IQLMetadata e) -> {
       return this.compile(e, c);
     };
-    String _join = IterableExtensions.join(ListExtensions.<IQLMetadata, String>map(o.getElements(), _function), ", ");
-    _builder.append(_join);
+    List<String> _map = ListExtensions.<IQLMetadata, String>map(_elements, _function);
+    String _join = IterableExtensions.join(_map, ", ");
+    _builder.append(_join, "");
     _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
@@ -51,10 +55,11 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   public String compile(final IQLMetadata o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     String _name = o.getName();
-    _builder.append(_name);
+    _builder.append(_name, "");
     _builder.append(" = ");
-    String _compile = this.compile(o.getValue(), c);
-    _builder.append(_compile);
+    IQLMetadataValue _value = o.getValue();
+    String _compile = this.compile(_value, c);
+    _builder.append(_compile, "");
     _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
@@ -97,14 +102,14 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   public String compile(final IQLMetadataValueSingleInt o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     int _value = o.getValue();
-    _builder.append(_value);
+    _builder.append(_value, "");
     return _builder.toString();
   }
   
   public String compile(final IQLMetadataValueSingleDouble o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     double _value = o.getValue();
-    _builder.append(_value);
+    _builder.append(_value, "");
     return _builder.toString();
   }
   
@@ -114,7 +119,8 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
     boolean _tripleNotEquals = (_expectedTypeRef != null);
     if (_tripleNotEquals) {
       String _xifexpression_1 = null;
-      boolean _isCharacter = this.typeUtils.isCharacter(c.getExpectedTypeRef());
+      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
+      boolean _isCharacter = this.typeUtils.isCharacter(_expectedTypeRef_1);
       if (_isCharacter) {
         String _value = o.getValue();
         String _plus = ("\'" + _value);
@@ -123,7 +129,7 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("\"");
         String _value_1 = o.getValue();
-        _builder.append(_value_1);
+        _builder.append(_value_1, "");
         _builder.append("\"");
         _xifexpression_1 = _builder.toString();
       }
@@ -132,7 +138,7 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
       StringConcatenation _builder_1 = new StringConcatenation();
       _builder_1.append("\"");
       String _value_2 = o.getValue();
-      _builder_1.append(_value_2);
+      _builder_1.append(_value_2, "");
       _builder_1.append("\"");
       _xifexpression = _builder_1.toString();
     }
@@ -142,7 +148,7 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   public String compile(final IQLMetadataValueSingleBoolean o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     boolean _isValue = o.isValue();
-    _builder.append(_isValue);
+    _builder.append(_isValue, "");
     return _builder.toString();
   }
   
@@ -154,8 +160,9 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   
   public String compile(final IQLMetadataValueSingleTypeRef o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
-    String _compile = this.typeCompiler.compile(o.getValue(), c, true);
-    _builder.append(_compile);
+    JvmTypeReference _value = o.getValue();
+    String _compile = this.typeCompiler.compile(_value, c, true);
+    _builder.append(_compile, "");
     _builder.append(".class");
     return _builder.toString();
   }
@@ -163,11 +170,13 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   public String compile(final IQLMetadataValueList o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("{");
+    EList<IQLMetadataValue> _elements = o.getElements();
     final Function1<IQLMetadataValue, String> _function = (IQLMetadataValue e) -> {
       return this.compile(e, c);
     };
-    String _join = IterableExtensions.join(ListExtensions.<IQLMetadataValue, String>map(o.getElements(), _function), ", ");
-    _builder.append(_join);
+    List<String> _map = ListExtensions.<IQLMetadataValue, String>map(_elements, _function);
+    String _join = IterableExtensions.join(_map, ", ");
+    _builder.append(_join, "");
     _builder.append("}");
     return _builder.toString();
   }
@@ -175,22 +184,26 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   public String compile(final IQLMetadataValueMap o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("(");
+    EList<IQLMetadataValueMapElement> _elements = o.getElements();
     final Function1<IQLMetadataValueMapElement, String> _function = (IQLMetadataValueMapElement e) -> {
       return this.compile(e, c);
     };
-    String _join = IterableExtensions.join(ListExtensions.<IQLMetadataValueMapElement, String>map(o.getElements(), _function), ", ");
-    _builder.append(_join);
+    List<String> _map = ListExtensions.<IQLMetadataValueMapElement, String>map(_elements, _function);
+    String _join = IterableExtensions.join(_map, ", ");
+    _builder.append(_join, "");
     _builder.append(")");
     return _builder.toString();
   }
   
   public String compile(final IQLMetadataValueMapElement o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
-    String _compile = this.compile(o.getKey(), c);
-    _builder.append(_compile);
+    IQLMetadataValue _key = o.getKey();
+    String _compile = this.compile(_key, c);
+    _builder.append(_compile, "");
     _builder.append(" = ");
-    String _compile_1 = this.compile(o.getValue(), c);
-    _builder.append(_compile_1);
+    IQLMetadataValue _value = o.getValue();
+    String _compile_1 = this.compile(_value, c);
+    _builder.append(_compile_1, "");
     return _builder.toString();
   }
 }

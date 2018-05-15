@@ -18,10 +18,13 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.builder.standalone,
  com.google.guava,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.mep,
+ org.junit,
+ de.uniol.inf.is.odysseus.core.server,
+ org.eclipse.debug.core,
+ javax.validation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.cql2,
- de.uniol.inf.is.odysseus.parser.cql2.builder,
  de.uniol.inf.is.odysseus.parser.cql2.generator,
  de.uniol.inf.is.odysseus.parser.cql2.scoping,
  de.uniol.inf.is.odysseus.parser.cql2.typing,
@@ -33,15 +36,9 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql2,
  de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.internal,
  de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.lexer,
  de.uniol.inf.is.odysseus.parser.cql2.serializer,
- de.uniol.inf.is.odysseus.parser.cql2.services,
- de.uniol.inf.is.odysseus.parser.cql2.cQL.util,
- de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.internal,
- de.uniol.inf.is.odysseus.parser.cql2.services,
+ de.uniol.inf.is.odysseus.parser.cql2.services
+Import-Package: com.google.inject,
  de.uniol.inf.is.odysseus.parser.cql2.cQL,
- de.uniol.inf.is.odysseus.parser.cql2.parser.antlr,
- de.uniol.inf.is.odysseus.parser.cql2.serializer,
- de.uniol.inf.is.odysseus.parser.cql2.cQL.impl,
- de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.lexer
-Import-Package: org.slf4j,
+ javax.validation.constraints,
+ org.slf4j,
  org.apache.log4j
-Bundle-ActivationPolicy: lazy
