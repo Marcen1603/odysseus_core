@@ -22,8 +22,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 
 public class Activator implements BundleActivator {
 
-	private static final String PRIORITY_PREDICATE = "PRIORITYPREDICATE";
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -33,7 +31,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putExpressionBuilder(PRIORITY_PREDICATE,
+		OperatorBuilderFactory.putExpressionBuilder(
 				new PriorityPredicateBuilder<>());
 	}
 
@@ -45,7 +43,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removeExpressionBuilder(PRIORITY_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(new PriorityPredicateBuilder<>());
 	}
 
 }

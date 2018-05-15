@@ -8,17 +8,14 @@ import de.uniol.inf.is.odysseus.server.xml.predicate.XMLStreamObjectPredicateBui
 
 public class Activator implements BundleActivator {
 
-	private static final String XMLSTREAMOBJECT_PREDICATE = "XMLSTREAMOBJECTPREDICATE";
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putExpressionBuilder(XMLSTREAMOBJECT_PREDICATE, new XMLStreamObjectPredicateBuilder<>());
-		OperatorBuilderFactory.putExpressionBuilder(XMLStreamObject.class.getName(), new XMLStreamObjectPredicateBuilder<>());
-			}
+		OperatorBuilderFactory.putExpressionBuilder(new XMLStreamObjectPredicateBuilder<>());
+	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removeExpressionBuilder(XMLSTREAMOBJECT_PREDICATE);
-		OperatorBuilderFactory.removeExpressionBuilder(XMLStreamObject.class.getName());
+		OperatorBuilderFactory.removeExpressionBuilder(new XMLStreamObjectPredicateBuilder<>());
 	}
 }

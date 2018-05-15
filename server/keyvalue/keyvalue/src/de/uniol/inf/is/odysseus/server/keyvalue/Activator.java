@@ -9,17 +9,13 @@ import de.uniol.inf.is.odysseus.server.keyvalue.expression.KeyValuePredicateBuil
 
 public class Activator implements BundleActivator {
 
-	private static final String KEYVALUE_PREDICATE = "KEYVALUEPREDICATE";
-
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putExpressionBuilder(KEYVALUE_PREDICATE, new KeyValuePredicateBuilder<>());
-		OperatorBuilderFactory.putExpressionBuilder(KeyValueObject.class.getName(), new KeyValuePredicateBuilder<>());
+		OperatorBuilderFactory.putExpressionBuilder(new KeyValuePredicateBuilder<>());
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removeExpressionBuilder(KEYVALUE_PREDICATE);
-		OperatorBuilderFactory.removeExpressionBuilder(KeyValueObject.class.getName());
+		OperatorBuilderFactory.removeExpressionBuilder(new KeyValuePredicateBuilder<>());
 	}
 }

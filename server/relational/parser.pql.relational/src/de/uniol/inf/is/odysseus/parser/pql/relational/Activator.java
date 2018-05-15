@@ -17,27 +17,19 @@ package de.uniol.inf.is.odysseus.parser.pql.relational;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 
 
 public class Activator implements BundleActivator {
 
-	private static final String RELATIONAL_PREDICATE = "RELATIONALPREDICATE";
-	private static final String FOR_ALL_PREDICATE = "FORALLPREDICATE";
-	private static final String FOR_ANY_PREDICATE = "FORANYPREDICATE";
-
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putExpressionBuilder(RELATIONAL_PREDICATE, new RelationalPredicateBuilder<>());
-		OperatorBuilderFactory.putExpressionBuilder(Tuple.class.getName(), new RelationalPredicateBuilder<>());
+		OperatorBuilderFactory.putExpressionBuilder(new RelationalPredicateBuilder<>());
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removeExpressionBuilder(RELATIONAL_PREDICATE);
-		OperatorBuilderFactory.removeExpressionBuilder(FOR_ALL_PREDICATE);
-		OperatorBuilderFactory.removeExpressionBuilder(FOR_ANY_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(new RelationalPredicateBuilder<>());
 	}
 
 }
