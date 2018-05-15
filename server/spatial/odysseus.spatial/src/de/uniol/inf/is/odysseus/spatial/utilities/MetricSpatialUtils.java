@@ -18,20 +18,20 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tobias Brandt
  *
  */
-public class MetrticSpatialUtils {
+public class MetricSpatialUtils {
 
 	private CoordinateReferenceSystem defaultCrs;
 
-	private static MetrticSpatialUtils instance;
+	private static MetricSpatialUtils instance;
 
-	public static MetrticSpatialUtils getInstance() {
+	public static MetricSpatialUtils getInstance() {
 		if (instance == null) {
-			instance = new MetrticSpatialUtils();
+			instance = new MetricSpatialUtils();
 		}
 		return instance;
 	}
 
-	private MetrticSpatialUtils() {
+	private MetricSpatialUtils() {
 		try {
 			// Just to make it explicit: We want lat/lng as the normal case
 

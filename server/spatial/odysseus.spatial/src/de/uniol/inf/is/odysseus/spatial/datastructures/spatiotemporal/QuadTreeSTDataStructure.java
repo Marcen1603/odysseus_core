@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 @Deprecated
 public class QuadTreeSTDataStructure implements ISpatioTemporalDataStructure {
@@ -135,14 +135,14 @@ public class QuadTreeSTDataStructure implements ISpatioTemporalDataStructure {
 	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double rangeMeters, ITimeInterval t) {
 
 		// Get the rectangular envelope for the circle
-		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCoordinate(), rangeMeters);
+		Envelope env = MetricSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCoordinate(), rangeMeters);
 
 		// Query the quadTree for all objects that may be in the envelope
 		List<Tuple<ITimeInterval>> envelopeItems = quadTree.query(env);
 
 		List<Tuple<ITimeInterval>> result = envelopeItems.parallelStream()
 				// spatial filter
-				.filter(e -> e != null && MetrticSpatialUtils.getInstance().calculateDistance(geometry.getCoordinate(),
+				.filter(e -> e != null && MetricSpatialUtils.getInstance().calculateDistance(geometry.getCoordinate(),
 						getGeometry((Tuple<ITimeInterval>) e).getCoordinate()) <= rangeMeters)
 				// temporal filter
 				.filter(f -> f.getMetadata().getStart().before(t.getEnd())

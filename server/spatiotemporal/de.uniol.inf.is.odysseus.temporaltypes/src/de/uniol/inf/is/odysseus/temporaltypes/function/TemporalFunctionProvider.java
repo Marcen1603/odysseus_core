@@ -15,6 +15,7 @@ public class TemporalFunctionProvider implements IFunctionProvider {
 		functions.add(new TrimFunction());
 		functions.add(new AtMinFunction());
 		functions.add(new AtMaxFunction());
+		functions.add(new SpeedFunction());
 		return functions;
 	}
 
