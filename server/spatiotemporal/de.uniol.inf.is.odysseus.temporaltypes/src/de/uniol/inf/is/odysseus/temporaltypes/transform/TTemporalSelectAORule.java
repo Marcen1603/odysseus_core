@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
+import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalSelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
@@ -30,10 +31,14 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		if (operator.getPredicate() instanceof RelationalExpression) {
 			@SuppressWarnings("unchecked")
 			RelationalExpression<IValidTimes> expression = (RelationalExpression<IValidTimes>) operator.getPredicate();
-			TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
-					expression);
-			TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = new TemporalSelectPO<>(temporalExpression);
-			this.defaultExecute(operator, temporalSelect, config, true, true);
+			if (expression instanceof TemporalFunction) {
+				System.out.println("Lalala!");
+			} else {
+				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
+						expression);
+				TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = new TemporalSelectPO<>(temporalExpression);
+				this.defaultExecute(operator, temporalSelect, config, true, true);
+			}
 		}
 	}
 
