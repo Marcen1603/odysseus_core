@@ -24,7 +24,7 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putExpressionBuilder(new RelationalPredicateBuilder<>());
+		OperatorBuilderFactory.addExpressionBuilder(new RelationalPredicateBuilder<>());
 	}
 
 	@Override

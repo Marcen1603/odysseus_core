@@ -66,7 +66,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		return operatorBuilders.keySet();
 	}
 
-	public static void putExpressionBuilder(IExpressionBuilder<?,?> builder) {
+	public static void addExpressionBuilder(IExpressionBuilder<?,?> builder) {
 		addExpressionBuilder(builder, builder.getName());
 		if (builder.getAliasName() != null) {
 			addExpressionBuilder(builder, builder.getAliasName());

@@ -47,7 +47,7 @@ public class Activator implements BundleActivator {
     @Override
     public final void start(final BundleContext bundleContext) throws Exception {
         Activator.context = bundleContext;
-        OperatorBuilderFactory.putExpressionBuilder(new ProbabilisticRelationalPredicateBuilder<>());
+        OperatorBuilderFactory.addExpressionBuilder(new ProbabilisticRelationalPredicateBuilder<>());
     }
 
     /*
