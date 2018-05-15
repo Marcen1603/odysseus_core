@@ -24,7 +24,7 @@ public class AtMinFunction extends AbstractFunction<GenericTemporalType<?>> impl
 		super("atMin", 2, accTypes, SDFDatatype.OBJECT);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public GenericTemporalType<?> getValue() {
 
@@ -36,33 +36,63 @@ public class AtMinFunction extends AbstractFunction<GenericTemporalType<?>> impl
 		GenericTemporalType<Comparable> result = new GenericTemporalType<>();
 		IValidTimes validTimes = this.getInputValue(1);
 
+		// These lists will contain the values and times with the min / max values
 		List<Comparable> minValues = new ArrayList<>();
 		List<PointInTime> pointsInTime = new ArrayList<>();
 
+		// Loop through all available values and pick the min / max ones
 		for (IValidTime validTime : validTimes.getValidTimes()) {
 			for (PointInTime currentTime = validTime.getValidStart(); currentTime
 					.before(validTime.getValidEnd()); currentTime = currentTime.plus(1)) {
 				Object value = temporalType.getValue(currentTime);
 				if (value instanceof Comparable) {
 					Comparable currentValue = (Comparable) value;
-					if (minValues.isEmpty() || currentValue.compareTo(minValues.get(0)) < 0) {
-						minValues.clear();
-						pointsInTime.clear();
-						minValues.add(currentValue);
-						pointsInTime.add(currentTime);
-					} else if (!minValues.isEmpty() && currentValue.compareTo(minValues.get(0)) == 0) {
-						minValues.add(currentValue);
-						pointsInTime.add(currentTime);
+					if (isMinMaxValue(minValues, currentValue)) {
+						startNewLists(minValues, pointsInTime, currentValue, currentTime);
+					} else if (isEqualValue(minValues, currentValue)) {
+						// There can be multiple min / max values
+						addToExistingLists(minValues, pointsInTime, currentValue, currentTime);
 					}
 				}
 			}
 		}
 
+		// Construct the temporal type only with the min / max values
 		for (int i = 0; i < minValues.size(); i++) {
 			result.setValue(pointsInTime.get(i), minValues.get(i));
 		}
 
 		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void addToExistingLists(List<Comparable> values, List<PointInTime> pointsInTime, Comparable currentValue,
+			PointInTime currentTime) {
+		values.add(currentValue);
+		pointsInTime.add(currentTime);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void startNewLists(List<Comparable> values, List<PointInTime> pointsInTime, Comparable currentValue,
+			PointInTime currentTime) {
+		/*
+		 * We found a value that is smaller / bigger than the ones we stored. Clear all
+		 * and start from the beginning.
+		 */
+		values.clear();
+		pointsInTime.clear();
+		values.add(currentValue);
+		pointsInTime.add(currentTime);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private boolean isMinMaxValue(List<Comparable> minValues, Comparable currentValue) {
+		return minValues.isEmpty() || currentValue.compareTo(minValues.get(0)) < 0;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private boolean isEqualValue(List<Comparable> minValues, Comparable currentValue) {
+		return !minValues.isEmpty() && currentValue.compareTo(minValues.get(0)) == 0;
 	}
 
 	@Override
