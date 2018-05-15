@@ -11,6 +11,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
+/**
+ * The speed function from the Moving Object Algebra. Uses not the Euclidean
+ * distance but the orthodromic distance to respect the shape of the Earth.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class SpeedFunction extends AbstractFunction<GenericTemporalType<?>> implements TemporalFunction {
 
 	private static final long serialVersionUID = -4062575755075928525L;
@@ -29,33 +36,44 @@ public class SpeedFunction extends AbstractFunction<GenericTemporalType<?>> impl
 		}
 
 		TemporalType<GeometryWrapper> temporalPoint = this.getInputValue(0);
-		GenericTemporalType<Double> result = new GenericTemporalType<>();
 		IValidTimes validTimes = this.getInputValue(1);
+
+		GenericTemporalType<Double> result = new GenericTemporalType<>();
 		PointInTime prevTime = null;
 
 		for (IValidTime validTime : validTimes.getValidTimes()) {
 			for (PointInTime currentTime = validTime.getValidStart(); currentTime
 					.before(validTime.getValidEnd()); currentTime = currentTime.plus(1)) {
 
+				// For the very first location there is no speed
 				if (prevTime == null) {
 					prevTime = currentTime;
 					result.setValue(currentTime, 0.0);
 					continue;
 				}
 
-				GeometryWrapper value = temporalPoint.getValue(prevTime);
-				GeometryWrapper nextValue = temporalPoint.getValue(currentTime);
-				Coordinate coord1 = value.getGeometry().getCoordinate();
-				Coordinate coord2 = nextValue.getGeometry().getCoordinate();
-				double distance = MetricSpatialUtils.getInstance().calculateDistance(coord1, coord2);
-				double speed = distance / (currentTime.minus(prevTime).getMainPoint());
+				// From the second point on the moving object has a speed
+				double speed = calculateSpeed(temporalPoint, currentTime, prevTime);
 				result.setValue(currentTime, speed);
-
 				prevTime = currentTime;
 			}
 		}
 
 		return result;
+	}
+
+	/**
+	 * Calculates the speed in meters per time instance
+	 */
+	private double calculateSpeed(TemporalType<GeometryWrapper> temporalPoint, PointInTime currentTime,
+			PointInTime prevTime) {
+		GeometryWrapper value = temporalPoint.getValue(prevTime);
+		GeometryWrapper nextValue = temporalPoint.getValue(currentTime);
+		Coordinate coord1 = value.getGeometry().getCoordinate();
+		Coordinate coord2 = nextValue.getGeometry().getCoordinate();
+		double distance = MetricSpatialUtils.getInstance().calculateDistance(coord1, coord2);
+		double speed = distance / (currentTime.minus(prevTime).getMainPoint());
+		return speed;
 	}
 
 }

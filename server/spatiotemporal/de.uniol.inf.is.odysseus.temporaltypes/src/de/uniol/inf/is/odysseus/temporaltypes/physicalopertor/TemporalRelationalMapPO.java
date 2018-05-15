@@ -37,13 +37,23 @@ public class TemporalRelationalMapPO<T extends IValidTimes> extends RelationalMa
 			 * could lead to an unwanted conversion from a temporal function to a generic
 			 * temporal function.
 			 */
-			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i]) && !(expr[i].getMEPExpression() instanceof TemporalFunction)) {
+			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i])
+					&& !isTemporalFunction(expr[i])) {
 				this.expressions[i] = new TemporalRelationalExpression<>(expr[i]);
 			} else {
 				this.expressions[i] = new RelationalExpression<T>(expr[i]);
 			}
 			this.expressions[i].initVars(schema);
 		}
+	}
+
+	/**
+	 * Tests if the given expression is a temporal function. If so, a normal
+	 * expression should be used, not a temporal one because the temporal function
+	 * can work with temporal types.
+	 */
+	private boolean isTemporalFunction(SDFExpression expression) {
+		return expression.getMEPExpression() instanceof TemporalFunction;
 	}
 
 	/**
