@@ -31,14 +31,15 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		if (operator.getPredicate() instanceof RelationalExpression) {
 			@SuppressWarnings("unchecked")
 			RelationalExpression<IValidTimes> expression = (RelationalExpression<IValidTimes>) operator.getPredicate();
-			if (expression instanceof TemporalFunction) {
-				System.out.println("Lalala!");
+			TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = null;
+			if (expression.getExpression().getMEPExpression() instanceof TemporalFunction) {
+				temporalSelect = new TemporalSelectPO<>(expression);
 			} else {
 				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
 						expression);
-				TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = new TemporalSelectPO<>(temporalExpression);
-				this.defaultExecute(operator, temporalSelect, config, true, true);
+				temporalSelect = new TemporalSelectPO<>(temporalExpression);
 			}
+			this.defaultExecute(operator, temporalSelect, config, true, true);
 		}
 	}
 
@@ -90,7 +91,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 			 */
 			List<SDFAttribute> attributes = operator.getInputSchema().getAttributes().stream()
 					.filter(e -> (e.getURI().equals(attribute.getURI()))).collect(Collectors.toList());
-			
+
 			// Check for all matches if they are temporal
 			for (SDFAttribute attr : attributes) {
 				if (TemporalDatatype.isTemporalAttribute(attr)) {
