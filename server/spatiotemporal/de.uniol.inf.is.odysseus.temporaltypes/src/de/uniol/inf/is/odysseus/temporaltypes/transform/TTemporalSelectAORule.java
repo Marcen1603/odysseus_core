@@ -33,6 +33,10 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 			RelationalExpression<IValidTimes> expression = (RelationalExpression<IValidTimes>) operator.getPredicate();
 			TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = null;
 			if (expression.getExpression().getMEPExpression() instanceof TemporalFunction) {
+				/*
+				 * In case that the function can directly work on a temporal type do not use a
+				 * temporal expression
+				 */
 				temporalSelect = new TemporalSelectPO<>(expression);
 			} else {
 				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
