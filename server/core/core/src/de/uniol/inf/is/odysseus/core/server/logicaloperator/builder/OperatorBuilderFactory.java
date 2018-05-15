@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<>();
 	private static Map<String, IExpressionBuilder<?,?>> expressionsBuilders = new HashMap<>();
-	private static Map<String, Object> udfs = new HashMap<String, Object>();
+	private static Map<String, Object> udfs = new HashMap<>();
 
 	public static IOperatorBuilder createOperatorBuilder(String name,
 			ISession caller, IDataDictionary dataDictionary, Context context, IServerExecutor executor) {
