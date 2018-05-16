@@ -252,11 +252,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	@Override
 	public void closeConnection() {
-		try {
-			close();
-		} catch (IOException e) {
-			getLogger().error("Error while closing connection!", e);
-		}
+		//XXX not implemented. Calling close() here causes a shutdown of Odysseus (I don't know why).
 	}
 
 	@Override
