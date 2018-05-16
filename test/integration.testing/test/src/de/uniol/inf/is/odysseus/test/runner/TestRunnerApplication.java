@@ -193,20 +193,28 @@ public class TestRunnerApplication implements IApplication {
     }
 
     private void startBundles(final BundleContext context) {
-        for (Bundle bundle : context.getBundles()) {
-            boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
-            if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
-                try {
-                    if (bundle.getSymbolicName().startsWith("de.uniol.inf.is.odysseus")) {
-                        bundle.start();
-                    }
-                }
-                catch (BundleException e) {
-                    e.printStackTrace();
-                }
-            }
+    	Thread runner = new Thread() {
+			
+			@Override
+			public void run() {
+		        for (Bundle bundle : context.getBundles()) {
+		            boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
+		            if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
+		                try {
+		                    if (bundle.getSymbolicName().startsWith("de.uniol.inf.is.odysseus")) {
+		                        bundle.start();
+		                    }
+		                }
+		                catch (BundleException e) {
+		                    e.printStackTrace();
+		                }
+		            }
 
-        }
+		        }
+				
+			}
+		};
+		runner.start();
 
     }
 
