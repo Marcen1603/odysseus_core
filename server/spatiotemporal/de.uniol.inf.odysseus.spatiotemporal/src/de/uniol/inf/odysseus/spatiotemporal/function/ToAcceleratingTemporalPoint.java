@@ -2,14 +2,19 @@ package de.uniol.inf.odysseus.spatiotemporal.function;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.geotools.referencing.GeodeticCalculator;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.AcceleratingMovingPointFunction;
@@ -25,8 +30,26 @@ public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tupl
 		super();
 	}
 
+	public ToAcceleratingTemporalPoint(final int[] attributes, final String[] outputNames) {
+		super(attributes, outputNames);
+		if (outputNames.length != attributes.length) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
+	}
+
+	public ToAcceleratingTemporalPoint(final int inputAttributesLength, final String[] outputNames) {
+		super(null, outputNames);
+		if (outputNames.length != inputAttributesLength) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
+	}
+
+	public ToAcceleratingTemporalPoint(ToAcceleratingTemporalPoint<M, T> other) {
+		super(other);
+	}
+
 	@Override
-	protected Object[] handleFilledHistory(T trigger, T oldestElement, PointInTime currentPointInTime,
+	protected Object[] handleFilledHistory(T newestElement, T oldestElement, PointInTime currentPointInTime,
 			Collection<T> history) {
 		Geometry basePoint = getPointFromElement(oldestElement);
 		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
@@ -35,7 +58,7 @@ public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tupl
 		PointInTime middlePointInTime = middleElement.getMetadata().getStart();
 		Geometry middlePoint = getPointFromElement(middleElement);
 
-		Geometry currentPoint = getPointFromElement(trigger);
+		Geometry currentPoint = getPointFromElement(newestElement);
 
 		GeodeticCalculator fullCalculator = getGeodeticCalculator(basePoint, currentPoint);
 		GeodeticCalculator firstHalfCalculator = getGeodeticCalculator(basePoint, middlePoint);
@@ -75,11 +98,32 @@ public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tupl
 
 		int middleElementIndex = (int) history.size() / 2;
 		Iterator<T> iterator = history.iterator();
-		for (int i = 0; i < middleElementIndex; i++) {
+		int i = 0;
+		do {
 			middleElement = iterator.next();
-		}
+			i++;
+		} while (i < middleElementIndex);
 
 		return middleElement;
+	}
+
+	@Override
+	public AbstractNonIncrementalAggregationFunction<M, T> clone() {
+		return new ToAcceleratingTemporalPoint<>(this);
+	}
+
+	@Override
+	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
+		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
+				attributeResolver);
+		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters,
+				attributeResolver);
+
+		if (attributes == null) {
+			return new ToAcceleratingTemporalPoint<>(attributeResolver.getSchema().get(0).size(), outputNames);
+		}
+
+		return new ToAcceleratingTemporalPoint<>(attributes, outputNames);
 	}
 
 }

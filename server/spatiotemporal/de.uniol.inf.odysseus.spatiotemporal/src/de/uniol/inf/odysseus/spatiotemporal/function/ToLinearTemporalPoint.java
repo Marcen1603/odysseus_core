@@ -2,6 +2,7 @@ package de.uniol.inf.odysseus.spatiotemporal.function;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -65,24 +66,25 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
 		T oldestElement = popOldestElement(elements);
-		
+		T newestElement = getNewestElement(elements);
+
 		if (oldestElement == null) {
-			return this.handleEmptyHistory(trigger);
+			return handleEmptyHistory(newestElement);
 		}
-		return this.handleFilledHistory(trigger, oldestElement, pointInTime, elements);
+		return handleFilledHistory(newestElement, oldestElement, pointInTime, elements);
 	}
-	
-	protected Object[] handleEmptyHistory(T trigger) {
-		Geometry currentPoint = getPointFromElement(trigger);
+
+	protected Object[] handleEmptyHistory(T newestElement) {
+		Geometry currentPoint = getPointFromElement(newestElement);
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
-				trigger.getMetadata().getStart(), 0, 0);
+				newestElement.getMetadata().getStart(), 0, 0);
 		TemporalPoint[] temporalPoint = new TemporalPoint[1];
 		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
 		return temporalPoint;
 	}
-	
-	protected Object[] handleFilledHistory(T trigger, T oldestElement, PointInTime pointInTime, Collection<T> history) {
-		Geometry currentPoint = getPointFromElement(trigger);
+
+	protected Object[] handleFilledHistory(T newestElement, T oldestElement, PointInTime pointInTime, Collection<T> history) {
+		Geometry currentPoint = getPointFromElement(newestElement);
 		Geometry basePoint = getPointFromElement(oldestElement);
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(basePoint, currentPoint);
 
@@ -135,6 +137,15 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 			return null;
 		}
 		return elements.iterator().next();
+	}
+
+	protected T getNewestElement(Collection<T> elements) {
+		Iterator<T> iterator = elements.iterator();
+		T newestElement = null;
+		while (iterator.hasNext()) {
+			newestElement = iterator.next();
+		}
+		return newestElement;
 	}
 
 	@Override
