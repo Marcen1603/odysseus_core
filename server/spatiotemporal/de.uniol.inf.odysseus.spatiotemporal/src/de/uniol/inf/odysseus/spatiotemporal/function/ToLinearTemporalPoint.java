@@ -72,7 +72,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return this.handleFilledHistory(trigger, oldestElement, pointInTime, elements);
 	}
 	
-	private Object[] handleEmptyHistory(T trigger) {
+	protected Object[] handleEmptyHistory(T trigger) {
 		Geometry currentPoint = getPointFromElement(trigger);
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
 				trigger.getMetadata().getStart(), 0, 0);
@@ -81,7 +81,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return temporalPoint;
 	}
 	
-	private Object[] handleFilledHistory(T trigger, T oldestElement, PointInTime pointInTime, Collection<T> history) {
+	protected Object[] handleFilledHistory(T trigger, T oldestElement, PointInTime pointInTime, Collection<T> history) {
 		Geometry currentPoint = getPointFromElement(trigger);
 		Geometry basePoint = getPointFromElement(oldestElement);
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(basePoint, currentPoint);
@@ -102,7 +102,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return temporalPoint;
 	}
 
-	private GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
+	protected GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 
 		double startLongitude = from.getCentroid().getY();
@@ -116,7 +116,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return geodeticCalculator;
 	}
 
-	private Geometry getPointFromElement(T element) {
+	protected Geometry getPointFromElement(T element) {
 		Geometry point = null;
 
 		Object[] attributes = this.getAttributes(element);
@@ -130,7 +130,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return point;
 	}
 
-	private T popOldestElement(Collection<T> elements) {
+	protected T popOldestElement(Collection<T> elements) {
 		if (elements.isEmpty()) {
 			return null;
 		}
