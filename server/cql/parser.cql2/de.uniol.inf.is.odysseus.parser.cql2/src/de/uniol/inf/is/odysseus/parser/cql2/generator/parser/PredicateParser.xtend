@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.OrPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeNameParser
@@ -32,12 +33,10 @@ import java.util.ArrayList
 import java.util.List
 import java.util.Map
 import java.util.Optional
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 class PredicateParser implements IPredicateParser {
 
-	private val Logger log = LoggerFactory.getLogger(PredicateParser);
+//	private val Logger log = LoggerFactory.getLogger(PredicateParser);
 
 	private var IUtilityService utilityService
 	private var ICacheService cacheService
@@ -66,7 +65,7 @@ class PredicateParser implements IPredicateParser {
 		
 	}
 
-	def CharSequence parse(Expression e, SimpleSelect select) {
+	def CharSequence parse(Expression e, SimpleSelect select) throws PQLOperatorBuilderException {
 		if (!e.eContents.empty) {
 			switch e {
 				OrPredicate: {

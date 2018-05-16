@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.TuplebasedWindow
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IWindowParser
 import java.util.Map
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException
 
 class WindowParser implements IWindowParser {
 	
@@ -20,7 +21,7 @@ class WindowParser implements IWindowParser {
 		this.builder = builder;
 	}	
 	
-	override parse(SimpleSource source) {
+	override parse(SimpleSource source) throws PQLOperatorBuilderException {
 	
 	if(source.window === null) return source.name
 		var Map<String, String> args = newHashMap

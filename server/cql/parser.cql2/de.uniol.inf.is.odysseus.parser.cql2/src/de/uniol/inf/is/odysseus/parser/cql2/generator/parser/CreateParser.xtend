@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ICreateP
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ISelectParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Map
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException
 
 class CreateParser implements ICreateParser {
 
@@ -50,7 +51,7 @@ class CreateParser implements ICreateParser {
 			parseCreateDatabaseSink(statement.create as CreateDatabaseSink)
 	}
 
-	def private CharSequence parseCreateView(CreateView view) {
+	def private CharSequence parseCreateView(CreateView view) throws PQLOperatorBuilderException {
 		var select = view.select.select as SimpleSelect
 		selectParser.parse(select)
 		var String viewName = view.getName()
@@ -60,7 +61,7 @@ class CreateParser implements ICreateParser {
 
 	private val SINK_INPUT_KEYWORD = '--INPUT--'
 	val String VIEW = "VIEW_KEY_";
-	
+
 	def private parseCreateDatabaseSink(CreateDatabaseSink sink) {
 		var Map<String, String> args = newHashMap
 		args.put('connection', sink.database)
@@ -143,7 +144,7 @@ class CreateParser implements ICreateParser {
 		return utilityService.generateKeyValueString(attributenames, datatypes, ',')
 	}
 
-	def private CharSequence parseCreateStreamFile(CreateChannelFormatViaFile file) {
+	def private CharSequence parseCreateStreamFile(CreateChannelFormatViaFile file) throws PQLOperatorBuilderException {
 		var Map<String, String> args = newHashMap
 		args.put('source', file.attributes.name)
 		args.put('wrapper', 'GenericPull')
@@ -156,7 +157,8 @@ class CreateParser implements ICreateParser {
 		return cacheService.getOperatorCache().add(VIEW + file.attributes.name, operator)
 	}
 
-	def private CharSequence parseCreateStreamChannel(CreateChannelFrameworkViaPort channel) {
+	def private CharSequence parseCreateStreamChannel(
+		CreateChannelFrameworkViaPort channel) throws PQLOperatorBuilderException{
 		var Map<String, String> args = newHashMap
 		args.put('source', channel.attributes.name)
 		args.put('wrapper', 'GenericPush')
@@ -218,12 +220,12 @@ class CreateParser implements ICreateParser {
 		argss.put('schema', if(argss.containsKey('source')) extractSchema(schema).toString else null)
 		argss.put('options', utilityService.generateKeyValueString(pars.keys, pars.values, ','))
 		argss.put('input', if(argss.containsKey('sink')) input else null)
-		
-		//TODO refactor me
+
+		// TODO refactor me
 		val StringBuilder b = new StringBuilder();
-		cacheService.getSystemSources().stream().filter(e | e.isMeta).forEach(e | b.append(e.getName) + ",")
+		cacheService.getSystemSources().stream().filter(e|e.isMeta).forEach(e|b.append(e.getName) + ",")
 		argss.put('metaattribute', b.toString.replaceAll(regex, ""))
-		
+
 		return builder.build(t, argss)
 	}
 
