@@ -67,10 +67,10 @@ public class SpeedFunction extends AbstractFunction<GenericTemporalType<?>> impl
 	 */
 	private double calculateSpeed(TemporalType<GeometryWrapper> temporalPoint, PointInTime currentTime,
 			PointInTime prevTime) {
-		GeometryWrapper value = temporalPoint.getValue(prevTime);
-		GeometryWrapper nextValue = temporalPoint.getValue(currentTime);
-		Coordinate coord1 = value.getGeometry().getCoordinate();
-		Coordinate coord2 = nextValue.getGeometry().getCoordinate();
+		GeometryWrapper prevValue = temporalPoint.getValue(prevTime);
+		GeometryWrapper currentValue = temporalPoint.getValue(currentTime);
+		Coordinate coord1 = prevValue.getGeometry().getCoordinate();
+		Coordinate coord2 = currentValue.getGeometry().getCoordinate();
 		double distance = MetricSpatialUtils.getInstance().calculateDistance(coord1, coord2);
 		double speed = distance / (currentTime.minus(prevTime).getMainPoint());
 		return speed;
