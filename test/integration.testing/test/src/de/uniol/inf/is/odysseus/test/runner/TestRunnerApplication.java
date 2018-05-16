@@ -201,9 +201,7 @@ public class TestRunnerApplication implements IApplication {
 		            boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
 		            if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
 		                try {
-		                    if (bundle.getSymbolicName().startsWith("de.uniol.inf.is.odysseus")) {
-		                        bundle.start();
-		                    }
+	                        bundle.start();
 		                }
 		                catch (BundleException e) {
 		                    e.printStackTrace();
