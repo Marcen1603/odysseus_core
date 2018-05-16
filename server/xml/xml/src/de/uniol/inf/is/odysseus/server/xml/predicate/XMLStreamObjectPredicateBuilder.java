@@ -21,4 +21,14 @@ public class XMLStreamObjectPredicateBuilder<M extends IMetaAttribute> extends A
 		return pred;
 	}
 	
+	@Override
+	public String getName() {
+		return "XMLSTREAMOBJECTPREDICATE";
+	}
+	
+	@Override
+	public String getAliasName() {
+		return XMLStreamObject.class.getName();
+	}
+	
 }

@@ -15,5 +15,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.mep.functions.bool,
  org.apache.xerces.xs,
  org.osgi.framework;version="1.8.0"
-Bundle-Activator: de.uniol.inf.is.odysseus.server.xml.Activator
 Bundle-ActivationPolicy: lazy

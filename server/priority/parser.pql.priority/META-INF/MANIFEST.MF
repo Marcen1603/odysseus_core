@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PQL Priority
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.pql.priority
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.priority.Activator
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.predicate,
  de.uniol.inf.is.odysseus.core.server,
@@ -20,3 +19,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
 Export-Package: de.uniol.inf.is.odysseus.parser.pql.priority
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core
+Service-Component: OSGI-INF/PriorityPredicateBuilder.xml
+Bundle-ActivationPolicy: lazy

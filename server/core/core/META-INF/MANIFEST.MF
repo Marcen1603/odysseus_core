@@ -101,3 +101,4 @@ Export-Package:
  de.uniol.inf.is.odysseus.core.server.usermanagement.policy,
  de.uniol.inf.is.odysseus.core.server.util
 Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy

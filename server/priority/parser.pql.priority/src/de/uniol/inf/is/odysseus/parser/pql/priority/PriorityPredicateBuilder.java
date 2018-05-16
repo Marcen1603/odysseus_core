@@ -30,5 +30,14 @@ public class PriorityPredicateBuilder<T extends IStreamObject<M>, M extends IMet
 		return new PriorityPredicate();
 	}
 
+	@Override
+	public String getName() {
+		return "PRIORITYPREDICATE";
+	}
+
+	@Override
+	public String getAliasName() {
+		return null;
+	}
 
 }
