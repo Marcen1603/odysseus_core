@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
+import de.uniol.inf.is.odysseus.core.usermanagement.Tenant;
 
 public class UserManagementProvider {
 	/**
