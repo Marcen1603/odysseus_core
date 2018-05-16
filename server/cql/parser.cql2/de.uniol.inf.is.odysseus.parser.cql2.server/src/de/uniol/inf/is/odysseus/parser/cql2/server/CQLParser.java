@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MissingParameterException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -91,6 +92,7 @@ public class CQLParser implements IQueryParser {
 	private static Map<String, String> databaseConnections = new HashMap<>();
 	private static Set<SDFSchema> currentSchema;
 	private static CQLGenerator generator;
+	private static List<String> failedQueries = new ArrayList<>();
 
 	private List<IExecutorCommand> executorCommands;
 	private XtextResourceSet resourceSet;
@@ -197,17 +199,7 @@ public class CQLParser implements IQueryParser {
 				Set<SDFSchema> schema = executor.getDataDictionary(user).getStreamsAndViews(user).stream()
 						.map(e -> e.getValue().getOutputSchema()).collect(Collectors.toSet());
 				generator.setSchema(convertSchemaToSystemSource(schema));
-				
-				//TODO use metaAttribute.getSchema()
-				// meta attributes in access operator
-				// or meta attributes with #
-				
-				 generator.setMetaAttributes(convertSchemaToSystemSource(metaAttribute.getSchema()));
-				
-//				generator.setMetaAttributes();
-				
-				// MetadataRegistry.getNames() use names to get meta data schemas
-				
+				generator.setMetaAttributes(convertSchemaToSystemSource(metaAttribute.getSchema()));
 				executorCommands.clear();
 				// Translate query to executor commands
 				for (EObject component : components) {
@@ -228,7 +220,7 @@ public class CQLParser implements IQueryParser {
 					} else if (component instanceof Command) {
 						// There are no pql operators for {@link CommandImpl},
 						// instead get the corresponding
-						// executor command like {@linkCreateStreamCommand} for
+						// executor command like {@link CreateStreamCommand} for
 						// the given command.
 						IExecutorCommand command = parseCommand((Command) component, user, dd, metaAttribute,
 								executorCommands);
@@ -254,7 +246,33 @@ public class CQLParser implements IQueryParser {
 				throw new QueryParseException(builder.toString());
 			}
 		} catch (Exception e) {
+			
 			executorCommands.clear();
+			
+			/* TODO WORKAROUND that relates to an issue where the PQLOperatorBuilder 
+			 * cannot resolve all parameters for an Aggregate operator. At the 
+			 * moment it is unknown why or when this bug occurs (only in rare cases).
+			 * However, a MissingParameterException will be raised if this is happening.
+			 * 
+			 * To overcome the issue, the exception will be caught and the
+			 * query will be build a second time. If this attempt fails, the
+			 * query will be marked as failed.
+			 * 
+			 * author ~ Jens Plümer on 16.05.18
+			 */
+			if (e instanceof MissingParameterException) {
+				if (!failedQueries.contains(query)) {
+					logger.warn("Query could not be parsed because of MissingParameterException; trying a second time");
+					failedQueries.add(query);
+					generator.clear();
+					resource.unload();
+					List<IExecutorCommand> cmds = parse(query, user,dd,context, metaAttribute,executor);
+					failedQueries.remove(query);
+					return cmds;
+				} 
+			}
+			
+			
 			throw e;
 		} finally {
 			if (fsa != null) {

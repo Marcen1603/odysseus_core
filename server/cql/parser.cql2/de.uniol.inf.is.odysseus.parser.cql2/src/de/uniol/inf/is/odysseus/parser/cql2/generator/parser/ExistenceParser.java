@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExistPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.InPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryPredicate;
@@ -123,7 +124,11 @@ public class ExistenceParser implements IExistenceParser {
 		final String input = cacheService.getOperatorCache().getLastOperator(parent) + "," + cacheService.getOperatorCache().last();
 		arguments.put("input", input);
 		
-		cacheService.getOperatorCache().add(select, builder.build(ExistenceAO.class, arguments));
+		try {
+			cacheService.getOperatorCache().add(select, builder.build(ExistenceAO.class, arguments));
+		} catch (PQLOperatorBuilderException e) {
+			e.printStackTrace();
+		}
 			
 //			var type = 'EXISTS'
 //					var operator = '=='

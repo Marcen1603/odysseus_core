@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeParser;
@@ -21,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 @SuppressWarnings("all")
@@ -63,10 +65,14 @@ public class ProjectionParser implements IProjectionParser {
   }
   
   private Object[] buildMapOperator(final Collection<QueryCache.QueryExpression> expressions) {
-    return this.buildMapOperator(expressions, null);
+    try {
+      return this.buildMapOperator(expressions, null);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
   }
   
-  private Object[] buildMapOperator(final Collection<QueryCache.QueryExpression> queryExpressions, final String input) {
+  private Object[] buildMapOperator(final Collection<QueryCache.QueryExpression> queryExpressions, final String input) throws PQLOperatorBuilderException {
     this.curStrRep = "";
     final Collection<String> stringList = CollectionLiterals.<String>newArrayList();
     final Collection<String> attributes = CollectionLiterals.<String>newArrayList();
@@ -103,60 +109,64 @@ public class ProjectionParser implements IProjectionParser {
   }
   
   private String buildProjection(final SimpleSelect select, final CharSequence operator) {
-    QueryCache _queryCache = this.cacheService.getQueryCache();
-    Collection<QueryCache.QueryAttribute> attributes = _queryCache.getProjectionAttributes(select);
-    for (int i = 0; (i < (this.renameParser.getAliases().size() - 2)); i = (i + 3)) {
-      {
-        Collection<String> _aliases = this.renameParser.getAliases();
-        String attributename = ((String[])Conversions.unwrapArray(_aliases, String.class))[i];
-        Collection<String> _aliases_1 = this.renameParser.getAliases();
-        String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
-        Collection<String> _aliases_2 = this.renameParser.getAliases();
-        String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
-        SystemSource _systemSource = this.utilityService.getSystemSource(sourcename);
-        _systemSource.addAliasTo(attributename, alias);
-      }
-    }
-    final ArrayList<String> list = CollectionLiterals.<String>newArrayList();
-    Stream<QueryCache.QueryAttribute> _stream = attributes.stream();
-    final Consumer<QueryCache.QueryAttribute> _function = (QueryCache.QueryAttribute e) -> {
-      boolean _equals = e.type.equals(IParsedObject.Type.EXPRESSION);
-      if (_equals) {
-        String _string = ((QueryCache.QueryExpression) e).parsedExpression.toString();
-        list.add(_string);
-      } else {
-        String name = "";
-        boolean _equals_1 = e.type.equals(IParsedObject.Type.AGGREGATION);
-        if (_equals_1) {
-          String _name = ((QueryCache.QueryAggregate) e).parsedAggregation.getName();
-          name = _name;
-        } else {
-          String _string_1 = e.parsedAttribute.toString();
-          name = _string_1;
+    try {
+      QueryCache _queryCache = this.cacheService.getQueryCache();
+      Collection<QueryCache.QueryAttribute> attributes = _queryCache.getProjectionAttributes(select);
+      for (int i = 0; (i < (this.renameParser.getAliases().size() - 2)); i = (i + 3)) {
+        {
+          Collection<String> _aliases = this.renameParser.getAliases();
+          String attributename = ((String[])Conversions.unwrapArray(_aliases, String.class))[i];
+          Collection<String> _aliases_1 = this.renameParser.getAliases();
+          String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
+          Collection<String> _aliases_2 = this.renameParser.getAliases();
+          String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
+          SystemSource _systemSource = this.utilityService.getSystemSource(sourcename);
+          _systemSource.addAliasTo(attributename, alias);
         }
-        list.add(name);
       }
-    };
-    _stream.forEach(_function);
-    for (int i = 0; (i < (this.renameParser.getAliases().size() - 2)); i = (i + 3)) {
-      {
-        Collection<String> _aliases = this.renameParser.getAliases();
-        String attributename = ((String[])Conversions.unwrapArray(_aliases, String.class))[i];
-        Collection<String> _aliases_1 = this.renameParser.getAliases();
-        String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
-        Collection<String> _aliases_2 = this.renameParser.getAliases();
-        String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
-        SystemSource _systemSource = this.utilityService.getSystemSource(sourcename);
-        _systemSource.removeAliasFrom(attributename, alias);
+      final ArrayList<String> list = CollectionLiterals.<String>newArrayList();
+      Stream<QueryCache.QueryAttribute> _stream = attributes.stream();
+      final Consumer<QueryCache.QueryAttribute> _function = (QueryCache.QueryAttribute e) -> {
+        boolean _equals = e.type.equals(IParsedObject.Type.EXPRESSION);
+        if (_equals) {
+          String _string = ((QueryCache.QueryExpression) e).parsedExpression.toString();
+          list.add(_string);
+        } else {
+          String name = "";
+          boolean _equals_1 = e.type.equals(IParsedObject.Type.AGGREGATION);
+          if (_equals_1) {
+            String _name = ((QueryCache.QueryAggregate) e).parsedAggregation.getName();
+            name = _name;
+          } else {
+            String _string_1 = e.parsedAttribute.toString();
+            name = _string_1;
+          }
+          list.add(name);
+        }
+      };
+      _stream.forEach(_function);
+      for (int i = 0; (i < (this.renameParser.getAliases().size() - 2)); i = (i + 3)) {
+        {
+          Collection<String> _aliases = this.renameParser.getAliases();
+          String attributename = ((String[])Conversions.unwrapArray(_aliases, String.class))[i];
+          Collection<String> _aliases_1 = this.renameParser.getAliases();
+          String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
+          Collection<String> _aliases_2 = this.renameParser.getAliases();
+          String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
+          SystemSource _systemSource = this.utilityService.getSystemSource(sourcename);
+          _systemSource.removeAliasFrom(attributename, alias);
+        }
       }
+      String _generateListString = this.utilityService.generateListString(list);
+      String _replace = _generateListString.replace("\'[\'", "[\'");
+      String argument = _replace.replace("\']\'", "\']");
+      Pair<String, String> _mappedTo = Pair.<String, String>of("expressions", argument);
+      String _string = operator.toString();
+      Pair<String, String> _mappedTo_1 = Pair.<String, String>of("input", _string);
+      LinkedHashMap<String, String> _newLinkedHashMap = CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1);
+      return this.builder.build(MapAO.class, _newLinkedHashMap);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    String _generateListString = this.utilityService.generateListString(list);
-    String _replace = _generateListString.replace("\'[\'", "[\'");
-    String argument = _replace.replace("\']\'", "\']");
-    Pair<String, String> _mappedTo = Pair.<String, String>of("expressions", argument);
-    String _string = operator.toString();
-    Pair<String, String> _mappedTo_1 = Pair.<String, String>of("input", _string);
-    LinkedHashMap<String, String> _newLinkedHashMap = CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1);
-    return this.builder.build(MapAO.class, _newLinkedHashMap);
   }
 }
