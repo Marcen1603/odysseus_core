@@ -7,11 +7,11 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-nl en -consoleLog -debug .options System manager -console -data @userData -clean
+      <programArgs>-nl en -consoleLog -debug .options System manager -data @userData -clean -console
       </programArgs>
       <programArgsLin>-os linux -ws gtk -arch x86_64
       </programArgsLin>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.8 -Xms1024m -Xmx2048m -Dlog4j.configuration=log4j.test.properties -Dosgi.console.enable.builtin=true
+      <vmArgs>-Dosgi.requiredJavaVersion=1.8 -Xms1024m -Xmx2048m -Dlog4j.configuration=log4j.test.properties
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
