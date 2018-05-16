@@ -12,7 +12,8 @@ Export-Package: de.uniol.inf.is.odysseus.spatial,
  de.uniol.inf.is.odysseus.spatial.logicaloperator,
  de.uniol.inf.is.odysseus.spatial.physicaloperator,
  de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.spatial.transform.rules
+ de.uniol.inf.is.odysseus.spatial.transform.rules,
+ de.uniol.inf.is.odysseus.spatial.utilities
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  org.osgeo.proj4j;bundle-version="1.0.0",
