@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: NetzDatenStrom Proxy Autostart
+Bundle-SymbolicName: de.uniol.inf.ei.odysseus.nds.proxy.autostart
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.osgi.framework
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
+Service-Component: OSGI-INF/Autostart.xml
+Bundle-Activator: de.uniol.inf.ei.odysseus.nds.proxy.Autostart
+Bundle-ActivationPolicy: lazy
