@@ -22,5 +22,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.eclipse.jetty.util,
  org.apache.commons.io,
  de.uniol.inf.is.odysseus.keyvalue.datatype,
- de.uniol.inf.is.odysseus.slf4j
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.web

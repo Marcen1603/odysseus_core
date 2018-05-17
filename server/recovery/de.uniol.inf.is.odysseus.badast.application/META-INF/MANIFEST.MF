@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.badast.application;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.badast,
  org.eclipse.osgi;bundle-version="3.10.101",
