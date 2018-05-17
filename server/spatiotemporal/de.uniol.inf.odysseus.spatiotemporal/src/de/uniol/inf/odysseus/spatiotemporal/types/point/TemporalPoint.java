@@ -20,7 +20,7 @@ public class TemporalPoint implements IClone, Cloneable, Serializable, TemporalT
 
 	private static final long serialVersionUID = 7337746723249079888L;
 
-	private TemporalFunction<GeometryWrapper> function;
+	protected TemporalFunction<GeometryWrapper> function;
 
 	public TemporalPoint(TemporalFunction<GeometryWrapper> function) {
 		this.function = function;

@@ -58,16 +58,16 @@ public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tupl
 	}
 
 	@Override
-	protected Object[] handleFilledHistory(T newestElement, T oldestElement, PointInTime currentPointInTime,
-			Collection<T> history) {
-		Geometry basePoint = getPointFromElement(oldestElement);
+	protected Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
+		Geometry basePoint = getGeometryFromElement(oldestElement);
 		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
 
 		T middleElement = getMiddleElement(history);
 		PointInTime middlePointInTime = middleElement.getMetadata().getStart();
-		Geometry middlePoint = getPointFromElement(middleElement);
+		Geometry middlePoint = getGeometryFromElement(middleElement);
 
-		Geometry currentPoint = getPointFromElement(newestElement);
+		PointInTime currentPointInTime = newestElement.getMetadata().getStart();
+		Geometry currentPoint = getGeometryFromElement(newestElement);
 
 		GeodeticCalculator fullCalculator = getGeodeticCalculator(basePoint, currentPoint);
 		GeodeticCalculator firstHalfCalculator = getGeodeticCalculator(basePoint, middlePoint);
