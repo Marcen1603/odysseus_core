@@ -3,11 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Web Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.web
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.web.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: org.osgi.framework;version="1.3.0",
- org.slf4j
 Service-Component: OSGI-INF/HTTPTransportHandler.xml,OSGI-INF/HTTPServerTransportHandler.xml,OSGI-INF/HTMLProtocolHandler.xml,OSGI-INF/XMLProtocolHandler.xml,
  OSGI-INF/HTTPStreamTransportHandler.xml,OSGI-INF/XMLProtocolHandler2.xml,OSGI-INF/HTTPPostFormUrlEncodedProtocolHandler.xml
 Bundle-ClassPath: .,
@@ -24,4 +21,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.eclipse.jetty.server,
  org.eclipse.jetty.util,
  org.apache.commons.io,
- de.uniol.inf.is.odysseus.keyvalue.datatype
+ de.uniol.inf.is.odysseus.keyvalue.datatype,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
