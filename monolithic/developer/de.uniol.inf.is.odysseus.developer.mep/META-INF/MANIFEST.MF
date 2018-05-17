@@ -9,8 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core
 Import-Package: com.google.common.base,
  com.google.common.collect,
  de.uniol.inf.is.odysseus.mep,

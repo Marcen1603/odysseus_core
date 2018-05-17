@@ -7,9 +7,9 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.logging.activator.RCPLoggingPlugI
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
  com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.rcp.base
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: libs/SWTSplitButton-1.3.jar,
  .

@@ -26,7 +26,7 @@ Require-Bundle: org.eclipse.xtext.ui,
  de.uniol.inf.is.odysseus.rcp.base,
  de.uniol.inf.is.odysseus.parser.cql2,
  org.eclipse.emf.ecore.edit,
- de.uniol.inf.is.odysseus.parser.cql2.ide;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.parser.cql2.ide
 Import-Package: de.uniol.inf.is.odysseus.parser.cql2.parser.antlr,
  org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

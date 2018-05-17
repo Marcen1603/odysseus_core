@@ -6,14 +6,13 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.polynomial.Activator
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
-  cc.kuka.odysseus.polynomial.common
+  cc.kuka.odysseus.polynomial.common, de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.mep,
  org.apache.commons.math3.stat.regression;version="3.2.0",
- org.osgi.framework,
- org.slf4j
+ org.osgi.framework
 Service-Component: OSGI-INF/PolynomialFunctionProvider.xml,OSGI-INF/PolynomialDataHandler.xml,
  OSGI-INF/PolynomialAggregationFunctionBuilder.xml
 Automatic-Module-Name: cc.kuka.odysseus.polynomial

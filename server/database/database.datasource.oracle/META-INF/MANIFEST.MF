@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: lib/ojdbc6.jar,
  .
-Require-Bundle: de.uniol.inf.is.odysseus.database;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.database
 Service-Component: OSGI-INF/oracle.xml,
  OSGI-INF/ConnectionFactory.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.oracle

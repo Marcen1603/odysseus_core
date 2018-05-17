@@ -5,8 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.report.executor
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.report.executor.ExecutorBugReportPlugIn
 Require-Bundle: org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.report;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.report
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/serverExecutor.xml,

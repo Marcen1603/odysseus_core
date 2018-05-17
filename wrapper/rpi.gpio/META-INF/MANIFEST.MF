@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.rpi.gpio.Activator
 Bundle-Vendor: Andrej Albrecht
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/RPiGPIOTransportHandler.xml,OSGI-INF/RPiGPIOPushTransportHandler.xml
 Bundle-NativeCode: lib/native/linux/libpi4j.so ;
   osname=linux;  processor=x86_64,

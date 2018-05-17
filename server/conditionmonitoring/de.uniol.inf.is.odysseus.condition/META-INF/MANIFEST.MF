@@ -5,12 +5,12 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.condition
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.condition.Activator
 Bundle-Vendor: Brandt
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
- jama;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.ruleengine,
+ jama,
+ de.uniol.inf.is.odysseus.slf4j,
  restlet-osgi-2.3.1
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.gson,

@@ -6,14 +6,14 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.application.storing.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.database;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.database,
  org.eclipse.core.expressions;bundle-version="3.4.300",
- de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.viewer.stream.table;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.wizard;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.chart,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.table,
+ de.uniol.inf.is.odysseus.rcp.wizard,
+ de.uniol.inf.is.odysseus.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.application.storing,

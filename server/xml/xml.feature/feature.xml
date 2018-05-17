@@ -20,6 +20,10 @@
          id="de.uniol.inf.is.odysseus.keyvalue.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.wrapper.web.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server"/>
@@ -46,13 +50,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.web"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.ruleengine"

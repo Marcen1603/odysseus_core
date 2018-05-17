@@ -7,7 +7,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/TopologyProtocolHandler.xml
 Import-Package: de.uniol.inf.is.odysseus.keyvalue.datatype,
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- com.fasterxml.jackson;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ com.fasterxml.jackson
 Automatic-Module-Name: de.uniol.inf.is.odysseus.estream.topology

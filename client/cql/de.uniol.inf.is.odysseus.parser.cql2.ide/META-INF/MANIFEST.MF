@@ -5,7 +5,7 @@ Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.cql2.ide;singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: de.uniol.inf.is.odysseus.parser.cql2;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.parser.cql2,
  org.eclipse.xtext.ide;bundle-version="2.10.0",
  org.antlr.runtime,
  com.google.guava,

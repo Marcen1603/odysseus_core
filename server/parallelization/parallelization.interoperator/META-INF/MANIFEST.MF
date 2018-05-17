@@ -21,8 +21,8 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/InterOperatorParallelizationPreTransformationHandler.xml,OSGI-INF/JoinTransformationStrategy.xml, OSGI-INF/ParallelTransformationStrategyRegistry.xml,OSGI-INF/NonGroupedAggregateTransformationStrategy.xml,OSGI-INF/GroupedAggregateTransformationStrategy.xml,OSGI-INF/InterOperatorParallelizationKeywordProvider.xml,OSGI-INF/InterOperatorPreExecutionHandler.xml,
  OSGI-INF/FastMedianTransformationStrategy.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.interoperator.configuration,

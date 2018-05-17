@@ -23,7 +23,7 @@ Export-Package: de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
  de.uniol.inf.is.odysseus.cep.epa.eventreading.relational,
  de.uniol.inf.is.odysseus.cep.epa.metamodel.relational,
  de.uniol.inf.is.odysseus.cep.epa.symboltable.relational
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.cep.epa;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.cep.epa
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.cep.relational

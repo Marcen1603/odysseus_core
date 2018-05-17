@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.dashboard.textfield.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.rcp.dashboard;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.dashboard.part;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.rcp.dashboard,
+ de.uniol.inf.is.odysseus.rcp.dashboard.part,
  com.google.guava;bundle-version="14.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

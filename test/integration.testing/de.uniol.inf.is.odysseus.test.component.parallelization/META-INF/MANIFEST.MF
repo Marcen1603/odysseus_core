@@ -7,9 +7,9 @@ Bundle-Activator: de.uniol.inf.is.odysseus.test.component.parallelization.Activa
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework;version="1.3.0",
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.test;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.test,
  org.eclipse.core.runtime
 Service-Component: OSGI-INF/testParallelizationComponent.xml
 Eclipse-BundleShape: dir

@@ -4,11 +4,11 @@ Bundle-Name: Mongodb
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.mongodb
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- com.mongodb.driver;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.server.nosql.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ com.mongodb.driver,
+ de.uniol.inf.is.odysseus.server.nosql.base,
+ de.uniol.inf.is.odysseus.keyvalue.datatype
 Import-Package: com.google.gson,
  com.mongodb,
  com.mongodb.util,

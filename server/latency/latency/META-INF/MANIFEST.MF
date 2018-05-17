@@ -8,12 +8,12 @@ Export-Package: de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.latency.physicaloperator,
  de.uniol.inf.is.odysseus.logicaloperator.latency
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.server.intervalapproach;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.server.intervalapproach
 Service-Component: OSGI-INF/*
 Automatic-Module-Name: de.uniol.inf.is.odysseus.latency

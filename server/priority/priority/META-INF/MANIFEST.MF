@@ -21,6 +21,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.event,
 Export-Package: de.uniol.inf.is.odysseus.priority,
  de.uniol.inf.is.odysseus.priority.buffer
 Service-Component: OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/Priority.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.priority

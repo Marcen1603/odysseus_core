@@ -5,13 +5,13 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.xml
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*
-Require-Bundle: org.apache.jlibs;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
+Require-Bundle: org.apache.jlibs,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.ruleengine,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
- de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.mep
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.server.xml,
  de.uniol.inf.is.odysseus.server.xml.predicate

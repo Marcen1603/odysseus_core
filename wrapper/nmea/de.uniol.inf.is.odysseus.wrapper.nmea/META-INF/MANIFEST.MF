@@ -26,5 +26,5 @@ Export-Package: de.uniol.inf.is.odysseus.wrapper.nmea.sentence,
 Require-Bundle: com.google.guava,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.equinox.common,
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.keyvalue.datatype
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.nmea

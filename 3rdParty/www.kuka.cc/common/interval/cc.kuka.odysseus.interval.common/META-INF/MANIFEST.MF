@@ -6,9 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.interval.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: org.osgi.framework,
- org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core
+Import-Package: org.osgi.framework
+Require-Bundle: de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/IntervalDatatypeProvider.xml
 Export-Package: cc.kuka.odysseus.interval.datatype,
  cc.kuka.odysseus.interval.sdf.schema

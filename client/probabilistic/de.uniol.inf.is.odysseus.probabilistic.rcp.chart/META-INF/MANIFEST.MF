@@ -3,11 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Probabilistic RCP Chart
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.probabilistic.rcp.chart;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.probabilistic.common,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.jfreechart;bundle-version="1.0.0"
+ de.uniol.inf.is.jfreechart
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: batik-awt-util.jar,

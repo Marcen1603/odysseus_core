@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.signal.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.slf4j
 Import-Package: cc.kuka.odysseus.signal.common.datatype,
  cc.kuka.odysseus.signal.common.sdf.schema,
  com.google.common.base,
@@ -17,8 +17,7 @@ Import-Package: cc.kuka.odysseus.signal.common.datatype,
  org.apache.commons.math3.linear,
  org.apache.commons.math3.transform,
  org.apache.commons.math3.util,
- org.osgi.framework,
- org.slf4j
+ org.osgi.framework
 Service-Component: OSGI-INF/SignalFunctionProvider.xml,
  OSGI-INF/SignalAggregationFunctionBuilder.xml
 Automatic-Module-Name: cc.kuka.odysseus.signal

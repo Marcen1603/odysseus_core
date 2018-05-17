@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.connect.select.all
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.net.connect;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.net.connect,
  de.uniol.inf.is.odysseus.net
 Service-Component: OSGI-INF/ConnectAllSelector.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.connect.select.all

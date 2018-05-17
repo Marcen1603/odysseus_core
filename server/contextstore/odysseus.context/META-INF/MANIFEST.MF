@@ -32,7 +32,7 @@ Export-Package: de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.context.store.types
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.sweeparea
 Service-Component: OSGI-INF/StoreService.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.context

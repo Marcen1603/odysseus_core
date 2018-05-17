@@ -4,11 +4,11 @@ Bundle-Name: Interval
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.interval;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.rcp.base,
  de.uniol.inf.is.odysseus.rcp.viewer,
  de.uniol.inf.is.odysseus.rcp.viewer,
  org.eclipse.swt,
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core,
  com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.viewer.stream.interval

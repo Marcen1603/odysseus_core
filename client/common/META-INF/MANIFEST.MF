@@ -4,6 +4,6 @@ Bundle-Name: Client Common
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.client.common
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core
 Export-Package: de.uniol.inf.is.odysseus.client.common
 Automatic-Module-Name: de.uniol.inf.is.odysseus.client.common

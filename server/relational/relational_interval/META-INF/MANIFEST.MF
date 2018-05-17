@@ -31,7 +31,7 @@ Export-Package: de.uniol.inf.is.odysseus.relational_interval,
 Bundle-ClassPath: .
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.relational.base
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

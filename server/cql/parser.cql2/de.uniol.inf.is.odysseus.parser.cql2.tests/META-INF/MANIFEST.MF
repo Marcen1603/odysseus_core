@@ -11,7 +11,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.parser.cql2,
  org.eclipse.xtext.xbase.lib,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.test;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.test,
  org.eclipse.xtext.testing,
  org.eclipse.xtext.xbase.testing
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

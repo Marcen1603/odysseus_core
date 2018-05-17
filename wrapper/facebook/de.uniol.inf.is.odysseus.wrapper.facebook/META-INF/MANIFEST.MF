@@ -13,6 +13,6 @@ Bundle-ClassPath: .,
  lib/org.json-20120521.jar,
  lib/httpclient-4.2.3.jar,
  lib/httpcore-4.2.2.jar
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.keyvalue.datatype
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.facebook

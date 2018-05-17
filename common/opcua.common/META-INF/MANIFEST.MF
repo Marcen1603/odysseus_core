@@ -100,7 +100,7 @@ Export-Package: com.google.common.annotations,
  io.netty.util.internal.logging;x-internal:=true,
  org.apache.commons.logging,
  org.apache.commons.logging.impl
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/*.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.opcua.common

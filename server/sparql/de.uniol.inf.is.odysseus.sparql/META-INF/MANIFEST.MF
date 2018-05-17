@@ -16,7 +16,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j,
- de.uniol.inf.is.odysseus.rdf;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.rdf
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.sparql,
  de.uniol.inf.is.odysseus.sparql.logicaloperator,

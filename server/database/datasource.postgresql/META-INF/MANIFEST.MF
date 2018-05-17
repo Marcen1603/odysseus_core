@@ -4,7 +4,7 @@ Bundle-Name: Postgresql Datasource
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.datasource.postgresql
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.database;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.database
 Bundle-ClassPath: lib/postgresql-9.1-901.jdbc4.jar,
  .
 Service-Component: OSGI-INF/postgresssource.xml,

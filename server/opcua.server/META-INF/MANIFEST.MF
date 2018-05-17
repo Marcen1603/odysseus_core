@@ -21,9 +21,9 @@ Bundle-ClassPath: .,
  lib/xpp3_min-1.1.4c.jar,
  lib/spring-core-4.2.0.RELEASE.jar,
  lib/commons-io-2.4.jar
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.security;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.security,
  de.uniol.inf.is.odysseus.opcua.common,
  org.apache.jena.2.13
 Service-Component: OSGI-INF/*.xml
