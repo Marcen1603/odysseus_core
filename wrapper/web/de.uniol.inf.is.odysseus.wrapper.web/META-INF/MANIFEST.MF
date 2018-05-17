@@ -13,7 +13,7 @@ Bundle-ClassPath: .,
  lib/httpclient-4.2.5.jar,
  lib/httpcore-4.2.4.jar,
  lib/commons-logging-1.1.1.jar
-Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.2",
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  com.google.guava,
