@@ -61,10 +61,13 @@ public class AcceleratingMovingPointFunction implements TemporalFunction<Geometr
 	 * time.
 	 */
 	private Geometry calculateLocationAtTime(PointInTime time) {
-		long timeTravelled = time.minus(basePointInTime).getMainPoint();
+		double timeTravelled = time.minus(basePointInTime).getMainPoint();
 		// formula for distance with acceleration and initial velocity
-		double distanceMeters = ((1 / 2) * accelerationPerTimeInstance * timeTravelled * timeTravelled)
+		double distanceMeters = (0.5 * accelerationPerTimeInstance * timeTravelled * timeTravelled)
 				+ (speedMeterPerTimeInstance * timeTravelled);
+		if (Double.isNaN(distanceMeters)) {
+			distanceMeters = 0;
+		}
 
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 		double latitude = basePoint.getCentroid().getX();
