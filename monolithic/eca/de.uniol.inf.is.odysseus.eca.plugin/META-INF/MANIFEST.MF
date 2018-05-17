@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rcp.base
 Export-Package: de.uniol.inf.is.odysseus.eca.plugin
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.eca.plugin

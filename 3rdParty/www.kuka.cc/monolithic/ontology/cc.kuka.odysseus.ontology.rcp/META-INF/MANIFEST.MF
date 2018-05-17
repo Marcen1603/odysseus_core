@@ -21,3 +21,4 @@ Import-Package: cc.kuka.odysseus.ontology.common,
  org.slf4j
 Service-Component: OSGI-INF/SensorOntologyService.xml
 Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: cc.kuka.odysseus.ontology.rcp

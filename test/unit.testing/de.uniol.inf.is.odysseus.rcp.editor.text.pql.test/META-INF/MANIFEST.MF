@@ -9,3 +9,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor.text.pql;bundle-version="1.0
  org.eclipse.ui;bundle-version="3.7.0",
  TestNG6.8;bundle-version="1.0.0"
 Import-Package: de.uniol.inf.is.odysseus.testng
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.text.pql.test

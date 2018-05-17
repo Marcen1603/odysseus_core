@@ -14,3 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.generator,
  de.uniol.inf.is.odysseus.generator.valuegenerator.evolve,
  de.uniol.inf.is.odysseus.generator.valuegenerator.switching,
  org.osgi.framework;version="1.3.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.generator.debs

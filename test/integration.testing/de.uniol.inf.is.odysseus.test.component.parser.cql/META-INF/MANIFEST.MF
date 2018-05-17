@@ -14,3 +14,4 @@ Import-Package: com.google.inject,
  org.osgi.framework,
  org.slf4j
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.parser.cql

@@ -28,3 +28,4 @@ Import-Package: org.eclipse.nebula.widgets.geomap,
  org.eclipse.nebula.widgets.geomap.internal,
  org.eclipse.nebula.widgets.geomap.jface,
  org.eclipse.nebula.widgets.geomap.jface.example
+Automatic-Module-Name: windscadaanwendung

@@ -24,4 +24,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.editor.script,
  de.uniol.inf.is.odysseus.rcp.editor.script.model,
  de.uniol.inf.is.odysseus.rcp.editor.script.rules,
  de.uniol.inf.is.odysseus.rcp.editor.script.service
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.script
 

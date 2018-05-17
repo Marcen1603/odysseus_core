@@ -12,3 +12,4 @@ Export-Package: de.uniol.inf.is.odysseus.recovery.checkpointing
 Service-Component: OSGI-INF/CheckpointManagerRegistry.xml,OSGI-INF/SystemTimeCheckpointManager.xml,
  OSGI-INF/CheckpointingRecoveryComponent.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.checkpointing

@@ -22,3 +22,4 @@ Import-Package: de.uniol.inf.is.odysseus.latency,
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.systemload,
  de.uniol.inf.is.odysseus.systemload.logicaloperator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.systemload

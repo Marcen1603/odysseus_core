@@ -22,3 +22,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/ClassifierRegistry.xml,OSGI-INF/NaiveBayes.xml,OSGI-INF/KNearestNeighbor.xml,OSGI-INF/StopWordsRegistry.xml,OSGI-INF/StopWordsEnglish.xml,
  OSGI-INF/StopWordsGerman.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.sentimentdetection

@@ -9,3 +9,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.trust;bundle-version="1.0.0"
 Service-Component: OSGI-INF/IntervalLatencyTrust.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.interval_latency_trust

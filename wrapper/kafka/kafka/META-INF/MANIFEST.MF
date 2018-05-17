@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  com.google.code.gson;bundle-version="2.2.4"
 Service-Component: OSGI-INF/KafkaTransportHandler.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.kafka

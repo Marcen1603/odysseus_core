@@ -19,3 +19,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.table,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.viewer.stream.table

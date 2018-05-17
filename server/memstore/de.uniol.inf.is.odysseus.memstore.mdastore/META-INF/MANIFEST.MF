@@ -15,3 +15,4 @@ Service-Component: OSGI-INF/MDAPreParserKeywordProvider.xml,
  OSGI-INF/FunctionProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.memstore.mdastore
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.memstore.mdastore

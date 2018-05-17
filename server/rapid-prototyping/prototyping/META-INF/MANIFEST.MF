@@ -27,3 +27,4 @@ Bundle-ClassPath: .,
  lib/jruby-1.6.7.2.jar
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
+Automatic-Module-Name: de.uniol.inf.is.odysseus.prototyping

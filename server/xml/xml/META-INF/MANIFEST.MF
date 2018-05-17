@@ -15,3 +15,4 @@ Require-Bundle: org.apache.jlibs;bundle-version="1.0.0",
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.server.xml,
  de.uniol.inf.is.odysseus.server.xml.predicate
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.xml

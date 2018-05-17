@@ -38,3 +38,4 @@ Export-Package: de.uniol.inf.is.odysseus.server,
  de.uniol.inf.is.odysseus.server.streamingsparql.impl,
  de.uniol.inf.is.odysseus.server.streamingsparql
 Service-Component: OSGI-INF/StreamingSparqlQueryParser.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.streamingsparql

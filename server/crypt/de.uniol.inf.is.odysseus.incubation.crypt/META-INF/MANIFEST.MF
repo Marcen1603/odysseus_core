@@ -20,3 +20,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.incubation.crypt.keymanagement,
  de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret,
  org.java-websocket;bundle-version="1.3.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.incubation.crypt

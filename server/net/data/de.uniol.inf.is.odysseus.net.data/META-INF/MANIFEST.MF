@@ -17,3 +17,4 @@ Service-Component: OSGI-INF/DistributedDataManager.xml,
  OSGI-INF/OdysseusNetDataPlugIn.xml
 Export-Package: de.uniol.inf.is.odysseus.net.data
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.data

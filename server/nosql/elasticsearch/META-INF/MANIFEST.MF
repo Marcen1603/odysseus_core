@@ -21,3 +21,4 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.transform.rule,
  org.elasticsearch.client.transport,
  org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.nosql.elasticsearch

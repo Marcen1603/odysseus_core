@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Import-Package: org.slf4j
 Service-Component: OSGI-INF/PMMLProtocolHandler.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.pmml

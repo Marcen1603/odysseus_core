@@ -32,4 +32,5 @@ Bundle-ClassPath: .,
 Bundle-Vendor: Christian Kuka
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
+Automatic-Module-Name: cc.kuka.odysseus.ontology.storage
 

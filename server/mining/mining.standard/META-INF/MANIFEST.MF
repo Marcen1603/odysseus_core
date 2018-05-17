@@ -17,3 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.mep
 Export-Package: de.uniol.inf.is.odysseus.mining.frequentitem.apriori,
  de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth
+Automatic-Module-Name: de.uniol.inf.is.odysseus.mining.standard

@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.pubsub;bundle-version="1.0.0",
  TestNG6.8,
  de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.pubsub.test

@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.connect;bundle-version="1.0.0",
  com.google.guava;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.net.util;bundle-version="1.0.0"
 Service-Component: OSGI-INF/OdysseusNodeSocketConnector.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.connect.socket

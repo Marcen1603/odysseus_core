@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/SDFGraphDatatype.xml
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.graph.datatype
+Automatic-Module-Name: de.uniol.inf.is.odysseus.graph.common

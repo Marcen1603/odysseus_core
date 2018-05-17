@@ -28,3 +28,4 @@ Bundle-ClassPath: lib/encog-core-3.3.0.jar,
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/DataTypes.xml,OSGI-INF/Binder.xml,OSGI-INF/Encog.xml,
  OSGI-INF/DefaultStrategy.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.neuralnetworks

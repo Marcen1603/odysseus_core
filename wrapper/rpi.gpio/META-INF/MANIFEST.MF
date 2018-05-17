@@ -35,3 +35,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.6.0",
  org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.rpi.gpio

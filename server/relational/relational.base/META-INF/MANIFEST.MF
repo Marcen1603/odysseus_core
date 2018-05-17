@@ -45,4 +45,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  com.google.guava
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.relational.base
 

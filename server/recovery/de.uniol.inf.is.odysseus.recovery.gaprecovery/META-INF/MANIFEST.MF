@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Export-Package: de.uniol.inf.is.odysseus.recovery.convergencedetector
 Service-Component: OSGI-INF/GapRecoveryExecutor.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.gaprecovery

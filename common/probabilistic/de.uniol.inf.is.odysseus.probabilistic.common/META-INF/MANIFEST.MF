@@ -40,3 +40,4 @@ Export-Package: de.uniol.inf.is.odysseus.probabilistic.common;uses:="de.uniol.in
  de.uniol.inf.is.odysseus.probabilistic.common.simulation,
  de.uniol.inf.is.odysseus.probabilistic.math,
  de.uniol.inf.is.odysseus.probabilistic.math.genz
+Automatic-Module-Name: de.uniol.inf.is.odysseus.probabilistic.common

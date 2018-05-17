@@ -17,3 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
 Export-Package: de.uniol.inf.is.odysseus.net.recovery.backupinfo
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/BackupInformationManager.xml,OSGI-INF/LocalBackupInformationFeeder.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.recovery

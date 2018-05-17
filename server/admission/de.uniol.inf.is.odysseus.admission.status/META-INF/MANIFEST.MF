@@ -23,3 +23,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.script.parser,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.admission.status
+Automatic-Module-Name: de.uniol.inf.is.odysseus.admission.status

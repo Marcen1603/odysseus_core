@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.recovery.recoverytime
 Service-Component: OSGI-INF/RollbackRecoveryExecutor.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.rollbackrecovery

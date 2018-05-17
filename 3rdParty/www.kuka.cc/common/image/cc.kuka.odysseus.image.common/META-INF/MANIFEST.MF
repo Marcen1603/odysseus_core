@@ -13,4 +13,5 @@ Export-Package: cc.kuka.odysseus.image.common,
 Require-Bundle: de.uniol.inf.is.odysseus.core
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/ImageDatatypeProvider.xml
+Automatic-Module-Name: cc.kuka.odysseus.image.common
 

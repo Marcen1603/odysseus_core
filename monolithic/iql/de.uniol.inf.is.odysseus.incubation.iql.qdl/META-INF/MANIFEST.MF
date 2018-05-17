@@ -65,3 +65,4 @@ Export-Package: de.uniol.inf.is.odysseus.iql.qdl,
  de.uniol.inf.is.odysseus.iql.qdl.validation
 Service-Component: OSGI-INF/QDLServiceBinding.xml,
  OSGI-INF/QDLQueryParser.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.qdl

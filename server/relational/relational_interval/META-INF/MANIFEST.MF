@@ -36,4 +36,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.relational.base
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.relational_interval
 

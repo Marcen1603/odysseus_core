@@ -40,3 +40,4 @@ Bundle-ClassPath: .,
  crawler/tagsoup-1.2.1.jar,
  crawler/tika-core-1.0.jar,
  crawler/tika-parsers-1.0.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.webcrawler

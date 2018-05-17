@@ -15,3 +15,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.querydistribute;bundle-version="1.0
  com.google.guava;bundle-version="18.0.0"
 Service-Component: OSGI-INF/DiscardedReplicatesPostProcessor.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.postprocess.discardedreplicates

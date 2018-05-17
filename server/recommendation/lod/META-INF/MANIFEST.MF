@@ -17,3 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.recommendation;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/recommendationlearner.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recommendation.lod

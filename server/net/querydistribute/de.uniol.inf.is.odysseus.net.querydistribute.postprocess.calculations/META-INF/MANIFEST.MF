@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.querydistribute,
 Service-Component: OSGI-INF/CalcLatencyPostProcessor.xml,
  OSGI-INF/CalcDataratePostProcessor.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.postprocess.calculations

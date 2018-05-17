@@ -15,3 +15,4 @@ Import-Package: org.apache.commons.math.geometry
 Service-Component: OSGI-INF/pinger.xml,
  OSGI-INF/pingMap.xml
 Export-Package: de.uniol.inf.is.odysseus.net.ping
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.ping

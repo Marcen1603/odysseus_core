@@ -15,3 +15,4 @@ Bundle-ClassPath: .,
  lib/httpcore-4.2.2.jar
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.facebook

@@ -11,3 +11,4 @@ Require-Bundle: org.antlr.runtime,
  de.uniol.inf.is.odysseus.server.streamingsparql
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.streamingsparql.ide

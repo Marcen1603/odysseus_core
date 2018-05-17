@@ -15,3 +15,4 @@ Service-Component: OSGI-INF/JiraTestComponent.xml
 Import-Package: org.osgi.framework,
  org.slf4j
 Eclipse-BundleShape: dir
+Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.jira

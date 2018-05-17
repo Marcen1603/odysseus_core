@@ -29,3 +29,4 @@ Export-Package: de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator,
  de.uniol.inf.is.odysseus.server.nosql.base.transform,
  de.uniol.inf.is.odysseus.server.nosql.base.util,
  de.uniol.inf.is.odysseus.server.nosql.base.util.connection
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.nosql.base

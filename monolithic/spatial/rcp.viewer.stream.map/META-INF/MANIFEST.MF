@@ -48,3 +48,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
  lib/gson-2.2.2.jar,
  lib/opal-0.9.5.2.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.viewer.stream.map

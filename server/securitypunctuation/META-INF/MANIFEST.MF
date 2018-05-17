@@ -41,3 +41,4 @@ Export-Package: de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 Service-Component: SecurityPunctuationPreTransformationHandler.xml,
  OSGI-INF/SecurityPunctuationPreTransformationHandler.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.securitypunctuation

@@ -21,3 +21,4 @@ Import-Package:  org.apache.tika;version="1.0.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/TikaProtocolHandler.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.tika

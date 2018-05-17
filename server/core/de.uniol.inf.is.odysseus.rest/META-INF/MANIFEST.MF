@@ -22,3 +22,4 @@ Export-Package: de.uniol.inf.is.odysseus.rest.dto.request,
  de.uniol.inf.is.odysseus.rest.serverresources,
  de.uniol.inf.is.odysseus.rest.service,
  de.uniol.inf.is.odysseus.rest.socket
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rest

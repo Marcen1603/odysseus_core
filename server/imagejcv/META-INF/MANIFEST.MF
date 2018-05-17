@@ -20,3 +20,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.imagejcv.util
+Automatic-Module-Name: de.uniol.inf.is.odysseus.imagejcv

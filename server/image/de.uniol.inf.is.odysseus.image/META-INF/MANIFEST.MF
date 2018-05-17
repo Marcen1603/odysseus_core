@@ -36,3 +36,4 @@ Bundle-NativeCode: lib/linux/x64/libopencv_java249.so ;  osname=linux;  processo
   lib/macosx/x64/libopencv_java249.dylib;  osname=macosx;  processor=x86_64,
   *
 Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.image

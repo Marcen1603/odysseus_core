@@ -27,3 +27,4 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.chart,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype
 Service-Component: OSGI-INF/executor.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.viewer.stream.chart

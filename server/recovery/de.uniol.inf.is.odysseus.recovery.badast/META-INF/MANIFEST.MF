@@ -23,3 +23,4 @@ Service-Component: OSGI-INF/SubscriberControllerProvider.xml,
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.recovery.badast,
  de.uniol.inf.is.odysseus.recovery.duplicatesdetector
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.badast

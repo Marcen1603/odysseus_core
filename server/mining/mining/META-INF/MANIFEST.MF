@@ -33,3 +33,4 @@ Export-Package: de.uniol.inf.is.odysseus.mining,
  de.uniol.inf.is.odysseus.mining.physicaloperator,
  de.uniol.inf.is.odysseus.mining.transform
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.mining

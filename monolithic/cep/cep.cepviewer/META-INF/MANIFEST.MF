@@ -21,3 +21,4 @@ Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  org.eclipse.draw2d,
  org.eclipse.draw2d.geometry
 Export-Package: de.uniol.inf.is.odysseus.cep.cepviewer
+Automatic-Module-Name: de.uniol.inf.is.odysseus.cep.cepviewer

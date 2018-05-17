@@ -20,3 +20,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.CostModelActivator
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.costmodel

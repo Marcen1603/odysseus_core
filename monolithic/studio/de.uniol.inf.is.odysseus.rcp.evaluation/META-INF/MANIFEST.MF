@@ -36,3 +36,4 @@ Bundle-ClassPath: .,
  lib/itextpdf-5.4.2.jar,
  lib/jcommon-1.0.16.jar
 Import-Package: de.uniol.inf.is.odysseus.mep
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.evaluation

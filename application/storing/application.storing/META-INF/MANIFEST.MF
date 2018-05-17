@@ -19,3 +19,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.application.storing,
  de.uniol.inf.is.odysseus.application.storing.controller,
  de.uniol.inf.is.odysseus.application.storing.model
+Automatic-Module-Name: de.uniol.inf.is.odysseus.application.storing

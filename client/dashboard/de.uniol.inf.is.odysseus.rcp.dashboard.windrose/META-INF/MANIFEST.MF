@@ -21,3 +21,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.view,
  org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.dashboard.windrose

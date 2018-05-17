@@ -18,3 +18,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/broadcastNodeDiscoverer.xml,
  OSGI-INF/BroadcastDiscoveryPlugInt.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.discovery.broadcast

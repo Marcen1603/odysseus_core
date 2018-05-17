@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/SystemTransportHandler.xml,  
  OSGI-INF/PingTransportHandler.xml
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.system

@@ -56,3 +56,4 @@ Export-Package: de.uniol.inf.is.odysseus.machine_learning.learner;uses:="de.unio
    de.uniol.inf.is.odysseus.ruleengine.ruleflow",
  de.uniol.inf.is.odysseus.recommendation.util;uses:="de.uniol.inf.is.odysseus.core.collection"
 Bundle-ClassPath: .
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recommendation

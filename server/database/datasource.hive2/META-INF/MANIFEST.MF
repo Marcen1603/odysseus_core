@@ -8,3 +8,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.database;bundle-version="1.0.0"
 Service-Component: OSGI-INF/hive2.xml
 Bundle-ClassPath: .,
  lib/hive-jdbc-0.14.0-standalone.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.hive2

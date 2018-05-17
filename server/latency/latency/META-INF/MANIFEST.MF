@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.server.intervalapproach;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.latency

@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.recommendation;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0"
 Service-Component: OSGI-INF/recommendationlearner.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recommendation.moa

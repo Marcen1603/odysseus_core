@@ -16,4 +16,5 @@ Import-Package: com.google.common.base,
  org.slf4j
 Service-Component: OSGI-INF/PolynomialFunctionProvider.xml,OSGI-INF/PolynomialDataHandler.xml,
  OSGI-INF/PolynomialAggregationFunctionBuilder.xml
+Automatic-Module-Name: cc.kuka.odysseus.polynomial
 

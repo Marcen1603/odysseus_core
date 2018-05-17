@@ -14,3 +14,4 @@ Import-Package: com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.database.spatial.Activator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.spatial

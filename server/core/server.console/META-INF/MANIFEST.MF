@@ -23,3 +23,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.report.executor;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.report.general;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.core.server.console
+Automatic-Module-Name: de.uniol.inf.is.odysseus.core.server.console

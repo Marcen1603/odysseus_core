@@ -23,3 +23,4 @@ Export-Package: de.uniol.inf.is.odysseus.priority,
 Service-Component: OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/Priority.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: de.uniol.inf.is.odysseus.priority

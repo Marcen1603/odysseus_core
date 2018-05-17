@@ -70,4 +70,5 @@ Export-Package: de.uniol.inf.is.odysseus.iql.odl,
  de.uniol.inf.is.odysseus.iql.odl.validation
 Service-Component: OSGI-INF/ODLServiceBinding.xml,
  OSGI-INF/ODLQueryParser.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.odl
 

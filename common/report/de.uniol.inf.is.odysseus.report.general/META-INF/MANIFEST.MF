@@ -11,3 +11,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/systemReportProvider.xml,OSGI-INF/bundleReportProvider.xml,
  OSGI-INF/servicesReportProvider.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.report.general

@@ -43,3 +43,4 @@ Export-Package: de.uniol.inf.is.odysseus.iql.basic.ui,
  de.uniol.inf.is.odysseus.iql.basic.ui.wizard
 Service-Component: OSGI-INF/IQLUiServiceBinding.xml,
  OSGI-INF/IQLDependenciesProviderServiceBinding.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.basic.ui

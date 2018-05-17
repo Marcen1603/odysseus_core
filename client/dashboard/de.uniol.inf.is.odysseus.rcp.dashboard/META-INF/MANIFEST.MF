@@ -29,3 +29,4 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.dashboard,
  de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider,
  de.uniol.inf.is.odysseus.rcp.dashboard.views
 Service-Component: OSGI-INF/executor.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.dashboard

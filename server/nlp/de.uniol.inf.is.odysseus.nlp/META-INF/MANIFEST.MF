@@ -26,3 +26,4 @@ Export-Package: de.uniol.inf.is.odysseus.nlp.datastructure,
  de.uniol.inf.is.odysseus.nlp.datastructure.pipeline,
  de.uniol.inf.is.odysseus.nlp.datastructure.toolkit
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.nlp

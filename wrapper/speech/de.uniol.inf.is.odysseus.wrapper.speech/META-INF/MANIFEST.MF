@@ -15,3 +15,4 @@ Bundle-ClassPath: .,
  lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar,
  lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar,
  lib/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.speech

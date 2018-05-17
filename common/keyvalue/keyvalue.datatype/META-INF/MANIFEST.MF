@@ -19,3 +19,4 @@ Export-Package: de.uniol.inf.is.odysseus.keyvalue.datatype;
    de.uniol.inf.is.odysseus.core.datatype,
    de.uniol.inf.is.odysseus.core.collection",
  de.uniol.inf.is.odysseus.keyvalue.mergefunction;uses:="de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.physicaloperator,de.uniol.inf.is.odysseus.core.metadata"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.keyvalue.datatype

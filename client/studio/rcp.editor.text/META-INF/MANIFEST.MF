@@ -34,4 +34,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text,
 Service-Component: OSGI-INF/Executor.xml,OSGI-INF/odysseusScriptTemplate.xml,
  OSGI-INF/FileExecutorRegistry.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.text
 

@@ -17,3 +17,4 @@ Export-Package: de.uniol.inf.is.odysseus.recovery.processingimage
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ProcessingImageRecoveryComponent.xml,
  OSGI-INF/StatefulGapRecoveryExecutor.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.processingimage

@@ -44,3 +44,4 @@ Bundle-ClassPath: .,
  lib/jung-graph-impl-2.0.1.jar,
  lib/vtd-xml.jar,
  lib/leveldbjni-all-1.8.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.trajectory

@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/IntervalDatatypeProvider.xml
 Export-Package: cc.kuka.odysseus.interval.datatype,
  cc.kuka.odysseus.interval.sdf.schema
+Automatic-Module-Name: cc.kuka.odysseus.interval.common

@@ -18,3 +18,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/WAVProtocolHandler.xml,
  OSGI-INF/AudioTransportHandler.xml
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.audio

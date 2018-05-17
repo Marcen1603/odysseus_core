@@ -28,3 +28,4 @@ Import-Package: com.google.gson,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.6.0",
  org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.mongodb

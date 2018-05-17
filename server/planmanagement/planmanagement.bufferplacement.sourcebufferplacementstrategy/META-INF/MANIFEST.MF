@@ -8,3 +8,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
  org.slf4j
 Service-Component: OSGI-INF/SourceBufferPlacementStrategy.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy

@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.net.discovery.activator.OdysseusNetDiscoveryPlugIn
 Export-Package: de.uniol.inf.is.odysseus.net.discovery
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.discovery

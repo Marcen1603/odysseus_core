@@ -29,3 +29,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
 Service-Component: OSGI-INF/RewriteRuleProvider.xml,OSGI-INF/SensorOntologyService.xml,OSGI-INF/QualityMetadata.xml,
  OSGI-INF/QualityTimeIntervalMetadata.xml
 Export-Package: cc.kuka.odysseus.ontology.metadata
+Automatic-Module-Name: cc.kuka.odysseus.ontology

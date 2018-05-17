@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.discovery;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.net;bundle-version="1.0.0"
 Service-Component: OSGI-INF/ipListNodeDiscoverer.xml
 Import-Package: de.uniol.inf.is.odysseus.core.config
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.discovery.iplist

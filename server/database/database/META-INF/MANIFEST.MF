@@ -42,3 +42,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/DataSourceFactoryRegistry.xml,
  OSGI-INF/DatabaseConnectionDictionary.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database

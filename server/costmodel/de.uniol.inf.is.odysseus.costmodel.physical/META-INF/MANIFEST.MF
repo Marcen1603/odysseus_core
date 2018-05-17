@@ -23,3 +23,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.physical.PhysicalCostModelPlugIn
+Automatic-Module-Name: de.uniol.inf.is.odysseus.costmodel.physical

@@ -46,3 +46,4 @@ Bundle-NativeCode: lib/linux/x64/libopencv_java2411.so ;
   *
 Service-Component: OSGI-INF/ImageFunctionProvider.xml, OSGI-INF/ImageDataHandler.xml,
  OSGI-INF/CameraTransportHandler.xml
+Automatic-Module-Name: cc.kuka.odysseus.image

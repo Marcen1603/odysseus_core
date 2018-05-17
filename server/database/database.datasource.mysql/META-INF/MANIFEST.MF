@@ -9,3 +9,4 @@ Bundle-ClassPath: lib/mysql-connector-java-5.1.15-bin.jar,
  .
 Service-Component: OSGI-INF/mysql.xml,
  OSGI-INF/ConnectionFactory.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.mysql

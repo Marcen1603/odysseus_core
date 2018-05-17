@@ -27,4 +27,5 @@ Bundle-NativeCode: lib/linux/x64/librxtxSerial.so ;
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Export-Package: gnu.io
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.rs232
 

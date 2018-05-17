@@ -12,3 +12,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.net
 Service-Component: OSGI-INF/nodeManager.xml,OSGI-INF/nodeManagerListenerBinder.xml,OSGI-INF/OdysseusNetStartupManager.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net

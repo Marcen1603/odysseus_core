@@ -18,3 +18,4 @@ Import-Package: org.osgi.framework;version="1.6.0", org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator
 Service-Component: OSGI-INF/KeyValuePredicateBuilder.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.keyvalue

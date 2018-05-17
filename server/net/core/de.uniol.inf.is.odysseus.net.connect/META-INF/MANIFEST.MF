@@ -14,3 +14,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.net.connect
 Service-Component: OSGI-INF/OdysseusNodeConnectionSelectorManager.xml,
  OSGI-INF/OdysseusNodeConnectionManager.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.connect

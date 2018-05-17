@@ -16,3 +16,4 @@ Export-Package: de.uniol.inf.is.odysseus.recovery,
  de.uniol.inf.is.odysseus.recovery.crashdetector,
  de.uniol.inf.is.odysseus.recovery.installedqueries,
  de.uniol.inf.is.odysseus.recovery.systemstatelogger
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery

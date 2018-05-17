@@ -25,3 +25,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/OdysseusNetRCPPlugIn.xml
 Import-Package: org.apache.commons.math.geometry
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.rcp

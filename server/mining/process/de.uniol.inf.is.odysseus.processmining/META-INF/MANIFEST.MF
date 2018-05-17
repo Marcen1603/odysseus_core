@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.google.guava,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.processmining.common
+Automatic-Module-Name: de.uniol.inf.is.odysseus.processmining

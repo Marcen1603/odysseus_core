@@ -56,3 +56,4 @@ Require-Bundle: org.eclipse.ui.navigator.resources;bundle-version="3.4.300",
  de.uniol.inf.is.odysseus.bugreport;bundle-version="1.0.0"
 Bundle-ClassPath: commons-httpclient-3.1.jar,
  .
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.base

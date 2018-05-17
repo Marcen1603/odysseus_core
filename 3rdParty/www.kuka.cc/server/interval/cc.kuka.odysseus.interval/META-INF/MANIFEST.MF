@@ -16,3 +16,4 @@ Service-Component: OSGI-INF/IntervalFunctionProvider.xml,
  OSGI-INF/IntervalDoubleDataHandler.xml,
  OSGI-INF/IntervalIntegerDataHandler.xml
 Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: cc.kuka.odysseus.interval

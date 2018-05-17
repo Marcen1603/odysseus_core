@@ -14,3 +14,4 @@ Service-Component: OSGI-INF/defaultAdmissionRuleProvider.xml,OSGI-INF/btwAdmissi
 Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.query,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query
+Automatic-Module-Name: de.uniol.inf.is.odysseus.admission.rules

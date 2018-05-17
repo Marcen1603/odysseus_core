@@ -10,3 +10,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Require-Bundle: de.uniol.inf.is.odysseus.nlp;bundle-version="1.0.0"
 Bundle-ClassPath: .,
  lib/opennlp-tools-1.7.2.jar
+Automatic-Module-Name: org.apache.opennlp

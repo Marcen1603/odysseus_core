@@ -40,3 +40,4 @@ Export-Package: de.uniol.inf.is.odysseus.iql.qdl.ui.quickfix,
 Bundle-Activator: de.uniol.inf.is.odysseus.incubation.iql.qdl.ui.internal.QdlActivator
 Service-Component: OSGI-INF/QDLFileExecutor.xml,OSGI-INF/QDLUiServiceBinding.xml,
  OSGI-INF/ODLDependenciesProvider.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.qdl.ui

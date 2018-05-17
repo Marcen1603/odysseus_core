@@ -11,3 +11,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/serverExecutor.xml,
  OSGI-INF/executorReportProvider.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.report.executor

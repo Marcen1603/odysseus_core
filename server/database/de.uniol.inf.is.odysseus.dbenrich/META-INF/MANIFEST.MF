@@ -18,3 +18,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.database;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.cache;bundle-version="1.0.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.dbenrich

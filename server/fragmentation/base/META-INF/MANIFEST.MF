@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.fragmentation

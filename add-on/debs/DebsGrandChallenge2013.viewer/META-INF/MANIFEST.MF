@@ -22,3 +22,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.debs2013.viewer,
  de.uniol.inf.is.odysseus.debs2013.viewer.activator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.debs2013.viewer

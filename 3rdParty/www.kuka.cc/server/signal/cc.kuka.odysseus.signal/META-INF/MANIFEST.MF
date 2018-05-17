@@ -21,3 +21,4 @@ Import-Package: cc.kuka.odysseus.signal.common.datatype,
  org.slf4j
 Service-Component: OSGI-INF/SignalFunctionProvider.xml,
  OSGI-INF/SignalAggregationFunctionBuilder.xml
+Automatic-Module-Name: cc.kuka.odysseus.signal

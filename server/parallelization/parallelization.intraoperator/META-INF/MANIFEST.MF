@@ -21,3 +21,4 @@ Service-Component: OSGI-INF/IntraOperatorPreExecutionHandler.xml,
  OSGI-INF/IntraOperatorParallelizationKeywordProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.intraoperator.constants,
  de.uniol.inf.is.odysseus.parallelization.intraoperator.keyword
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parallelization.intraoperator

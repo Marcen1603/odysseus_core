@@ -36,3 +36,4 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql2.ui,
  de.uniol.inf.is.odysseus.parser.cql2.ui.internal,
  de.uniol.inf.is.odysseus.parser.cql2.ui.internal
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.cql2.ui.Activator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.cql2.ui

@@ -11,3 +11,4 @@ Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.mep,
  org.slf4j
 Service-Component: OSGI-INF/MiscFunctionProvider.xml
+Automatic-Module-Name: cc.kuka.odysseus.misc

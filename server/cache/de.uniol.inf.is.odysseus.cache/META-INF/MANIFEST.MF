@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Service-Component: OSGI-INF/RemovalStrategyRegistryService.xml, OSGI-INF/FIFOService.xml, OSGI-INF/LFUService.xml, OSGI-INF/LRUService.xml, OSGI-INF/RANDOMService.xml
 Export-Package: de.uniol.inf.is.odysseus.cache,
  de.uniol.inf.is.odysseus.cache.removalstrategy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.cache

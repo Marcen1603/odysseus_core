@@ -15,3 +15,4 @@ Service-Component: OSGI-INF/*
 Import-Package: org.osgi.framework;version="1.6.0",
  org.slf4j
 Eclipse-BundleShape: dir
+Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.keyvalue

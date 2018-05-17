@@ -16,3 +16,4 @@ Import-Package: cc.kuka.odysseus.financial.common.sdf.schema,
  org.slf4j
 Service-Component: OSGI-INF/FinancialAggregationFunctionBuilder.xml,
  OSGI-INF/FinancialFunctionProvider.xml
+Automatic-Module-Name: cc.kuka.odysseus.financial

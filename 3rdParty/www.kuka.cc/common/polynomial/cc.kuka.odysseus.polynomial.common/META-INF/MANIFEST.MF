@@ -12,3 +12,4 @@ Import-Package: org.osgi.framework,
 Export-Package: cc.kuka.odysseus.polynomial.datatype,
  cc.kuka.odysseus.polynomial.sdf.schema
 Service-Component: OSGI-INF/PolynomialDatatypeProvider.xml
+Automatic-Module-Name: cc.kuka.odysseus.polynomial.common

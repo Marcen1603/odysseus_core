@@ -12,3 +12,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor.exception,
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.sensormanagement.common;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client
+Automatic-Module-Name: de.uniol.inf.is.odysseus.sensormanagement.client

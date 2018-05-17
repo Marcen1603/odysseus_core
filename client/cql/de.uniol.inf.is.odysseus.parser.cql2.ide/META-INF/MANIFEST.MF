@@ -16,4 +16,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.cql2.ide.contentassist.antlr,
  de.uniol.inf.is.odysseus.parser.cql2.ide.contentassist.antlr.internal,
  de.uniol.inf.is.odysseus.parser.cql2.ide.contentassist.antlr.lexer
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.cql2.ide
 

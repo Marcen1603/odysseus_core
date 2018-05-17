@@ -27,3 +27,4 @@ Import-Package: com.google.gson,
  org.osgi.framework;version="1.6.0"
 Export-Package: de.uniol.inf.is.odysseus.condition.logicaloperator
 Service-Component: OSGI-INF/ConditionRuleProvider.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.condition

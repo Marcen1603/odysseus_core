@@ -9,3 +9,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  com.rabbitmq;bundle-version="3.6.5",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
 Service-Component: OSGI-INF/TransportHandler.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.rabbitmq

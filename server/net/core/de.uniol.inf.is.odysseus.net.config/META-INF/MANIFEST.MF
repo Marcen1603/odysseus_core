@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.net.config
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.config

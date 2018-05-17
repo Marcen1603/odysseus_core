@@ -68,4 +68,5 @@ Bundle-ClassPath: .,
  lib/javassist.jar,
  lib/reflections-0.9.9-RC1.jar
 Service-Component: OSGI-INF/IQLServiceBinding.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.basic
 

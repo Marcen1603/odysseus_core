@@ -13,4 +13,5 @@ Import-Package: org.osgi.framework;version="1.6.0",
 Export-Package: de.uniol.inf.is.odysseus.s100.common.datatype,
  de.uniol.inf.is.odysseus.s100.common.geometry,
  de.uniol.inf.is.odysseus.s100.common.sdf.schema
+Automatic-Module-Name: de.uniol.inf.is.odysseus.s100.common
 

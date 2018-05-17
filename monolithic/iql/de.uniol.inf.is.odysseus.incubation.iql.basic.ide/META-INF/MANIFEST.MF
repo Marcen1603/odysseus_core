@@ -10,3 +10,4 @@ Require-Bundle: com.google.inject;bundle-version="3.0.0",
 Export-Package: de.uniol.inf.is.odysseus.iql.basic.ide,
  de.uniol.inf.is.odysseus.iql.basic.ide.contentassist.antlr,
  de.uniol.inf.is.odysseus.iql.basic.ide.contentassist.antlr.internal
+Automatic-Module-Name: de.uniol.inf.is.odysseus.incubation.iql.basic.ide

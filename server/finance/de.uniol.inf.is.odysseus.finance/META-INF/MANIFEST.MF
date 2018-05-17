@@ -29,3 +29,4 @@ Export-Package: de.uniol.inf.is.odysseus.finance,
  de.uniol.inf.is.odysseus.finance.risk.var.estimator,
  de.uniol.inf.is.odysseus.finance.risk.var.model,
  de.uniol.inf.is.odysseus.finance.simulation
+Automatic-Module-Name: de.uniol.inf.is.odysseus.finance

@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Service-Component: OSGI-INF/XovisTransportHandler.xml, OSGI-INF/GPBProtocolHandler.xml
 Bundle-ClassPath: .
 Import-Package: de.uniol.inf.is.odysseus.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.xovis

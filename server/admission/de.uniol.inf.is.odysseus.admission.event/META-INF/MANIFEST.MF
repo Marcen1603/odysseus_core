@@ -13,3 +13,4 @@ Service-Component: OSGI-INF/admissionEventPlugIn.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.admission.event
+Automatic-Module-Name: de.uniol.inf.is.odysseus.admission.event

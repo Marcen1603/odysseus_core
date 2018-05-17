@@ -11,3 +11,4 @@ Export-Package: de.uniol.inf.is.odysseus.billingmodel,
  de.uniol.inf.is.odysseus.billingmodel.physicaloperator
 Bundle-ClassPath: postgresql-9.2-1003.jdbc4.jar,
  .
+Automatic-Module-Name: de.uniol.inf.is.odysseus.billingmodel
