@@ -20,6 +20,15 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.AcceleratingMovingPointFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
 
+/**
+ * Creates a temporal point that is accelerating. The acceleration is calculated
+ * by taking the speed of the first half and the second half and calculating the
+ * acceleration between these two values. The speed of the first half is used as
+ * the initial speed.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		extends ToLinearTemporalPoint<M, T> {
 

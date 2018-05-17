@@ -12,6 +12,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 
+/**
+ * A temporal point with a constant acceleration.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class AcceleratingMovingPointFunction implements TemporalFunction<GeometryWrapper> {
 
 	protected Geometry basePoint;
