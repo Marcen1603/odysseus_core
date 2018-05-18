@@ -12,7 +12,6 @@ Require-Bundle: org.apache.jlibs,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.mep
-Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.server.xml,
  de.uniol.inf.is.odysseus.server.xml.predicate
 Automatic-Module-Name: de.uniol.inf.is.odysseus.server.xml
