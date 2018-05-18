@@ -5,17 +5,18 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.slascheduler.rcp;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.scheduler.slascheduler;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.dashboard;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.dashboard.part;bundle-version="1.0.0",
- de.uniol.inf.is.jfreechart;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.scheduler.slascheduler,
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.rcp.dashboard,
+ de.uniol.inf.is.odysseus.rcp.dashboard.part,
+ de.uniol.inf.is.jfreechart,
+ de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.swt;bundle-version="3.7.2",
  com.google.guava;bundle-version="14.0.0",
  org.eclipse.ui;bundle-version="3.7.0",
  org.eclipse.core.resources;bundle-version="3.7.101",
- de.uniol.inf.is.odysseus.billingmodel;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.billingmodel,
  org.eclipse.core.runtime;bundle-version="3.7.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.slascheduler.rcp

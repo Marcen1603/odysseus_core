@@ -4,11 +4,12 @@ Bundle-Name: Localsource
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.querydistribute.postprocess.localsource
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.net.util;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.net,
+ de.uniol.inf.is.odysseus.net.util,
  com.google.guava;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
- de.uniol.inf.is.odysseus.net.querydistribute;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.net.querydistribute,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/LocalSourcesPostProcessor.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.postprocess.localsource

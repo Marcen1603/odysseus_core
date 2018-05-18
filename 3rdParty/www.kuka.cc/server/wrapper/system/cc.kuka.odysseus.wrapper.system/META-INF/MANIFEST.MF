@@ -7,7 +7,8 @@ Bundle-Activator: cc.kuka.odysseus.wrapper.system.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework,
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/SystemTransportHandler.xml,  
  OSGI-INF/PingTransportHandler.xml
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.system

@@ -25,3 +25,4 @@ Bundle-ClassPath: lib/lwjgl.jar,
 Bundle-NativeCode: lib/linux/liblwjgl64.so, lib/linux/libjinput_linux64.so, lib/linux/libopenal64.so ;
   osname=linux;  processor=x86_64,
   *
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.dashboard.canvas

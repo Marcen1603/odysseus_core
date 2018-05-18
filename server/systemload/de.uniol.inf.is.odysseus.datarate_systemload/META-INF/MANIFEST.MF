@@ -5,14 +5,15 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.datarate_systemload
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.server.intervalapproach;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.systemload;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.datarate;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.systemload,
+ de.uniol.inf.is.odysseus.datarate
 Import-Package: de.uniol.inf.is.odysseus.latency
 Service-Component: OSGI-INF/DatarateSystemLoad.xml,OSGI-INF/LatencyDatarateSystemLoad.xml,OSGI-INF/TimeIntervalDatarateSystemLoad.xml,
  OSGI-INF/TimeIntervalLatencyDatarateSystemLoad.xml
 Export-Package: de.uniol.inf.is.odysseus.datarate_systemload
+Automatic-Module-Name: de.uniol.inf.is.odysseus.datarate_systemload

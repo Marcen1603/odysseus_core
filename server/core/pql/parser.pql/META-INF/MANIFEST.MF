@@ -9,3 +9,4 @@ Export-Package: de.uniol.inf.is.odysseus.parser.pql
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core 
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.pql

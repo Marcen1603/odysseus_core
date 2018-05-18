@@ -7,11 +7,12 @@ Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.speech.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework,
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/*.xml
 Bundle-ClassPath: .,
  lib/sphinx4.jar,
  lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar,
  lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar,
  lib/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.speech

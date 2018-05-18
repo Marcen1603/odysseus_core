@@ -12,5 +12,6 @@ Service-Component: OSGI-INF/TwitterTransportHandler.xml
 Bundle-ClassPath: .,
  lib/twitter4j-core-4.0.4.jar,
  lib/twitter4j-stream-4.0.4.jar
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.twitter

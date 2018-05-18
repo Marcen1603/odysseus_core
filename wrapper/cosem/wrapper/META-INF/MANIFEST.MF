@@ -14,3 +14,4 @@ Service-Component: OSGI-INF/IEC62056TransportHandler.xml, OSGI-INF/JSONCOSEMProt
 Import-Package: com.google.inject.spi,
  org.slf4j
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.iec62056

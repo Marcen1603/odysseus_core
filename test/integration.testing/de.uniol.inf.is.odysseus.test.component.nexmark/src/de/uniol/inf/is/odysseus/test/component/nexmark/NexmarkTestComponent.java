@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.framework.BundleContext;
+
 import de.uniol.inf.is.odysseus.test.component.AbstractQueryExpectedOutputTestComponent;
 import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
 import de.uniol.inf.is.odysseus.test.set.ExpectedOutputTestSet;
@@ -28,9 +30,10 @@ public class NexmarkTestComponent extends AbstractQueryExpectedOutputTestCompone
 //		sets.add(set);
 		return sets;
 	}
-
+ 
 	private URL getURL(String file) {
-		return Activator.getContext().getBundle().getEntry("testdaten/" + file);
+		BundleContext context = Activator.getContext();
+		return context.getBundle().getEntry("testdaten/" + file);
 	}
 	
 	@Override

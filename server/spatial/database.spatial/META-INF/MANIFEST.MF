@@ -5,12 +5,13 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.spatial;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/SpatialDataTypeMappingHandler.xml 
-Require-Bundle: de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.database;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.spatial,
+ de.uniol.inf.is.odysseus.database,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
  com.vividsolutions.jts
 Import-Package: com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.database.spatial.Activator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.spatial

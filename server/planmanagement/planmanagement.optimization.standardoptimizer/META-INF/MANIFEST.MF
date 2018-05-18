@@ -8,3 +8,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.co
 Import-Package: org.slf4j
 Service-Component: OSGI-INF/StandardOptimizer.xml
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer
+Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer

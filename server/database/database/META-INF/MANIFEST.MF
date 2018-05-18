@@ -38,7 +38,8 @@ Export-Package: de.uniol.inf.is.odysseus.database,
    de.uniol.inf.is.odysseus.database.logicaloperator,
    de.uniol.inf.is.odysseus.ruleengine.ruleflow",
  org.osgi.service.jdbc
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/DataSourceFactoryRegistry.xml,
  OSGI-INF/DatabaseConnectionDictionary.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database

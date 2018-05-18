@@ -42,3 +42,4 @@ Import-Package: com.google.inject,
  javax.validation.constraints,
  org.slf4j,
  org.apache.log4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.cql2

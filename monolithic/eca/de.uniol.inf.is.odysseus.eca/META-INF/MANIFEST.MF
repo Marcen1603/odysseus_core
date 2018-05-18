@@ -32,4 +32,5 @@ Export-Package: de.uniol.inf.is.odysseus.eca,
  de.uniol.inf.is.odysseus.eca.generator,
  de.uniol.inf.is.odysseus.eca.formatting,
  de.uniol.inf.is.odysseus.eca.formatting2
+Automatic-Module-Name: de.uniol.inf.is.odysseus.eca
 

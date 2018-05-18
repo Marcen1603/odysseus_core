@@ -9,3 +9,4 @@ Export-Package: kohonen,
  metrics,
  network,
  topology
+Automatic-Module-Name: de.uniol.inf.is.odysseus.kohonen

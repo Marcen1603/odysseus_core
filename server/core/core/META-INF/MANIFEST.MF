@@ -14,11 +14,11 @@ Import-Package:
  org.simpleframework.xml.core
 Service-Component: OSGI-INF/*
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- org.apache.commons.io;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.compiler;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.mep,
+ org.apache.commons.io,
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.compiler
 Export-Package: 
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.cache,
@@ -102,3 +102,4 @@ Export-Package:
  de.uniol.inf.is.odysseus.core.server.util
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.core.server

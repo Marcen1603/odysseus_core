@@ -5,12 +5,13 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.connect
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.net.connect.OdysseusNetConnectPlugIn
 Require-Bundle: org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.net,
+ de.uniol.inf.is.odysseus.slf4j,
  com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.net.config;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.net.config
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.net.connect
 Service-Component: OSGI-INF/OdysseusNodeConnectionSelectorManager.xml,
  OSGI-INF/OdysseusNodeConnectionManager.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.connect

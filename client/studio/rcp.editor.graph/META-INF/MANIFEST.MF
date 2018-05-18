@@ -13,10 +13,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.gef,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.ui.workbench,
  org.eclipse.jface,
  org.eclipse.ui.navigator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.graph

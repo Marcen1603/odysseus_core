@@ -6,9 +6,10 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.net.OdysseusNetPlugIn
 Require-Bundle: org.eclipse.core.runtime,
  com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.net.config
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.net
 Service-Component: OSGI-INF/nodeManager.xml,OSGI-INF/nodeManagerListenerBinder.xml,OSGI-INF/OdysseusNetStartupManager.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net

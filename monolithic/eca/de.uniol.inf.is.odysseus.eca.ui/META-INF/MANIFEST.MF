@@ -18,9 +18,10 @@ Require-Bundle: de.uniol.inf.is.odysseus.eca;visibility:=reexport,
  org.eclipse.compare,
  com.google.guava,
  org.eclipse.xtend.lib;resolution:=optional,
- de.uniol.inf.is.odysseus.eca.ide;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.eca.ide
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.eca.ui.quickfix,
  de.uniol.inf.is.odysseus.eca.ui.contentassist,
  de.uniol.inf.is.odysseus.eca.ui.internal
+Automatic-Module-Name: de.uniol.inf.is.odysseus.eca.ui

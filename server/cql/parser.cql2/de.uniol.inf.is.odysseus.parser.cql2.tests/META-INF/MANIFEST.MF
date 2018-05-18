@@ -11,7 +11,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.parser.cql2,
  org.eclipse.xtext.xbase.lib,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.test;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.test,
  org.eclipse.xtext.testing,
  org.eclipse.xtext.xbase.testing
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -30,4 +30,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.sdf.schema,
  org.junit.runner.notification;version="4.5.0",
  org.junit.runners;version="4.5.0",
  org.junit.runners.model;version="4.5.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.cql2.tests
 

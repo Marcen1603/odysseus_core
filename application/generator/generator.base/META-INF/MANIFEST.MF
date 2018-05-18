@@ -21,3 +21,4 @@ Export-Package: de.uniol.inf.is.odysseus.generator,
  de.uniol.inf.is.odysseus.generator.valuegenerator.random,
  de.uniol.inf.is.odysseus.generator.valuegenerator.spatial,
  de.uniol.inf.is.odysseus.generator.valuegenerator.switching
+Automatic-Module-Name: de.uniol.inf.is.odysseus.generator

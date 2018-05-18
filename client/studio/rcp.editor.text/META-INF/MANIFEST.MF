@@ -7,15 +7,15 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorText
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.google.guava;bundle-version="1.0.0",
+ com.google.guava,
  org.eclipse.jface.text;bundle-version="3.7.2",
  org.eclipse.ui.editors;bundle-version="3.7.0",
  org.eclipse.ui.ide;bundle-version="3.7.0",
- TestNG6.8;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.config;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.editor.script;bundle-version="1.0.0"
+ TestNG6.8,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.rcp.config,
+ de.uniol.inf.is.odysseus.rcp.editor.script
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.eclipse.core.resources,
  org.eclipse.ui.dialogs,
@@ -34,4 +34,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text,
 Service-Component: OSGI-INF/Executor.xml,OSGI-INF/odysseusScriptTemplate.xml,
  OSGI-INF/FileExecutorRegistry.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.text
 

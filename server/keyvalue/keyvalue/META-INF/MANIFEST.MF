@@ -6,15 +6,16 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.transform,
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.server.intervalapproach;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.keyvalue.datahandler;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ de.uniol.inf.is.odysseus.keyvalue.datatype,
+ de.uniol.inf.is.odysseus.keyvalue.datahandler
 Import-Package: org.osgi.framework;version="1.6.0", org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator
 Service-Component: OSGI-INF/KeyValuePredicateBuilder.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.keyvalue

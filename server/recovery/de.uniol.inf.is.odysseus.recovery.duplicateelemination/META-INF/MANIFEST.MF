@@ -5,13 +5,13 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.duplicateelemination
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.recovery;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.recovery,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
- de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.trust;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.trust,
  de.uniol.inf.is.odysseus.recovery.checkpointing,
  de.uniol.inf.is.odysseus.recovery.processingimage,
  de.uniol.inf.is.odysseus.recovery.badast,
@@ -20,3 +20,4 @@ Export-Package: de.uniol.inf.is.odysseus.recovery.duplicateelemination
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/PreciseRecoveryExecutor.xml,
  OSGI-INF/FullReplayWithoutDuplicatesRecoveryExecutor.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.duplicateelemination
