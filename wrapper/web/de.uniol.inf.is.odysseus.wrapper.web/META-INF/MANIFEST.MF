@@ -19,8 +19,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.2",
  com.google.guava,
  javax.servlet,
  org.apache.commons.collections15,
- org.eclipse.jetty.server,
  org.apache.commons.io,
  de.uniol.inf.is.odysseus.keyvalue.datatype,
+ org.eclipse.jetty.server;bundle-version="9.2.13",
  org.eclipse.jetty.util;bundle-version="9.2.13"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.web
