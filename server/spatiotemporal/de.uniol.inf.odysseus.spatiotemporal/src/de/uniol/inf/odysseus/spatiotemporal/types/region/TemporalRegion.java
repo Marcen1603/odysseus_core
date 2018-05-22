@@ -2,9 +2,9 @@ package de.uniol.inf.odysseus.spatiotemporal.types.region;
 
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
-import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
+import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 
-public class TemporalRegion extends TemporalPoint {
+public class TemporalRegion extends TemporalGeometry {
 
 	private static final long serialVersionUID = 56876639887007517L;
 

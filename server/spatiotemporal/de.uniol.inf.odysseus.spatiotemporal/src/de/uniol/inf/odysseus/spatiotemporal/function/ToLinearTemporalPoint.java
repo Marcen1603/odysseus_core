@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
-import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
+import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 
 /**
  * An aggregation function to create a temporal function for a point that is
@@ -41,9 +41,7 @@ import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
 public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
-	private static final long serialVersionUID = -564559788689771841L;
-	
-	private GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
+	private static final long serialVersionUID = -564559788689771841L; 
 
 	// For OSGi
 	public ToLinearTemporalPoint() {
@@ -83,23 +81,23 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		Geometry currentPoint = getGeometryFromElement(newestElement);
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
 				newestElement.getMetadata().getStart(), 0, 0);
-		TemporalPoint[] temporalPoint = new TemporalPoint[1];
-		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
 		return temporalPoint;
 	}
 
 	protected Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
 		Geometry currentPoint = getGeometryFromElement(newestElement);
-		Geometry basePoint = getGeometryFromElement(oldestElement);
-		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
+		Geometry oldestPoint = getGeometryFromElement(oldestElement);
+		PointInTime oldestPointInTime = oldestElement.getMetadata().getStart();
 		PointInTime currentPointInTime = newestElement.getMetadata().getStart();
-		return createTemporalPoint(currentPoint, basePoint, currentPointInTime, basePointInTime);
+		return createTemporalPoint(currentPoint, oldestPoint, currentPointInTime, oldestPointInTime);
 	}
 
-	protected Object[] createTemporalPoint(Geometry currentPoint, Geometry basePoint, PointInTime currentPointInTime,
-			PointInTime basePointInTime) {
-		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(basePoint, currentPoint);
-		long timeInstancesTravelled = currentPointInTime.minus(basePointInTime).getMainPoint();
+	protected Object[] createTemporalPoint(Geometry currentPoint, Geometry oldestPoint, PointInTime currentPointInTime,
+			PointInTime oldestPointInTime) {
+		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(oldestPoint, currentPoint);
+		long timeInstancesTravelled = currentPointInTime.minus(oldestPointInTime).getMainPoint();
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
 		double speedMetersPerTimeInstance = metersTravelled / timeInstancesTravelled;
 		if (Double.isNaN(speedMetersPerTimeInstance) || Double.isInfinite(speedMetersPerTimeInstance)) {
@@ -107,14 +105,15 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		}
 		double azimuth = geodeticCalculator.getAzimuth();
 
-		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(basePoint,
-				basePointInTime, speedMetersPerTimeInstance, azimuth);
-		TemporalPoint[] temporalPoint = new TemporalPoint[1];
-		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
+				currentPointInTime, speedMetersPerTimeInstance, azimuth);
+		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
 		return temporalPoint;
 	}
 	
 	protected GeodeticCalculator getGeodeticCalculator(Coordinate from, Coordinate to) {
+		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 		double startLongitude = from.y;
 		double startLatitude = from.x;
 		geodeticCalculator.setStartingGeographicPoint(startLongitude, startLatitude);

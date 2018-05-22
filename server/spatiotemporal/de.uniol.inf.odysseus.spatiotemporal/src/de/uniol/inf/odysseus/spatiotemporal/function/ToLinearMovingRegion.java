@@ -17,9 +17,11 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
-import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
+import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 import de.uniol.inf.odysseus.spatiotemporal.types.region.LinearMovingRegionFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.region.TemporalRegion;
 
@@ -61,18 +63,19 @@ public class ToLinearMovingRegion<M extends ITimeInterval, T extends Tuple<M>> e
 		Coordinate[] oldestCoordinates = oldestPolygon.getCoordinates();
 		Coordinate[] newestCoordinates = newestPolygon.getCoordinates();
 
-		List<LinearMovingPointFunction> movingPoints = new ArrayList<>();
+		List<TemporalFunction<GeometryWrapper>> movingPoints = new ArrayList<>();
 
 		for (int i = 0; i < oldestCoordinates.length; i++) {
 			Coordinate oldCorner = oldestCoordinates[i];
 			Coordinate newCorner = newestCoordinates[i];
 			Point oldPoint = GeometryFactory.createPointFromInternalCoord(oldCorner, oldestPolygon);
 			Point newPoint = GeometryFactory.createPointFromInternalCoord(newCorner, newestPolygon);
-			Object[] temporalPoint = createTemporalPoint(oldPoint, newPoint, newestElement.getMetadata().getStart(),
+			Object[] temporalPoint = createTemporalPoint(newPoint, oldPoint, newestElement.getMetadata().getStart(),
 					oldestElement.getMetadata().getStart());
-			movingPoints.add(
-					temporalPoint[0] instanceof LinearMovingPointFunction ? (LinearMovingPointFunction) temporalPoint[0]
-							: null);
+			TemporalFunction<GeometryWrapper> function = temporalPoint[0] instanceof TemporalGeometry
+					? ((TemporalGeometry) temporalPoint[0]).getFunction()
+					: null;
+			movingPoints.add(function);
 		}
 
 		LinearMovingRegionFunction movingRegion = new LinearMovingRegionFunction(movingPoints);

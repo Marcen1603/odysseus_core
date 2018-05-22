@@ -10,14 +10,13 @@ import com.vividsolutions.jts.geom.Polygon;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
-import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
 
 public class LinearMovingRegionFunction implements TemporalFunction<GeometryWrapper> {
 
-	private List<LinearMovingPointFunction> movingPoints;
+	private List<TemporalFunction<GeometryWrapper>> movingPoints;
 	private GeometryFactory geometryFactory;
 
-	public LinearMovingRegionFunction(List<LinearMovingPointFunction> movingPoints) {
+	public LinearMovingRegionFunction(List<TemporalFunction<GeometryWrapper>> movingPoints) {
 		this.movingPoints = movingPoints;
 		this.geometryFactory = new GeometryFactory();
 	}
@@ -32,7 +31,7 @@ public class LinearMovingRegionFunction implements TemporalFunction<GeometryWrap
 
 		Coordinate[] points = new Coordinate[movingPoints.size()];
 		int i = 0;
-		for (LinearMovingPointFunction tpoint : movingPoints) {
+		for (TemporalFunction<GeometryWrapper> tpoint : movingPoints) {
 			points[i] = tpoint.getValue(time).getGeometry().getCoordinate();
 			i++;
 		}
@@ -57,7 +56,8 @@ public class LinearMovingRegionFunction implements TemporalFunction<GeometryWrap
 	
 	@Override
 	public String toString() {
-		return "moving region";
+		String sample = movingPoints.size() > 0 ? movingPoints.get(0).toString() : "";
+		return movingPoints.size() + " vertices; sample-function: " + sample;
 	}
 
 }
