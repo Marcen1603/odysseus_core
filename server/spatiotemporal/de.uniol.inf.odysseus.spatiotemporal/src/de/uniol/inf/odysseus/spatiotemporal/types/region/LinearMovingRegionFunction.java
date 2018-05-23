@@ -11,6 +11,13 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 
+/**
+ * A function for a moving region (polygon) consisting of a number of moving
+ * corner points.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class LinearMovingRegionFunction implements TemporalFunction<GeometryWrapper> {
 
 	private List<TemporalFunction<GeometryWrapper>> movingPoints;
@@ -20,7 +27,7 @@ public class LinearMovingRegionFunction implements TemporalFunction<GeometryWrap
 		this.movingPoints = movingPoints;
 		this.geometryFactory = new GeometryFactory();
 	}
-	
+
 	public LinearMovingRegionFunction(LinearMovingRegionFunction other) {
 		this.movingPoints = other.movingPoints;
 		this.geometryFactory = new GeometryFactory();
@@ -48,12 +55,12 @@ public class LinearMovingRegionFunction implements TemporalFunction<GeometryWrap
 
 		return new GeometryWrapper(poly);
 	}
-	
+
 	@Override
 	public LinearMovingRegionFunction clone() {
 		return new LinearMovingRegionFunction(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		String sample = movingPoints.size() > 0 ? movingPoints.get(0).toString() : "";

@@ -25,6 +25,14 @@ import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 import de.uniol.inf.odysseus.spatiotemporal.types.region.LinearMovingRegionFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.region.TemporalRegion;
 
+/**
+ * Creates a moving region by taking the corner points and using these as linear
+ * moving points. Be aware that the order of the corner points needs to stay the
+ * same over time.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ToLinearMovingRegion<M extends ITimeInterval, T extends Tuple<M>> extends ToLinearTemporalPoint<M, T> {
 
 	private static final long serialVersionUID = 6318595318867497345L;
@@ -65,6 +73,7 @@ public class ToLinearMovingRegion<M extends ITimeInterval, T extends Tuple<M>> e
 
 		List<TemporalFunction<GeometryWrapper>> movingPoints = new ArrayList<>();
 
+		/* Go through all corner points and create a moving point for each */
 		for (int i = 0; i < oldestCoordinates.length; i++) {
 			Coordinate oldCorner = oldestCoordinates[i];
 			Coordinate newCorner = newestCoordinates[i];
