@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="de.uniol.inf.is.odysseus.server.xml.DatatypeProvider">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" immediate="true" name="de.uniol.inf.is.odysseus.server.xml.DatatypeProvider">
    <implementation class="de.uniol.inf.is.odysseus.server.xml.DatatypeProvider"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider"/>

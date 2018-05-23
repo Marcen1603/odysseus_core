@@ -50,6 +50,10 @@ Unless required by applicable law or agreed to in writing, software
          id="de.uniol.inf.is.odysseus.test.component.operator.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.test.component.xml.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.test"
          download-size="0"
