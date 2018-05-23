@@ -16,17 +16,17 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
  * @author Tobias Brandt
  *
  */
-public class TemporalPoint implements IClone, Cloneable, Serializable, TemporalType<GeometryWrapper> {
+public class TemporalGeometry implements IClone, Cloneable, Serializable, TemporalType<GeometryWrapper> {
 
 	private static final long serialVersionUID = 7337746723249079888L;
 
-	private TemporalFunction<GeometryWrapper> function;
+	protected TemporalFunction<GeometryWrapper> function;
 
-	public TemporalPoint(TemporalFunction<GeometryWrapper> function) {
+	public TemporalGeometry(TemporalFunction<GeometryWrapper> function) {
 		this.function = function;
 	}
 
-	public TemporalPoint(TemporalPoint other) {
+	public TemporalGeometry(TemporalGeometry other) {
 		this.function = other.function;
 	}
 
@@ -49,10 +49,14 @@ public class TemporalPoint implements IClone, Cloneable, Serializable, TemporalT
 		}
 		return results;
 	}
+	
+	public TemporalFunction<GeometryWrapper> getFunction() {
+		return this.function;
+	}
 
 	@Override
-	public TemporalPoint clone() {
-		return new TemporalPoint(this);
+	public TemporalGeometry clone() {
+		return new TemporalGeometry(this);
 	}
 
 	@Override

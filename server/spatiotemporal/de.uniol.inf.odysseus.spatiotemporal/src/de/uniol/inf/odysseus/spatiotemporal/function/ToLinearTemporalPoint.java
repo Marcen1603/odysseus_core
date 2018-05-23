@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.geotools.referencing.GeodeticCalculator;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
-import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
+import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 
 /**
  * An aggregation function to create a temporal function for a point that is
@@ -33,12 +34,14 @@ import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
  * @author Tobias Brandt
  *
  * @param <M>
+ *            The metadata type
  * @param <T>
+ *            The tuple type
  */
 public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
-	private static final long serialVersionUID = -564559788689771841L;
+	private static final long serialVersionUID = -564559788689771841L; 
 
 	// For OSGi
 	public ToLinearTemporalPoint() {
@@ -71,25 +74,30 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		if (oldestElement == null) {
 			return handleEmptyHistory(newestElement);
 		}
-		return handleFilledHistory(newestElement, oldestElement, pointInTime, elements);
+		return handleFilledHistory(newestElement, oldestElement, elements);
 	}
 
 	protected Object[] handleEmptyHistory(T newestElement) {
-		Geometry currentPoint = getPointFromElement(newestElement);
+		Geometry currentPoint = getGeometryFromElement(newestElement);
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
 				newestElement.getMetadata().getStart(), 0, 0);
-		TemporalPoint[] temporalPoint = new TemporalPoint[1];
-		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
 		return temporalPoint;
 	}
 
-	protected Object[] handleFilledHistory(T newestElement, T oldestElement, PointInTime pointInTime, Collection<T> history) {
-		Geometry currentPoint = getPointFromElement(newestElement);
-		Geometry basePoint = getPointFromElement(oldestElement);
-		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(basePoint, currentPoint);
+	protected Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
+		Geometry currentPoint = getGeometryFromElement(newestElement);
+		Geometry oldestPoint = getGeometryFromElement(oldestElement);
+		PointInTime oldestPointInTime = oldestElement.getMetadata().getStart();
+		PointInTime currentPointInTime = newestElement.getMetadata().getStart();
+		return createTemporalPoint(currentPoint, oldestPoint, currentPointInTime, oldestPointInTime);
+	}
 
-		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
-		long timeInstancesTravelled = pointInTime.minus(basePointInTime).getMainPoint();
+	protected Object[] createTemporalPoint(Geometry currentPoint, Geometry oldestPoint, PointInTime currentPointInTime,
+			PointInTime oldestPointInTime) {
+		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(oldestPoint, currentPoint);
+		long timeInstancesTravelled = currentPointInTime.minus(oldestPointInTime).getMainPoint();
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
 		double speedMetersPerTimeInstance = metersTravelled / timeInstancesTravelled;
 		if (Double.isNaN(speedMetersPerTimeInstance) || Double.isInfinite(speedMetersPerTimeInstance)) {
@@ -97,39 +105,42 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		}
 		double azimuth = geodeticCalculator.getAzimuth();
 
-		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(basePoint,
-				basePointInTime, speedMetersPerTimeInstance, azimuth);
-		TemporalPoint[] temporalPoint = new TemporalPoint[1];
-		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
+				currentPointInTime, speedMetersPerTimeInstance, azimuth);
+		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
 		return temporalPoint;
 	}
-
-	protected GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
+	
+	protected GeodeticCalculator getGeodeticCalculator(Coordinate from, Coordinate to) {
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
-
-		double startLongitude = from.getCentroid().getY();
-		double startLatitude = from.getCentroid().getX();
+		double startLongitude = from.y;
+		double startLatitude = from.x;
 		geodeticCalculator.setStartingGeographicPoint(startLongitude, startLatitude);
 
-		double destinationLongitude = to.getCentroid().getY();
-		double destinationLatitude = to.getCentroid().getX();
+		double destinationLongitude = to.y;
+		double destinationLatitude = to.x;
 		geodeticCalculator.setDestinationGeographicPoint(destinationLongitude, destinationLatitude);
 
 		return geodeticCalculator;
 	}
 
-	protected Geometry getPointFromElement(T element) {
-		Geometry point = null;
+	protected GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
+		return getGeodeticCalculator(from.getCoordinate(), to.getCoordinate());
+	}
+
+	protected Geometry getGeometryFromElement(T element) {
+		Geometry geom = null;
 
 		Object[] attributes = this.getAttributes(element);
 		// Should only be one attribute given for this function
 		Object pointObject = attributes[0];
 		if (pointObject instanceof GeometryWrapper) {
-			point = ((GeometryWrapper) pointObject).getGeometry();
+			geom = ((GeometryWrapper) pointObject).getGeometry();
 		} else {
 			throw new ClassCastException("Cannot use any other attribute type than a Geometry.");
 		}
-		return point;
+		return geom;
 	}
 
 	protected T popOldestElement(Collection<T> elements) {

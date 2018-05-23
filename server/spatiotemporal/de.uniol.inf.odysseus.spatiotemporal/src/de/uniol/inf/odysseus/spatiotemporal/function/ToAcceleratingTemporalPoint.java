@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.AcceleratingMovingPointFunction;
-import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
+import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 
 /**
  * Creates a temporal point that is accelerating. The acceleration is calculated
@@ -58,16 +58,16 @@ public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tupl
 	}
 
 	@Override
-	protected Object[] handleFilledHistory(T newestElement, T oldestElement, PointInTime currentPointInTime,
-			Collection<T> history) {
-		Geometry basePoint = getPointFromElement(oldestElement);
+	protected Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
+		Geometry basePoint = getGeometryFromElement(oldestElement);
 		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
 
 		T middleElement = getMiddleElement(history);
 		PointInTime middlePointInTime = middleElement.getMetadata().getStart();
-		Geometry middlePoint = getPointFromElement(middleElement);
+		Geometry middlePoint = getGeometryFromElement(middleElement);
 
-		Geometry currentPoint = getPointFromElement(newestElement);
+		PointInTime currentPointInTime = newestElement.getMetadata().getStart();
+		Geometry currentPoint = getGeometryFromElement(newestElement);
 
 		GeodeticCalculator fullCalculator = getGeodeticCalculator(basePoint, currentPoint);
 		GeodeticCalculator firstHalfCalculator = getGeodeticCalculator(basePoint, middlePoint);
@@ -87,8 +87,8 @@ public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tupl
 
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new AcceleratingMovingPointFunction(basePoint,
 				basePointInTime, v1, acceleration, azimuth);
-		TemporalPoint[] temporalPoint = new TemporalPoint[1];
-		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
 		return temporalPoint;
 	}
 
