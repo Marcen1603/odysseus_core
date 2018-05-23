@@ -15,22 +15,15 @@
  */
 package de.uniol.inf.is.odysseus.server.xml.logicaloperator;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
-import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 @LogicalOperator(name = "XMLEnrich", minInputPorts = 2, maxInputPorts = 2, doc = "XML-Enrich operator", category = {LogicalOperatorCategory.ENRICH })
 public class XMLEnrichAO extends BinaryLogicalOp implements IHasPredicate {

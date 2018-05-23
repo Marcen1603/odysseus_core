@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractNamedAttributeMapPO;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XMLMapAO;
 
 public class XMLMapPO<K extends IMetaAttribute, T extends INamedAttributeStreamObject<K>> extends AbstractNamedAttributeMapPO<K, T> {
 	

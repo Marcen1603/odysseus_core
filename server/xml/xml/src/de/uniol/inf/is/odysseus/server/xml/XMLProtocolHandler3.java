@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.server.xml;
 
-import java.awt.datatransfer.Transferable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
