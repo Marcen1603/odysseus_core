@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/httpclient-4.2.5.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.2.4.jar" sourcepath="/home/ckuka/.m2/repository/org/apache/httpcomponents/httpcore/4.2.4/httpcore-4.2.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-all-9.4.9.v20180320-uber.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

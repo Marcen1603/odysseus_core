@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Export-Package: de.uniol.inf.is.odysseus.args,
  de.uniol.inf.is.odysseus.args.marshaller
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: de.uniol.inf.is.odysseus.args

@@ -17,3 +17,4 @@ Import-Package: de.uniol.inf.is.odysseus.billingmodel,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/SLAPriorityScheduler.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler

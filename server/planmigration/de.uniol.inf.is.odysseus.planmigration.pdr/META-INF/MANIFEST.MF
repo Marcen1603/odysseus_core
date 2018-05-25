@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.planmigration,
  de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/PauseDrainResumeMigrationStrategy.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.planmigration.pdr

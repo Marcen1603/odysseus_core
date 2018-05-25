@@ -8,3 +8,4 @@ Require-Bundle: org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: de.uniol.inf.is.odysseus.probabilistic.starter

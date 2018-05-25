@@ -310,11 +310,6 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler implement
 	}
 
 	@Override
-	public void handleFlowListenerException(Channel channel, Throwable exception) {
-		exception.printStackTrace();
-	}
-
-	@Override
 	public void handleConfirmListenerException(Channel channel, Throwable exception) {
 		exception.printStackTrace();
 	}

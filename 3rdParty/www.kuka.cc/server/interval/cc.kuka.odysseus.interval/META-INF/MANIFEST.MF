@@ -9,10 +9,11 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: cc.kuka.odysseus.interval.datatype,
  cc.kuka.odysseus.interval.sdf.schema,
  de.uniol.inf.is.odysseus.mep,
- org.osgi.framework,
- org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core
+ org.osgi.framework
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/IntervalFunctionProvider.xml,
  OSGI-INF/IntervalDoubleDataHandler.xml,
  OSGI-INF/IntervalIntegerDataHandler.xml
 Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: cc.kuka.odysseus.interval

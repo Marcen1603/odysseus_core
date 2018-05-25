@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 public class StateMapAO extends MapAO implements IStatefulAO, IParallelizableOperator {
 
 	private static final long serialVersionUID = 1695948732660010522L;
-	private boolean allowNull = false;
+	private boolean allowNull = true;
 	private List<SDFAttribute> groupingAttributes;
 
 	public StateMapAO() {
@@ -53,7 +53,7 @@ public class StateMapAO extends MapAO implements IStatefulAO, IParallelizableOpe
 		return new StateMapAO(this);
 	}
 
-	@Parameter(type = BooleanParameter.class, optional = true)
+	@Parameter(type = BooleanParameter.class, optional = true, deprecated=true)
 	public void setAllowNullInOutput(boolean allowNull) {
 		this.allowNull = allowNull;
 	}

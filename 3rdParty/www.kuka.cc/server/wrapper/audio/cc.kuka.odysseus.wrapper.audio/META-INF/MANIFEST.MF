@@ -12,9 +12,9 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
  de.uniol.inf.is.odysseus.core.sdf.schema,
- org.osgi.framework,
- org.slf4j
+ org.osgi.framework
 Require-Bundle: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server, de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/WAVProtocolHandler.xml,
  OSGI-INF/AudioTransportHandler.xml
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.audio

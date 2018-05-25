@@ -18,3 +18,4 @@ Service-Component: OSGI-INF/GeneralizedParallelTracksMigrationStrategy.xml,
  OSGI-INF/ParallelizationOptimizationPreParserKeywordProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.optimization
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parallelization.optimization

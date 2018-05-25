@@ -16,3 +16,4 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/*.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimizer
+Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing

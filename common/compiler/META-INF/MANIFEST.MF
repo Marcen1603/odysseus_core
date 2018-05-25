@@ -12,3 +12,4 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
 Export-Package: de.uniol.inf.is.odysseus.compiler
 Bundle-ClassPath: .
+Automatic-Module-Name: de.uniol.inf.is.odysseus.compiler

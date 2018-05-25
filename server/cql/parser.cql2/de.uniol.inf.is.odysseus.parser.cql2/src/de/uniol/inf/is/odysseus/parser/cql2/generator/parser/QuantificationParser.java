@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.QuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IQuantificationParser;
@@ -31,7 +32,7 @@ public class QuantificationParser implements IQuantificationParser {
 	}
 	
 	@Override
-	public String parse(ComplexPredicate predicate, SimpleSelect parent) {
+	public String parse(ComplexPredicate predicate, SimpleSelect parent) throws PQLOperatorBuilderException {
 
 		final QuantificationPredicate qp = predicate.getQuantification();
 		final SimpleSelect select = predicate.getSelect().getSelect();

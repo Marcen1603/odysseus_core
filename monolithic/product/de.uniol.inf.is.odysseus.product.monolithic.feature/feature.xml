@@ -43,8 +43,4 @@ limitations under the License.
          id="de.uniol.inf.is.odysseus.studio.feature"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.parser.cql2.feature"
-         version="0.0.0"/>
-
 </feature>

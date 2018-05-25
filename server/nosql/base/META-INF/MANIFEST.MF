@@ -4,10 +4,10 @@ Bundle-Name: Base
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.nosql.base
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
  com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.keyvalue.datatype
 Import-Package: com.google.gson,
  com.google.gson.internal,
  de.uniol.inf.is.odysseus.core,
@@ -29,3 +29,4 @@ Export-Package: de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator,
  de.uniol.inf.is.odysseus.server.nosql.base.transform,
  de.uniol.inf.is.odysseus.server.nosql.base.util,
  de.uniol.inf.is.odysseus.server.nosql.base.util.connection
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.nosql.base

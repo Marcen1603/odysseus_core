@@ -32,3 +32,4 @@ Export-Package: de.uniol.inf.is.odysseus.server.streamingsparql.ui.internal,
  de.uniol.inf.is.odysseus.server.ui.quickfix
 Service-Component: OSGI-INF/StreamingSparqlFileExecutor.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.server.streamingsparql.ui.internal.StreamingsparqlActivator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.streamingsparql.ui

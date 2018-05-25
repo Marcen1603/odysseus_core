@@ -6,11 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.google.guava;bundle-version="1.0.0",
+ com.google.guava,
  org.eclipse.ui.ide;bundle-version="3.7.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.config;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.rcp.config
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.eclipse.core.resources,
  org.eclipse.ui.dialogs,
@@ -24,4 +24,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.editor.script,
  de.uniol.inf.is.odysseus.rcp.editor.script.model,
  de.uniol.inf.is.odysseus.rcp.editor.script.rules,
  de.uniol.inf.is.odysseus.rcp.editor.script.service
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.script
 

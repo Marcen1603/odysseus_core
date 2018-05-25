@@ -35,3 +35,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.eclipse.swt.widgets
 Service-Component: OSGI-INF/InertiaCubeTransportHandler.xml, OSGI-INF/InertiaCubeProtocolHandler.xml, OSGI-INF/InertiaCubeDatatypeProvider.xml, OSGI-INF/InertiaYawPitchRollHandler.xml, OSGI-INF/TransformationRuleService.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.inertiacube

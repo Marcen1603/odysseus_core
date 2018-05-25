@@ -4,7 +4,8 @@ Bundle-Name: MoitoringCPU
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.moitoringCPU
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/Executor.xml
 Import-Package: org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.moitoringCPU

@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 /**
  * A very simple implementation for a spatial data structure. No performance
@@ -120,7 +120,7 @@ public class NaiveSTDataStructure implements ISpatioTemporalDataStructure {
 			Geometry tupleGeometry = getGeometry(tuple);
 
 			// TODO Use the right coordinate reference system
-			MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+			MetricSpatialUtils spatialUtils = MetricSpatialUtils.getInstance();
 			double realDistance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
 					tupleGeometry.getCentroid().getCoordinate());
 

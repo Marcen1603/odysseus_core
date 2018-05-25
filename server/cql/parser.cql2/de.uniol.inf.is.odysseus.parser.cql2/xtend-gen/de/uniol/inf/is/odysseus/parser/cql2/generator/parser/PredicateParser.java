@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Plus;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.QuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
@@ -43,13 +44,10 @@ import java.util.stream.Stream;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class PredicateParser implements IPredicateParser {
-  private final Logger log = LoggerFactory.getLogger(PredicateParser.class);
-  
   private IUtilityService utilityService;
   
   private ICacheService cacheService;
@@ -82,7 +80,7 @@ public class PredicateParser implements IPredicateParser {
     this.lastPredicateElement = "";
   }
   
-  public CharSequence parse(final Expression e, final SimpleSelect select) {
+  public CharSequence parse(final Expression e, final SimpleSelect select) throws PQLOperatorBuilderException {
     EList<EObject> _eContents = e.eContents();
     boolean _isEmpty = _eContents.isEmpty();
     boolean _not = (!_isEmpty);
@@ -278,25 +276,29 @@ public class PredicateParser implements IPredicateParser {
   
   @Override
   public CharSequence parse(final List<Expression> expressions, final SimpleSelect select) {
-    this.predicateString = "";
-    for (int i = 0; (i < (expressions.size() - 1)); i++) {
-      Expression _get = expressions.get(i);
-      if ((_get instanceof AttributeRef)) {
-      } else {
-        Expression _get_1 = expressions.get(i);
-        CharSequence _parse = this.parse(_get_1, select);
-        String _string = _parse.toString();
-        this.predicateString = _string;
-        this.buildPredicateString("&&");
+    try {
+      this.predicateString = "";
+      for (int i = 0; (i < (expressions.size() - 1)); i++) {
+        Expression _get = expressions.get(i);
+        if ((_get instanceof AttributeRef)) {
+        } else {
+          Expression _get_1 = expressions.get(i);
+          CharSequence _parse = this.parse(_get_1, select);
+          String _string = _parse.toString();
+          this.predicateString = _string;
+          this.buildPredicateString("&&");
+        }
       }
+      int _size = expressions.size();
+      int _minus = (_size - 1);
+      Expression _get = expressions.get(_minus);
+      CharSequence _parse = this.parse(_get, select);
+      String _string = _parse.toString();
+      this.predicateString = _string;
+      return this.predicateString;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    int _size = expressions.size();
-    int _minus = (_size - 1);
-    Expression _get = expressions.get(_minus);
-    CharSequence _parse = this.parse(_get, select);
-    String _string = _parse.toString();
-    this.predicateString = _string;
-    return this.predicateString;
   }
   
   @Override
@@ -323,35 +325,39 @@ public class PredicateParser implements IPredicateParser {
   }
   
   public List<String> parseComplexPredicate(final SimpleSelect select, final ComplexPredicate complexPredicate, final String type) {
-    List<String> _xblockexpression = null;
-    {
-      ArrayList<String> predicateStringListBackup = new ArrayList<String>(this.predicateStringList);
-      ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
-      this.predicateStringList = _newArrayList;
-      String predicateBackup = this.predicateString;
-      this.predicateString = "";
-      Map<String, String> args = CollectionLiterals.<String, String>newHashMap();
-      args.put("type", type);
-      InnerSelect _select = complexPredicate.getSelect();
-      SimpleSelect _select_1 = _select.getSelect();
-      SimpleSelect subQuery = ((SimpleSelect) _select_1);
-      this.selectParser.prepare(subQuery, null);
-      this.selectParser.parse(subQuery);
-      InnerSelect _select_2 = complexPredicate.getSelect();
-      SimpleSelect _select_3 = _select_2.getSelect();
-      ExpressionsModel _predicates = _select_3.getPredicates();
-      EList<Expression> _elements = _predicates.getElements();
-      Expression _get = _elements.get(0);
-      this.parse(_get, select);
-      args.put("predicate", this.predicateString);
-      OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-      String _last = _operatorCache.last();
-      args.put("input", _last);
-      this.predicateString = predicateBackup;
-      ArrayList<String> _arrayList = new ArrayList<String>(predicateStringListBackup);
-      _xblockexpression = this.predicateStringList = _arrayList;
+    try {
+      List<String> _xblockexpression = null;
+      {
+        ArrayList<String> predicateStringListBackup = new ArrayList<String>(this.predicateStringList);
+        ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+        this.predicateStringList = _newArrayList;
+        String predicateBackup = this.predicateString;
+        this.predicateString = "";
+        Map<String, String> args = CollectionLiterals.<String, String>newHashMap();
+        args.put("type", type);
+        InnerSelect _select = complexPredicate.getSelect();
+        SimpleSelect _select_1 = _select.getSelect();
+        SimpleSelect subQuery = ((SimpleSelect) _select_1);
+        this.selectParser.prepare(subQuery, null);
+        this.selectParser.parse(subQuery);
+        InnerSelect _select_2 = complexPredicate.getSelect();
+        SimpleSelect _select_3 = _select_2.getSelect();
+        ExpressionsModel _predicates = _select_3.getPredicates();
+        EList<Expression> _elements = _predicates.getElements();
+        Expression _get = _elements.get(0);
+        this.parse(_get, select);
+        args.put("predicate", this.predicateString);
+        OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+        String _last = _operatorCache.last();
+        args.put("input", _last);
+        this.predicateString = predicateBackup;
+        ArrayList<String> _arrayList = new ArrayList<String>(predicateStringListBackup);
+        _xblockexpression = this.predicateStringList = _arrayList;
+      }
+      return _xblockexpression;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    return _xblockexpression;
   }
   
   public CharSequence buildPredicateString(final CharSequence sequence) {

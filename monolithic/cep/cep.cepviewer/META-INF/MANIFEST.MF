@@ -8,7 +8,7 @@ Bundle-Vendor: Christian Menne
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.event,
@@ -21,3 +21,4 @@ Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  org.eclipse.draw2d,
  org.eclipse.draw2d.geometry
 Export-Package: de.uniol.inf.is.odysseus.cep.cepviewer
+Automatic-Module-Name: de.uniol.inf.is.odysseus.cep.cepviewer

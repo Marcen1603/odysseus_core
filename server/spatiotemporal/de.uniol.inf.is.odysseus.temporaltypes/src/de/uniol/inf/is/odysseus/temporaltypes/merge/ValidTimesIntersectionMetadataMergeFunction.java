@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.temporaltypes.merge;
 
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 
 /**
  * Used to merge two metadata fields with valid times. Merges the lists by doing
@@ -23,26 +23,31 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 	private IValidTimes intersectionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
 		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
 			for (IValidTime rightValidTime : inRight.getValidTimes()) {
-				IValidTime mergedData = mergeValidTime(leftValidTime, rightValidTime);
-				result = addValidTimeToValidTimes(result, mergedData);
+				IValidTime mergedData = ValidTime.intersect(leftValidTime, rightValidTime);
+				if (mergedData != null && !includesInterval(result, mergedData)) {
+					result = addValidTimeToValidTimes(result, mergedData);
+				}
 			}
 		}
 		return result;
 	}
 
-	private IValidTime mergeValidTime(IValidTime left, IValidTime right) {
-		IValidTime mergedData = (IValidTime) left.createInstance();
-		PointInTime mergedStart = PointInTime.max(left.getValidStart(), right.getValidStart());
-		PointInTime mergedEnd = PointInTime.min(left.getValidEnd(), right.getValidEnd());
-		if (!mergedEnd.before(mergedStart)) {
-			mergedData.setValidStart(mergedStart);
-			mergedData.setValidEnd(mergedEnd);
+	private boolean includesInterval(IValidTimes includes, IValidTime toInclude) {
+		for (IValidTime time : includes.getValidTimes()) {
+			if (leftIncludesRight(time, toInclude)) {
+				return true;
+			}
 		}
-		return mergedData;
+		return false;
+	}
+
+	private boolean leftIncludesRight(IValidTime left, IValidTime right) {
+		return left.getValidStart().beforeOrEquals(right.getValidStart())
+				&& left.getValidEnd().afterOrEquals(right.getValidEnd());
 	}
 
 	private IValidTimes addValidTimeToValidTimes(IValidTimes addTo, IValidTime validTime) {
-		if (validTime.getValidEnd().after(validTime.getValidStart())) {
+		if (validTime != null && validTime.getValidEnd().after(validTime.getValidStart())) {
 			// Only add if the resulting interval is at least valid for one time instance
 			addTo.addValidTime(validTime);
 		}

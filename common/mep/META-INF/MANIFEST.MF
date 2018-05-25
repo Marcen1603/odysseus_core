@@ -37,8 +37,9 @@ Export-Package: de.uniol.inf.is.odysseus.mep;
  de.uniol.inf.is.odysseus.mep.functions.tuple,
  de.uniol.inf.is.odysseus.mep.impl;uses:="de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.mep",
  de.uniol.inf.is.odysseus.mep.optimizer;uses:="de.uniol.inf.is.odysseus.mep.functions.bool,de.uniol.inf.is.odysseus.core.mep"
-Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core
 Bundle-Activator: de.uniol.inf.is.odysseus.mep.Activator
 Import-Package: org.osgi.framework;version="1.6.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.mep

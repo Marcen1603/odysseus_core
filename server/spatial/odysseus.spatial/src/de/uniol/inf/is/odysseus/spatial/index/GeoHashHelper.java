@@ -20,7 +20,7 @@ import ch.hsr.geohash.WGS84Point;
 import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 public class GeoHashHelper {
 
@@ -72,7 +72,7 @@ public class GeoHashHelper {
 	public static List<GeoHash> approximateCircle(double centerLatitude, double centerLongitude, double radius,
 			int srid) {
 		// Get the rectangular envelope for the circle
-		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(centerLatitude, centerLongitude, radius);
+		Envelope env = MetricSpatialUtils.getInstance().getEnvelopeForRadius(centerLatitude, centerLongitude, radius);
 		GeometryFactory factory = new GeometryFactory(new PrecisionModel(), srid);
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
 		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Service-Component: OSGI-INF/recommendationlearner.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.recommendation;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.recommendation,
  com.google.guava;bundle-version="14.0.0",
  org.apache.mahout
 Bundle-Vendor: University of Oldenburg
@@ -15,4 +15,5 @@ Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="1.3.0",org.slf4j
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.recommendation.mahout
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recommendation.mahout
 

@@ -11,5 +11,6 @@ Bundle-ClassPath: .
 Export-Package: de.uniol.inf.is.odysseus.nexmark.generator
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="3.7.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: de.uniol.inf.is.odysseus.nexmark

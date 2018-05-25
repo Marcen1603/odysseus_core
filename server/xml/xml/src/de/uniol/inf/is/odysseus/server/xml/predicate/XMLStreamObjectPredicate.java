@@ -75,6 +75,7 @@ public class XMLStreamObjectPredicate<T extends XMLStreamObject<?>> extends Name
 		NotOperator not = new NotOperator();
 		not.setArguments(new IMepExpression<?>[] { expression.getMEPExpression() });
 		return new XMLStreamObjectPredicate<>(
-				new SDFExpression(not.toString(), expression.getAttributeResolver(), expression.getExpressionParser()), inputSchema);
+				new SDFExpression(not.toString(), expression.getAttributeResolver(), expression.getExpressionParser()),
+				inputSchema);
 	}
 }

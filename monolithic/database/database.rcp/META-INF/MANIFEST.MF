@@ -12,3 +12,4 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.sdf,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.database.connection
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.rcp

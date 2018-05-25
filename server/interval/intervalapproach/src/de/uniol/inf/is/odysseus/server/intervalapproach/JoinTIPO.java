@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 /**
-* Join operator to process elements with time interval semantivs
+ * Join operator to process elements with time interval semantivs
  *
  * @author Jonas Jacobi, abolles, jan steinke
  * @author Marco Grawunder
@@ -67,7 +67,7 @@ import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractPipe<T, T>
 		implements IHasPredicate, IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
-	
+
 	private static Logger LOGGER = LoggerFactory.getLogger(JoinTIPO.class);;
 
 	protected IPredicate<T> joinPredicate;
@@ -96,7 +96,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	 * This object will be used as fallback grouping key.
 	 */
 	protected static final Serializable DEFAULT_GROUPING_KEY = "";
-	
+
 	protected boolean keepEndtimestamp = false;
 
 	// ------------------------------------------------------------------------------------
@@ -397,7 +397,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	private PointInTime getMinStartTs(int port) {
 		PointInTime minStartTs = null;
 		for (ITimeIntervalSweepArea<T> sweepArea : groups.get(port).values()) {
-			if (minStartTs == null || sweepArea.getMinStartTs().before(minStartTs)) {
+			if (minStartTs == null
+					|| (sweepArea.getMinStartTs() != null && sweepArea.getMinStartTs().before(minStartTs))) {
 				minStartTs = sweepArea.getMinStartTs();
 			}
 		}
@@ -438,7 +439,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 			return sa;
 		} catch (InstantiationException | IllegalAccessException e) {
-			LOGGER.error("Error accessing sweep area",e);
+			LOGGER.error("Error accessing sweep area", e);
 		}
 		return null;
 	}
@@ -615,7 +616,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 

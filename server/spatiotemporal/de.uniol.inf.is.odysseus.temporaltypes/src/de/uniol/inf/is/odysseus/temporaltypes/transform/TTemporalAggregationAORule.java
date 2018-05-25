@@ -10,15 +10,10 @@ import de.uniol.inf.is.odysseus.aggregation.functions.INonIncrementalAggregation
 import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
 import de.uniol.inf.is.odysseus.aggregation.transform.TAggregationAORule;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.temporaltypes.aggregationfunctions.TemporalIncrementalAggregationFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataUnionMergeFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
 /**
@@ -29,7 +24,6 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
  *
  */
 public class TTemporalAggregationAORule extends TAggregationAORule {
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -55,7 +49,7 @@ public class TTemporalAggregationAORule extends TAggregationAORule {
 		return operator.isAllPhysicalInputSet() && inputSchemaContainsTemporalAttribute(operator.getInputSchema());
 	}
 
-	private boolean inputSchemaContainsTemporalAttribute(SDFSchema schema) {
+	protected boolean inputSchemaContainsTemporalAttribute(SDFSchema schema) {
 		long numberOfTemporalAttributes = schema.getAttributes().stream()
 				.filter(attribute -> TemporalDatatype.isTemporalAttribute(attribute)).count();
 		return numberOfTemporalAttributes > 0;

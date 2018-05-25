@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/SMTPTransportHandler.xml,OSGI-INF/POP3TransportHandler.xml,OSGI-INF/IMAPTransportHandler.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- javax.mail;bundle-version="1.6.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ javax.mail
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.mail

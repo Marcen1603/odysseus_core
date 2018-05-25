@@ -72,7 +72,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 		BasicTestContext testcontext = new BasicTestContext();
 		testcontext.setPassword("manager");
 		testcontext.setUsername("System");
-		URL bundleentry = FrameworkUtil.getBundle(getClass()).getEntry(".");
+		URL bundleentry = FrameworkUtil.getBundle(getClass()).getEntry("/");
 
 		URL rootPath;
 		try {

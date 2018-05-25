@@ -17,3 +17,4 @@ Export-Package: it.unimi.dsi.fastutil,
  it.unimi.dsi.fastutil.objects,
  it.unimi.dsi.fastutil.shorts
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: fastutil

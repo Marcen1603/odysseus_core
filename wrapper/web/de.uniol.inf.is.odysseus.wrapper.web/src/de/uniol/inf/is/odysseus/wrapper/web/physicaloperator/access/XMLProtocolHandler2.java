@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -50,7 +51,7 @@ import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
  * XML Protocol Handler which transforms a complete xml document into a nested
- * key-value object and vice versa
+ * key-value object and vice versa.
  *
  * @author Henrik Surm
  * @author Marco Grawunder
@@ -136,6 +137,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 			getTransfer().transfer(parseXml(message));
 		} catch (IOException e) {
 			XMLProtocolHandler2.LOG.error(e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 
@@ -145,20 +147,41 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 			getTransfer().transfer(parseXml(new ByteBufferBackedInputStream(message)));
 		} catch (IOException e) {
 			XMLProtocolHandler2.LOG.error(e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 
-
+	@Override
+	public void process(String message) {
+		try {
+			getTransfer().transfer(parseXml(new ByteArrayInputStream(message.getBytes())));
+		} catch (IOException e) {
+			XMLProtocolHandler2.LOG.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void process(String[] message) {
+		try {
+			getTransfer().transfer(parseXml(new ByteArrayInputStream(String.join("", message).getBytes())));
+		} catch (IOException e) {
+			XMLProtocolHandler2.LOG.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private T parseXml(InputStream input) throws IOException {
 
 		// Deliver Input from former runs
-		if (result.size() > 0)
+		if (result.size() > 0) {
 			return result.remove(0);
+		}
 
-		if (input.available() == 0)
+		if (input.available() == 0) {
 			return null;
+		}
 
 		try {
 			KeyValueObject<IMetaAttribute> resultObj = KeyValueObject.createFromXML(input);
@@ -168,6 +191,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 
@@ -200,11 +224,11 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 				addListToNode(doc, root, e.getKey(), (List<Object>) value);
 			} else {
 				Element node = doc.createElement(e.getKey());
-				if (value instanceof Map)
+				if (value instanceof Map) {
 					addMapToNode(doc, node, (Map<String, Object>) value);
-				else
+				} else {
 					node.appendChild(doc.createTextNode(value.toString()));
-
+				}
 				root.appendChild(node);
 			}
 		}
@@ -215,10 +239,11 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 
 		try {
 			String xml = object.getAsXML();
-			if (output != null)
+			if (output != null) {
 				output.write(xml);
-			else
+			} else {
 				getTransportHandler().send(xml.getBytes("UTF-8"));
+			}
 		} catch (Exception e) {
 			throw new IOException("Exception while transforming to XML", e);
 		}

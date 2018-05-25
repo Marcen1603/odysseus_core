@@ -5,13 +5,14 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.debsgc2015
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Universtiy of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep.commons.math;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep.matrix;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.mep.commons.math,
+ de.uniol.inf.is.odysseus.mep.matrix,
+ de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.script.parser,
  com.google.guava,
  de.uniol.inf.is.odysseus.memstore.mdastore
 Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.debsgc2015

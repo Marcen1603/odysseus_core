@@ -4,9 +4,9 @@ Bundle-Name: Wsenrich
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wsenrich;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.cache;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.cache,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
 Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
@@ -45,4 +45,5 @@ Bundle-ClassPath: lib/bcprov-jdk15on-148.jar,
  lib/json-simple-1.1.1.jar,
  lib/json-smart-1.1.jar,
  lib/commons-lang-2.6.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wsenrich
 

@@ -14,3 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Bundle-ClassPath: lib/zeroc-ice-3.4.jar,
  .
 Service-Component: OSGI-INF/HaggisTransportHandler.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.haggis
