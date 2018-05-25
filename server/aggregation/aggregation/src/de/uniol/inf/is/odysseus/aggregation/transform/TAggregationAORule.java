@@ -83,7 +83,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 		final boolean evaluateAtNewElement = operator.isEvaluateAtNewElement();
 		final boolean evaluateAtDone = operator.isEvaluateAtDone();
 		final boolean outputOnlyChanges = operator.isOutputOnlyChanges();
-		final SDFSchema outputSchema = operator.getOutputSchema();
+		final SDFSchema outputSchema = getOutputSchema(operator);
 		final SDFSchema inputSchema = operator.getInputSchema();
 		final List<SDFAttribute> groupingAttributes = operator.getGroupingAttributes();
 		final int[] groupingAttributesIndices = new int[groupingAttributes.size()];
@@ -100,7 +100,11 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 
 		defaultExecute(operator, po, config, true, true);
 	}
-	
+
+	protected SDFSchema getOutputSchema(AggregationAO operator) {
+		return operator.getOutputSchema();
+	}
+
 	@SuppressWarnings("rawtypes")
 	protected IMetadataMergeFunction getMetadataMergeFunction(AggregationAO operator) {
 		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
