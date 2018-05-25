@@ -121,7 +121,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 	public void setValidStartAndEnd(PointInTime start, PointInTime end) {
 		this.delegateTimeInterval.setStartAndEnd(start, end);
 	}
-	
+
 	@Override
 	public boolean includes(PointInTime p) {
 		return this.delegateTimeInterval.includes(p);
@@ -134,6 +134,21 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 		if (TimeInterval.overlaps(left, right) || TimeInterval.areAdjacent(left, right)) {
 			return new TimeInterval(PointInTime.min(left.getStart(), right.getStart()),
 					PointInTime.max(left.getEnd(), right.getEnd()));
+		}
+		return null;
+	}
+
+	public static IValidTime intersect(IValidTime left, IValidTime right) {
+		TimeInterval workIntervalLeft = new TimeInterval(left.getValidStart(), left.getValidEnd());
+		TimeInterval workIntervalRight = new TimeInterval(right.getValidStart(), right.getValidEnd());
+
+		if (TimeInterval.overlaps(workIntervalLeft, workIntervalRight)) {
+			// TODO fehler bei infinity (auch in anderen operationen vorhanden)
+			PointInTime newLeft = PointInTime.max(workIntervalLeft.getStart(), workIntervalRight.getStart());
+			PointInTime newRight = PointInTime.min(workIntervalLeft.getEnd(), workIntervalRight.getEnd());
+			if (newLeft.before(newRight)) {
+				return new ValidTime(newLeft, newRight);
+			}
 		}
 		return null;
 	}

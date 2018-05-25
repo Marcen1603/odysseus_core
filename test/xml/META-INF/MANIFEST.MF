@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test Component - XML
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.component.xml
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.test.component.xml.Activator
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.test,
+ org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.server.xml, de.uniol.inf.is.odysseus.slf4j
+Service-Component: OSGI-INF/testcomponent.xml
+Eclipse-BundleShape: dir
+Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.xml

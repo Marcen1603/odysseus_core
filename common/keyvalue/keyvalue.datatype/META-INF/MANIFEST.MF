@@ -4,11 +4,11 @@ Bundle-Name: KeyValue Datatype
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.keyvalue.datatype
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.codehaus.woodstox.stax2-api;bundle-version="1.0.0",
+Require-Bundle: org.codehaus.woodstox.stax2-api,
  com.fasterxml.jackson,
- com.jayway.jsonpath;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ com.jayway.jsonpath,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.keyvalue.datatype;
@@ -19,3 +19,4 @@ Export-Package: de.uniol.inf.is.odysseus.keyvalue.datatype;
    de.uniol.inf.is.odysseus.core.datatype,
    de.uniol.inf.is.odysseus.core.collection",
  de.uniol.inf.is.odysseus.keyvalue.mergefunction;uses:="de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.physicaloperator,de.uniol.inf.is.odysseus.core.metadata"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.keyvalue.datatype

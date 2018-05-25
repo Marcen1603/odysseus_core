@@ -42,5 +42,15 @@ public class RelationalPredicateBuilder<M extends IMetaAttribute> extends Abstra
 		pred.initVars(resolver.getSchema());
 		return pred;
 	}
+	
+	@Override
+	public String getName() {
+		return "RELATIONALPREDICATE";
+	}
 
+	@Override
+	public String getAliasName() {
+		return Tuple.class.getName();
+	}
+	
 }

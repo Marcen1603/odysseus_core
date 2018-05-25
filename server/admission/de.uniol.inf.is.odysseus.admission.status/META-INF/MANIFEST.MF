@@ -4,16 +4,16 @@ Bundle-Name: Status
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.admission.status
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.admission;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.admission,
  com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.costmodel.logical;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.costmodel.physical;bundle-version="1.0.0",
- sigar;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.costmodel,
+ de.uniol.inf.is.odysseus.costmodel.logical,
+ de.uniol.inf.is.odysseus.costmodel.physical,
+ sigar,
+ de.uniol.inf.is.odysseus.latency
 Service-Component: OSGI-INF/ExecutorAdmissionStatusComponent.xml,OSGI-INF/AdmissionStatusPlugIn.xml,OSGI-INF/costModelAdmissionStatusComponent.xml,OSGI-INF/systemLoadAdmissionStatusComponent.xml,OSGI-INF/SimpleLoadSheddingAdmissionStatusComponent.xml,OSGI-INF/SimpleLoadSheddingWPAdmissionStatusComponent.xml,OSGI-INF/ComplexLoadSheddingAdmissionStatusComponent.xml,OSGI-INF/ComplexLoadSheddingWPAdmissionStatusComponent.xml,OSGI-INF/AdmissionFunctionProvider.xml,
  OSGI-INF/AdmissionKeywordProvider.xml
 Bundle-ActivationPolicy: lazy
@@ -23,3 +23,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.script.parser,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.admission.status
+Automatic-Module-Name: de.uniol.inf.is.odysseus.admission.status

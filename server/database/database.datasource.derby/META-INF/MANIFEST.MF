@@ -8,3 +8,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.database,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.derby

@@ -5,9 +5,9 @@ Bundle-SymbolicName: cc.kuka.odysseus.misc
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.misc.Activator
 Require-Bundle: org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.mep,
- org.slf4j
+Import-Package: de.uniol.inf.is.odysseus.mep
 Service-Component: OSGI-INF/MiscFunctionProvider.xml
+Automatic-Module-Name: cc.kuka.odysseus.misc

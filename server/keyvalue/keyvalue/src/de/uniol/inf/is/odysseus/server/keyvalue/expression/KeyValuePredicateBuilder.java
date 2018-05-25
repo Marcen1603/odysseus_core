@@ -15,10 +15,18 @@ public class KeyValuePredicateBuilder<M extends IMetaAttribute> extends Abstract
 	@Override
 	public IPredicate<KeyValueObject<M>> createPredicate(IAttributeResolver resolver, String predicate) {
 		SDFExpression expression = new SDFExpression("", predicate, null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		KeyValuePredicate<KeyValueObject<M>> pred = new KeyValuePredicate<>(expression, resolver.getSchema());
-		return pred;
+		return new KeyValuePredicate<>(expression, resolver.getSchema());
 	}
 
+	@Override
+	public String getName() {
+		return "KEYVALUEPREDICATE";
+	}
+	
+	@Override
+	public String getAliasName() {
+		return KeyValueObject.class.getName();
+	}
 
 
 }

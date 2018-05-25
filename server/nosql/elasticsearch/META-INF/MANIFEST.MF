@@ -4,12 +4,12 @@ Bundle-Name: Elasticsearch
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.nosql.elasticsearch
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.server.nosql.base;bundle-version="1.0.0",
- org.elasticsearch.driver;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.server.nosql.base,
+ org.elasticsearch.driver,
  com.google.code.gson;bundle-version="2.2.4",
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.keyvalue.datatype
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.metadata,
@@ -21,3 +21,4 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.transform.rule,
  org.elasticsearch.client.transport,
  org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.nosql.elasticsearch

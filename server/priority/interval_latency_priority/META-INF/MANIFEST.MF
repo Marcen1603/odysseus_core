@@ -7,10 +7,11 @@ Import-Package: org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.interval_latency_priority
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.interval_latency;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.latency_relational;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.interval_latency,
+ de.uniol.inf.is.odysseus.latency,
+ de.uniol.inf.is.odysseus.latency_relational,
  de.uniol.inf.is.odysseus.priority;bundle-version="1.0.1",
- de.uniol.inf.is.odysseus.priority_interval;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.priority_interval
+Automatic-Module-Name: de.uniol.inf.is.odysseus.interval_latency_priority

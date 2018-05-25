@@ -4,15 +4,16 @@ Bundle-Name: Source
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.source
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.net.data;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
- org.json;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.net.data,
+ de.uniol.inf.is.odysseus.net,
+ org.json,
  com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.parser.pql.generator;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.net.config;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.parser.pql.generator,
+ de.uniol.inf.is.odysseus.net.config,
  de.uniol.inf.is.odysseus.relational_interval
 Service-Component: OSGI-INF/DistributedDataSourceManager.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.source

@@ -9,14 +9,15 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.base,
  org.osgi.framework;version="1.6.0",
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
  com.jogamp.jogl;bundle-version="2.0.0",
  org.bytedeco.javacv;bundle-version="0.8.0",
  de.uniol.inf.is.odysseus.image.common;resolution:=optional,
- de.uniol.inf.is.odysseus.imagejcv.common;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.imagejcv.common,
+ de.uniol.inf.is.odysseus.mep
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.imagejcv.util
+Automatic-Module-Name: de.uniol.inf.is.odysseus.imagejcv

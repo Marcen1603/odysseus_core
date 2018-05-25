@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 public class GeoHashIndex<T extends IMetaAttribute> implements SpatialIndex<T> {
 
@@ -104,7 +104,7 @@ public class GeoHashIndex<T extends IMetaAttribute> implements SpatialIndex<T> {
 	public Map<String, ResultElement> queryCircleOnLatestElements(double centerLatitude, double centerLongitude,
 			double radius, TimeInterval interval) {
 
-		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+		MetricSpatialUtils spatialUtils = MetricSpatialUtils.getInstance();
 
 		// Get possible elements within the circle
 		Map<String, TrajectoryElement> candidates = approximateCircleOnLatestElements(centerLatitude, centerLongitude,

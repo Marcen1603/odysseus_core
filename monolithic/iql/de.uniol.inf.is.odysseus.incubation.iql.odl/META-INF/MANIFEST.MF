@@ -22,14 +22,14 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.common.types,
  org.eclipse.core.runtime,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
- de.uniol.inf.is.odysseus.iql.basic;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.iql.basic,
  org.eclipse.core.resources,
  com.google.guava,
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.server.intervalapproach,
@@ -38,7 +38,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.jdt.core,
  org.eclipse.xtext.xbase;bundle-version="2.7.3",
  org.apache.commons.io,
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.keyvalue.datatype,
  org.eclipse.xtext.testing;bundle-version="2.12.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -70,4 +70,5 @@ Export-Package: de.uniol.inf.is.odysseus.iql.odl,
  de.uniol.inf.is.odysseus.iql.odl.validation
 Service-Component: OSGI-INF/ODLServiceBinding.xml,
  OSGI-INF/ODLQueryParser.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.odl
 

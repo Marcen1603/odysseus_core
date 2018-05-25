@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 /**
  * Difference: Removed the idea of distance as a window predicate and do not
@@ -101,7 +101,7 @@ public class MONoCleanupNoPointMapIndexStructure implements MovingObjectIndexOld
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			String movingObjectIdToIgnore) {
 		// Get the rectangular envelope for the circle
-		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
+		Envelope env = MetricSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
 				radius);
 		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
@@ -382,7 +382,7 @@ public class MONoCleanupNoPointMapIndexStructure implements MovingObjectIndexOld
 		// Calculate speed and direction
 
 		// Distance
-		double distanceMeters = MetrticSpatialUtils.getInstance().calculateDistance(null,
+		double distanceMeters = MetricSpatialUtils.getInstance().calculateDistance(null,
 				new Coordinate(elementBefore.getLatitude(), elementBefore.getLongitude()),
 				new Coordinate(elementAfter.getLatitude(), elementAfter.getLongitude()));
 

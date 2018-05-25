@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
@@ -22,11 +22,11 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
  */
 public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> {
 
-	public TemporalSelectPO(TemporalRelationalExpression<IValidTimes> expression) {
+	public TemporalSelectPO(RelationalExpression<IValidTimes> expression) {
 		super(expression);
 	}
 
-	public TemporalSelectPO(boolean predicateIsUpdateable, TemporalRelationalExpression<IValidTimes> expression) {
+	public TemporalSelectPO(boolean predicateIsUpdateable, RelationalExpression<IValidTimes> expression) {
 		super(predicateIsUpdateable, expression);
 	}
 
@@ -80,8 +80,20 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		 * If there is no valid time interval, nothing will be transferred.
 		 */
 		for (PointInTime time : temporalType.getValues().keySet()) {
-			boolean value = temporalType.getValues().get(time);
-			if (value) {
+			Object timeValue = temporalType.getValues().get(time);
+
+			/*
+			 * The values are not necessarily always a boolean. E.g., an atMin function
+			 * returns a reduced set of values which can be other types as well. In that
+			 * case, use all the available values. In case that we get boolean, only use the
+			 * ones which are true.
+			 */
+			boolean useValue = true;
+			if (timeValue instanceof Boolean) {
+				useValue = temporalType.getValues().get(time);
+			}
+
+			if (useValue) {
 				if (currentInterval == null) {
 					currentInterval = new ValidTime(time);
 				}
@@ -115,9 +127,9 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 	 * @return The predicate at a TemporalRelationalExpression
 	 */
 	@SuppressWarnings("unchecked")
-	private TemporalRelationalExpression<IValidTimes> getExpression() {
-		if (this.getPredicate() instanceof TemporalRelationalExpression<?>) {
-			return (TemporalRelationalExpression<IValidTimes>) (this.getPredicate());
+	private RelationalExpression<IValidTimes> getExpression() {
+		if (this.getPredicate() instanceof RelationalExpression<?>) {
+			return (RelationalExpression<IValidTimes>) (this.getPredicate());
 		}
 		return null;
 	}

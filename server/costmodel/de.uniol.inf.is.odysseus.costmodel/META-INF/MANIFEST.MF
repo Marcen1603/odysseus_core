@@ -5,9 +5,9 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.costmodel
 Service-Component: OSGI-INF/ICostModelKnowledge.xml,OSGI-INF/CostModelConsole.xml,
@@ -20,3 +20,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.CostModelActivator
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.costmodel

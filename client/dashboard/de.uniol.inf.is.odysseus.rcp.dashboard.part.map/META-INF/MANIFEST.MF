@@ -5,20 +5,20 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard.part.map;singleton:=
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.Activator
 Require-Bundle: com.google.guava;bundle-version="18.0.0",
- com.vividsolutions.jts;bundle-version="1.0.0",
+ com.vividsolutions.jts,
  org.eclipse.swt,
  org.eclipse.ui;bundle-version="3.7.0",
- org.osgeo.proj4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.dashboard;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.dashboard.part;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.editor.text;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0",
+ org.osgeo.proj4j,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.rcp.dashboard,
+ de.uniol.inf.is.odysseus.rcp.dashboard.part,
+ de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.spatial,
+ de.uniol.inf.is.odysseus.sweeparea,
  org.eclipse.osgi,
- org.mihalis.opal;bundle-version="1.0.0"
+ org.mihalis.opal
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  de.uniol.inf.is.odysseus.rcp,
@@ -32,3 +32,4 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.nebula.cwt.svg_custom
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.dashboard.part.map

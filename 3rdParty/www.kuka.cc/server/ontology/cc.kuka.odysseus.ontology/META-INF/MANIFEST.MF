@@ -21,11 +21,10 @@ Import-Package: cc.kuka.odysseus.ontology.common,
  de.uniol.inf.is.odysseus.transform.rule,
  org.apache.commons.math3.util;version="3.2.0",
  org.osgi.framework,
- org.osgi.service.component,
- org.slf4j,
- org.slf4j.spi
+ org.osgi.service.component
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/RewriteRuleProvider.xml,OSGI-INF/SensorOntologyService.xml,OSGI-INF/QualityMetadata.xml,
  OSGI-INF/QualityTimeIntervalMetadata.xml
 Export-Package: cc.kuka.odysseus.ontology.metadata
+Automatic-Module-Name: cc.kuka.odysseus.ontology

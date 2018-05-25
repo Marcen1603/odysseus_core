@@ -21,7 +21,8 @@ Service-Component: OSGI-INF/PreParserKeywordProvider.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  com.google.guava,
- de.uniol.inf.is.odysseus.updater;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.updater,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.script.keyword
+Automatic-Module-Name: de.uniol.inf.is.odysseus.script.executor

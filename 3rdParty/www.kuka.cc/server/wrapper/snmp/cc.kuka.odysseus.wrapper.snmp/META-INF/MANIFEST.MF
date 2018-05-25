@@ -19,3 +19,4 @@ Bundle-ClassPath: lib/snmp4j-2.3.1.jar,
 Service-Component: OSGI-INF/SNMPTransportHandler.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.snmp

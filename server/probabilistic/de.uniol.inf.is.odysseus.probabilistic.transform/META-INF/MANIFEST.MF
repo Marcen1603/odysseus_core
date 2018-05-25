@@ -7,7 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.probabilistic.transform.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.probabilistic;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.common
 Import-Package: de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  de.uniol.inf.is.odysseus.mep,
@@ -27,3 +27,4 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  org.osgi.framework,
  org.slf4j
 Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: de.uniol.inf.is.odysseus.probabilistic.transform

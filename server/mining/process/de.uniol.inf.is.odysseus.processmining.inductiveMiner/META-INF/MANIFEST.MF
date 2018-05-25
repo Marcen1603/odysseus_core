@@ -19,3 +19,4 @@ Bundle-ClassPath: .,
  jgrapht-core-0.9.0.jar
 Export-Package: de.uniol.inf.is.odysseus.processmining.inductiveMiner.models,
  org.jgrapht.graph
+Automatic-Module-Name: de.uniol.inf.is.odysseus.processmining.inductiveMiner

@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 /**
  * 
@@ -34,7 +34,7 @@ public class OrthodromicDistance extends AbstractFunction<Double> {
 		Geometry firstGeometry = ((GeometryWrapper) this.getInputValue(0)).getGeometry();
 		Geometry secondGeometry = ((GeometryWrapper) this.getInputValue(1)).getGeometry();
 
-		double distance = MetrticSpatialUtils.getInstance().calculateDistance(firstGeometry.getCoordinate(),
+		double distance = MetricSpatialUtils.getInstance().calculateDistance(firstGeometry.getCoordinate(),
 				secondGeometry.getCoordinate());
 		return distance;
 	}

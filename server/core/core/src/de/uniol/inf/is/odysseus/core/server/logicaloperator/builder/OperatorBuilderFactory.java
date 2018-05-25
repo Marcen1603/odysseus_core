@@ -31,9 +31,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class OperatorBuilderFactory implements IOperatorBuilderFactory {
-	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<String, IOperatorBuilder>();
-	private static Map<String, IExpressionBuilder<?,?>> expressionsBuilders = new HashMap<String, IExpressionBuilder<?,?>>();
-	private static Map<String, Object> udfs = new HashMap<String, Object>();
+	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<>();
+	private static Map<String, IExpressionBuilder<?,?>> expressionsBuilders = new HashMap<>();
+	private static Map<String, Object> udfs = new HashMap<>();
 
 	public static IOperatorBuilder createOperatorBuilder(String name,
 			ISession caller, IDataDictionary dataDictionary, Context context, IServerExecutor executor) {
@@ -66,19 +66,25 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		return operatorBuilders.keySet();
 	}
 
-	public static void putExpressionBuilder(String identifier,
-			IExpressionBuilder<?,?> builder) {
+	public void addExpressionBuilder(IExpressionBuilder<?,?> builder) {
+		addExpressionBuilder(builder, builder.getName());
+		if (builder.getAliasName() != null) {
+			addExpressionBuilder(builder, builder.getAliasName());
+		}
+	}
+
+	private static void addExpressionBuilder(IExpressionBuilder<?, ?> builder, String identifier) {
 		identifier = identifier.toUpperCase();
 		if (expressionsBuilders.containsKey(identifier)) {
 			throw new IllegalArgumentException(
 					"multiple definitions of expression builder: " + identifier);
 		}
-
 		expressionsBuilders.put(identifier, builder);
 	}
+	
 
-	public static void removeExpressionBuilder(String identifier) {
-		identifier = identifier.toUpperCase();
+	public static void removeExpressionBuilder(IExpressionBuilder<?, ?> builder) {
+		String identifier = builder.getName().toUpperCase();
 		expressionsBuilders.remove(identifier);
 	}
 
@@ -135,8 +141,6 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 
 	public static void removeOperatorBuilderByName(String name) {
 	    removeOperatorBuilderType(name);
-		/** FIXME what is remove here?*/
-	    removeExpressionBuilder(name);
 	}
 
 	@Override

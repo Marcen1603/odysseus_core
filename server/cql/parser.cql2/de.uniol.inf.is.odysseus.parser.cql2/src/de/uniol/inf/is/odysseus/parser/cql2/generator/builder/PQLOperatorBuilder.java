@@ -22,7 +22,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParamete
 
 public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 
-//	private final Logger LOGGER = LoggerFactory.getLogger(PQLOperatorBuilder.class);
+	// private final Logger LOGGER =
+	// LoggerFactory.getLogger(PQLOperatorBuilder.class);
 
 	private StringBuilder builder;
 
@@ -31,9 +32,13 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 
 	}
 
-	/** Builds the string representation of a specified PQL-operator. */
+	/**
+	 * Builds the string representation of a specified PQL-operator.
+	 * 
+	 * @throws PQLOperatorBuilderException
+	 */
 	@Override
-	public String build(final Class<?> operator, final Map<String, String> args) {
+	public String build(final Class<?> operator, final Map<String, String> args) throws PQLOperatorBuilderException {
 		builder = new StringBuilder();
 		String name = null;
 		for (Annotation annotation : new ArrayList<>(Arrays.asList(operator.getAnnotations()))) {
@@ -48,7 +53,7 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 			buildArguments(operator, args);
 			buildSuffix(args.get("input"));
 		} else {
-			throw new IllegalArgumentException("logical operator could not be found: " + operator.toString());
+			throw new PQLOperatorBuilderException("logical operator could not be found: " + operator.toString());
 		}
 		String operatorString = builder.toString().replaceAll("\\s+", "");
 		return operatorString;
@@ -74,12 +79,14 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private StringBuilder buildArguments(final Class<?> operator, Map<String, String> map) {
+	private StringBuilder buildArguments(final Class<?> operator, Map<String, String> map) throws PQLOperatorBuilderException {
 		List<Parameter> parameters = new ArrayList<>(getParameters(operator));
 		List<Parameter> mandatoryParameters = new ArrayList<>();
 
+		// build arguments
 		for (Parameter parameter : parameters) {
 			final Class<? extends IParameter> type = parameter.type;
+			// collect all mandatory arguments
 			if (!parameter.optional && !mandatoryParameters.contains(parameter)) {
 				mandatoryParameters.add(parameter);
 			}
@@ -90,6 +97,7 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 				if (name.equals(givenName)) {
 					if (!name.equals("input")) {
 						String value = getValue(type, entry.getValue());
+						// remove argument from mandatoryParameters, if it could be resolved
 						if (value != null) {
 							builder.append(name + "=" + value + ",");
 							mandatoryParameters.remove(parameter);
@@ -100,6 +108,7 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 
 		}
 
+		// check if all mandatory arguments could be resolved, otherwise throw PQLOperatorBuilderException
 		if (!mandatoryParameters.isEmpty()) {
 			builder = new StringBuilder();
 			for (Parameter parameter : mandatoryParameters) {
@@ -107,7 +116,7 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 					builder.append(parameter.toString()).append("\n");
 				}
 			}
-//			throw new IllegalArgumentException(operator.getSimpleName() + " misses parameters: " + builder.toString());
+			throw new PQLOperatorBuilderException(operator.getSimpleName() + " misses parameters: " + builder.toString());
 		}
 
 		builder.deleteCharAt(builder.toString().length() - 1);
@@ -122,21 +131,28 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 		final String typename = type.getSimpleName().toLowerCase();
 
 		// get type names from odysseus IParameter-classes
-//		final String string = new StringParameter().getClass().getSimpleName().toLowerCase();
-//		final String bool = new BooleanParameter().getClass().getSimpleName().toLowerCase();
+		// final String string = new
+		// StringParameter().getClass().getSimpleName().toLowerCase();
+		// final String bool = new
+		// BooleanParameter().getClass().getSimpleName().toLowerCase();
 		final String list = new ListParameter<>(null).getClass().getSimpleName().toLowerCase();
 		final String map = new MapParameter<>(null, null).getClass().getSimpleName().toLowerCase();
 		final String integer = new IntegerParameter().getClass().getSimpleName().toLowerCase();
 		final String longg = new LongParameter().getClass().getSimpleName().toLowerCase();
 		final String option = new OptionParameter().getClass().getSimpleName().toLowerCase();
 		final String schema = new CreateSDFAttributeParameter().getClass().getSimpleName().toLowerCase();
-//		final String accessao = new AccessAOSourceParameter().getClass().getSimpleName().toLowerCase();
-//		final String ressource = new ResourceParameter().getClass().getSimpleName().toLowerCase();
+		// final String accessao = new
+		// AccessAOSourceParameter().getClass().getSimpleName().toLowerCase();
+		// final String ressource = new
+		// ResourceParameter().getClass().getSimpleName().toLowerCase();
 		final String expressions = new NamedExpressionParameter().getClass().getSimpleName().toLowerCase();
 		final String aggregations = new AggregateItemParameter().getClass().getSimpleName().toLowerCase();
-//		final String resolved = new ResolvedSDFAttributeParameter().getClass().getSimpleName().toLowerCase();
-//		final String predicate = new PredicateParameter().getClass().getSimpleName().toLowerCase();
-//		final String enumm = new EnumParameter().getClass().getSimpleName().toLowerCase();
+		// final String resolved = new
+		// ResolvedSDFAttributeParameter().getClass().getSimpleName().toLowerCase();
+		// final String predicate = new
+		// PredicateParameter().getClass().getSimpleName().toLowerCase();
+		// final String enumm = new
+		// EnumParameter().getClass().getSimpleName().toLowerCase();
 		final String window = new TimeParameter().getClass().getSimpleName().toLowerCase();
 		// evaluate type parameter type and return correct format
 		if (typename.equals(list) || typename.equals(map) || typename.equals(option) || typename.equals(schema)

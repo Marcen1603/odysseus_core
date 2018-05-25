@@ -45,6 +45,7 @@ import org.eclipse.xtext.generator.IGenerator2;
 import org.eclipse.xtext.generator.IGeneratorContext;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,37 +167,41 @@ public class CQLGenerator implements IGenerator2 {
    * It returns an operator plan that consists of PQL-operators.
    */
   public CharSequence parseStatement(final Query query) {
-    this.log.debug("parsing CQL query: selecting query type");
-    EObject _type = query.getType();
-    if ((_type instanceof ComplexSelect)) {
-      EObject _type_1 = query.getType();
-      ComplexSelect select = ((ComplexSelect) _type_1);
-      String _operation = select.getOperation();
-      boolean _tripleNotEquals = (_operation != null);
-      if (_tripleNotEquals) {
-        SimpleSelect _left = select.getLeft();
-        SimpleSelect _right = select.getRight();
-        String _operation_1 = select.getOperation();
-        this.selectParser.parseComplex(_left, _right, _operation_1);
+    try {
+      this.log.debug("parsing CQL query: selecting query type");
+      EObject _type = query.getType();
+      if ((_type instanceof ComplexSelect)) {
+        EObject _type_1 = query.getType();
+        ComplexSelect select = ((ComplexSelect) _type_1);
+        String _operation = select.getOperation();
+        boolean _tripleNotEquals = (_operation != null);
+        if (_tripleNotEquals) {
+          SimpleSelect _left = select.getLeft();
+          SimpleSelect _right = select.getRight();
+          String _operation_1 = select.getOperation();
+          this.selectParser.parseComplex(_left, _right, _operation_1);
+        } else {
+          SimpleSelect _left_1 = select.getLeft();
+          this.selectParser.parse(_left_1);
+        }
       } else {
-        SimpleSelect _left_1 = select.getLeft();
-        this.selectParser.parse(_left_1);
-      }
-    } else {
-      EObject _type_2 = query.getType();
-      if ((_type_2 instanceof Create)) {
-        EObject _type_3 = query.getType();
-        this.createParser.parseCreate(((Create) _type_3));
-      } else {
-        EObject _type_4 = query.getType();
-        if ((_type_4 instanceof StreamTo)) {
-          EObject _type_5 = query.getType();
-          this.createParser.parseStreamTo(((StreamTo) _type_5));
+        EObject _type_2 = query.getType();
+        if ((_type_2 instanceof Create)) {
+          EObject _type_3 = query.getType();
+          this.createParser.parseCreate(((Create) _type_3));
+        } else {
+          EObject _type_4 = query.getType();
+          if ((_type_4 instanceof StreamTo)) {
+            EObject _type_5 = query.getType();
+            this.createParser.parseStreamTo(((StreamTo) _type_5));
+          }
         }
       }
+      OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+      return _operatorCache.getPQL();
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-    return _operatorCache.getPQL();
   }
   
   public void setSchema(final Collection<SystemSource> schemas) {

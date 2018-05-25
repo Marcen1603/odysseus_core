@@ -8,23 +8,22 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.relational_interval.physicaloperator,
  de.uniol.inf.is.odysseus.script.parser,
  org.osgi.framework;version="1.6.0",
- org.osgi.service.component;version="1.1.0",
- org.slf4j
+ org.osgi.service.component;version="1.1.0"
 Service-Component: OSGI-INF/*
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  org.eclipse.equinox.app,
  org.apache.commons.lang3,
- de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rewrite;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.sweeparea,
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.rewrite,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.report;bundle-version="1.0.0",
- com.google.guava;bundle-version="18.0.0"
+ de.uniol.inf.is.odysseus.keyvalue.datatype,
+ de.uniol.inf.is.odysseus.report,
+ com.google.guava;bundle-version="18.0.0", de.uniol.inf.is.odysseus.slf4j
 Export-Package: de.uniol.inf.is.odysseus.test,
  de.uniol.inf.is.odysseus.test.checks,
  de.uniol.inf.is.odysseus.test.component,
@@ -32,3 +31,4 @@ Export-Package: de.uniol.inf.is.odysseus.test,
  de.uniol.inf.is.odysseus.test.set,
  de.uniol.inf.is.odysseus.test.sinks.physicaloperator
 Bundle-Vendor: University of Oldenburg
+Automatic-Module-Name: de.uniol.inf.is.odysseus.test

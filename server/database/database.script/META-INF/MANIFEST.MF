@@ -5,8 +5,9 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.script;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.database;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.database
 Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.script

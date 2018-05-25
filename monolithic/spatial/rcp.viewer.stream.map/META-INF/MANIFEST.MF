@@ -24,19 +24,19 @@ Import-Package: com.google.common.base,
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- com.vividsolutions.jts;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.rcp.editor.text;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
- org.osgeo.proj4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.spatial,
+ de.uniol.inf.is.odysseus.core,
+ com.vividsolutions.jts,
+ de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.script.parser,
+ org.osgeo.proj4j,
  org.eclipse.core.databinding,
  org.eclipse.core.databinding.beans,
  org.eclipse.jface.databinding,
  org.eclipse.core.databinding.property;bundle-version="1.4.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.sweeparea,
+ de.uniol.inf.is.odysseus.core.server
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer,
@@ -48,3 +48,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
  lib/gson-2.2.2.jar,
  lib/opal-0.9.5.2.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.viewer.stream.map

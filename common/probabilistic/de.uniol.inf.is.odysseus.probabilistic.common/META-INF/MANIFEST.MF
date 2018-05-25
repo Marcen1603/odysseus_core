@@ -6,9 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.probabilistic.common.Activator
 Bundle-Vendor: Christian Kuka
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.rits.cloning;bundle-version="1.8.5",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.collection,
@@ -40,3 +40,4 @@ Export-Package: de.uniol.inf.is.odysseus.probabilistic.common;uses:="de.uniol.in
  de.uniol.inf.is.odysseus.probabilistic.common.simulation,
  de.uniol.inf.is.odysseus.probabilistic.math,
  de.uniol.inf.is.odysseus.probabilistic.math.genz
+Automatic-Module-Name: de.uniol.inf.is.odysseus.probabilistic.common

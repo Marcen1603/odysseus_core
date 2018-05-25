@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
 import java.util.Optional
 import java.util.stream.Collectors
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException
 
 class AggregationParser implements IAggregationParser {
 
@@ -47,7 +48,7 @@ class AggregationParser implements IAggregationParser {
 		return buildAggregateOP(list, list2, srcs, select);
 	}
 
-	def private Object[] buildAggregateOP(Collection<QueryAggregate> aggAttr, Collection<Attribute> orderAttr, CharSequence input) {
+	def private Object[] buildAggregateOP(Collection<QueryAggregate> aggAttr, Collection<Attribute> orderAttr, CharSequence input) throws PQLOperatorBuilderException {
 
 		argsstr = ''
 		var mapName = ''

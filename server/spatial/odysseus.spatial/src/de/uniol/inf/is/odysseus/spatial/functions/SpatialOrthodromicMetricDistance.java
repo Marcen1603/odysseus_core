@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 public class SpatialOrthodromicMetricDistance extends AbstractFunction<Double> {
 
@@ -23,7 +23,7 @@ public class SpatialOrthodromicMetricDistance extends AbstractFunction<Double> {
 	public Double getValue() {
 		Point spatialPoint1 = ((GeometryWrapper) this.getInputValue(0)).getGeometry().getCentroid();
 		Point spatialPoint2 = ((GeometryWrapper) this.getInputValue(1)).getGeometry().getCentroid();
-		double distance = MetrticSpatialUtils.getInstance().calculateDistance(spatialPoint1.getCoordinate(),
+		double distance = MetricSpatialUtils.getInstance().calculateDistance(spatialPoint1.getCoordinate(),
 				spatialPoint2.getCoordinate());
 		return distance;
 	}

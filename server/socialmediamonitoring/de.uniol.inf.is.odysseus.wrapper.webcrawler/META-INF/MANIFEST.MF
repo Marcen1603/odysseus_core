@@ -6,9 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.webcrawler.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.core.collection,
@@ -40,3 +40,4 @@ Bundle-ClassPath: .,
  crawler/tagsoup-1.2.1.jar,
  crawler/tika-core-1.0.jar,
  crawler/tika-parsers-1.0.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.webcrawler

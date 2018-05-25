@@ -13,9 +13,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 
 public abstract class AbstractPQLOperatorBuilder {
-	
-	abstract public String build(Class<?> operator, Map<String, String> args);
-	
+
+	abstract public String build(Class<?> operator, Map<String, String> args) throws PQLOperatorBuilderException;
+
 	class Parameter {
 
 		final String name;
@@ -43,7 +43,7 @@ public abstract class AbstractPQLOperatorBuilder {
 		}
 
 	}
-	
+
 	protected List<Parameter> getParameters(final Class<?> type) {
 		final List<Parameter> parameters = new ArrayList<>();
 		final Class<? extends Annotation> annotation = de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter.class;

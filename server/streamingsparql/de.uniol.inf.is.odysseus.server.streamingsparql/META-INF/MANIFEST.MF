@@ -15,8 +15,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.common.types,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
  com.google.guava,
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
  org.eclipse.xtext.ui,
  de.uniol.inf.is.odysseus.rcp.editor.text,
  de.uniol.inf.is.odysseus.rcp.base,
@@ -38,3 +38,4 @@ Export-Package: de.uniol.inf.is.odysseus.server,
  de.uniol.inf.is.odysseus.server.streamingsparql.impl,
  de.uniol.inf.is.odysseus.server.streamingsparql
 Service-Component: OSGI-INF/StreamingSparqlQueryParser.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.streamingsparql
