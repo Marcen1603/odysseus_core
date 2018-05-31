@@ -210,10 +210,6 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.context.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.wsenrich.feature"
          version="0.0.0"/>
 
