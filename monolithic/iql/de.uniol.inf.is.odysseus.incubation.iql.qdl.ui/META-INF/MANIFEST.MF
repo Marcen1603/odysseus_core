@@ -6,9 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.iql.qdl.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.iql.qdl;visibility:=reexport,
- de.uniol.inf.is.odysseus.iql.basic.ui;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.incubation.iql.qdl.ide;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.incubation.iql.odl.ide;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.iql.basic.ui,
+ de.uniol.inf.is.odysseus.incubation.iql.qdl.ide,
+ de.uniol.inf.is.odysseus.incubation.iql.odl.ide,
  org.eclipse.emf.edit.ui,
  org.apache.commons.io,
  org.eclipse.xtext.junit4,
@@ -40,3 +40,4 @@ Export-Package: de.uniol.inf.is.odysseus.iql.qdl.ui.quickfix,
 Bundle-Activator: de.uniol.inf.is.odysseus.incubation.iql.qdl.ui.internal.QdlActivator
 Service-Component: OSGI-INF/QDLFileExecutor.xml,OSGI-INF/QDLUiServiceBinding.xml,
  OSGI-INF/ODLDependenciesProvider.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.qdl.ui

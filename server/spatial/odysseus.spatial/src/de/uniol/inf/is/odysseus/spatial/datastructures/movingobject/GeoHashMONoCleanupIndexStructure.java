@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 /**
  * Difference: Removed the idea of distance as a window predicate and do not
@@ -116,7 +116,7 @@ public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndexOld {
 	public Map<GeoHash, List<Tuple<ITimeInterval>>> approximateCircle(Geometry geometry, double radius, ITimeInterval t,
 			String movingObjectIdToIgnore) {
 		// Get the rectangular envelope for the circle
-		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
+		Envelope env = MetricSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
 				radius);
 		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
@@ -137,7 +137,7 @@ public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndexOld {
 
 		// Get the rectangular envelope for the circle
 		Coordinate centerCoord = new Coordinate(centerElement.getLatitude(), centerElement.getLongitude());
-		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(centerCoord, radius);
+		Envelope env = MetricSpatialUtils.getInstance().getEnvelopeForRadius(centerCoord, radius);
 		GeometryFactory factory = new GeometryFactory();
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
 		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
@@ -166,7 +166,7 @@ public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndexOld {
 	private Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection, String movingObjectIdToIgnore) {
 
-		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+		MetricSpatialUtils spatialUtils = MetricSpatialUtils.getInstance();
 
 		// TODO Maybe faster with Haversine. Give choice?
 		// TODO Think about: maybe it is faster to first check if the point is
@@ -442,7 +442,7 @@ public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndexOld {
 		// Calculate speed and direction
 
 		// Distance
-		double distanceMeters = MetrticSpatialUtils.getInstance().calculateDistance(null,
+		double distanceMeters = MetricSpatialUtils.getInstance().calculateDistance(null,
 				new Coordinate(elementBefore.getLatitude(), elementBefore.getLongitude()),
 				new Coordinate(elementAfter.getLatitude(), elementAfter.getLongitude()));
 

@@ -4,11 +4,11 @@ Bundle-Name: Polynomial Common
 Bundle-SymbolicName: cc.kuka.odysseus.polynomial.common
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.polynomial.Activator
-Require-Bundle: de.uniol.inf.is.odysseus.core
+Require-Bundle: de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: org.osgi.framework,
- org.slf4j
+Import-Package: org.osgi.framework
 Export-Package: cc.kuka.odysseus.polynomial.datatype,
  cc.kuka.odysseus.polynomial.sdf.schema
 Service-Component: OSGI-INF/PolynomialDatatypeProvider.xml
+Automatic-Module-Name: cc.kuka.odysseus.polynomial.common

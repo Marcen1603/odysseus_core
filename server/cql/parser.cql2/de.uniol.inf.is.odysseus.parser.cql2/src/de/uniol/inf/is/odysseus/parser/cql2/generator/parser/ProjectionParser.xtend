@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IRenameP
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ISelectParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException
 
 class ProjectionParser implements IProjectionParser {
 
@@ -55,7 +56,7 @@ class ProjectionParser implements IProjectionParser {
 		return buildMapOperator(expressions, null)
 	}
 	
-	def private Object[] buildMapOperator(Collection<QueryExpression> queryExpressions, String input) {
+	def private Object[] buildMapOperator(Collection<QueryExpression> queryExpressions, String input) throws PQLOperatorBuilderException {
 		
 		curStrRep = ''
 		val Collection<String> stringList = newArrayList()

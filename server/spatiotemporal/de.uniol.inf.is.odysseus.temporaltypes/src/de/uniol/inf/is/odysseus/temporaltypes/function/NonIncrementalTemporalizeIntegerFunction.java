@@ -15,17 +15,17 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.temporaltypes.types.IntegerFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.types.LinearIntegerFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
-import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalInteger;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.integer.LinearIntegerFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.integer.TemporalInteger;
 
 /**
  * Function for the aggregation operator to temporalize an integer attribute.
  * Makes a TemporalInteger from an integer.
  * 
  * Remark: Uses the non-incremental interface to deal with the second metadata
- * (ValidTime) correctly.
+ * (ValidTimes) correctly.
  * 
  * @author Tobias Brandt
  *
@@ -49,6 +49,15 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 		this.temporalInteger = new TemporalInteger[attributes.length];
 		// TODO Fill values?
 		if (outputNames.length != attributes.length) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
+	}
+	
+	public NonIncrementalTemporalizeIntegerFunction(final int inputAttributesLength, final String[] outputNames) {
+		super(null, outputNames);
+		this.temporalInteger = new TemporalInteger[inputAttributesLength];
+		// TODO Fill values?
+		if (outputNames.length != inputAttributesLength) {
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
@@ -105,7 +114,7 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 		double b = newestValue - m * trigger.getMetadata().getStart().getMainPoint();
 
 		// Create a linear function with the calculated values
-		IntegerFunction function = new LinearIntegerFunction(m, b);
+		TemporalFunction<Integer> function = new LinearIntegerFunction(m, b);
 		this.temporalInteger[0] = new TemporalInteger(function);
 		return this.temporalInteger;
 	}
@@ -144,7 +153,7 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 				attributeResolver);
 
 		if (attributes == null) {
-			return new TemporalizeInteger<>(attributeResolver.getSchema().get(0).size(), outputNames);
+			return new NonIncrementalTemporalizeIntegerFunction<>(attributeResolver.getSchema().get(0).size(), outputNames);
 		}
 
 		return new NonIncrementalTemporalizeIntegerFunction<>(attributes, outputNames);

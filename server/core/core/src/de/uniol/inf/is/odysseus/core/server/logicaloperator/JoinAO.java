@@ -19,7 +19,9 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
@@ -28,14 +30,17 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
@@ -54,8 +59,12 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	private IPredicate<?> predicate;
 	private String sweepAreaName;
 	
+	// For the internal element window
 	private int elementSizePort0 = -1;
 	private int elementSizePort1 = -1;
+	private List<SDFAttribute> groupingAttributesPort0;
+	private List<SDFAttribute> groupingAttributesPort1;
+	private boolean keepEndTimestamp = false;
 
 	public JoinAO() {
 		super();
@@ -72,6 +81,11 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		
 		this.elementSizePort0 = joinAO.elementSizePort0;
 		this.elementSizePort1 = joinAO.elementSizePort1;
+		
+		this.groupingAttributesPort0 = joinAO.groupingAttributesPort0;
+		this.groupingAttributesPort1 = joinAO.groupingAttributesPort1;
+		
+		this.keepEndTimestamp = joinAO.keepEndTimestamp;
 	}
 
 	@Parameter(type = EnumParameter.class, optional = true, doc = "Type of input streams. For optimization purposes: ONE_ONE, ONE_MANY, MANY_ONE, MANY_MANY")
@@ -129,6 +143,41 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	
 	public int getElementSizePort2() {
 		return this.elementSizePort1;
+	}
+	
+	public boolean keepEndTimestamp() {
+		return keepEndTimestamp;
+	}
+
+	@Parameter(type = BooleanParameter.class, optional = true, name = "keepEndTimestamp", doc = "When using element size restrictions, the end timestamp is set to infinity due to semantics (later aggeregation). If you want to keep end timestamp, set to true. Default is false.")
+	public void setKeepEndTimestamp(boolean keepEndTimestamp) {
+		this.keepEndTimestamp = keepEndTimestamp;
+	}
+	
+	@Parameter(name = "group_by_port_0", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "Group the element window (if used) be these attributes on port 0.")
+	public void setGroupingAttributesPort0(final List<SDFAttribute> attributes) {
+		groupingAttributesPort0 = attributes;
+	}
+
+	@GetParameter(name = "group_by_port_0")
+	public List<SDFAttribute> getGroupingAttributesPort0() {
+		if (groupingAttributesPort0 == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(groupingAttributesPort0);
+	}
+	
+	@Parameter(name = "group_by_port_1", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "Group the element window (if used) be these attributes on port 1.")
+	public void setGroupingAttributesPort1(final List<SDFAttribute> attributes) {
+		groupingAttributesPort1 = attributes;
+	}
+
+	@GetParameter(name = "group_by_port_1")
+	public List<SDFAttribute> getGroupingAttributesPort1() {
+		if (groupingAttributesPort1 == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(groupingAttributesPort1);
 	}
 
 	public @Override JoinAO clone() {

@@ -5,10 +5,10 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.types.IntegerFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.types.LinearIntegerFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
-import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalInteger;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.integer.LinearIntegerFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.integer.TemporalInteger;
 
 /**
  * An example for a map function that converts an integer to a TemporalInteger.
@@ -28,7 +28,7 @@ public class TemporalizeIntegerFunction extends AbstractFunction<TemporalInteger
 
 	@Override
 	public TemporalInteger getValue() {
-		IntegerFunction function = new LinearIntegerFunction(0, 1);
+		TemporalFunction<Integer> function = new LinearIntegerFunction(0, 1);
 		return new TemporalInteger(function);
 	}
 	

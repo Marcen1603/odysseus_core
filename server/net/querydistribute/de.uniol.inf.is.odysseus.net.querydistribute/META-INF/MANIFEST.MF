@@ -5,21 +5,22 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.querydistribute
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.net.util;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.net.util,
+ de.uniol.inf.is.odysseus.net,
  de.uniol.inf.is.odysseus.parser.pql.generator,
  org.eclipse.osgi,
- de.uniol.inf.is.odysseus.net.communication;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.net.config;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.net.communication,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.net.config
 Export-Package: de.uniol.inf.is.odysseus.net.querydistribute,
  de.uniol.inf.is.odysseus.net.querydistribute.modify,
  de.uniol.inf.is.odysseus.net.querydistribute.util
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/QueryDistributionComponent.xml,OSGI-INF/QueryDistributorHelper.xml,OSGI-INF/QueryDistributor.xml,OSGI-INF/ServiceBinder.xml,OSGI-INF/QueryDistributionPreParserKeywordProvider.xml,OSGI-INF/QueryPartSender.xml,OSGI-INF/QueryPartReceiver.xml,OSGI-INF/QueryPartController.xml,OSGI-INF/LogicalQueryHelper.xml,OSGI-INF/QueryDistributionNotifier.xml,OSGI-INF/QueryDistributionPlugIn.xml,
  OSGI-INF/ModificationHelper.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute

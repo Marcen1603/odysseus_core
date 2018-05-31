@@ -26,7 +26,7 @@ Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
  org.apache.commons.lang;version="2.6.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.aggregation
 Export-Package: de.uniol.inf.is.odysseus.securitypunctuation.datatype;
@@ -41,3 +41,4 @@ Export-Package: de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 Service-Component: SecurityPunctuationPreTransformationHandler.xml,
  OSGI-INF/SecurityPunctuationPreTransformationHandler.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.securitypunctuation

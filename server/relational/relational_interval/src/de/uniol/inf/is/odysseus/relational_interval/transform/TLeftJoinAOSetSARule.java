@@ -128,9 +128,7 @@ public class TLeftJoinAOSetSARule extends
 		if (operator.getOutputSchema().getType() == Tuple.class
 				&& operator.getInputSchema(0).hasMetatype(ITimeInterval.class)
 				&& operator.getInputSchema(1).hasMetatype(ITimeInterval.class)) {
-			if (operator.getAreas() == null) {
-				return true;
-			}
+			return !operator.isAreasSet();
 		}
 		return false;
 	}

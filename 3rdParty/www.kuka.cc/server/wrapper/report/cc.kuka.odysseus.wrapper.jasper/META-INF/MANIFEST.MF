@@ -25,3 +25,4 @@ Service-Component: OSGI-INF/JasperProtocolHandler.xml
 Require-Bundle:  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  org.eclipse.jdt.core;bundle-version="3.7.3"
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.jasper

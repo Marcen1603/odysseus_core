@@ -23,7 +23,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.apache.commons.lang,
  com.google.guava,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.osgi,
  org.eclipse.core.runtime,
@@ -68,4 +68,5 @@ Bundle-ClassPath: .,
  lib/javassist.jar,
  lib/reflections-0.9.9-RC1.jar
 Service-Component: OSGI-INF/IQLServiceBinding.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.iql.basic
 

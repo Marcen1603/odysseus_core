@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class JoinParser implements IJoinParser {
@@ -53,71 +54,75 @@ public class JoinParser implements IJoinParser {
   
   @Override
   public String buildJoin(final Collection<QueryCache.QuerySource> sources, final SimpleSelect select) {
-    int _size = sources.size();
-    String[] sourceStrings = new String[_size];
-    Collection<String> sourcenames = CollectionLiterals.<String>newArrayList();
-    for (int i = 0; (i < sources.size()); i++) {
-      {
-        QueryCache.QuerySource _get = ((QueryCache.QuerySource[])Conversions.unwrapArray(sources, QueryCache.QuerySource.class))[i];
-        Source source = _get.source;
-        if ((source instanceof NestedSource)) {
-          QueryCache _queryCache = this.cacheService.getQueryCache();
-          Alias _alias = ((NestedSource)source).getAlias();
-          String _name = _alias.getName();
-          final Optional<QueryCache.SubQuery> o = _queryCache.getSubQuery(_name);
-          boolean _isPresent = o.isPresent();
-          if (_isPresent) {
-            final QueryCache.SubQuery subQuery = o.get();
-            QueryCache _queryCache_1 = this.cacheService.getQueryCache();
-            Collection<QueryCache.QueryAttribute> _projectionAttributes = _queryCache_1.getProjectionAttributes(subQuery.select);
-            Stream<QueryCache.QueryAttribute> _stream = _projectionAttributes.stream();
-            final Predicate<QueryCache.QueryAttribute> _function = (QueryCache.QueryAttribute p) -> {
-              return (!Objects.equal(p.referenceOf, null));
-            };
-            Stream<QueryCache.QueryAttribute> _filter = _stream.filter(_function);
-            Collector<QueryCache.QueryAttribute, ?, List<QueryCache.QueryAttribute>> _list = Collectors.<QueryCache.QueryAttribute>toList();
-            final Collection<QueryCache.QueryAttribute> col = _filter.collect(_list);
-            final Collection<String> renames = CollectionLiterals.<String>newArrayList();
-            Stream<QueryCache.QueryAttribute> _stream_1 = col.stream();
-            final Consumer<QueryCache.QueryAttribute> _function_1 = (QueryCache.QueryAttribute e) -> {
-              String _name_1 = e.parsedAttribute.getName();
-              String _replace = _name_1.replace(".", "_");
-              renames.add(_replace);
-              String _xifexpression = null;
-              String _alias_1 = e.referenceOf.parsedAttribute.getAlias();
-              boolean _notEquals = (!Objects.equal(_alias_1, null));
-              if (_notEquals) {
-                _xifexpression = e.referenceOf.parsedAttribute.getAlias();
-              } else {
-                _xifexpression = e.referenceOf.parsedAttribute.getName();
-              }
-              renames.add(_xifexpression);
-            };
-            _stream_1.forEach(_function_1);
-            String _parse = this.renameParser.parse(renames, subQuery.operator, select);
-            sourceStrings[i] = _parse;
-          }
-        } else {
-          if ((source instanceof SimpleSource)) {
-            final String sourcename = ((SimpleSource)source).getName();
-            Stream<String> _stream_2 = sourcenames.stream();
-            final Predicate<String> _function_2 = (String e) -> {
-              return e.equals(sourcename);
-            };
-            Stream<String> _filter_1 = _stream_2.filter(_function_2);
-            final long count = _filter_1.count();
-            sourcenames.add(sourcename);
-            this.renameParser.setSources(sources);
-            String _parse_1 = this.windowParser.parse(((SimpleSource)source));
-            CharSequence _buildRename = this.renameParser.buildRename(_parse_1, ((SimpleSource)source), select, 
-              ((int) count));
-            String _string = _buildRename.toString();
-            sourceStrings[i] = _string;
+    try {
+      int _size = sources.size();
+      String[] sourceStrings = new String[_size];
+      Collection<String> sourcenames = CollectionLiterals.<String>newArrayList();
+      for (int i = 0; (i < sources.size()); i++) {
+        {
+          QueryCache.QuerySource _get = ((QueryCache.QuerySource[])Conversions.unwrapArray(sources, QueryCache.QuerySource.class))[i];
+          Source source = _get.source;
+          if ((source instanceof NestedSource)) {
+            QueryCache _queryCache = this.cacheService.getQueryCache();
+            Alias _alias = ((NestedSource)source).getAlias();
+            String _name = _alias.getName();
+            final Optional<QueryCache.SubQuery> o = _queryCache.getSubQuery(_name);
+            boolean _isPresent = o.isPresent();
+            if (_isPresent) {
+              final QueryCache.SubQuery subQuery = o.get();
+              QueryCache _queryCache_1 = this.cacheService.getQueryCache();
+              Collection<QueryCache.QueryAttribute> _projectionAttributes = _queryCache_1.getProjectionAttributes(subQuery.select);
+              Stream<QueryCache.QueryAttribute> _stream = _projectionAttributes.stream();
+              final Predicate<QueryCache.QueryAttribute> _function = (QueryCache.QueryAttribute p) -> {
+                return (!Objects.equal(p.referenceOf, null));
+              };
+              Stream<QueryCache.QueryAttribute> _filter = _stream.filter(_function);
+              Collector<QueryCache.QueryAttribute, ?, List<QueryCache.QueryAttribute>> _list = Collectors.<QueryCache.QueryAttribute>toList();
+              final Collection<QueryCache.QueryAttribute> col = _filter.collect(_list);
+              final Collection<String> renames = CollectionLiterals.<String>newArrayList();
+              Stream<QueryCache.QueryAttribute> _stream_1 = col.stream();
+              final Consumer<QueryCache.QueryAttribute> _function_1 = (QueryCache.QueryAttribute e) -> {
+                String _name_1 = e.parsedAttribute.getName();
+                String _replace = _name_1.replace(".", "_");
+                renames.add(_replace);
+                String _xifexpression = null;
+                String _alias_1 = e.referenceOf.parsedAttribute.getAlias();
+                boolean _notEquals = (!Objects.equal(_alias_1, null));
+                if (_notEquals) {
+                  _xifexpression = e.referenceOf.parsedAttribute.getAlias();
+                } else {
+                  _xifexpression = e.referenceOf.parsedAttribute.getName();
+                }
+                renames.add(_xifexpression);
+              };
+              _stream_1.forEach(_function_1);
+              String _parse = this.renameParser.parse(renames, subQuery.operator, select);
+              sourceStrings[i] = _parse;
+            }
+          } else {
+            if ((source instanceof SimpleSource)) {
+              final String sourcename = ((SimpleSource)source).getName();
+              Stream<String> _stream_2 = sourcenames.stream();
+              final Predicate<String> _function_2 = (String e) -> {
+                return e.equals(sourcename);
+              };
+              Stream<String> _filter_1 = _stream_2.filter(_function_2);
+              final long count = _filter_1.count();
+              sourcenames.add(sourcename);
+              this.renameParser.setSources(sources);
+              String _parse_1 = this.windowParser.parse(((SimpleSource)source));
+              CharSequence _buildRename = this.renameParser.buildRename(_parse_1, ((SimpleSource)source), select, 
+                ((int) count));
+              String _string = _buildRename.toString();
+              sourceStrings[i] = _string;
+            }
           }
         }
       }
+      return this.buildJoin(sourceStrings);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    return this.buildJoin(sourceStrings);
   }
   
   @Override

@@ -9,8 +9,8 @@ Service-Component: OSGI-INF/testcomponent.xml
 Require-Bundle: de.uniol.inf.is.odysseus.test,
   de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- com.google.guava
+ com.google.guava, de.uniol.inf.is.odysseus.slf4j
 Import-Package: com.google.inject,
- org.osgi.framework,
- org.slf4j
+ org.osgi.framework
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.parser.cql

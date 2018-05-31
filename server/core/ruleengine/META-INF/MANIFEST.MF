@@ -15,3 +15,4 @@ Export-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  org.apache.commons.lang3;bundle-version="3.1.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.ruleengine

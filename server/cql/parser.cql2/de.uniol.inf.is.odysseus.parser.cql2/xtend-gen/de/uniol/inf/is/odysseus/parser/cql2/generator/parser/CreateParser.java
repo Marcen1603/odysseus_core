@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Time;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ICreateParser;
@@ -37,6 +38,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class CreateParser implements ICreateParser {
@@ -56,45 +58,49 @@ public class CreateParser implements ICreateParser {
   
   @Override
   public void parseCreate(final Create statement) {
-    EObject _create = statement.getCreate();
-    if ((_create instanceof CreateView)) {
-      EObject _create_1 = statement.getCreate();
-      this.parseCreateView(((CreateView) _create_1));
-    } else {
-      EObject _create_2 = statement.getCreate();
-      if ((_create_2 instanceof CreateAccessFramework)) {
-        EObject _create_3 = statement.getCreate();
-        String _type = statement.getType();
-        this.parseCreateAccessFramework(((CreateAccessFramework) _create_3), _type);
+    try {
+      EObject _create = statement.getCreate();
+      if ((_create instanceof CreateView)) {
+        EObject _create_1 = statement.getCreate();
+        this.parseCreateView(((CreateView) _create_1));
       } else {
-        EObject _create_4 = statement.getCreate();
-        if ((_create_4 instanceof CreateChannelFormatViaFile)) {
-          EObject _create_5 = statement.getCreate();
-          this.parseCreateStreamFile(((CreateChannelFormatViaFile) _create_5));
+        EObject _create_2 = statement.getCreate();
+        if ((_create_2 instanceof CreateAccessFramework)) {
+          EObject _create_3 = statement.getCreate();
+          String _type = statement.getType();
+          this.parseCreateAccessFramework(((CreateAccessFramework) _create_3), _type);
         } else {
-          EObject _create_6 = statement.getCreate();
-          if ((_create_6 instanceof CreateChannelFrameworkViaPort)) {
-            EObject _create_7 = statement.getCreate();
-            this.parseCreateStreamChannel(((CreateChannelFrameworkViaPort) _create_7));
+          EObject _create_4 = statement.getCreate();
+          if ((_create_4 instanceof CreateChannelFormatViaFile)) {
+            EObject _create_5 = statement.getCreate();
+            this.parseCreateStreamFile(((CreateChannelFormatViaFile) _create_5));
           } else {
-            EObject _create_8 = statement.getCreate();
-            if ((_create_8 instanceof CreateDatabaseStream)) {
-              EObject _create_9 = statement.getCreate();
-              this.parseCreateDatabaseStream(((CreateDatabaseStream) _create_9));
+            EObject _create_6 = statement.getCreate();
+            if ((_create_6 instanceof CreateChannelFrameworkViaPort)) {
+              EObject _create_7 = statement.getCreate();
+              this.parseCreateStreamChannel(((CreateChannelFrameworkViaPort) _create_7));
             } else {
-              EObject _create_10 = statement.getCreate();
-              if ((_create_10 instanceof CreateDatabaseSink)) {
-                EObject _create_11 = statement.getCreate();
-                this.parseCreateDatabaseSink(((CreateDatabaseSink) _create_11));
+              EObject _create_8 = statement.getCreate();
+              if ((_create_8 instanceof CreateDatabaseStream)) {
+                EObject _create_9 = statement.getCreate();
+                this.parseCreateDatabaseStream(((CreateDatabaseStream) _create_9));
+              } else {
+                EObject _create_10 = statement.getCreate();
+                if ((_create_10 instanceof CreateDatabaseSink)) {
+                  EObject _create_11 = statement.getCreate();
+                  this.parseCreateDatabaseSink(((CreateDatabaseSink) _create_11));
+                }
               }
             }
           }
         }
       }
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
   }
   
-  private CharSequence parseCreateView(final CreateView view) {
+  private CharSequence parseCreateView(final CreateView view) throws PQLOperatorBuilderException {
     InnerSelect _select = view.getSelect();
     SimpleSelect _select_1 = _select.getSelect();
     SimpleSelect select = ((SimpleSelect) _select_1);
@@ -270,7 +276,7 @@ public class CreateParser implements ICreateParser {
     return this.utilityService.generateKeyValueString(attributenames, datatypes, ",");
   }
   
-  private CharSequence parseCreateStreamFile(final CreateChannelFormatViaFile file) {
+  private CharSequence parseCreateStreamFile(final CreateChannelFormatViaFile file) throws PQLOperatorBuilderException {
     Map<String, String> args = CollectionLiterals.<String, String>newHashMap();
     SchemaDefinition _attributes = file.getAttributes();
     String _name = _attributes.getName();
@@ -298,7 +304,7 @@ public class CreateParser implements ICreateParser {
     return _operatorCache.add(_plus, operator);
   }
   
-  private CharSequence parseCreateStreamChannel(final CreateChannelFrameworkViaPort channel) {
+  private CharSequence parseCreateStreamChannel(final CreateChannelFrameworkViaPort channel) throws PQLOperatorBuilderException {
     Map<String, String> args = CollectionLiterals.<String, String>newHashMap();
     SchemaDefinition _attributes = channel.getAttributes();
     String _name = _attributes.getName();
@@ -330,137 +336,145 @@ public class CreateParser implements ICreateParser {
   
   @Override
   public void parseStreamTo(final StreamTo query) {
-    String lastOperator = "";
-    String sink = "";
-    OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-    Map<String, String> sinks = _operatorCache.getSinks();
-    Set<String> _keySet = sinks.keySet();
-    String _name = query.getName();
-    String _plus = (this.VIEW + _name);
-    boolean _contains = _keySet.contains(_plus);
-    if (_contains) {
-      String _name_1 = query.getName();
-      String _plus_1 = (this.VIEW + _name_1);
-      String _get = sinks.get(_plus_1);
-      sink = _get;
-    } else {
-      Set<String> _keySet_1 = sinks.keySet();
-      String _name_2 = query.getName();
-      boolean _contains_1 = _keySet_1.contains(_name_2);
-      if (_contains_1) {
-        String _name_3 = query.getName();
-        String _get_1 = sinks.get(_name_3);
-        sink = _get_1;
+    try {
+      String lastOperator = "";
+      String sink = "";
+      OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+      Map<String, String> sinks = _operatorCache.getSinks();
+      Set<String> _keySet = sinks.keySet();
+      String _name = query.getName();
+      String _plus = (this.VIEW + _name);
+      boolean _contains = _keySet.contains(_plus);
+      if (_contains) {
+        String _name_1 = query.getName();
+        String _plus_1 = (this.VIEW + _name_1);
+        String _get = sinks.get(_plus_1);
+        sink = _get;
+      } else {
+        Set<String> _keySet_1 = sinks.keySet();
+        String _name_2 = query.getName();
+        boolean _contains_1 = _keySet_1.contains(_name_2);
+        if (_contains_1) {
+          String _name_3 = query.getName();
+          String _get_1 = sinks.get(_name_3);
+          sink = _get_1;
+        }
       }
-    }
-    InnerSelect2 _statement = query.getStatement();
-    boolean _tripleNotEquals = (_statement != null);
-    if (_tripleNotEquals) {
-      InnerSelect2 _statement_1 = query.getStatement();
-      SimpleSelect _select = _statement_1.getSelect();
-      this.selectParser.parse(((SimpleSelect) _select));
-      OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
-      String _last = _operatorCache_1.last();
-      lastOperator = _last;
-    } else {
-      String _inputname = query.getInputname();
-      lastOperator = _inputname;
-    }
-    boolean _notEquals = (!Objects.equal(sink, ""));
-    if (_notEquals) {
-      String _replace = sink.replace("--INPUT--", lastOperator);
-      sink = _replace;
-      OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
-      boolean _isBACKUPState = _operatorCache_2.isBACKUPState();
-      if (_isBACKUPState) {
-        OperatorCache _operatorCache_3 = this.cacheService.getOperatorCache();
-        _operatorCache_3.changeToBACKUP();
+      InnerSelect2 _statement = query.getStatement();
+      boolean _tripleNotEquals = (_statement != null);
+      if (_tripleNotEquals) {
+        InnerSelect2 _statement_1 = query.getStatement();
+        SimpleSelect _select = _statement_1.getSelect();
+        this.selectParser.parse(((SimpleSelect) _select));
+        OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
+        String _last = _operatorCache_1.last();
+        lastOperator = _last;
+      } else {
+        String _inputname = query.getInputname();
+        lastOperator = _inputname;
       }
-      String _name_4 = query.getName();
-      sinks.remove(_name_4);
-      OperatorCache _operatorCache_4 = this.cacheService.getOperatorCache();
-      String _name_5 = query.getName();
-      _operatorCache_4.add(sink, _name_5);
-    } else {
-      OperatorCache _operatorCache_5 = this.cacheService.getOperatorCache();
-      Map<String, String> _streamTo = _operatorCache_5.getStreamTo();
-      String _name_6 = query.getName();
-      String _name_7 = query.getName();
-      _streamTo.put(_name_6, _name_7);
-      OperatorCache _operatorCache_6 = this.cacheService.getOperatorCache();
-      _operatorCache_6.changeToBACKUP();
+      boolean _notEquals = (!Objects.equal(sink, ""));
+      if (_notEquals) {
+        String _replace = sink.replace("--INPUT--", lastOperator);
+        sink = _replace;
+        OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
+        boolean _isBACKUPState = _operatorCache_2.isBACKUPState();
+        if (_isBACKUPState) {
+          OperatorCache _operatorCache_3 = this.cacheService.getOperatorCache();
+          _operatorCache_3.changeToBACKUP();
+        }
+        String _name_4 = query.getName();
+        sinks.remove(_name_4);
+        OperatorCache _operatorCache_4 = this.cacheService.getOperatorCache();
+        String _name_5 = query.getName();
+        _operatorCache_4.add(sink, _name_5);
+      } else {
+        OperatorCache _operatorCache_5 = this.cacheService.getOperatorCache();
+        Map<String, String> _streamTo = _operatorCache_5.getStreamTo();
+        String _name_6 = query.getName();
+        String _name_7 = query.getName();
+        _streamTo.put(_name_6, _name_7);
+        OperatorCache _operatorCache_6 = this.cacheService.getOperatorCache();
+        _operatorCache_6.changeToBACKUP();
+      }
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
   }
   
   private CharSequence buildCreate1(final String type, final AccessFramework pars, final SchemaDefinition schema, final String name) {
-    Class<?> t = null;
-    String input = "--INPUT--";
-    boolean _equals = type.equals("ACCESS");
-    if (_equals) {
-      t = AccessAO.class;
-    } else {
-      t = SenderAO.class;
+    try {
+      Class<?> t = null;
+      String input = "--INPUT--";
+      boolean _equals = type.equals("ACCESS");
+      if (_equals) {
+        t = AccessAO.class;
+      } else {
+        t = SenderAO.class;
+      }
+      OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+      Map<String, String> streamTo = _operatorCache.getStreamTo();
+      Set<String> _keySet = streamTo.keySet();
+      boolean _contains = _keySet.contains(name);
+      if (_contains) {
+        String _get = streamTo.get(name);
+        input = _get;
+      }
+      Map<String, String> argss = CollectionLiterals.<String, String>newHashMap();
+      boolean _equals_1 = t.equals(AccessAO.class);
+      if (_equals_1) {
+        argss.put("source", name);
+      } else {
+        argss.put("sink", name);
+      }
+      String _wrapper = pars.getWrapper();
+      argss.put("wrapper", _wrapper);
+      String _protocol = pars.getProtocol();
+      argss.put("protocol", _protocol);
+      String _transport = pars.getTransport();
+      argss.put("transport", _transport);
+      String _datahandler = pars.getDatahandler();
+      argss.put("datahandler", _datahandler);
+      String _xifexpression = null;
+      boolean _containsKey = argss.containsKey("source");
+      if (_containsKey) {
+        CharSequence _extractSchema = this.extractSchema(schema);
+        _xifexpression = _extractSchema.toString();
+      } else {
+        _xifexpression = null;
+      }
+      argss.put("schema", _xifexpression);
+      EList<String> _keys = pars.getKeys();
+      EList<String> _values = pars.getValues();
+      String _generateKeyValueString = this.utilityService.generateKeyValueString(_keys, _values, ",");
+      argss.put("options", _generateKeyValueString);
+      String _xifexpression_1 = null;
+      boolean _containsKey_1 = argss.containsKey("sink");
+      if (_containsKey_1) {
+        _xifexpression_1 = input;
+      } else {
+        _xifexpression_1 = null;
+      }
+      argss.put("input", _xifexpression_1);
+      final StringBuilder b = new StringBuilder();
+      Collection<SystemSource> _systemSources = this.cacheService.getSystemSources();
+      Stream<SystemSource> _stream = _systemSources.stream();
+      final Predicate<SystemSource> _function = (SystemSource e) -> {
+        return e.isMeta();
+      };
+      Stream<SystemSource> _filter = _stream.filter(_function);
+      final Consumer<SystemSource> _function_1 = (SystemSource e) -> {
+        String _name = e.getName();
+        StringBuilder _append = b.append(_name);
+        /* (_append + ","); */
+      };
+      _filter.forEach(_function_1);
+      String _string = b.toString();
+      String _replaceAll = _string.replaceAll(this.regex, "");
+      argss.put("metaattribute", _replaceAll);
+      return this.builder.build(t, argss);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-    Map<String, String> streamTo = _operatorCache.getStreamTo();
-    Set<String> _keySet = streamTo.keySet();
-    boolean _contains = _keySet.contains(name);
-    if (_contains) {
-      String _get = streamTo.get(name);
-      input = _get;
-    }
-    Map<String, String> argss = CollectionLiterals.<String, String>newHashMap();
-    boolean _equals_1 = t.equals(AccessAO.class);
-    if (_equals_1) {
-      argss.put("source", name);
-    } else {
-      argss.put("sink", name);
-    }
-    String _wrapper = pars.getWrapper();
-    argss.put("wrapper", _wrapper);
-    String _protocol = pars.getProtocol();
-    argss.put("protocol", _protocol);
-    String _transport = pars.getTransport();
-    argss.put("transport", _transport);
-    String _datahandler = pars.getDatahandler();
-    argss.put("datahandler", _datahandler);
-    String _xifexpression = null;
-    boolean _containsKey = argss.containsKey("source");
-    if (_containsKey) {
-      CharSequence _extractSchema = this.extractSchema(schema);
-      _xifexpression = _extractSchema.toString();
-    } else {
-      _xifexpression = null;
-    }
-    argss.put("schema", _xifexpression);
-    EList<String> _keys = pars.getKeys();
-    EList<String> _values = pars.getValues();
-    String _generateKeyValueString = this.utilityService.generateKeyValueString(_keys, _values, ",");
-    argss.put("options", _generateKeyValueString);
-    String _xifexpression_1 = null;
-    boolean _containsKey_1 = argss.containsKey("sink");
-    if (_containsKey_1) {
-      _xifexpression_1 = input;
-    } else {
-      _xifexpression_1 = null;
-    }
-    argss.put("input", _xifexpression_1);
-    final StringBuilder b = new StringBuilder();
-    Collection<SystemSource> _systemSources = this.cacheService.getSystemSources();
-    Stream<SystemSource> _stream = _systemSources.stream();
-    final Predicate<SystemSource> _function = (SystemSource e) -> {
-      return e.isMeta();
-    };
-    Stream<SystemSource> _filter = _stream.filter(_function);
-    final Consumer<SystemSource> _function_1 = (SystemSource e) -> {
-      String _name = e.getName();
-      StringBuilder _append = b.append(_name);
-      /* (_append + ","); */
-    };
-    _filter.forEach(_function_1);
-    String _string = b.toString();
-    String _replaceAll = _string.replaceAll(this.regex, "");
-    argss.put("metaattribute", _replaceAll);
-    return this.builder.build(t, argss);
   }
 }

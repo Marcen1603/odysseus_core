@@ -4,14 +4,15 @@ Bundle-Name: Update
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.update
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.net.communication;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.net.communication,
+ de.uniol.inf.is.odysseus.slf4j,
  com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.updater;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.net,
+ de.uniol.inf.is.odysseus.updater,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.net.config;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.net.config
 Service-Component: OSGI-INF/OdysseusNodeUpdater.xml
 Export-Package: de.uniol.inf.is.odysseus.net.update
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.update

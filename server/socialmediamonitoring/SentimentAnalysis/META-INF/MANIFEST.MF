@@ -22,9 +22,10 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mining.weka;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mining;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mining.standard;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.weka;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.mining.weka,
+ de.uniol.inf.is.odysseus.mining,
+ de.uniol.inf.is.odysseus.mining.standard,
+ de.uniol.inf.is.odysseus.weka
+Automatic-Module-Name: de.uniol.inf.is.odysseus.sentimentanalysis

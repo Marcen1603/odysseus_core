@@ -14,3 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  org.eclipse.core.resources,
  org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.dashboard.part.example

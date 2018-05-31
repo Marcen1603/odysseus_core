@@ -20,4 +20,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory"/>
    </service>
+   <reference bind="addExpressionBuilder" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder" name="IExpressionBuilder" policy="dynamic" unbind="removeExpressionBuilder"/>
 </scr:component>

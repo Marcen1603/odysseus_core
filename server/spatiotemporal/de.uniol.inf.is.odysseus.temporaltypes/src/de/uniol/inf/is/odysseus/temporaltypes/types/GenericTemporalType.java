@@ -1,12 +1,16 @@
 package de.uniol.inf.is.odysseus.temporaltypes.types;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 
 /**
  * A generic class for temporal types. As it is not possible to create a nice
@@ -27,7 +31,7 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	}
 
 	public GenericTemporalType(GenericTemporalType<T> other) {
-		this.values = other.getValues();
+		this.values = other.copyMap();
 	}
 
 	/**
@@ -91,14 +95,60 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 		return this.values;
 	}
 
+	public SortedMap<PointInTime, T> copyMap() {
+		return new TreeMap<PointInTime, T>(this.values);
+	}
+
+	/**
+	 * Removes all elements from the map which are not within the valid times
+	 * 
+	 * @param validTimes
+	 *            The valid times which are needed. Others can be removed
+	 */
+	public void trim(IValidTimes validTimes) {
+
+		List<PointInTime> toRemove = new ArrayList<>();
+
+		for (PointInTime point : this.values.keySet()) {
+			if (!validTimes.includes(point)) {
+				toRemove.add(point);
+			}
+		}
+		toRemove.stream().forEach(e -> this.values.remove(e));
+	}
+
 	@Override
-	public IClone clone() {
+	public GenericTemporalType<?> clone() {
 		return new GenericTemporalType<>(this);
 	}
 
 	@Override
 	public String toString() {
-		return "GenericTemporalType: " + this.values;
+		StringBuilder builder = new StringBuilder();
+		builder.append("GenericTemporalType: ");
+
+		boolean first = true;
+		for (PointInTime time : this.values.keySet()) {
+			if (!first) {
+				builder.append(", ");
+			} else {
+				first = false;
+			}
+			builder.append(time + " = ");
+			Object value = this.values.get(time);
+			builder.append(objectToString(value));
+		}
+
+		return builder.toString();
+	}
+
+	private String objectToString(Object value) {
+		if (value instanceof Object[]) {
+			Object[] values = (Object[]) value;
+			return Arrays.deepToString(values);
+		} else {
+			return value.toString();
+		}
 	}
 
 }

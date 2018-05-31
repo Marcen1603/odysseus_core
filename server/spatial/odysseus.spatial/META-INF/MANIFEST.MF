@@ -12,26 +12,26 @@ Export-Package: de.uniol.inf.is.odysseus.spatial,
  de.uniol.inf.is.odysseus.spatial.logicaloperator,
  de.uniol.inf.is.odysseus.spatial.physicaloperator,
  de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.spatial.transform.rules
+ de.uniol.inf.is.odysseus.spatial.transform.rules,
+ de.uniol.inf.is.odysseus.spatial.utilities
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- org.osgeo.proj4j;bundle-version="1.0.0",
- com.vividsolutions.jts;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
+ org.osgeo.proj4j,
+ com.vividsolutions.jts,
+ de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.transform,
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.ruleengine,
  org.eclipse.osgi,
- org.geotools;bundle-version="1.0.0",
+ org.geotools,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
- org.junit;bundle-version="4.12.0",
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.aggregation,
- com.fasterxml.jackson;bundle-version="1.0.0",
- org.sesame;bundle-version="1.0.0"
-Bundle-Activator: de.uniol.inf.is.odysseus.spatial.Activator
-Bundle-ClassPath: lib/geohash-1.3.0.jar,
+ com.fasterxml.jackson,
+ org.sesame,
+ org.junit;resolution:=optional
+Bundle-ClassPath: lib/geohash-1.3.0.jar,lib/jeospatial-0.2-SNAPSHOT.jar, lib/jvptree-0.3-SNAPSHOT.jar,
  .
 Import-Package: com.google.common.base,
  com.google.common.collect,
@@ -39,3 +39,5 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.keyvalue.datatype,
  de.uniol.inf.is.odysseus.parser.pql.relational,
  de.uniol.inf.is.odysseus.physicaloperator.relational
+Automatic-Module-Name: de.uniol.inf.is.odysseus.spatial
+Bundle-ActivationPolicy: lazy

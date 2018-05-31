@@ -9,8 +9,8 @@ Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator,
  org.osgi.framework;version="1.6.0"
-Require-Bundle: restlet-osgi-2.3.1;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+Require-Bundle: restlet-osgi-2.3.1,
+ de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  com.google.guava
@@ -22,3 +22,4 @@ Export-Package: de.uniol.inf.is.odysseus.rest.dto.request,
  de.uniol.inf.is.odysseus.rest.serverresources,
  de.uniol.inf.is.odysseus.rest.service,
  de.uniol.inf.is.odysseus.rest.socket
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rest

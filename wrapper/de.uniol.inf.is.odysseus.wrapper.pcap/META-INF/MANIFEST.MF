@@ -10,3 +10,4 @@ Require-Bundle: org.jnetpcap;bundle-version="1.3.0",
  de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/PcapFileTransportHandler.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.pcap

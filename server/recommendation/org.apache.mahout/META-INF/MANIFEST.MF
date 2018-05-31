@@ -149,3 +149,4 @@ Import-Package: com.google.common.base,
  org.apache.lucene.analysis.tokenattributes;version="2.9.1",
  org.apache.lucene.util;version="2.9.1",
  org.slf4j
+Automatic-Module-Name: org.apache.mahout

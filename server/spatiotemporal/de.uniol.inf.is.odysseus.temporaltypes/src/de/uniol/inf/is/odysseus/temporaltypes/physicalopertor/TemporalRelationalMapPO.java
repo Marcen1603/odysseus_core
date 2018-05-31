@@ -6,7 +6,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
 /**
@@ -17,7 +18,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
  *
  * @param <T>
  */
-public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMapPO<T> {
+public class TemporalRelationalMapPO<T extends IValidTimes> extends RelationalMapPO<T> {
 
 	public TemporalRelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
 			boolean evaluateOnPunctuation, boolean expressionsUpdateable, boolean suppressErrors, boolean keepInput,
@@ -36,13 +37,23 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 			 * could lead to an unwanted conversion from a temporal function to a generic
 			 * temporal function.
 			 */
-			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i])) {
+			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i])
+					&& !isTemporalFunction(expr[i])) {
 				this.expressions[i] = new TemporalRelationalExpression<>(expr[i]);
 			} else {
 				this.expressions[i] = new RelationalExpression<T>(expr[i]);
 			}
 			this.expressions[i].initVars(schema);
 		}
+	}
+
+	/**
+	 * Tests if the given expression is a temporal function. If so, a normal
+	 * expression should be used, not a temporal one because the temporal function
+	 * can work with temporal types.
+	 */
+	private boolean isTemporalFunction(SDFExpression expression) {
+		return expression.getMEPExpression() instanceof TemporalFunction;
 	}
 
 	/**

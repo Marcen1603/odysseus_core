@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
  * @author Tobias Brandt
  *
  * @param <T>
+ *            The stream element type, e.g. a tuple
  */
 public interface TemporalType<T> {
 

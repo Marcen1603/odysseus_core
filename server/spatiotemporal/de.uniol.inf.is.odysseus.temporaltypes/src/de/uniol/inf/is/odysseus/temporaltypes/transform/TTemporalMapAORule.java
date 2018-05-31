@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalRelationalMapPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -20,7 +20,7 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	@Override
 	public void execute(MapAO mapAO, TransformationConfiguration config) throws RuleException {
 		int[] restrictList = SDFSchema.calcRestrictList(mapAO.getInputSchema(), mapAO.getRemoveAttributes());
-		TemporalRelationalMapPO<IValidTime> mapPO = new TemporalRelationalMapPO<>(mapAO.getInputSchema(),
+		TemporalRelationalMapPO<IValidTimes> mapPO = new TemporalRelationalMapPO<>(mapAO.getInputSchema(),
 				mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullValue(),
 				mapAO.isEvaluateOnPunctuation(), mapAO.isExpressionsUpdateable(), mapAO.isSuppressErrors(),
 				mapAO.isKeepInput(), restrictList);
@@ -33,8 +33,8 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 		 * Only use this rule if there is at least one expression with a temporal
 		 * attribute.
 		 */
-		return operator.isAllPhysicalInputSet()
-				&& this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
+		return operator.isAllPhysicalInputSet() && this
+				.containsExpressionWithTemporalAttribute(operator.getExpressionList(), operator.getInputSchema());
 	}
 
 	@Override
@@ -56,9 +56,9 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	 * @return True, if at least one expression has a temporal attribute, false
 	 *         otherwise
 	 */
-	protected boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions) {
+	protected boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions, SDFSchema inputSchema) {
 		for (SDFExpression expression : expressions) {
-			if (expressionHasTemporalAttribute(expression)) {
+			if (expressionHasTemporalAttribute(expression, inputSchema)) {
 				return true;
 			}
 		}
@@ -72,13 +72,30 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	 *            The expression to check
 	 * @return True, if is has a temporal attribute, false otherwise
 	 */
-	protected boolean expressionHasTemporalAttribute(SDFExpression expression) {
+	protected boolean expressionHasTemporalAttribute(SDFExpression expression, SDFSchema inputSchema) {
 		for (SDFAttribute attribute : expression.getAllAttributes()) {
-			if (TemporalDatatype.isTemporalAttribute(attribute)) {
+
+			SDFAttribute attributeFromSchema = getAttributeFromSchema(inputSchema, attribute);
+			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * The search needs to be done on the input schema, because the temporal
+	 * constraints are added to the input schema, not to the attributes in the
+	 * expression. That's why this method searches for the same attribute in the
+	 * schema.
+	 */
+	protected SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
+		for (SDFAttribute attribute : inputSchema.getAttributes()) {
+			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
+				return attribute;
+			}
+		}
+		return attributeToSearch;
 	}
 
 }

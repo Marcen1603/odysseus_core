@@ -545,7 +545,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	// Help - System
 	// -----------------------------------------------------------------------------------------------
 
-	public void _man(CommandInterpreter ci) {
+	public void _odyHelp(CommandInterpreter ci) {
 		TreeMap<String, Help> methodHelps = new TreeMap<String, Help>();
 		// sort relevant methods by name
 		for (Method method : this.getClass().getMethods()) {
@@ -1243,7 +1243,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _macro(CommandInterpreter ci) {
 		String macroName = ci.nextArgument();
 		if (macroName == null) {
-			_man(ci);
+			_odyHelp(ci);
 			return;
 		}
 
@@ -1276,7 +1276,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _removemacro(CommandInterpreter ci) {
 		String name = ci.nextArgument();
 		if (name == null) {
-			_man(ci);
+			_odyHelp(ci);
 			return;
 		}
 		if (!this.macros.containsKey(name)) {
@@ -1392,7 +1392,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _runmacro(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		if (args.length != 1) {
-			_man(ci);
+			_odyHelp(ci);
 			return;
 		}
 		addCommand(args);
@@ -1429,7 +1429,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			}
 			String macroName = ci.nextArgument();
 			if (macroName == null) {
-				_man(ci);
+				_odyHelp(ci);
 				return;
 			}
 

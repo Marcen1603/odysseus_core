@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.apache.kafka;bundle-version="0.9.0",
- de.uniol.inf.is.odysseus.badast;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.badast,
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
  org.apache.zookeeper;bundle-version="3.4.6"
 Service-Component: OSGI-INF/StringKafkaPublisher.xml,
@@ -15,3 +15,4 @@ Service-Component: OSGI-INF/StringKafkaPublisher.xml,
  OSGI-INF/KafkaSubscriberController.xml,
  OSGI-INF/KafkaSystem.xml
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.badast.kafka

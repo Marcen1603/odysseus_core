@@ -17,8 +17,7 @@ Import-Package: cc.kuka.odysseus.image.common.sdf.schema,
  de.uniol.inf.is.odysseus.transform.rule,
  de.uniol.inf.is.odysseus.sweeparea,
  org.apache.commons.math3.util;version="3.2.0",
- org.osgi.framework,
- org.slf4j
+ org.osgi.framework
 Export-Package: cc.kuka.odysseus.image.util;uses:="org.opencv.core,cc.kuka.odysseus.image.common.datatype",
  org.opencv.calib3d;uses:="org.opencv.core",
  org.opencv.contrib;uses:="org.opencv.core",
@@ -33,7 +32,8 @@ Export-Package: cc.kuka.odysseus.image.util;uses:="org.opencv.core,cc.kuka.odyss
  org.opencv.utils;uses:="org.opencv.core",
  org.opencv.video;uses:="org.opencv.core"
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/opencv-2411.jar,
  .
@@ -46,3 +46,4 @@ Bundle-NativeCode: lib/linux/x64/libopencv_java2411.so ;
   *
 Service-Component: OSGI-INF/ImageFunctionProvider.xml, OSGI-INF/ImageDataHandler.xml,
  OSGI-INF/CameraTransportHandler.xml
+Automatic-Module-Name: cc.kuka.odysseus.image

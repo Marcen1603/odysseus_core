@@ -33,3 +33,4 @@ Import-Package: org.apache.log4j,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.parser.cql2.server
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.cql2.server

@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.TimebasedWindow;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.TuplebasedWindow;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.WindowOperator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IWindowParser;
 import java.util.Map;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
@@ -24,7 +25,7 @@ public class WindowParser implements IWindowParser {
   }
   
   @Override
-  public String parse(final SimpleSource source) {
+  public String parse(final SimpleSource source) throws PQLOperatorBuilderException {
     WindowOperator _window = source.getWindow();
     boolean _tripleEquals = (_window == null);
     if (_tripleEquals) {

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.core.usermanagement.Tenant;
 
 public class TenantDAO extends AbstractStoreDAO<ITenant> {
 
@@ -31,18 +32,6 @@ public class TenantDAO extends AbstractStoreDAO<ITenant> {
 		if (findAll().isEmpty()) {
 			ITenant t = new Tenant();
 			t.setName(config.get("Tenant.DefaultName"));
-			create(t);
-
-			// TODO: REMOVE ME (Only for Debugging)
-
-			t = new Tenant();
-			t.setName("Marco1");
-			create(t);
-			t = new Tenant();
-			t.setName("Marco2");
-			create(t);
-			t = new Tenant();
-			t.setName("Marco3");
 			create(t);
 
 		} else {

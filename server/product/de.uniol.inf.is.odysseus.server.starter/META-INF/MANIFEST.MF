@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.product.server.starter.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.event;bundle-version="1.2.100",
  org.eclipse.osgi.services,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: University of Oldenburg
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.starter

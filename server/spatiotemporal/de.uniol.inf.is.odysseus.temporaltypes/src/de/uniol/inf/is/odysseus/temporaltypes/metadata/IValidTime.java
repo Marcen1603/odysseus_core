@@ -23,5 +23,7 @@ public interface IValidTime extends IMetaAttribute {
 	public void setValidEnd(PointInTime point);
 
 	public void setValidStartAndEnd(PointInTime start, PointInTime end);
+	
+	public boolean includes(PointInTime p);
 
 }

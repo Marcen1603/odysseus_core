@@ -12,3 +12,4 @@ Export-Package: cc.kuka.odysseus.ontology.common,
  cc.kuka.odysseus.ontology.common.model.condition,
  cc.kuka.odysseus.ontology.common.model.property
 Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: cc.kuka.odysseus.ontology.common

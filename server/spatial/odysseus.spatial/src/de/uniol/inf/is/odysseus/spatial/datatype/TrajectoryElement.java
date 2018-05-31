@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 /**
  * One element in a trajectory. The trajectory is made of a double linked list
@@ -96,7 +96,7 @@ public class TrajectoryElement {
 			Coordinate previousCoord = new Coordinate(this.previousElement.getLatitude(),
 					this.previousElement.getLongitude());
 			Coordinate currentCoord = new Coordinate(this.getLatitude(), this.getLongitude());
-			azimuth = MetrticSpatialUtils.getInstance().calculateAzimuth(null, previousCoord, currentCoord);
+			azimuth = MetricSpatialUtils.getInstance().calculateAzimuth(null, previousCoord, currentCoord);
 		}
 		return azimuth;
 	}
@@ -137,7 +137,7 @@ public class TrajectoryElement {
 		double distanceInMeters = 0;
 		// Calculate distance to previous element in meters
 		if (previousElement != null) {
-			distanceInMeters = MetrticSpatialUtils.getInstance().calculateDistance(null,
+			distanceInMeters = MetricSpatialUtils.getInstance().calculateDistance(null,
 					new Coordinate(this.getLatitude(), this.getLongitude()),
 					new Coordinate(this.previousElement.getLatitude(), this.previousElement.getLongitude()));
 		}

@@ -39,7 +39,7 @@ public final class OdysseusRCPConfiguration {
 				properties.loadFromXML(in);
 			} finally {
 				in.close();
-			}
+			} 
 			LOG.info("Loaded rcp configurations from "+ODYSSEUS_RCP_CONFIGURATION_FILE);
 		} catch (IOException ex) {
 			LOG.error("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
