@@ -51,6 +51,7 @@ public class OsgiObjectInputStream extends ObjectInputStream {
         	LOG.error("Unable to find class "+desc.getName()+" "+e);
         } catch( NullPointerException e ) {
             LOG.error("Nullpointer finding class "+desc.getName());
+            e.printStackTrace();
         }
         return super.resolveClass(desc);
     }
