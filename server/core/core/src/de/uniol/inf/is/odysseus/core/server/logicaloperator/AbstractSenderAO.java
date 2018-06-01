@@ -275,12 +275,26 @@ public abstract class AbstractSenderAO extends AbstractLogicalOperator {
 
 	@Override
 	public boolean isValid() {
+		boolean valid = true;
+		
 		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
 			this.addError("Wrapper " + this.wrapper + " unknown");
-			return false;
+			valid = false;
 		}
+		
+		if (this.getInputSchema(0) == null) {
+			if (this.outputSchema.get(0) == null) {
+				this.addError("Output schema must be provided if sender is standalone.");
+				valid = false;
+			}
+			if (this.metaAttribute == null) {
+				this.addError("Metaattribute must be set, if sender is standalone");
+				valid = false;
+			}
+		}
+		
 
-		return super.isValid();
+		return valid;
 	}
 
 	@Override
