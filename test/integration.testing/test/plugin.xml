@@ -17,11 +17,11 @@
          id="odysseustestproduct"
          point="org.eclipse.core.runtime.products">
       <product
-            application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication"
-            name="Test Runner Product">
+            application="de.uniol.inf.is.odysseus.server.starter.OdysseusServerApplication"
+            name="Odysseus Server">
          <property
                name="appName"
-               value="Test Runner Product">
+               value="Odysseus Server">
          </property>
       </product>
    </extension>
