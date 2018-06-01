@@ -70,8 +70,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -87,8 +86,16 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 		}
 
 		if (operator.isWriteMetaData()) {
-			IMetaAttribute metaAttribute = MetadataRegistry
-					.getMetadataType(operator.getInputSchema(0).getMetaAttributeNames());
+			IMetaAttribute metaAttribute;
+			// for standalone version
+			if (operator.getOutputSchema() != null) {
+				metaAttribute = MetadataRegistry
+						.getMetadataType(operator.getOutputSchema().getMetaAttributeNames());
+				
+			} else {
+				metaAttribute = MetadataRegistry
+						.getMetadataType(operator.getInputSchema(0).getMetaAttributeNames());
+			}
 			dataHandler.setMetaAttribute(metaAttribute);
 		}
 
@@ -126,8 +133,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
 	 * .Object, java.lang.Object)
 	 */
 	@Override
@@ -206,8 +212,8 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            The current data handler
 	 * @return The protocol handler
 	 */
-	private static IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator, IStreamObjectDataHandler<?> dataHandler,
-			OptionMap options) {
+	private static IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator,
+			IStreamObjectDataHandler<?> dataHandler, OptionMap options) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
@@ -231,8 +237,8 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	private static IStreamObjectDataHandler<?> getDataHandler(AbstractSenderAO operator) {
 		IDataHandler<?> dataHandler = null;
 		String dataHandlerText = operator.getDataHandler();
-		if (dataHandlerText == null){
-			if (operator.getInputSchema(0) != null){
+		if (dataHandlerText == null) {
+			if (operator.getInputSchema(0) != null) {
 				dataHandlerText = operator.getInputSchema(0).getType().getSimpleName();
 			}
 		}
@@ -249,7 +255,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Instantiates a new SenderPO. <br />
 	 * <br />
@@ -261,11 +267,9 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            The logical operator
 	 * @return A new {@link SenderPO} implementation
 	 */
-	//@SuppressWarnings("static-method")
-	protected SenderPO<?> getSenderPO(IProtocolHandler<?> protocolHandler,
-			AbstractSenderAO senderAO) {
+	// @SuppressWarnings("static-method")
+	protected SenderPO<?> getSenderPO(IProtocolHandler<?> protocolHandler, AbstractSenderAO senderAO) {
 		return new SenderPO<>(protocolHandler);
 	}
-
 
 }
