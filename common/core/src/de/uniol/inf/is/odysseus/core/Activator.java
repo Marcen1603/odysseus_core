@@ -50,7 +50,9 @@ public class Activator implements BundleActivator {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void start(BundleContext context) throws Exception {	
-		
+				
+		bundleContext = context;
+
 		// Get current size of heap
 		LOGGER.info("Current size of heap: \t"+humanReadableByteCount(Runtime.getRuntime().totalMemory(), true));
 		
@@ -62,8 +64,6 @@ public class Activator implements BundleActivator {
 		
 		
 		LOGGER.info("Running VM with: \t"+System.getProperty("os.arch"));
-		
-		bundleContext = context;
 		
 		ProtocolHandlerRegistry.register(new LineProtocolHandler());
 		ProtocolHandlerRegistry.register(new DocumentProtocolHandler());

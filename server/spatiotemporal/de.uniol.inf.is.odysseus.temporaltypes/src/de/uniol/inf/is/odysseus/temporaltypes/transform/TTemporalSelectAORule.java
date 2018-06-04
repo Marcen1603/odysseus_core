@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
+import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalSelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
@@ -30,9 +31,18 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		if (operator.getPredicate() instanceof RelationalExpression) {
 			@SuppressWarnings("unchecked")
 			RelationalExpression<IValidTimes> expression = (RelationalExpression<IValidTimes>) operator.getPredicate();
-			TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
-					expression);
-			TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = new TemporalSelectPO<>(temporalExpression);
+			TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = null;
+			if (expression.getExpression().getMEPExpression() instanceof TemporalFunction) {
+				/*
+				 * In case that the function can directly work on a temporal type do not use a
+				 * temporal expression
+				 */
+				temporalSelect = new TemporalSelectPO<>(expression);
+			} else {
+				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
+						expression);
+				temporalSelect = new TemporalSelectPO<>(temporalExpression);
+			}
 			this.defaultExecute(operator, temporalSelect, config, true, true);
 		}
 	}
@@ -43,7 +53,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		 * Only use this rule if there is at least one temporal attribute in the
 		 * predicate.
 		 */
-		return operator.isAllPhysicalInputSet() && predicateContaintsTemporalAttribute(operator);
+		return operator.isAllPhysicalInputSet() && predicateContainsTemporalAttribute(operator);
 	}
 
 	@Override
@@ -62,7 +72,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 	 * @param operator
 	 * @return
 	 */
-	private boolean predicateContaintsTemporalAttribute(SelectAO operator) {
+	private boolean predicateContainsTemporalAttribute(SelectAO operator) {
 
 		/*
 		 * Loop through all attributes of the predicates to compare them to the input
@@ -85,7 +95,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 			 */
 			List<SDFAttribute> attributes = operator.getInputSchema().getAttributes().stream()
 					.filter(e -> (e.getURI().equals(attribute.getURI()))).collect(Collectors.toList());
-			
+
 			// Check for all matches if they are temporal
 			for (SDFAttribute attr : attributes) {
 				if (TemporalDatatype.isTemporalAttribute(attr)) {

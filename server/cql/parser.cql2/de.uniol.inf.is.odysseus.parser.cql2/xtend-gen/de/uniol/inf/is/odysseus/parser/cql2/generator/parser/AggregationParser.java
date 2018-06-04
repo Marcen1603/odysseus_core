@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilderException;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAggregationParser;
@@ -30,6 +31,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 @SuppressWarnings("all")
@@ -65,7 +67,7 @@ public class AggregationParser implements IAggregationParser {
     return this.buildAggregateOP(list, list2, srcs, select);
   }
   
-  private Object[] buildAggregateOP(final Collection<QueryCache.QueryAggregate> aggAttr, final Collection<Attribute> orderAttr, final CharSequence input) {
+  private Object[] buildAggregateOP(final Collection<QueryCache.QueryAggregate> aggAttr, final Collection<Attribute> orderAttr, final CharSequence input) throws PQLOperatorBuilderException {
     this.argsstr = "";
     String mapName = "";
     final Collection<String> args = CollectionLiterals.<String>newArrayList();
@@ -175,7 +177,11 @@ public class AggregationParser implements IAggregationParser {
   }
   
   private Object[] buildAggregateOP(final Collection<QueryCache.QueryAggregate> list, final Collection<Attribute> list2, final Collection<QueryCache.QuerySource> srcs, final SimpleSelect select) {
-    String _buildJoin = this.joinParser.buildJoin(srcs, select);
-    return this.buildAggregateOP(list, list2, _buildJoin);
+    try {
+      String _buildJoin = this.joinParser.buildJoin(srcs, select);
+      return this.buildAggregateOP(list, list2, _buildJoin);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
   }
 }

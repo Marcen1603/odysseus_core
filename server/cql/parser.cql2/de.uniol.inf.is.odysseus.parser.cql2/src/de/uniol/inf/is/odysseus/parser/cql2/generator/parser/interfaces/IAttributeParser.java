@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
 

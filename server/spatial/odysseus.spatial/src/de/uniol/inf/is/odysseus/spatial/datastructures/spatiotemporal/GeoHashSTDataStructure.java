@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
-import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
 
 /**
  * Uses GeoHashes for a spatial indexing. This index structure is made for
@@ -220,7 +220,7 @@ public class GeoHashSTDataStructure implements ISpatioTemporalDataStructure {
 		// timely fitting tuples for this query
 		do {
 			// Get the rectangular envelope for the circle
-			Envelope env = MetrticSpatialUtils.getInstance()
+			Envelope env = MetricSpatialUtils.getInstance()
 					.getEnvelopeForRadius(geometry.getCentroid().getCoordinate(), guessRadius);
 			Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
 			Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
@@ -308,7 +308,7 @@ public class GeoHashSTDataStructure implements ISpatioTemporalDataStructure {
 	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
 
 		// Get the rectangular envelope for the circle
-		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
+		Envelope env = MetricSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
 				radius);
 		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
@@ -342,7 +342,7 @@ public class GeoHashSTDataStructure implements ISpatioTemporalDataStructure {
 	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection) {
 
-		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+		MetricSpatialUtils spatialUtils = MetricSpatialUtils.getInstance();
 
 		// For every point in our list ask JTS if the points lies within the
 		// polygon (refinement step)

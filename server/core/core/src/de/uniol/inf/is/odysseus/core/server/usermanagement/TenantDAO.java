@@ -15,19 +15,10 @@ import de.uniol.inf.is.odysseus.core.usermanagement.Tenant;
 public class TenantDAO extends AbstractStoreDAO<ITenant> {
 
 	static Logger logger = LoggerFactory.getLogger(TenantDAO.class);
-	/** use osgi injection instead */
-	@Deprecated
-	static TenantDAO instance = null;
-
-	@Deprecated
-	static synchronized public TenantDAO getInstance() {
-		return instance;
-	}
 
 	private OdysseusConfiguration config;
 
 	public void setInstance() throws IOException {
-		instance = this;
 		init(new FileStore<String, ITenant>(config.getFileProperty("tenantStoreFilename")), new ArrayList<ITenant>());
 		if (findAll().isEmpty()) {
 			ITenant t = new Tenant();

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -19,7 +20,6 @@ import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.GeoHashSTD
 import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.ISpatioTemporalDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import junit.framework.TestCase;
 
 /**
  * Tests a spatial data structure.
@@ -29,7 +29,8 @@ import junit.framework.TestCase;
  * @author Tobias Brandt
  *
  */
-public class SpatialDataStructureTest extends TestCase {
+@SuppressWarnings("deprecation")
+public class SpatialDataStructureTest {
 
 	private static final String DATA_STRUCTURE_NAME = "test";
 	private static final int GEOMETRY_POSITION = 0;
@@ -346,6 +347,7 @@ public class SpatialDataStructureTest extends TestCase {
 	 * @param correctSolution
 	 *            The points which we know are correct
 	 */
+	@Test
 	private void assertEqualList(List<Tuple<ITimeInterval>> queryResult, List<Point> correctSolution) {
 		// Copy the list with the original neighbors that need to be found
 		List<Point> correctSolutionCopy = new ArrayList<>(correctSolution);

@@ -18,3 +18,4 @@ Service-Component: OSGI-INF/*
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: de.uniol.inf.is.odysseus.server.xml
 Import-Package: org.osgi.framework
+Bundle-ClassPath: .
