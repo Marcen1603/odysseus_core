@@ -1,11 +1,5 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.cache;
 
-import java.util.Collection;
-
-import javax.validation.constraints.NotNull;
-
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
-
 public interface Cache {
 	
 //	Collection<?> getAll(@NotNull Object obj);

@@ -5,7 +5,7 @@ import java.util.Properties;
 public class POP3MailConfiguration extends MailConfiguration {
 
 	private static final String PROVIDER_NAME = "pop3";
-	private static final int DEFAULT_PORT = 110;
+	//private static final int DEFAULT_PORT = 110;
 	private static final int DEFAULT_PORT_SECURED = 995;
 
 	@Override

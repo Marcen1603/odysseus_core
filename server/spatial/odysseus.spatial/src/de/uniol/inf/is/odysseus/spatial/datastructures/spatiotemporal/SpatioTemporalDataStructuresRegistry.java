@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.IHasAlias;
  * @author Tobias Brandt
  *
  */
+@SuppressWarnings("deprecation")
 public class SpatioTemporalDataStructuresRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(SpatioTemporalDataStructuresRegistry.class);

@@ -20,8 +20,10 @@ public class ProbabilisticEqualsProbabilisticNumberOperator extends AbstractProb
      *
      */
     private static final long serialVersionUID = 7656616835285616813L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    @SuppressWarnings("unused")
+	private final boolean leftInclusive;
+    @SuppressWarnings("unused")
+	private final boolean rightInclusive;
 
     public ProbabilisticEqualsProbabilisticNumberOperator() {
         super("==", ProbabilisticEqualsProbabilisticNumberOperator.ACC_TYPES);

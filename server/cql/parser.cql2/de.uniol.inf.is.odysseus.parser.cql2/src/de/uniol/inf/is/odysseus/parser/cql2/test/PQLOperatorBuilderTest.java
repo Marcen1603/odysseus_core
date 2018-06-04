@@ -113,6 +113,8 @@ public class PQLOperatorBuilderTest {
 		}
 	}
 
+	
+	@SuppressWarnings("unused")
 	@Test
 	public void test_build_WindowAO_successful() {
 		Map<String, String> args = new HashMap<>();

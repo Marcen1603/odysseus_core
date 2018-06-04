@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wrapper.pmml.logicaloperator.PMMLModelEvaluatorAO;
 import de.uniol.inf.is.odysseus.wrapper.pmml.physicaloperator.PMMLModelEvaluatorPO;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class TPMMLModelEvaluatorAORule extends AbstractTransformationRule<PMMLModelEvaluatorAO>{
 
 	@Override
