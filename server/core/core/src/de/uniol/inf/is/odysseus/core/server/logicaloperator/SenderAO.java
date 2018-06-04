@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "Sender", doc="This operator can be used to publish processing results to multiple endpoints using different transport and application protocols.", category={LogicalOperatorCategory.SINK})
+@LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 0, name = "Sender", doc="This operator can be used to publish processing results to multiple endpoints using different transport and application protocols.", category={LogicalOperatorCategory.SINK})
 public class SenderAO extends AbstractSenderAO {
 
 	private static final long serialVersionUID = -7035132852387239629L;
@@ -72,9 +72,10 @@ public class SenderAO extends AbstractSenderAO {
 		super.setTransportHandler(transportHandler);
 	}
 	
+
+
 	@Override
 	public SenderAO clone() {
 		return new SenderAO(this);
 	}
-
 }
