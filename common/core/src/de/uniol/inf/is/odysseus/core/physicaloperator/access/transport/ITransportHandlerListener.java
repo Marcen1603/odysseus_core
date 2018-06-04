@@ -71,4 +71,10 @@ public interface ITransportHandlerListener<T extends IStreamObject<? extends IMe
 	 * @param message as T
 	 */
 	void process(T m);
+
+	/**
+	 * With active source, use this method to state end of processing
+	 */
+	void propagateDone();
+	
 }

@@ -205,6 +205,10 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	final public void fireProcess(IStreamObject<IMetaAttribute> message) {
 		delegate.fireProcess(message);
 	}
+	
+	final public void fireDone() {
+		delegate.fireDone();
+	}
 
 	final public void fireOnConnect() {
 		delegate.fireOnConnect(this);
