@@ -1,8 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-/// Create admin
-CREATE USER NDSadmin IDENTIFIED by '2016NDS2019'
-GRANT ALL to NDSadmin
-
-/// Delete powerful standard user
-DROP USER System
