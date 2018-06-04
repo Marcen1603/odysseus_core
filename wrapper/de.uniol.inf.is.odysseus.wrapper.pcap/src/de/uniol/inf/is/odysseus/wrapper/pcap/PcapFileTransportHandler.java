@@ -157,6 +157,8 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 					}
 
 				}, PcapFileTransportHandler.this);
+
+				fireDone();
 			};
 
 		}.start();
@@ -174,7 +176,7 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public void processOutOpen() throws IOException {
-		throw new RuntimeException("PcapFileHanlder is currently only implemented to READ files!");
+		throw new RuntimeException("PcapFileHandler is currently only implemented to READ files!");
 	}
 
 	@Override
@@ -184,7 +186,7 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		throw new RuntimeException("PcapFileHanlder is currently only implemented to READ files!");
+		throw new RuntimeException("PcapFileHandler is currently only implemented to READ files!");
 
 	}
 }
