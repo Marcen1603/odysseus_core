@@ -22,7 +22,7 @@ public class TupleLastFunction extends AbstractFunction<Object>  {
 		if (l == null) {
 			return null;
 		}
-		return l.getAttribute(l.size());
+		return l.getAttribute(l.size() - 1);
 	}
 
 	@Override
