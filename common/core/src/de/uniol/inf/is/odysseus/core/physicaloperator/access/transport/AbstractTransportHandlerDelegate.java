@@ -96,6 +96,12 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 		}
 	}
 
+	public void fireDone() {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
+			l.propagateDone();
+		}		
+	}
+	
 	public void fireOnConnect(ITransportHandler handler) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.onConnect(handler);
