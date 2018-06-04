@@ -31,6 +31,7 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	
 	private int lastWidth;
 	private int lastTextWidth;
+	@SuppressWarnings("unused")
 	private int lastTextHeight;
 	private Vector offset;
 	

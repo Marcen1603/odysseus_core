@@ -71,7 +71,9 @@ public class DistributedDataSourceManager
 
 	private final Map<String, UUID> createdSourcesMap = Maps.newHashMap();
 	private final BiMap<UUID, String> importedSourcesBiMap = HashBiMap.create();
+	@SuppressWarnings("unused")
 	private DataDictionaryProvider dataDictionaryProvider;
+	@SuppressWarnings("unused")
 	private UserManagementProvider userManagementProvider;
 
 	// called by OSGi-DS
