@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.spatial.physicaloperator.SpatialQueryPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+@SuppressWarnings("deprecation")
 public class TSpatialQueryAOTransformRule extends AbstractTransformationRule<SpatialQueryAO> {
 
 	@Override

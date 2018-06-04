@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialRangeAO;
  *
  * @param <T>
  */
+@SuppressWarnings("deprecation")
 public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 	private ISpatioTemporalDataStructure dataStructure;
