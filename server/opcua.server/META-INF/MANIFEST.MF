@@ -30,3 +30,4 @@ Service-Component: OSGI-INF/*.xml
 Export-Package: com.xafero.turjumaan.server.sdk.api
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.opcua.server
+Bundle-ActivationPolicy: lazy

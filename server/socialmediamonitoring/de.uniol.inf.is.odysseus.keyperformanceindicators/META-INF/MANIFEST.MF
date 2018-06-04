@@ -31,3 +31,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/KPIRegistry.xml,OSGI-INF/ConversationReachKPI.xml,OSGI-INF/AudienceEngagementKPI.xml,
  OSGI-INF/ShareOfVoiceKPI.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.keyperformanceindicators
+Bundle-ActivationPolicy: lazy

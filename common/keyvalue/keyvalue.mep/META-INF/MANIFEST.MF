@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.keyvalue.datatype
 Service-Component: OSGI-INF/MepFunctionProvider.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.keyvalue.mep
+Bundle-ActivationPolicy: lazy

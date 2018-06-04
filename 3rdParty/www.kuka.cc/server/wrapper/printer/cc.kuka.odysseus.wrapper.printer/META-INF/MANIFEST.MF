@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/PrinterTransportHandler.xml
 Automatic-Module-Name: cc.kuka.odysseus.wrapper.printer
+Bundle-ActivationPolicy: lazy

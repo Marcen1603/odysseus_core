@@ -9,3 +9,4 @@ Import-Package: org.osgi.service.component
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain
 Automatic-Module-Name: de.uniol.inf.is.odysseus.usermanagement.filestore
+Bundle-ActivationPolicy: lazy

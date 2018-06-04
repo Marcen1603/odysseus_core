@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.querydistribute,
  de.uniol.inf.is.odysseus.net
 Service-Component: OSGI-INF/OperatorCloudPartitioner.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.partition.operatorcloud
+Bundle-ActivationPolicy: lazy

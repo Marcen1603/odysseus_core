@@ -39,3 +39,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.script.parser
 Export-Package: de.uniol.inf.is.odysseus.sensormanagement.server.logging
 Automatic-Module-Name: de.uniol.inf.is.odysseus.sensormanagement.server
+Bundle-ActivationPolicy: lazy

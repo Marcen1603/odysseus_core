@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/JSONProtocolHandler.xml,
  OSGI-INF/BSONProtocolHandler.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.json
+Bundle-ActivationPolicy: lazy

@@ -17,3 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/testProbabilisticComponent.xml
 Eclipse-BundleShape: dir
 Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.probabilistic
+Bundle-ActivationPolicy: lazy

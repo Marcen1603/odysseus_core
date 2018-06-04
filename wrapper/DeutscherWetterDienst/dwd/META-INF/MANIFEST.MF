@@ -8,3 +8,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/DWDKLDataHandler.xml
 Import-Package: org.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.dwd
+Bundle-ActivationPolicy: lazy

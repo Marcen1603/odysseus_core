@@ -13,3 +13,4 @@ Service-Component: OSGI-INF/RemovalStrategyRegistryService.xml, OSGI-INF/FIFOSer
 Export-Package: de.uniol.inf.is.odysseus.cache,
  de.uniol.inf.is.odysseus.cache.removalstrategy
 Automatic-Module-Name: de.uniol.inf.is.odysseus.cache
+Bundle-ActivationPolicy: lazy

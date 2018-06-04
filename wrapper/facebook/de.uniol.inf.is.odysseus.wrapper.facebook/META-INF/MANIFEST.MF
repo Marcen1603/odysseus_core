@@ -16,3 +16,4 @@ Bundle-ClassPath: .,
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.keyvalue.datatype
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.facebook
+Bundle-ActivationPolicy: lazy

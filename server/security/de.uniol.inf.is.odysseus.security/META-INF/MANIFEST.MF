@@ -17,3 +17,4 @@ Service-Component: OSGI-INF/securityprovider.xml
 Export-Package: de.uniol.inf.is.odysseus.security.provider,
  de.uniol.inf.is.odysseus.security.ssl
 Automatic-Module-Name: de.uniol.inf.is.odysseus.security
+Bundle-ActivationPolicy: lazy

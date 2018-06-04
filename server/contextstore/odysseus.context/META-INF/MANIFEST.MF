@@ -36,3 +36,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.sweeparea
 Service-Component: OSGI-INF/StoreService.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.context
+Bundle-ActivationPolicy: lazy

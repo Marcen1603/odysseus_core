@@ -15,3 +15,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/EditorCompletionProvider.xml,OSGI-INF/cqlScriptTemplate.xml,
  OSGI-INF/CQLFileExecutor.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.text.cql
+Bundle-ActivationPolicy: lazy

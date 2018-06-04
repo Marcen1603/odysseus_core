@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.trust
 Service-Component: OSGI-INF/IntervalLatencyDatarateTrust.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.interval_latency_datarate_trust
+Bundle-ActivationPolicy: lazy

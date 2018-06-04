@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.connect,
  de.uniol.inf.is.odysseus.net.util
 Service-Component: OSGI-INF/OdysseusNodeSocketConnector.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.connect.socket
+Bundle-ActivationPolicy: lazy

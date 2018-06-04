@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.communication,
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/OdysseusNodeResourceUsageManager.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.resource
+Bundle-ActivationPolicy: lazy
