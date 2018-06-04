@@ -7,21 +7,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class SystemSource {
 
 	protected static Map<String, String> attributeAliases = new HashMap<>();
 	protected static Collection<String> querySources = new HashSet<>();
 
-	private final Logger log = LoggerFactory.getLogger(SystemSource.class);
+	//private final Logger log = LoggerFactory.getLogger(SystemSource.class);
 
 	public String name;
 	public Collection<SystemAttribute> attributeList;
