@@ -35,7 +35,7 @@ public class TupleLastFunction extends AbstractFunction<Object>  {
 		SDFDatatype dt = args[0].getReturnType();
 		SDFSchema schema = dt.getSchema();
 		if (schema != null) {
-			return schema.get(schema.size()).getDatatype();
+			return schema.get(schema.size() - 1).getDatatype();
 		}
 
 		return SDFDatatype.OBJECT;
