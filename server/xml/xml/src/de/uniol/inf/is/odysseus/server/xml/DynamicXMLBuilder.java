@@ -30,10 +30,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.xerces.xs.XSAttributeDeclaration;
-import org.apache.xerces.xs.XSElementDeclaration;
-import org.apache.xerces.xs.XSModel;
-import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,9 +40,6 @@ import org.xml.sax.SAXException;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import jlibs.xml.sax.XMLDocument;
-import jlibs.xml.xsd.XSInstance;
-import jlibs.xml.xsd.XSParser;
 
 public class DynamicXMLBuilder<T extends IMetaAttribute> {
     

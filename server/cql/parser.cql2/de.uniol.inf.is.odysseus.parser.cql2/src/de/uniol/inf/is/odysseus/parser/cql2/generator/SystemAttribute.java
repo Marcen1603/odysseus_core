@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 
 public class SystemAttribute {
