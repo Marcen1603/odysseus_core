@@ -43,14 +43,15 @@ public class OsgiObjectInputStream extends ObjectInputStream {
 	@Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
         Preconditions.checkNotNull(desc, "Desc must not be null!");
-
+        Preconditions.checkNotNull(Activator.getBundleContext(), "BundleContext not set!");
+        
         try {
             Class<?> ret = BundleClassLoading.findClass(desc.getName(), Activator.getBundleContext().getBundle());
             return ret;
         } catch (ClassNotFoundException e) {
         	LOG.error("Unable to find class "+desc.getName()+" "+e);
         } catch( NullPointerException e ) {
-            LOG.error("Nullpointer finding class "+desc.getName());
+            LOG.error("Nullpointer finding class "+desc.getName(),e);
         }
         return super.resolveClass(desc);
     }

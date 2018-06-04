@@ -48,4 +48,5 @@ Require-Bundle: com.google.guava;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.osgi
 Automatic-Module-Name: de.uniol.inf.is.odysseus.core
+Bundle-ActivationPolicy: lazy
 

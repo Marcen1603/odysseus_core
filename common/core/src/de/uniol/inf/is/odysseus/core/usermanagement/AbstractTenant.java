@@ -5,7 +5,7 @@ import java.io.Serializable;
 import de.uniol.inf.is.odysseus.core.usermanagement.IAbstractEntity;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
-abstract public class AbstractTenant implements ITenant, Serializable {
+public abstract class AbstractTenant implements ITenant, Serializable {
 	
 	private static final long serialVersionUID = 2607833722589527621L;
 	private String name;
