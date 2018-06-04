@@ -121,8 +121,6 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 	
 	@Override
 	public void open() throws UnknownHostException, IOException {
-		getTransportHandler().open();
-		getTransportHandler().processInOpen();
 		super.open();
 	}
 
