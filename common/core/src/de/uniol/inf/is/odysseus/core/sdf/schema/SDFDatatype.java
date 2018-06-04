@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

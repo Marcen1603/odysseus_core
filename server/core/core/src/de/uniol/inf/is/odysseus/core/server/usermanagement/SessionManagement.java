@@ -30,8 +30,7 @@ public class SessionManagement implements ISessionManagement {
 	private final List<ISessionListener> sessionListener = new CopyOnWriteArrayList<>();
 
 	private UserManagementProvider userManagementProvider;
-	/** use osgi injection instead */
-	@Deprecated
+	
 	public static SessionManagement instance;
 
 	/*

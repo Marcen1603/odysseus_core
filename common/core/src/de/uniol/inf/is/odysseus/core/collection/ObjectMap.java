@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.core.collection;
 
 import java.util.HashMap;
 
-import com.sun.xml.internal.bind.v2.runtime.RuntimeUtil.ToStringAdapter;
-
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
