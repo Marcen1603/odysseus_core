@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptTemplateService">
-   <implementation class="de.uniol.inf.is.odysseus.rcp.editor.text.services.OdysseusScriptTemplateService"/>
-   <reference bind="bind" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rcp.editor.text.IOdysseusScriptTemplate" name="IOdysseusScriptTemplate" policy="dynamic" unbind="unbind"/>
-</scr:component>

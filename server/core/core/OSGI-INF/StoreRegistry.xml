@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.server.StoreRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.core.server.store.StoreRegistry"/>
-   <reference bind="bind" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.store.IStore" name="IStore" policy="dynamic" unbind="unbind"/>
-</scr:component>

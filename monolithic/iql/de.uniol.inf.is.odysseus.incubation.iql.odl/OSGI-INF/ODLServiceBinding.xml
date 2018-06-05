@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceBinding">
-   <implementation class="de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceBinding"/>
-   <reference bind="bindODLService" cardinality="0..n" interface="de.uniol.inf.is.odysseus.iql.odl.service.IODLService" name="IODLService" policy="dynamic" unbind="unbindODLService"/>
-   <reference bind="bindOperatorBuilderFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory" name="IOperatorBuilderFactory" policy="static" unbind="unbindOperatorBuilderFactory"/>
-   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
-</scr:component>

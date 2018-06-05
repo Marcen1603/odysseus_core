@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.costmodel.CostModelConsole">
-   <implementation class="de.uniol.inf.is.odysseus.costmodel.CostModelConsole"/>
-   <service>
-      <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
-   </service>
-   <reference bind="bindCostModelKnowledge" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.ICostModelKnowledge" name="ICostModelKnowledge" policy="static" unbind="unbindCostModelKnowledge"/>
-</scr:component>

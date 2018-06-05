@@ -1,3 +1,0 @@
-http://sourceforge.net/projects/j2mod/
-based on 
-http://jamod.sf.net/

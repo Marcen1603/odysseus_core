@@ -1,120 +1,0 @@
- /**
- * JavaCC file
- * @author Jonas Jacobi, Marco Grawunder
- */options{  JDK_VERSION = "1.5";  IGNORE_CASE = true;
-
-  }PARSER_BEGIN(PQLParserImpl)package de.uniol.inf.is.odysseus.parser.pql.impl;import java.beans.BeanInfo;import java.beans.IntrospectionException;import java.beans.Introspector;import java.beans.PropertyDescriptor;import java.lang.reflect.Method;import java.util.ArrayList;import java.util.Collection;import java.util.Collections;import java.util.HashMap;import java.util.HashSet;import java.util.LinkedList;import java.util.List; import java.util.Map;import java.util.Set;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;import de.uniol.inf.is.odysseus.core.server.logicaloperator.AppendToPhysicalAO;import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.InputOperatorItem;import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateItem;import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;import de.uniol.inf.is.odysseus.parser.pql.PQLParser;import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
-import de.uniol.inf.is.odysseus.core.collection.Context;
-
-@SuppressWarnings("all")public class PQLParserImpl{
-	static final private InfoService infoService = InfoServiceFactory.getInfoService("PQLParser");  static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)  {    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary(), getContext(), getServerExecutor());    builder.setMetaAttribute(getMetaAttribute());
-    List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();    for (int i = 0; i < inputOps.size(); ++i)    {      builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);    }    PQLParser.initParameters(identifier.toUpperCase(), builder.getParameters(), parameters);    if (!builder.validate())    {      throw new ValidationException(identifier, builder.getErrors());    }    for (String e : builder.getWarnings())    {      infoService.warning(e);    }    ILogicalOperator operator = builder.createOperator();    return operator;  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op)  {    return findRoots(op, new ArrayList < ILogicalOperator > ());  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op, List < ILogicalOperator > visited)  {    Set < ILogicalOperator > result = new HashSet < ILogicalOperator > ();    if (!visited.contains(op))    {      visited.add(op);      Collection < LogicalSubscription > subscriptions = op.getSubscriptions();      if (subscriptions.isEmpty())      {        return Collections.singleton(op);      }      for (LogicalSubscription sub : subscriptions)      {        result.addAll(findRoots(sub.getSink(), visited));      }    }    return result;  }  static ISession user;  static public ISession getUser()  {    return user;  }  static public void setUser(ISession newUser)  {    user = newUser;  }  static IDataDictionary dd;  static public void setDataDictionary(IDataDictionary dataDictionary)  {    dd = dataDictionary;  }
-  static IServerExecutor serverExecutor;
-
-  static public void setServerExecutor(IServerExecutor executor)
-  {
-    serverExecutor = executor;
-  } 
- 
-  static IServerExecutor getServerExecutor()
-  {
-    return serverExecutor;
-  }
-   static public IDataDictionary getDataDictionary()  {    return dd;  }
-  
-  static Context ctx;
-  static public void setContext(Context context){
-    ctx = context;
-  }
-  
-  static public Context getContext(){
-  	return ctx;
-  }
-  
-  static public IMetaAttribute metaAttribute;
-  
-  static public void setMetaAttribute(IMetaAttribute metaAttr){
-  	metaAttribute = metaAttr;
-  }
-  
-  static public IMetaAttribute getMetaAttribute(){
-  	return metaAttribute;
-  }
-  
-  static public boolean _updateQueryId = true;
-  static public void setUpdateQueryID(boolean updateQueryId){
-    _updateQueryId = updateQueryId;
-  }
-
-}PARSER_END(PQLParserImpl)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN :{   < BOOLEAN : ("TRUE" | "FALSE" )>
-|  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":" >| < CHAR_LITERAL :    "'" ("\\" ~[] |~[ "'" ])* "'"  | "\"" ("\\" ~[] | ~[ "\"" ])* "\"" >| < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >
-}TOKEN : /* Numeric Constants */
-{
-  < FLOAT :
-    ("-")?
-    (
-      < NUMBER > "." < NUMBER >
-    | "." < NUMBER >
-    ) >
-| < INTEGER : 
-    ("-")?
-    (
-      < NUMBER >
-     ) >
-| < NUMBER : (< DIGIT >)+ >
-| < #DIGIT : [ "0"-"9" ] >
-}
-List < IExecutorCommand > query() :{  Map < String, ILogicalOperator > namedOps = new HashMap < String, ILogicalOperator > ();  Map < String, Map < String, Object > > namedOpParameters = new HashMap < String, Map < String, Object > > ();
-  Map< String, IExecutorCommand > commands = new HashMap<String, IExecutorCommand >();
-    ILogicalOperator outputStream;}{  (    namedStream(namedOps, namedOpParameters, commands)  )+  < EOF >  {    LinkedList < ILogicalOperator > result = new LinkedList < ILogicalOperator > ();    Set < ILogicalOperator > roots = new HashSet < ILogicalOperator > ();    for (ILogicalOperator op : namedOps.values())    {      roots.addAll(findRoots(op));    }    BeanInfo beanInfo;    try    {      beanInfo = Introspector.getBeanInfo(ILogicalQuery.class);    }    catch (IntrospectionException e)    {      {        if (true) throw new RuntimeException(e);      }    }    PropertyDescriptor [ ] properties = beanInfo.getPropertyDescriptors();    ILogicalQuery query = null;    for (Map.Entry < String, ILogicalOperator > opEntry : namedOps.entrySet())    {      String queryName = opEntry.getKey();      ILogicalOperator topOperator = opEntry.getValue();      if (roots.contains(topOperator))      {
-        // create temporal query (without id)        query = new LogicalQuery(-1);        PQLParser.initQueryParameters(namedOpParameters.get(queryName));        for (String parameterName : namedOpParameters.get(queryName).keySet())        {          boolean found = false;          for (PropertyDescriptor property : properties)          {            if (property.getName().equalsIgnoreCase(parameterName))            {              Method method = property.getWriteMethod();              try              {                method.invoke(query, PQLParser.getQueryParameter(parameterName).getValue());              }              catch (Exception e)              {                throw new RuntimeException(e);              }              found = true;            }          }          if (!found)          {            throw new RuntimeException("unknown parameter for query: " + parameterName);          }        }      }      else      {        if (!namedOpParameters.get(queryName).isEmpty())        {          {            if (true)            {              if (true) throw new QueryParseException("query parameters can only be defined for root operators, not for: " + queryName);            }          }        }      }    }    List < ILogicalQuery > queries = new ArrayList < ILogicalQuery > ();    if (roots.size() > 0)    {      ILogicalOperator topOperator = new TopAO();      int inputPort = 0;      for (ILogicalOperator root : roots)      {        root.subscribeSink(topOperator, inputPort++, 0, root.getOutputSchema());      }
-      // create real query (with new id)
-      if (_updateQueryId){      	query = new LogicalQuery();
-      }else{
-      	query = new LogicalQuery(-1);
-      }      // Set Owners for query 
-      //AbstractTreeWalker walker = new AbstractTreeWalker();
-      GenericGraphWalker walker = new GenericGraphWalker();      SetOwnerGraphVisitor visitor = new SetOwnerGraphVisitor(query);      walker.prefixWalk(topOperator, visitor);      //		System.err.println("SET OWNER");
-      //
-      //		AbstractTreeWalker walker2 = new AbstractTreeWalker();
-      //		System.err.println(walker2.prefixWalk(topOperator, new AlgebraPlanToStringVisitor()));
-      query.setLogicalPlan(new LogicalPlan(topOperator), false);      ILogicalOperator namingOp = topOperator;      if (topOperator instanceof TopAO)      {        namingOp = topOperator.getSubscribedToSource(0).getSource();      }      //query.setName(namingOp.getName());
-     // TODO:Find a better solution
-     /// if (!commands.containsKey(namingOp.getName())){      
-      if (commands.isEmpty()){
-          commands.put(namingOp.getName(), new CreateQueryCommand( query, getUser()));
-      }    }    return new LinkedList(commands.values());  }}void namedStream(Map < String, ILogicalOperator > namedOps, Map < String, Map < String, Object > > namedOpParameters, Map<String, IExecutorCommand > commands) :{  Token name;  ILogicalOperator op;  boolean isView = false;  boolean isSharedSource = false;  boolean subscribeToSink = false;  Map < String, Object > parameters = new HashMap < String, Object > ();}{  name = < IDENTIFIER > [ "{" parameters = parameterMap() "}" ]  (    "="  | "::="    {      isSharedSource = true;    }  | ":="    {      isView = true;    }  | "<-"    {      subscribeToSink = true;    }  )  op = operator(namedOps)  {    String nameStr = name.image.toUpperCase();    if (namedOps.containsKey(nameStr))    {      throw new QueryParseException("multiple definition of '" + nameStr + "'");    }    try    {      if (isView || isSharedSource)      {        nameStr = name.image;        IDataDictionary dd = getDataDictionary();        if (dd.containsViewOrStream(nameStr, getUser()))        {          throw new QueryParseException("multiple definition of view '" + nameStr + "'");        }               if (isSharedSource)        {		  commands.put(nameStr, new CreateStreamCommand(nameStr, op, user));        }        else        {
-        // Now done in CreateViewCommand
-//          RenameAO rename = new RenameAO();
-//		  rename.subscribeTo(op, op.getOutputSchema());
-//		  List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-//		  for(SDFAttribute old : op.getOutputSchema()){
-//			 attributes.add(new SDFAttribute(nameStr, old.getAttributeName(), old));
-//		  }
-//		  rename.setOutputSchema(new SDFSchema(nameStr, op.getOutputSchema(), attributes));
-//		  op = rename;          commands.put(nameStr,new CreateViewCommand(nameStr, op, user));        }        //get access operator for view, so other operators don't get subscribed
-        //to top operator of the view
-        //op = dd.getViewOrStream(nameStr, getUser());      }      else      {        if (subscribeToSink)        {          nameStr = name.image;          AppendToPhysicalAO appendOp = new AppendToPhysicalAO();          appendOp.setAppendTo(nameStr);
-          appendOp.subscribeToSource(op, 0, 0, op.getOutputSchema());                  }        namedOpParameters.put(nameStr.toUpperCase(), parameters);        namedOps.put(nameStr.toUpperCase(), op);      }    }    catch (DataDictionaryException e)    {      throw new QueryParseException(e.getMessage());    }  }}ILogicalOperator operator(Map < String, ILogicalOperator > namedOps) :{  Token identifier;  Token port;  Map < String, Object > parameters = new HashMap < String, Object > ();  List < InputOperatorItem > inputOps = new ArrayList < InputOperatorItem > ();}{  (    LOOKAHEAD(< IDENTIFIER > "(")    identifier = < IDENTIFIER > "("    (      "{" parameters = parameterMap() "}" [ "," inputOps = operatorList(namedOps) ]    | inputOps = operatorList(namedOps)    )    ")"    {      return createOperator(identifier.image, parameters, inputOps);    }  | identifier = < IDENTIFIER >    {      ILogicalOperator op = namedOps.get(identifier.image.toUpperCase());      if (op == null)      {        try        {          op = getDataDictionary().getViewOrStream(identifier.image, getUser()).getRoot();        }        catch (DataDictionaryException e)        {          throw new QueryParseException("The input source \"" + identifier.image +"\" is not registered.");        }      }      return op;    }  )}Map < String, Object > parameterMap() :{  Map < String, Object > parameters = new HashMap < String, Object > ();}{  parameter(parameters)  (    "," parameter(parameters)  )*  {    return parameters;  }}void parameter(Map < String, Object > parameters) :{  Token id;  Object value;}{  id = < IDENTIFIER > "=" value = parameterValue()  {
-  	String key = id.image.toUpperCase();
-    if (!parameters.containsKey(key)){      parameters.put(key, value);
-    }else{
-      throw new QueryParseException("Parameter "+key+" is used more than once!");
-    }  }}Object parameterValue() :{  Token t;  Object value;}{  (    t = < FLOAT >    {      value = Double.valueOf(t.image);    }  | t = < INTEGER >    {      value = Long.valueOf(t.image);    }  | t = < CHAR_LITERAL >    {      value = t.image.substring(1, t.image.length() - 1).replace("\\\'","\'").replace("\\\"","\"");
-    }
-  | t = < BOOLEAN >
-  {
-  	  value = Boolean.valueOf(t.image);
-  }  | LOOKAHEAD(4)    value = list()  | value = predicate()  | value = map()  )  {    return value;  }}List < Object > list() :{  Object value;  List < Object > list = new ArrayList < Object > ();}{  "["  [    value = parameterValue()    {      list.add(value);    }    (      "," value = parameterValue()      {        list.add(value);      }    )*  ]  "]"  {    return list;  }}Map < Object, Object > map() :{  Object key;  Object value;  Map < Object, Object > map = new HashMap < Object, Object > ();}{  "["  [    key = parameterValue() "=" value = parameterValue()    {      map.put(key, value);    }    (      "," key = parameterValue() "=" value = parameterValue()      {        map.put(key, value);      }    )*  ]  "]"  {    return map;  }}List < InputOperatorItem > operatorList(Map < String, ILogicalOperator > namedOps) :{  List < InputOperatorItem > list = new LinkedList < InputOperatorItem > ();  Token tPort = null;  ILogicalOperator operator;  int port = 0;}{  [    [ tPort = < INTEGER > ":" ] operator = operator(namedOps)    {      port = tPort == null ? 0 : Integer.parseInt(tPort.image);      list.add(new InputOperatorItem(operator, port));    }    (      "," [ tPort = < INTEGER > ":" ] operator = operator(namedOps)      {        port = tPort == null ? 0 : Integer.parseInt(tPort.image);        list.add(new InputOperatorItem(operator, port));      }    )*  ]  {    return list;  }}PredicateItem predicate() :{  Token predicateType;  Token predicate;}{  predicateType = < IDENTIFIER > "(" predicate = < CHAR_LITERAL > ")"  {    return new PredicateItem(predicateType.image, predicate.image.substring(1, predicate.image.length() - 1));  }}

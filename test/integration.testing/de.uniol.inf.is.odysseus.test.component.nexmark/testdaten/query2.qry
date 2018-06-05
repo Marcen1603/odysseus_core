@@ -1,9 +1,0 @@
-///OdysseusScript
-#PARSER CQL
-#ADDQUERY
-DROP STREAM nexmark:auction2;
-#ADDQUERY
-ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FILE '${BUNDLE-ROOT}/testdaten/daten/nexmark_auction2.csv' AS SimpleCSV
-
-#ADDQUERY
-SELECT * FROM nexmark:auction2;

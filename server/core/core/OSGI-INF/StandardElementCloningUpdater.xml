@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="setInstance" immediate="true" name="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.StandardElementCloningUpdater">
-   <implementation class="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.StandardElementCloningUpdater"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.StandardElementCloningUpdater"/>
-   </service>
-   <reference bind="setSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement" name="SessionManagement" policy="static"/>
-</scr:component>

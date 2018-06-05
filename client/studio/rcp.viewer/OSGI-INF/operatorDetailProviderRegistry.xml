@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.rcp.server.OperatorDetailProviderRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.rcp.viewer.views.OperatorDetailProviderRegistry"/>
-   <reference bind="bindOperatorDetailProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rcp.IOperatorDetailProvider" name="IOperatorDetailProvider" policy="dynamic" unbind="unbindOperatorDetailProvider"/>
-   <reference bind="bindOperatorGeneralDetailProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rcp.IOperatorGeneralDetailProvider" name="IOperatorGeneralDetailProvider" policy="dynamic" unbind="unbindOperatorGeneralDetailProvider"/>
-</scr:component>

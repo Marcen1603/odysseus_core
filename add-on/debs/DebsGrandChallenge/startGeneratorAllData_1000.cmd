@@ -1,1 +1,0 @@
-java -jar generator.jar allData.txt 1000.0 localhost 9999
