@@ -1,0 +1,12 @@
+#PARSER PQL
+#RUNQUERY
+///Your first pql-query here
+
+input = ACCESS({source='Source',
+wrapper='GenericPull',
+transport='Ping',
+protocol='SimpleByteBuffer',
+dataHandler='Tuple',
+options=[['host', 'localhost'],['scheduler.delay', '1000']],
+schema=[['time', 'Timestamp'], ['value', 'Double']]
+})

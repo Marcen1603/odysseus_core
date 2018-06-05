@@ -1,0 +1,33 @@
+#PARSER PQL
+#PARALLELIZATION (degree=AUTO) (type=INTER_OPERATOR) (threadedbuffer=true) (buffersize=10000000) (optimization=true) 
+#INTEROPERATOR  (id=medianId) (degree=8) (buffersize=GLOBAL) (strategy=FastMedianTransformationStrategy) (fragment=HashFragmentAO)
+#ADDQUERY
+ 
+bid = ACCESS({source='bid',
+		wrapper='GenericPull',
+		transport='File',
+		protocol='CSV',
+		dataHandler='Tuple',
+		options=[['filename', '${BUNDLE-ROOT}\test\testdata\bidTestData.csv']],
+		schema=[
+		['timestamp', 'STARTTIMESTAMP'],
+		['auction', 'INTEGER'],
+		['bidder', 'INTEGER'],
+		['datetime', 'LONG'],
+		['price', 'DOUBLE']]
+		})
+ 
+windowBid = TIMEWINDOW({SIZE = [1, 'MINUTES'],
+                  advance = [1, 'SECONDS']
+                  }, bid)
+                  
+out = FASTMEDIAN({name="FastMedian",
+			ID = 'medianId',
+            attribute='price',
+            numerical=true,
+            histogram = true,
+            group_by=['bidder'],
+            appendglobalmedian = false,
+            roundingfactor=100
+           },windowBid)
+           

@@ -1,0 +1,67 @@
+grammar de.uniol.inf.is.odysseus.iql.qdl.QDL with de.uniol.inf.is.odysseus.iql.basic.BasicIQL
+
+generate qDL "http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
+
+import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as basiciql
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
+
+QDLModel returns basiciql::IQLModel:
+	namespaces+=IQLNamespace*
+	(elements+=QDLModelElement)*
+;
+
+QDLModelElement returns basiciql::IQLModelElement:
+	(javametadata+=IQLJavaMetadata)*
+	inner=(IQLClass | IQLInterface | QDLQuery)
+; 
+
+QDLQuery returns jvm::JvmGenericType:
+	{QDLQuery}
+	'query' simpleName=ID ('(' (metadataList=IQLMetadataList)? ')')?
+	statements=IQLStatementBlock
+;
+
+@Override 
+IQLRelationalExpression returns basiciql::IQLExpression:
+	IQLSubscribeExpression
+	(=>({basiciql::IQLInstanceOfExpression.leftOperand=current} 'instanceof') targetRef=JvmTypeReference |
+	 =>({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
+;
+
+IQLSubscribeExpression returns basiciql::IQLExpression:
+	IQLPortExpression
+	(=>({IQLSubscribeExpression.leftOperand=current} op=IQLSubscribe) rightOperand=IQLPortExpression)*
+;
+
+IQLPortExpression returns basiciql::IQLExpression:
+	IQLAdditiveExpression
+	(=>({IQLPortExpression.leftOperand=current} op=':') rightOperand=IQLAdditiveExpression)?
+;
+
+IQLSubscribe:
+	'->' | '<-'
+;
+
+@Override 
+IQLMetadataValueSingle returns basiciql::IQLMetadataValue:
+	{basiciql::IQLMetadataValueSingleInt} value = INT|
+	{basiciql::IQLMetadataValueSingleDouble} value = DOUBLE|
+	{basiciql::IQLMetadataValueSingleString} value = STRING|
+	{basiciql::IQLMetadataValueSingleBoolean} value = BOOLEAN|
+	(=>({QDLMetadataValueSingleID} value = ID)) |
+	{basiciql::IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
+	{basiciql::IQLMetadataValueSingleNull} 'null'	
+;
+
+@Override 
+IQLJavaText:
+	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
+	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
+	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
+	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
+	'>>' | '>>=' | '<<' | '<<=' | '>>>' | '>>>=' |
+	'['  | ']'   |'{'   |'}'    |  '('  |')'     |
+	 '.' | ':'   | ';'  | ','   | 'null' | 
+	 'query')*
+;
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012 The Odysseus Team
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="false" name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
+   <implementation class="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor"/>
+   <service>
+       <provide interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor"/>
+   </service>
+   <reference bind="setSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement" name="SessionManagement" policy="static"/>
+   <reference bind="setUserManagementProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider" name="UserManagementProvider" policy="static"/>
+   <reference bind="setDataDictionaryProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider" name="DataDictionaryProvider" policy="static"/>
+   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
+   <reference bind="bindSchedulerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager" name="ISchedulerManager" policy="dynamic" unbind="unbindSchedulerManager"/>
+   <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>
+   <reference bind="bindSystemMonitorFactory" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory" name="ISystemMonitorFactory" policy="dynamic" unbind="unbindSystemMonitorFactory"/>
+   <reference bind="bindQueryBuildConfiguration" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate" name="IQueryBuildConfigurationTemplate" policy="dynamic" unbind="unbindQueryBuildConfiguration"/>
+   <reference bind="bindUserManagement" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
+   <reference bind="bindQueryDistributor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor" name="IQueryDistributor" policy="dynamic" unbind="unbindQueryDistributor"/>
+   <reference bind="bindPreTransformationHandler" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler" name="IPreTransformationHandler" policy="dynamic" unbind="unbindPreTransformationHandler"/>
+   <reference bind="bindRecoveryExecutor" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor" name="IRecoveryExecutor" policy="dynamic" unbind="unbindRecoveryExecutor"/>
+</scr:component>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="Odyseus"
+            name="Odysseus">
+      </category>
+      <view
+            category="Odysseus"
+            class="cc.kuka.odysseus.ontology.rcp.views.SensingDevicesView"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views.SensingDevicesView"
+            name="SensingDevices"
+            icon="icons/ontology.png"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            class="cc.kuka.odysseus.ontology.rcp.views.FeaturesOfInterestView"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views.FeaturesOfInterestView"
+            name="FeaturesOfInterest"
+            icon="icons/ontology.png"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+     <command
+            defaultHandler="cc.kuka.odysseus.ontology.rcp.commands.RefreshSensorRegistryViewsCommand"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.RefreshSensorRegistryViewCommand"
+            name="Refresh sensor registry">
+      </command>
+           <command
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateSensingDeviceCommand"
+            name="Create sensing device">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateFeatureOfInterestCommand"
+            name="Create feature of interest">
+      </command>
+      </extension>
+      <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views.SensingDevicesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.RefreshSensorRegistryViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.base.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateSensingDeviceCommand"
+               icon="icons/sensingDevice-plus.png"
+               label="Create sensing device"
+               style="push">
+         </command>
+      </menuContribution>
+           <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views.FeaturesOfInterestView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.RefreshSensorRegistryViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.base.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateFeatureOfInterestCommand"
+               icon="icons/featureOfInterest-plus.png"
+               label="Create feature of interest"
+               style="push">
+         </command>
+      </menuContribution>
+        </extension>
+           <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="cc.kuka.odysseus.ontology.rcp.wizards.SensingDeviceWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            icon="icons/sensingDevice-plus.png"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.SensingDeviceWizard"
+            name="Sensing Device"
+            project="true">
+      </wizard>
+       <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="cc.kuka.odysseus.ontology.rcp.wizards.FeatureOfInterestWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            icon="icons/featureOfInterest-plus.png"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.FeatureOfInterestWizard"
+            name="Feature of Interest"
+            project="true">
+      </wizard>
+      <category
+            id="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            name="Odysseus">
+      </category>
+   </extension>
+</plugin>

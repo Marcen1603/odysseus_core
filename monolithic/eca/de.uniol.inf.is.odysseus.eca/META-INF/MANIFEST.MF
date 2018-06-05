@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.uniol.inf.is.odysseus.eca
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.eca; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext;visibility:=reexport,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types,
+ com.google.guava,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.xtend.lib
+Import-Package: de.uniol.inf.is.odysseus.eca.plugin,
+ org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.uniol.inf.is.odysseus.eca,
+ de.uniol.inf.is.odysseus.eca.services,
+ de.uniol.inf.is.odysseus.eca.eCA,
+ de.uniol.inf.is.odysseus.eca.eCA.impl,
+ de.uniol.inf.is.odysseus.eca.eCA.util,
+ de.uniol.inf.is.odysseus.eca.serializer,
+ de.uniol.inf.is.odysseus.eca.parser.antlr,
+ de.uniol.inf.is.odysseus.eca.parser.antlr.internal,
+ de.uniol.inf.is.odysseus.eca.validation,
+ de.uniol.inf.is.odysseus.eca.scoping,
+ de.uniol.inf.is.odysseus.eca.generator,
+ de.uniol.inf.is.odysseus.eca.formatting,
+ de.uniol.inf.is.odysseus.eca.formatting2
+Automatic-Module-Name: de.uniol.inf.is.odysseus.eca
+

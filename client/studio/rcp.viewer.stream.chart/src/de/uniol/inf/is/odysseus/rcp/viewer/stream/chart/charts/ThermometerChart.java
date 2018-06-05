@@ -1,0 +1,180 @@
+/********************************************************************************** 
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.ThermometerPlot;
+import org.jfree.data.general.DefaultValueDataset;
+
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting.Type;
+
+public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute> {
+
+	DefaultValueDataset dataset = new DefaultValueDataset(new Double(0));
+	private int selectedValue;
+	private ThermometerPlot plot;
+
+	private double mininum = 0.0d;
+	private double maximum = 400.0d;
+	private double upperWarning = maximum * 0.75d;
+	private double upperCritical = maximum * 0.90d;
+
+	@Override
+	protected void init() {
+		super.init();
+		selectedValue = 0;
+		reloadChart();
+		resetBounds();
+	}
+
+	private void resetBounds() {
+		if (plot != null) {
+			plot.setUpperBound(this.maximum);
+			plot.setLowerBound(this.mininum);
+
+			plot.setSubrange(ThermometerPlot.NORMAL, this.mininum, this.upperWarning);
+			plot.setSubrange(ThermometerPlot.WARNING, this.upperWarning, this.upperCritical);
+			plot.setSubrange(ThermometerPlot.CRITICAL, this.upperCritical, this.maximum);
+		}
+	}
+
+	@Override
+	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					dataset.setValue(tuple.get(selectedValue));
+				} catch (SWTException e) {
+					dispose();
+					return;
+				} catch (Exception ex) {
+					ex.printStackTrace(System.err);
+				}
+			}
+		});
+
+	}
+
+	@Override
+	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+		return checkAtLeastOneSelectedAttribute(selectAttributes);
+	}
+
+	@Override
+	protected void decorateChart(JFreeChart thechart) {
+
+	}
+
+	@Override
+	protected JFreeChart createChart() {
+		plot = new ThermometerPlot(dataset);
+		plot.setThermometerStroke(new BasicStroke(1.0f));
+		plot.setThermometerPaint(Color.DARK_GRAY);
+		plot.setUseSubrangePaint(true);
+
+		// change subranges
+		plot.setSubrange(ThermometerPlot.NORMAL, Double.MAX_VALUE, Double.MAX_VALUE);
+		plot.setSubrange(ThermometerPlot.WARNING, Double.MAX_VALUE, Double.MAX_VALUE);
+		plot.setSubrange(ThermometerPlot.CRITICAL, Double.MAX_VALUE, Double.MAX_VALUE);
+		// change mercury colors
+		plot.setMercuryPaint(Color.GREEN);
+		plot.setSubrangePaint(ThermometerPlot.NORMAL, Color.GREEN);
+		plot.setSubrangePaint(ThermometerPlot.WARNING, Color.ORANGE);
+		plot.setSubrangePaint(ThermometerPlot.CRITICAL, Color.RED);
+
+		// change background color
+		plot.setBackgroundPaint(DEFAULT_BACKGROUND);
+		plot.setOutlinePaint(DEFAULT_BACKGROUND);
+		plot.setUnits(ThermometerPlot.UNITS_NONE);
+		plot.setUpperBound(400);
+		JFreeChart chart = new JFreeChart(getTitle(), // chart title
+				JFreeChart.DEFAULT_TITLE_FONT, plot, // plot
+				true); // include legend
+
+		chart.setBackgroundPaint(DEFAULT_BACKGROUND);
+		chart.setBorderVisible(false);
+
+		return chart;
+	}
+
+	@Override
+	public String getViewID() {
+		return VIEW_ID_PREFIX + ".thermometerchart";
+	}
+
+	@ChartSetting(name = "Lower Bound", type = Type.GET)
+	public Double getMininum() {
+		return mininum;
+	}
+
+	@ChartSetting(name = "Lower Bound", type = Type.SET)
+	public void setMininum(Double mininum) {
+		this.mininum = mininum;
+		resetBounds();
+	}
+
+	@ChartSetting(name = "Upper Bound", type = Type.GET)
+	public Double getMaximum() {
+		return maximum;
+	}
+
+	@ChartSetting(name = "Upper Bound", type = Type.SET)
+	public void setMaximum(Double maximum) {
+		this.maximum = maximum;
+		resetBounds();
+	}
+
+	@ChartSetting(name = "Upper Warning Bound", type = Type.GET)
+	public Double getUpperWarning() {
+		return upperWarning;
+	}
+
+	@ChartSetting(name = "Upper Warning Bound", type = Type.SET)
+	public void setUpperWarning(Double upperWarning) {
+		this.upperWarning = upperWarning;
+		resetBounds();
+	}
+
+	@ChartSetting(name = "Upper Critical Bound", type = Type.GET)
+	public Double getUpperCritical() {
+		return upperCritical;
+	}
+
+	@ChartSetting(name = "Upper Critical Bound", type = Type.SET)
+	public void setUpperCritical(Double upperCritical) {
+		this.upperCritical = upperCritical;
+		resetBounds();
+	}
+
+	@Override
+	protected void reloadChart() {
+		resetBounds();
+	}
+
+}

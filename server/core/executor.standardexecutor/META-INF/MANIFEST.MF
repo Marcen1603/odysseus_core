@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Standard Executor
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.setting,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.optimization,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.core.server.scheduler.manager,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
+ org.osgi.framework;version="1.6.0",
+ org.slf4j
+Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
+Service-Component: OSGI-INF/StandardExecutor.xml,
+ OSGI-INF/ReloadLog.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ com.google.guava;bundle-version="12.0.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
+Bundle-ActivationPolicy: lazy
+

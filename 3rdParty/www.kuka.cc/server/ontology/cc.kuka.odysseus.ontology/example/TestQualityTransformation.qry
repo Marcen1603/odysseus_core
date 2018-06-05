@@ -1,0 +1,65 @@
+
+#PARSER CQL
+#QUERY
+DROP STREAM CraneArea:Supervisor  IF EXISTS
+
+
+ATTACH STREAM CraneArea:Supervisor(  x Double, y Double  ) 
+WRAPPER 'GenericPush'
+PROTOCOL 'SizeByteBuffer'
+TRANSPORT 'NonBlockingTcp'
+DATAHANDLER 'Tuple'
+OPTIONS ( 'port' '12343', 'host' 'localhost', 'ByteOrder' 'Little_Endian')
+
+DROP STREAM CraneArea:Cargo  IF EXISTS
+
+
+ATTACH STREAM CraneArea:Cargo(  a Double, b Double  ) 
+WRAPPER 'GenericPush'
+PROTOCOL 'SizeByteBuffer'
+TRANSPORT 'NonBlockingTcp'
+DATAHANDLER 'Tuple'
+OPTIONS ( 'port' '12341', 'host' 'localhost', 'ByteOrder' 'Little_Endian')
+
+DROP STREAM CraneArea:Temperature  IF EXISTS
+
+
+ATTACH STREAM CraneArea:Temperature(  temp Double ) 
+WRAPPER 'GenericPush'
+PROTOCOL 'SizeByteBuffer'
+TRANSPORT 'NonBlockingTcp'
+DATAHANDLER 'Tuple'
+OPTIONS ( 'port' '12342', 'host' 'localhost', 'ByteOrder' 'Little_Endian')
+
+#PARSER PQL
+#METADATA TimeInterval
+
+
+#DEFINE LATENCY
+///#DEFINE WRITELATENCY
+#DEFINE LATENCYFILENAME /home/ckuka/noquality-latency
+
+#IFDEF LATENCY
+#METADATA Latency
+#ENDIF
+
+#ADDQUERY
+
+
+cargo = WINDOW({SIZE = 1, TYPE = 'tuple'}, CraneArea:Cargo)
+supervisor = WINDOW({SIZE = 1, TYPE = 'tuple'}, CraneArea:Supervisor)
+///supervisor = Quality({attributes=['x'],PROPERTIES=['Accuracy']},  
+///                    WINDOW({SIZE = 1, TYPE = 'tuple'}, CraneArea:Supervisor))
+
+out = JOIN({predicate = RelationalPredicate('distance(x, a) <= 5.0 || distance(x, a) >= 5.0')}, supervisor, cargo)
+
+///out = JOIN({predicate = RelationalPredicate('distance(x+x_Accuracy, a) <= 5.0 || distance(x-x_Accuracy, a) >= 5.0')}, supervisor, cargo)
+
+                   
+                   
+#IFDEF LATENCY
+outLatency = CALCLATENCY(out)
+#ENDIF
+#IFDEF WRITELATENCY
+outLatencyWrite = CSVFILESINK({FILENAME = '${LATENCYFILENAME}_out_${NOW}.csv', SINK = 'out', options=[['csv.writemetadata','true'],['csv.delimiter',';']]}, outLatency)
+#ENDIF

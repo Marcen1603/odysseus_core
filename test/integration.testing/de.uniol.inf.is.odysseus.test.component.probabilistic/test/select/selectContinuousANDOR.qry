@@ -1,0 +1,26 @@
+///OdysseusScript
+#PARSER PQL
+#METADATA TimeInterval
+#METADATA Probabilistic
+#ADDQUERY
+data = ACCESS({
+    source='source', 
+    wrapper='GenericPull',
+    transport='file', 
+    protocol='SimpleCSV',
+    dataHandler='ProbabilisticTuple', 
+    options=[
+        ['filename', '${BUNDLE-ROOT}\test\select\input0.csv'], 
+///        ['filename', '${ROOT}/input0.csv'], 
+        ['csv.delimiter', ','],
+        ['csv.trim', 'true']
+        ], 
+    schema=[
+        ['timestamp', 'STARTTIMESTAMP'], 
+        ['x', 'Double'],
+        ['y', 'Double']
+]})
+
+in = Distribution({attributes = ['x', 'y'], variance = 'variance', continuous = 'true'}, Map({expressions = [['timestamp','timestamp'], ['x','x'], ['y','y'], ['[1.0, 0.5; 0.5, 1.0]','variance']]}, data))
+out = select({predicate = RelationalPredicate('x<0 && y>3 || y<3')}, project({attributes = ['timestamp', 'x', 'y']}, in))
+

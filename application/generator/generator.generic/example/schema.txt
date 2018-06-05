@@ -1,0 +1,4 @@
+increaseValue Increase 0 1
+alternatingValue Alternating 0.0 1.0 5.0 -5.0
+logNormalDistributionValue LogNormalDistribution 0 1
+movingCircleValue MovingCircle  6 1.0 1.0

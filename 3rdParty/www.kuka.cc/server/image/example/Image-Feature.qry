@@ -1,0 +1,23 @@
+#PARSER PQL
+#ADDQUERY
+
+input = ACCESS({source='Source',
+wrapper='GenericPush',
+transport='Timer',
+protocol='None',
+dataHandler='Tuple',
+options=[['period', '1000']],
+schema=[['time', 'Timestamp']]
+})
+
+image = MAP({EXPRESSIONS=[['toImage(30, 30)','img']]}, input)
+
+resizeImage = MAP({EXPRESSIONS=[['resize(img, 40, 40)','img']]}, image)
+
+rotateImage = MAP({EXPRESSIONS=[['rotate(img, 90.0)','img']]}, resizeImage)
+
+subImage = MAP({EXPRESSIONS=[['sub(img, 5, 5, 10, 10)','img']]}, rotateImage)
+
+func = MAP({EXPRESSIONS = ['rgbToCMYK(255,255,0)','CMYKToRGB(0,0,1,0)','rgbToHSL(255,255,0)','hslToRGB(60,1,0.5)','rgbToHSV(255,255,0)','hsvToRGB(60,1,1)']}, input)
+
+eyes=EYETRACKER({ATTRIBUTE = 'img'}, image)

@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/" name="WebserviceServerService" targetNamespace="http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://134.106.56.82:9669/odysseus?xsd=1" namespace="http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/" />
+    </xsd:schema>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://134.106.56.82:9669/odysseus?xsd=2" namespace="http://jaxb.dev.java.net/array" />
+    </xsd:schema>
+  </types>
+  <message name="getName">
+    <part name="parameters" element="tns:getName" />
+  </message>
+  <message name="getNameResponse">
+    <part name="parameters" element="tns:getNameResponse" />
+  </message>
+  <message name="initialize">
+    <part name="parameters" element="tns:initialize" />
+  </message>
+  <message name="initializeResponse">
+    <part name="parameters" element="tns:initializeResponse" />
+  </message>
+  <message name="isRunning">
+    <part name="parameters" element="tns:isRunning" />
+  </message>
+  <message name="isRunningResponse">
+    <part name="parameters" element="tns:isRunningResponse" />
+  </message>
+  <message name="removeQuery">
+    <part name="parameters" element="tns:removeQuery" />
+  </message>
+  <message name="removeQueryResponse">
+    <part name="parameters" element="tns:removeQueryResponse" />
+  </message>
+  <message name="login">
+    <part name="parameters" element="tns:login" />
+  </message>
+  <message name="loginResponse">
+    <part name="parameters" element="tns:loginResponse" />
+  </message>
+  <message name="addQuery">
+    <part name="parameters" element="tns:addQuery" />
+  </message>
+  <message name="addQueryResponse">
+    <part name="parameters" element="tns:addQueryResponse" />
+  </message>
+  <message name="getInstalledSources">
+    <part name="parameters" element="tns:getInstalledSources" />
+  </message>
+  <message name="getInstalledSourcesResponse">
+    <part name="parameters" element="tns:getInstalledSourcesResponse" />
+  </message>
+  <message name="getInstalledQueries">
+    <part name="parameters" element="tns:getInstalledQueries" />
+  </message>
+  <message name="getInstalledQueriesResponse">
+    <part name="parameters" element="tns:getInstalledQueriesResponse" />
+  </message>
+  <message name="getPlan">
+    <part name="parameters" element="tns:getPlan" />
+  </message>
+  <message name="getPlanResponse">
+    <part name="parameters" element="tns:getPlanResponse" />
+  </message>
+  <message name="startQuery">
+    <part name="parameters" element="tns:startQuery" />
+  </message>
+  <message name="startQueryResponse">
+    <part name="parameters" element="tns:startQueryResponse" />
+  </message>
+  <message name="stopQuery">
+    <part name="parameters" element="tns:stopQuery" />
+  </message>
+  <message name="stopQueryResponse">
+    <part name="parameters" element="tns:stopQueryResponse" />
+  </message>
+  <message name="startExecution">
+    <part name="parameters" element="tns:startExecution" />
+  </message>
+  <message name="startExecutionResponse">
+    <part name="parameters" element="tns:startExecutionResponse" />
+  </message>
+  <message name="stopExecution">
+    <part name="parameters" element="tns:stopExecution" />
+  </message>
+  <message name="stopExecutionResponse">
+    <part name="parameters" element="tns:stopExecutionResponse" />
+  </message>
+  <message name="getInfos">
+    <part name="parameters" element="tns:getInfos" />
+  </message>
+  <message name="getInfosResponse">
+    <part name="parameters" element="tns:getInfosResponse" />
+  </message>
+  <message name="getQueryBuildConfigurationNames">
+    <part name="parameters" element="tns:getQueryBuildConfigurationNames" />
+  </message>
+  <message name="getQueryBuildConfigurationNamesResponse">
+    <part name="parameters" element="tns:getQueryBuildConfigurationNamesResponse" />
+  </message>
+  <message name="getSupportedQueryParsers">
+    <part name="parameters" element="tns:getSupportedQueryParsers" />
+  </message>
+  <message name="getSupportedQueryParsersResponse">
+    <part name="parameters" element="tns:getSupportedQueryParsersResponse" />
+  </message>
+  <message name="startAllClosedQueries">
+    <part name="parameters" element="tns:startAllClosedQueries" />
+  </message>
+  <message name="startAllClosedQueriesResponse">
+    <part name="parameters" element="tns:startAllClosedQueriesResponse" />
+  </message>
+  <message name="getRegisteredBufferPlacementStrategiesIDs">
+    <part name="parameters" element="tns:getRegisteredBufferPlacementStrategiesIDs" />
+  </message>
+  <message name="getRegisteredBufferPlacementStrategiesIDsResponse">
+    <part name="parameters" element="tns:getRegisteredBufferPlacementStrategiesIDsResponse" />
+  </message>
+  <message name="getRegisteredSchedulingStrategies">
+    <part name="parameters" element="tns:getRegisteredSchedulingStrategies" />
+  </message>
+  <message name="getRegisteredSchedulingStrategiesResponse">
+    <part name="parameters" element="tns:getRegisteredSchedulingStrategiesResponse" />
+  </message>
+  <message name="getRegisteredSchedulers">
+    <part name="parameters" element="tns:getRegisteredSchedulers" />
+  </message>
+  <message name="getRegisteredSchedulersResponse">
+    <part name="parameters" element="tns:getRegisteredSchedulersResponse" />
+  </message>
+  <message name="setScheduler">
+    <part name="parameters" element="tns:setScheduler" />
+  </message>
+  <message name="setSchedulerResponse">
+    <part name="parameters" element="tns:setSchedulerResponse" />
+  </message>
+  <message name="getCurrentSchedulerID">
+    <part name="parameters" element="tns:getCurrentSchedulerID" />
+  </message>
+  <message name="getCurrentSchedulerIDResponse">
+    <part name="parameters" element="tns:getCurrentSchedulerIDResponse" />
+  </message>
+  <message name="getCurrentSchedulingStrategyID">
+    <part name="parameters" element="tns:getCurrentSchedulingStrategyID" />
+  </message>
+  <message name="getCurrentSchedulingStrategyIDResponse">
+    <part name="parameters" element="tns:getCurrentSchedulingStrategyIDResponse" />
+  </message>
+  <message name="updateExecutionPlan">
+    <part name="parameters" element="tns:updateExecutionPlan" />
+  </message>
+  <message name="updateExecutionPlanResponse">
+    <part name="parameters" element="tns:updateExecutionPlanResponse" />
+  </message>
+  <portType name="WebserviceServer">
+    <operation name="getName">
+      <input message="tns:getName" />
+      <output message="tns:getNameResponse" />
+    </operation>
+    <operation name="initialize">
+      <input message="tns:initialize" />
+      <output message="tns:initializeResponse" />
+    </operation>
+    <operation name="isRunning">
+      <input message="tns:isRunning" />
+      <output message="tns:isRunningResponse" />
+    </operation>
+    <operation name="removeQuery">
+      <input message="tns:removeQuery" />
+      <output message="tns:removeQueryResponse" />
+    </operation>
+    <operation name="login">
+      <input message="tns:login" />
+      <output message="tns:loginResponse" />
+    </operation>
+    <operation name="addQuery">
+      <input message="tns:addQuery" />
+      <output message="tns:addQueryResponse" />
+    </operation>
+    <operation name="getInstalledSources">
+      <input message="tns:getInstalledSources" />
+      <output message="tns:getInstalledSourcesResponse" />
+    </operation>
+    <operation name="getInstalledQueries">
+      <input message="tns:getInstalledQueries" />
+      <output message="tns:getInstalledQueriesResponse" />
+    </operation>
+    <operation name="getPlan">
+      <input message="tns:getPlan" />
+      <output message="tns:getPlanResponse" />
+    </operation>
+    <operation name="startQuery">
+      <input message="tns:startQuery" />
+      <output message="tns:startQueryResponse" />
+    </operation>
+    <operation name="stopQuery">
+      <input message="tns:stopQuery" />
+      <output message="tns:stopQueryResponse" />
+    </operation>
+    <operation name="startExecution">
+      <input message="tns:startExecution" />
+      <output message="tns:startExecutionResponse" />
+    </operation>
+    <operation name="stopExecution">
+      <input message="tns:stopExecution" />
+      <output message="tns:stopExecutionResponse" />
+    </operation>
+    <operation name="getInfos">
+      <input message="tns:getInfos" />
+      <output message="tns:getInfosResponse" />
+    </operation>
+    <operation name="getQueryBuildConfigurationNames">
+      <input message="tns:getQueryBuildConfigurationNames" />
+      <output message="tns:getQueryBuildConfigurationNamesResponse" />
+    </operation>
+    <operation name="getSupportedQueryParsers">
+      <input message="tns:getSupportedQueryParsers" />
+      <output message="tns:getSupportedQueryParsersResponse" />
+    </operation>
+    <operation name="startAllClosedQueries">
+      <input message="tns:startAllClosedQueries" />
+      <output message="tns:startAllClosedQueriesResponse" />
+    </operation>
+    <operation name="getRegisteredBufferPlacementStrategiesIDs">
+      <input message="tns:getRegisteredBufferPlacementStrategiesIDs" />
+      <output message="tns:getRegisteredBufferPlacementStrategiesIDsResponse" />
+    </operation>
+    <operation name="getRegisteredSchedulingStrategies">
+      <input message="tns:getRegisteredSchedulingStrategies" />
+      <output message="tns:getRegisteredSchedulingStrategiesResponse" />
+    </operation>
+    <operation name="getRegisteredSchedulers">
+      <input message="tns:getRegisteredSchedulers" />
+      <output message="tns:getRegisteredSchedulersResponse" />
+    </operation>
+    <operation name="setScheduler">
+      <input message="tns:setScheduler" />
+      <output message="tns:setSchedulerResponse" />
+    </operation>
+    <operation name="getCurrentSchedulerID">
+      <input message="tns:getCurrentSchedulerID" />
+      <output message="tns:getCurrentSchedulerIDResponse" />
+    </operation>
+    <operation name="getCurrentSchedulingStrategyID">
+      <input message="tns:getCurrentSchedulingStrategyID" />
+      <output message="tns:getCurrentSchedulingStrategyIDResponse" />
+    </operation>
+    <operation name="updateExecutionPlan">
+      <input message="tns:updateExecutionPlan" />
+      <output message="tns:updateExecutionPlanResponse" />
+    </operation>
+  </portType>
+  <binding name="WebserviceServerPortBinding" type="tns:WebserviceServer">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="getName">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="initialize">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="isRunning">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="removeQuery">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="login">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="addQuery">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getInstalledSources">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getInstalledQueries">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getPlan">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="startQuery">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="stopQuery">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="startExecution">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="stopExecution">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getInfos">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getQueryBuildConfigurationNames">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getSupportedQueryParsers">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="startAllClosedQueries">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getRegisteredBufferPlacementStrategiesIDs">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getRegisteredSchedulingStrategies">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getRegisteredSchedulers">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="setScheduler">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getCurrentSchedulerID">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getCurrentSchedulingStrategyID">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="updateExecutionPlan">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="WebserviceServerService">
+    <port name="WebserviceServerPort" binding="tns:WebserviceServerPortBinding">
+      <soap:address location="http://134.106.56.82:9669/odysseus" />
+    </port>
+  </service>
+</definitions>

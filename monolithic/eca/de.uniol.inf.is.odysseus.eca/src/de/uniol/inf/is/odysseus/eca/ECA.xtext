@@ -1,0 +1,86 @@
+grammar de.uniol.inf.is.odysseus.eca.ECA with org.eclipse.xtext.common.Terminals
+
+generate eCA "http://www.uniol.de/inf/is/odysseus/eca/ECA"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+/* Genereller Aufbau: Konstanten und Event-Definitionen, danach erst die Regeln */
+Model:
+	((constants+=Constant*) & (defEvents+=DefinedEvent*) & (windowSize=Window)? & (timeIntervall=Timer)?) &
+	(rules+=Rule*);
+
+/* Definition von Konstanten, Fenstern, Timerintervall und Events */
+Constant:
+	"DEFINE" "CONSTANT" name=ID ":" constValue=INT ";";
+
+Window:
+	"DEFINE" "WINDOWSIZE" ":" windowValue=INT ";";
+
+Timer:
+	"DEFINE" "TIMEINTERVALL" ":" timerIntervallValue=INT ";";
+
+DefinedEvent:
+	"DEFINE" "EVENT" name=ID ":" definedSource=Source "WITH"
+	definedAttribute=ID
+	definedOperator=Operator definedValue=EcaValue ";";
+
+/* Regeldefinitiony */
+Rule:
+	"ON" name=ID source=RuleSource "IF" ruleConditions=CONDITIONS "THEN" ruleActions=ACTIONS ";";
+
+CONDITIONS returns Expression:
+	SUBCONDITION ({CONDITIONS.left=current} "AND" right=SUBCONDITION)*;
+
+SUBCONDITION returns Expression:
+	subsource=SOURCECONDITION | subsys=SYSTEMCONDITION | {SUBCONDITION} (subfree=FREECONDITION) | {SUBCONDITION}
+	(submap=MAPCONDITION?) | {SUBCONDITION} (queryCond=QUERYCONDITION);
+
+RuleSource:
+	("${" defSource=[DefinedEvent] "}") | (newSource=Source) | (preSource=PREDEFINEDSOURCE);
+
+SOURCECONDITION:
+	condAttribute=ID operator=Operator value=EcaValue;
+
+QUERYCONDITION:
+	(queryNot="!")? "queryExists" "(" queryFunct=RNDQUERY ")";
+
+SYSTEMCONDITION:
+	"SYSTEM." systemAttribute=SYSTEMFUNCTION operator=Operator value=EcaValue;
+
+FREECONDITION:
+	freeCondition=STRING;
+
+MAPCONDITION:
+	"GET" mapCond=STRING;
+
+//SourceAttribute:
+//	simpleName=ID;
+
+ACTIONS returns Expression:
+	SUBACTIONS ({ACTIONS.left=current} "AND" right=SUBACTIONS)*;
+
+SUBACTIONS returns Expression:
+	comAction=COMMANDACTION;
+
+COMMANDACTION:
+	subActname=ID "(" (functAction=RNDQUERY | actionValue=(EcaValue) | (innerAction+=COMMANDACTION)*) ")";
+
+RNDQUERY:
+	"prio" priOperator=Operator priVal=INT ("(" sel=("MIN" | "MAX") ")")? "," "state" "=" stateName=ID;
+
+Source:
+	name=ID;
+
+EcaValue:
+	intValue=INT | idValue=ID | ("${" constValue=[Constant|ID]) "}" | stringValue=STRING | doubleValue=DOUBLE;
+
+PREDEFINEDSOURCE:
+	"TimerEvent" | "QueryEvent";
+
+SYSTEMFUNCTION:
+	"curCPULoad" | "curMEMLoad" | "curNETLoad";
+
+Operator:
+	'<' | '>' | '=' | '<=' | '>=';
+
+terminal DOUBLE returns ecore::EDouble:
+	'-'? ('0'..'9')+ '.' ('0'..'9');

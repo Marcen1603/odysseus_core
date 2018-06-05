@@ -1,0 +1,3 @@
+#PARSER PQL
+#RUNQUERY
+Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:kohonen'})

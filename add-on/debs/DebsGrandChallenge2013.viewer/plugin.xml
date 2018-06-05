@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.debs2013.viewer.PositionsView"
+            id="de.uniol.inf.is.odysseus.debs2013.viewer.PositionsView"
+            label="Soccer - Positions">
+      </editor>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.debs2013.viewer.HeatmapView"
+            id="de.uniol.inf.is.odysseus.debs2013.viewer.HeatmapView"
+            label="Soccer - Heatmap">
+      </editor>
+   </extension>
+
+</plugin>

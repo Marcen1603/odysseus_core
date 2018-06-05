@@ -1,0 +1,20 @@
+///OdysseusScript
+#PARSER PQL
+#ADDQUERY
+percentage = ACCESS({
+	source='percentage', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '${BUNDLE-ROOT}\testdaten\aggregate_time\input0.csv'], 
+		['csv.delimiter', ';'],
+		['csv.trim', 'true']
+		], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['percentage', 'INTEGER']
+]})
+window0 = TimeWindow({size = [5,'SECONDS'], advance = [1,'SECONDS']}, percentage)
+aggregate0 = aggregate({aggregations=[['AVG', 'percentage', 'avgPerc', 'double']]}, window0)

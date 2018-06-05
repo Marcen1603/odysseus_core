@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Datarate
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.datarate
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.slf4j
+Service-Component: OSGI-INF/DatarateMetaattribute.xml,OSGI-INF/TimeIntervalDatarateMetaattribute.xml,OSGI-INF/LatencyDatarateMetaattribute.xml,
+ OSGI-INF/TimeIntervalLatencyDatarateMetaattribute.xml
+Import-Package: de.uniol.inf.is.odysseus.core.server.metadata,
+ de.uniol.inf.is.odysseus.latency
+Export-Package: de.uniol.inf.is.odysseus.datarate,
+ de.uniol.inf.is.odysseus.datarate.logicaloperator,
+ de.uniol.inf.is.odysseus.datarate.physicaloperator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.datarate
+Bundle-ActivationPolicy: lazy

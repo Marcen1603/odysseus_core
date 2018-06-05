@@ -1,0 +1,57 @@
+#PARSER PQL
+#RUNQUERY
+///Your first pql-query here
+
+input = ACCESS({
+            transport='RabbitMQ',
+            source= 'FromRabbitMQ',
+            wrapper='GenericPush',
+            protocol='SimpleByteBuffer',
+            datahandler='Tuple',
+            options=[
+              ['EXCHANGE_NAME','service_bus'],
+              ['PUBLISH_STYLE','publishsubscribe'],
+              ['CONSUMER_TAG','tag'],
+              ['HOST','localhost'],
+              ['ByteOrder', 'LittleEndian']
+            ],
+            schema=[['gpsPoint', 'GM_Point'], ['starttimestamp', 'STARTTIMESTAMP']]                      
+          }
+        )
+
+gpsTuple = MAP({
+              expressions = [
+              					['GetGMPointCoordinate(gpsPoint, 0)', 'longitude'],              			
+              					['GetGMPointCoordinate(gpsPoint, 1)', 'latitude']                               
+                            ]
+             }, input)
+
+        
+nmea0183Tuple = MAP({
+              expressions = [
+              					['"GGA"','sentenceId'],              			
+              					['"GP"','talkerId'],
+              					['"$"','beginChar'],
+                                ['Abs(latitude)','latitude'],
+                                ['eif(latitude>=0, "N", "S")','latitudeHem'],
+                                ['Abs(longitude)','longitude'],
+                                ['eif(longitude>=0, "E", "W")','longitudeHem']                               
+                            ]
+             }, gpsTuple)
+
+nmea0183 = TUPLETOKEYVALUE(nmea0183Tuple)
+
+
+SENDER = SENDER({
+			  sink='toFile',
+			  wrapper='GenericPush',
+              transport='File',              
+              protocol='NMEA',
+              datahandler='Tuple',
+              
+              options=[
+                ['filename', 'D:\nmea0183.txt']
+              ]                       
+            },
+            nmea0183
+          )        

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: User Management Filestore
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.usermanagement.filestore;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.core.server, de.uniol.inf.is.odysseus.slf4j
+Import-Package: org.osgi.service.component
+Service-Component: OSGI-INF/*
+Export-Package: de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain
+Automatic-Module-Name: de.uniol.inf.is.odysseus.usermanagement.filestore
+Bundle-ActivationPolicy: lazy

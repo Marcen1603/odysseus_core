@@ -1,0 +1,49 @@
+///OdysseusScript
+#DEFINE PATH ${BUNDLE-ROOT}\testdaten\difference
+
+#PARSER PQL
+#ADDQUERY
+wind0 = Project({attributes = ['speed', 'direction', 'name', 'location']}, ACCESS({
+	source='wind0', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '${PATH}\inputLeft.csv'],
+		['csv.delimiter', ';'],
+		['csv.trim', 'true'],
+		['delay', '0']
+	], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'],
+		['timestamp2', 'ENDTIMESTAMP'],  
+		['speed', 'INTEGER'], 
+		['direction', 'STRING'], 
+		['name', 'STRING'],
+		['location', 'INTEGER']
+]}))
+wind1 = Project({attributes = ['speed', 'direction', 'name', 'location']}, ACCESS({
+	source='wind1', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '${PATH}\inputRight.csv'],
+		['csv.delimiter', ';'],
+		['csv.trim', 'true']
+	], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['timestamp2', 'ENDTIMESTAMP'],  
+		['speed', 'INTEGER'], 
+		['direction', 'STRING'], 
+		['name', 'STRING'],
+		['location', 'INTEGER']
+]}))
+///window_wind0 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind0)
+///window_wind1 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind1)
+
+///result = DIFFERENCE(window_wind0, window_wind1)
+result = DIFFERENCE(wind0, wind1)

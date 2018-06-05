@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.SoccerOverviewDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.SoccerOverviewConfigurer"
+            name="Soccer Overview">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.HeatmapDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.HeatmapConfigurer"
+            name="Soccer Heatmap">
+      </dashboardPart>
+   </extension>
+
+</plugin>

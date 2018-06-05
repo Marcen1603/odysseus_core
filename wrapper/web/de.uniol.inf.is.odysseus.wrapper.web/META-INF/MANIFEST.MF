@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Web Wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.web
+Bundle-Version: 1.0.0.qualifier
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Service-Component: OSGI-INF/HTTPTransportHandler.xml,OSGI-INF/HTTPServerTransportHandler.xml,OSGI-INF/HTMLProtocolHandler.xml,OSGI-INF/XMLProtocolHandler.xml,
+ OSGI-INF/HTTPStreamTransportHandler.xml,OSGI-INF/XMLProtocolHandler2.xml,OSGI-INF/HTTPPostFormUrlEncodedProtocolHandler.xml
+Bundle-ClassPath: .,
+ lib/nekohtml-1.9.6.2.jar,
+ lib/xercesImpl-2.9.1.jar,
+ lib/httpclient-4.2.5.jar,
+ lib/httpcore-4.2.4.jar,
+ lib/commons-logging-1.1.1.jar,
+ lib/jetty-all-9.4.9.v20180320-uber.jar
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.2",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ com.google.guava,
+ org.apache.commons.collections15,
+ org.apache.commons.io,
+ de.uniol.inf.is.odysseus.keyvalue.datatype
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.web

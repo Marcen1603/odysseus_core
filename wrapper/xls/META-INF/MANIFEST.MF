@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XLS wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.xls
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.xls.Activator
+Bundle-Vendor: Christian Kuka
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.core.collection,
+ de.uniol.inf.is.odysseus.core.datahandler,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Bundle-ClassPath: lib/OpenXLS.jar,
+ .
+Service-Component: OSGI-INF/XLSProtocolHandler.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.xls
+Bundle-ActivationPolicy: lazy

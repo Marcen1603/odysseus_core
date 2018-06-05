@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Statistic Common
+Bundle-SymbolicName: cc.kuka.odysseus.statistic.common
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: cc.kuka.odysseus.statistic.common.Activator
+Require-Bundle: de.uniol.inf.is.odysseus.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: cc.kuka.odysseus.statistic.common.sdf.schema
+Import-Package: org.osgi.framework
+Service-Component: OSGI-INF/StatisticDatatypeProvider.xml
+Automatic-Module-Name: cc.kuka.odysseus.statistic.common

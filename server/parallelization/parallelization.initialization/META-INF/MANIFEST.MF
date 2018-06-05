@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Parallelization Initialization
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.parallelization.initialization
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.parallelization.initialization.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.google.common.collect,
+ de.uniol.inf.is.odysseus.parallelization.optimization,
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.parallelization,
+ de.uniol.inf.is.odysseus.parallelization.interoperator,
+ de.uniol.inf.is.odysseus.server.fragmentation,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.ruleengine
+Service-Component: OSGI-INF/AutomaticParallelizationPreParserKeywordProvider.xml,
+ OSGI-INF/AutomaticPreExecutionHandler.xml,
+ OSGI-INF/AutomaticParallelizationPreTransformationHandler.xml,
+ OSGI-INF/GenericGroupedTransformationStrategy.xml,
+ OSGI-INF/GenericStatelessTransformationStrategy.xml
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parallelization.initialization

@@ -1,0 +1,30 @@
+///OdysseusScript
+#PARSER PQL
+#DROPALLSOURCES
+#DROPALLQUERIES
+#ADDQUERY
+percentage = ACCESS({
+	source='percentage', 
+	wrapper='GenericPull',
+	transport='file',
+	protocol='json',
+	dataHandler='KeyValueObject', 
+	options=[['filename', '${BUNDLE-ROOT}\testdata\keyvaluetotupletimestamp\input0.json']]
+})
+
+keyvaluetotuple0 = KEYVALUETOTUPLE({schema=[['id','STARTTIMESTAMP'],['percentage','Integer']]}, percentage)
+
+longToInt = MAP({EXPRESSIONS=[['toInteger(id)','id'],['percentage','percentage']]}, keyvaluetotuple0)
+
+tupletokeyvalue0 = TUPLETOKEYVALUE(longToInt)
+
+///SENDERjson = SENDER({
+///	transport='File',
+///	wrapper='GenericPush',
+///	protocol='JSON',
+///	dataHandler='KeyValueObject',
+///	SINK="SENDERjson",
+///	options=[
+///		['filename','${WORKSPACEPROJECT}\testdata\keyvaluetotupletimestamp\output.json'],
+///		['json.write.metadata','true']
+///	]}, tupletokeyvalue0)

@@ -1,0 +1,135 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG StandardProbabilistic
+#ADDQUERY
+///Your first query here
+
+input = ACCESS({
+            source='Source',
+            wrapper='GenericPush',
+            transport='TCPClient',
+            protocol='SizeByteBUFFER',
+            datahandler='PROBABILISTICTuple',
+            options=[
+              ['host', 'localhost'],
+              ['port', '54321'],
+              ['read', '10240'],
+              ['write', '10240']
+            ],
+            schEMa=[
+              ['TIMESTAMP','StartTIMESTAMP'],
+              ['cpdata11', 'PROBABILISTICContinuousDouble'],            
+              ['pdata', 'PROBABILISTICDouble'],              
+              ['pdata2', 'PROBABILISTICDouble'],
+              ['cpdata12', 'PROBABILISTICContinuousDouble'],
+              ['cpdata21', 'PROBABILISTICContinuousDouble'],
+              ['cpdata22', 'PROBABILISTICContinuousDouble'],
+              ['ddata', 'DOUBLE'],
+              ['ddata2', 'DOUBLE']
+            ]          
+          }        
+        )
+output_map = MAP({
+              expressions = [
+              'cpdata11',               
+              'pdata',             
+              'pdata2', 
+              'cpdata21', 
+              'pdata + pdata2',
+              'pdata - pdata2',
+              'pdata * pdata2',
+              'pdata / pdata2',
+              'pdata^3',
+              '(pdata + pdata2) * pdata',
+              'pdata * (pdata2 + pdata)',
+              'pdata - pdata',
+              '((pdata - pdata + pdata2 - pdata2) * pdata * pdata2)',
+              'pdata / pdata',
+              'sqrt(pdata)'
+              ]                         
+            },
+            input
+          )
+          
+output_select = MAP({
+              expressions = [              
+              'pdata > pdata2',
+              'pdata < pdata2',
+              'pdata <= pdata2',
+              'pdata >= pdata2',
+              'pdata == pdata',
+              'cpdata11 <= 3'       
+              ]                         
+            },
+            input
+          )
+output_pGreater = MAP({
+              expressions = [              
+              'pdata > pdata2'       
+              ]                         
+            },
+            input
+          )
+output_pGreaterEquals = MAP({
+              expressions = [              
+              'pdata >= pdata2'      
+              ]                         
+            },
+            input
+          )
+output_pLower = MAP({
+              expressions = [              
+              'pdata < pdata2'       
+              ]                         
+            },
+            input
+          )
+output_pLowerEquals = MAP({
+              expressions = [              
+              'pdata <= pdata2'       
+              ]                         
+            },
+            input
+          )
+output_pEquals = MAP({
+              expressions = [              
+              'pdata == pdata2'       
+              ]                         
+            },
+            input
+          )
+output_cpGreater = MAP({
+              expressions = [              
+              'cpdata11 > 3'       
+              ]                         
+            },
+            input
+          )
+output_cpGreaterEquals = MAP({
+              expressions = [              
+              'cpdata11 >= 3'      
+              ]                         
+            },
+            input
+          )
+output_cpLower = MAP({
+              expressions = [              
+              'cpdata11 < 3'       
+              ]                         
+            },
+            input
+          )
+output_cpLowerEquals = MAP({
+              expressions = [              
+              'cpdata11 <= 3'       
+              ]                         
+            },
+            input
+          )
+output_cpEquals = MAP({
+              expressions = [              
+              'cpdata11 == 3'       
+              ]                         
+            },
+            input
+          )

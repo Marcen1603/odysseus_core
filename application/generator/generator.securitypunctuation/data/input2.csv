@@ -1,0 +1,11 @@
+flag;stream;starttupel;endtupel;attribute;rollen;sign;mutable;ts
+SP;0;autoverkehr,fahrradverkehr;-1;-1;*;*;1;1
+Data;1;6;Oldenburg;12;;;;
+Data;2;7;Delmenhorst;1;;;;
+Data;4;9;Oldenburg;2;;;;
+Data;5;10;Bremen;33;;;;
+Data;6;11;Delmenhorst;1;;;;
+Data;7;12;Hude;0;;;;
+Data;8;13;Oldenburg;22;;;;
+Data;9;14;Oldenburg;1;;;;
+Data;10;15;Bremen;44;;;;

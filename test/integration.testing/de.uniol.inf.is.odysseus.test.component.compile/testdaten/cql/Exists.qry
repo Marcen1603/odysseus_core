@@ -1,0 +1,25 @@
+#PARSER CQL
+#DROPALLQUERIES
+#QUERY 
+DROP STREAM bid IF EXISTS
+#QUERY
+CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65442', 'host' 'localhost')
+#QUERY 
+DROP STREAM person IF EXISTS
+#QUERY
+CREATE STREAM person (timestamp STARTTIMESTAMP, id INTEGER, name STRING, email STRING, creditcard STRING, city STRING, state STRING) CHANNEL localhost : 65440
+
+#QUERY
+SELECT B.bidder FROM bid AS B 
+WHERE EXISTS(SELECT P.id FROM person AS P WHERE P.id!= B.bidder);
+#QUERY
+SELECT B.bidder FROM bid AS B 
+WHERE EXISTS(SELECT * FROM person AS P WHERE P.id!= B.bidder AND P.name != 'Max');
+#QUERY
+SELECT B.bidder FROM bid AS B 
+WHERE EXISTS(SELECT id, name FROM person WHERE id!= B.bidder AND name != 'Max') OR B.price > 1000;

@@ -1,0 +1,7 @@
+#PARSER PQL
+#RUNQUERY
+dataxXxwkaidxXx = STREAM({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})
+timewindowxXxwkaidxXx = TIMEWINDOW({slide=[10,'MINUTES'],size=[10,'MINUTES']},dataxXxwkaidxXx)
+aggregatexXxwkaidxXx = AGGREGATE({AGGREGATIONS=[['AVG','wind_speed','AVG_wind_speed','Double'],['AVG','corrected_score','AVG_corrected_score','Double'],['AVG','wind_direction','AVG_wind_direction','Double'],['AVG','rotational_speed','AVG_rotational_speed','Double'],['AVG','phase_shift','AVG_phase_shift','Double'],['AVG','pitch_angle','AVG_pitch_angle','Double'],['AVG','gier_angle','AVG_gier_angle','Double']], GROUP_BY=['PxXxwindfarmidxXx:xXxwkaidxXx.id']},timewindowxXxwkaidxXx)
+mapxXxwkaidxXx = MAP({expressions=[['0','id'],['xXxwindfarmidxXx','wp_id'],['PxXxwindfarmidxXx:xXxwkaidxXx.id','wka_id'],['now()','timestamp'],['AVG_wind_speed',''],['AVG_corrected_score',''],['AVG_wind_direction',''],['AVG_rotational_speed',''],['AVG_phase_shift',''],['AVG_pitch_angle',''],['AVG_gier_angle',''],['''','comment']], THREADS=0},aggregatexXxwkaidxXx)
+hdsinkxXxwkaidxXx = DATABASESINK({connection='CONHD',table='HDarchive',tableschema=['Integer','Integer','Integer','Timestamp','double','double','double','double','double','double','double','string'], LAZY_CONNECTION_CHECK='false'},mapxXxwkaidxXx)

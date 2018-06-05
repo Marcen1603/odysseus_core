@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor" name="Stream Editor" schema="schema/de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor.exsd"/>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.ShowStreamCommand"
+            name="ShowStream">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.StreamEditorTypeParameter"
+               name="Stream Editor Type"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.CallGraphEditorCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand"
+            name="Call Graph Editor">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.CallActiveGraphEditor"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor"
+            name="Call Active Graph Editor">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline"
+            name="Refresh Graph Outline">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.ResetGraphCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ResetGraph"
+            name="Reset Graph Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.CenterNodeCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CenterNode"
+            name="Center Node">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.CopyNodeSchemaCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CopyNodeSchema"
+            name="Copy Node Schema">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.RefreshGraphEditor"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphEditor"
+            name="Refresh Graph Editor">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="isQueryID">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="java.lang.Integer">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
+      <definition
+            id="isNodeView">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.ShowStreamCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.ShowStreamCommand">
+         <enabledWhen>
+            <or>
+               <reference
+                     definitionId="isNodeView">
+               </reference>
+               <reference
+                     definitionId="isQueryID">
+               </reference>
+            </or>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.RefreshGraphOutlineCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor"
+            default="false"
+            icon="icons/lupe.gif"
+            id="de.uniol.inf.is.odysseus.rcp.editors.StreamEditor"
+            name="Stream Editor">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.GraphViewEditor"
+            default="false"
+            icon="icons/graph.png"
+            id="de.uniol.inf.is.odysseus.rcp.editors.GraphEditor"
+            name="Graph Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.ViewerToolBar">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor"
+                  icon="icons/graph.png"
+                  label="Active Graph"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamMenuFactory"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamMenuFactory"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamMenuFactory"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor?after=additions">
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor"
+               icon="icons/graph.png"
+               label="Active Graph"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CenterNode"
+               icon="icons/center.jpg"
+               label="Center"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CopyNodeSchema"
+               label="Copy Node Schema"
+               style="push">
+         </command>
+
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor?after=additions">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResetGraph"
+               icon="icons/reset.gif"
+               label="Reset"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphEditor"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList10"
+            icon="icons/application-list.png"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List10"
+            label="List - Show last 10 elements">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList50"
+            icon="icons/application-list.png"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List50"
+            label="List - Show last 50 elements">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList100"
+            icon="icons/application-list.png"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List100"
+            label="List - Show last 100 elements">
+      </editor>
+            <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList"
+            icon="icons/application-list.png"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List"
+            label="List - Show all last elements">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.views.OperatorDetailView"
+            icon="icons/operator_details.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.OperatorDetailView"
+            name="Operator Detail Info"
+            restorable="true">
+      </view>
+   </extension>
+</plugin>

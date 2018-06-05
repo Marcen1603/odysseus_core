@@ -1,0 +1,1 @@
+java -jar generator.jar 20120222-171330-000077.txt 1.0 localhost 9999

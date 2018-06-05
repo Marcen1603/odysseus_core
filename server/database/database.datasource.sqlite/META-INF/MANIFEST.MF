@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sqlite DataSource
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.datasource.sqlite
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ClassPath: lib/sqlite-jdbc-3.8.11.2.jar,
+ .
+Require-Bundle: de.uniol.inf.is.odysseus.database
+Service-Component: OSGI-INF/ConnectionFacctory.xml,
+ OSGI-INF/sqlite.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.sqlite
+Bundle-ActivationPolicy: lazy

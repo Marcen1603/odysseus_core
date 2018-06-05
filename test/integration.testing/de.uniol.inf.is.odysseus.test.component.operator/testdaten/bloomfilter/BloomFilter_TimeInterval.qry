@@ -1,0 +1,40 @@
+/// Odysseus Testcase: BloomFilter
+/// Operator: BLOOMFILTER
+/// Date: Sat Sep 19 17:37:16 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  ATTRIBUTES: ['x','y']
+///  DESTINATION: 
+///  FPP: 
+///  SUPPRESSPUNCTUATIONS: 
+///  ID: 
+///  DEBUG: 
+///  INSERTIONS: 
+///  NAME: 
+
+
+#PARSER PQL
+
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
+
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source0_TimeInterval',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    metaattribute=[
+                  'TimeInterval'
+                  ],
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/bloomfilter/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+
+output = BLOOMFILTER({ATTRIBUTES=['x','y']}, input0)

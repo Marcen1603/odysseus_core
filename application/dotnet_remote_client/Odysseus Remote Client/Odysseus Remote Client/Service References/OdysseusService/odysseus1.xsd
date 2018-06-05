@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/" targetNamespace="http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="addQuery" type="tns:addQuery" />
+  <xs:element name="addQueryResponse" type="tns:addQueryResponse" />
+  <xs:element name="getCurrentSchedulerID" type="tns:getCurrentSchedulerID" />
+  <xs:element name="getCurrentSchedulerIDResponse" type="tns:getCurrentSchedulerIDResponse" />
+  <xs:element name="getCurrentSchedulingStrategyID" type="tns:getCurrentSchedulingStrategyID" />
+  <xs:element name="getCurrentSchedulingStrategyIDResponse" type="tns:getCurrentSchedulingStrategyIDResponse" />
+  <xs:element name="getInfos" type="tns:getInfos" />
+  <xs:element name="getInfosResponse" type="tns:getInfosResponse" />
+  <xs:element name="getInstalledQueries" type="tns:getInstalledQueries" />
+  <xs:element name="getInstalledQueriesResponse" type="tns:getInstalledQueriesResponse" />
+  <xs:element name="getInstalledSources" type="tns:getInstalledSources" />
+  <xs:element name="getInstalledSourcesResponse" type="tns:getInstalledSourcesResponse" />
+  <xs:element name="getName" type="tns:getName" />
+  <xs:element name="getNameResponse" type="tns:getNameResponse" />
+  <xs:element name="getPlan" type="tns:getPlan" />
+  <xs:element name="getPlanResponse" type="tns:getPlanResponse" />
+  <xs:element name="getQueryBuildConfigurationNames" type="tns:getQueryBuildConfigurationNames" />
+  <xs:element name="getQueryBuildConfigurationNamesResponse" type="tns:getQueryBuildConfigurationNamesResponse" />
+  <xs:element name="getRegisteredBufferPlacementStrategiesIDs" type="tns:getRegisteredBufferPlacementStrategiesIDs" />
+  <xs:element name="getRegisteredBufferPlacementStrategiesIDsResponse" type="tns:getRegisteredBufferPlacementStrategiesIDsResponse" />
+  <xs:element name="getRegisteredSchedulers" type="tns:getRegisteredSchedulers" />
+  <xs:element name="getRegisteredSchedulersResponse" type="tns:getRegisteredSchedulersResponse" />
+  <xs:element name="getRegisteredSchedulingStrategies" type="tns:getRegisteredSchedulingStrategies" />
+  <xs:element name="getRegisteredSchedulingStrategiesResponse" type="tns:getRegisteredSchedulingStrategiesResponse" />
+  <xs:element name="getSupportedQueryParsers" type="tns:getSupportedQueryParsers" />
+  <xs:element name="getSupportedQueryParsersResponse" type="tns:getSupportedQueryParsersResponse" />
+  <xs:element name="graphNode" type="tns:graphNode" />
+  <xs:element name="initialize" type="tns:initialize" />
+  <xs:element name="initializeResponse" type="tns:initializeResponse" />
+  <xs:element name="isRunning" type="tns:isRunning" />
+  <xs:element name="isRunningResponse" type="tns:isRunningResponse" />
+  <xs:element name="login" type="tns:login" />
+  <xs:element name="loginResponse" type="tns:loginResponse" />
+  <xs:element name="removeQuery" type="tns:removeQuery" />
+  <xs:element name="removeQueryResponse" type="tns:removeQueryResponse" />
+  <xs:element name="setScheduler" type="tns:setScheduler" />
+  <xs:element name="setSchedulerResponse" type="tns:setSchedulerResponse" />
+  <xs:element name="simpleGraph" type="tns:simpleGraph" />
+  <xs:element name="startAllClosedQueries" type="tns:startAllClosedQueries" />
+  <xs:element name="startAllClosedQueriesResponse" type="tns:startAllClosedQueriesResponse" />
+  <xs:element name="startExecution" type="tns:startExecution" />
+  <xs:element name="startExecutionResponse" type="tns:startExecutionResponse" />
+  <xs:element name="startQuery" type="tns:startQuery" />
+  <xs:element name="startQueryResponse" type="tns:startQueryResponse" />
+  <xs:element name="stopExecution" type="tns:stopExecution" />
+  <xs:element name="stopExecutionResponse" type="tns:stopExecutionResponse" />
+  <xs:element name="stopQuery" type="tns:stopQuery" />
+  <xs:element name="stopQueryResponse" type="tns:stopQueryResponse" />
+  <xs:element name="updateExecutionPlan" type="tns:updateExecutionPlan" />
+  <xs:element name="updateExecutionPlanResponse" type="tns:updateExecutionPlanResponse" />
+  <xs:complexType name="simpleGraph">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="rootNodes" nillable="true" type="tns:graphNode" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="graphNode">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="childs" nillable="true" type="tns:graphNode" />
+      <xs:element name="id" type="xs:int" />
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getRegisteredSchedulingStrategies">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getRegisteredSchedulingStrategiesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stringListResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:response">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="responseValue" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="response">
+    <xs:sequence>
+      <xs:element name="successful" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getInstalledQueries">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getInstalledQueriesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getRegisteredSchedulers">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getRegisteredSchedulersResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getInfos">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getInfosResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stringResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:response">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="responseValue" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getCurrentSchedulingStrategyID">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getCurrentSchedulingStrategyIDResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getQueryBuildConfigurationNames">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getQueryBuildConfigurationNamesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="startQuery">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+      <xs:element name="queryID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="startQueryResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="isRunning">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="isRunningResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:booleanResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="booleanResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:response">
+        <xs:sequence>
+          <xs:element name="responseValue" type="xs:boolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="setScheduler">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+      <xs:element minOccurs="0" name="scheduler" type="xs:string" />
+      <xs:element minOccurs="0" name="scheduler_strategy" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="setSchedulerResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getCurrentSchedulerID">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getCurrentSchedulerIDResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateExecutionPlan">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateExecutionPlanResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="initialize">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="initializeResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="login">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="username" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="loginResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="tns:stringResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getSupportedQueryParsers">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getSupportedQueryParsersResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getInstalledSources">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getInstalledSourcesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stopQuery">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+      <xs:element name="queryID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stopQueryResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="startAllClosedQueries">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="startAllClosedQueriesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getName">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getNameResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getPlan">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getPlanResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:simpleGraph" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="startExecution">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="startExecutionResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="addQuery">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+      <xs:element minOccurs="0" name="parser" type="xs:string" />
+      <xs:element minOccurs="0" name="query" type="xs:string" />
+      <xs:element minOccurs="0" name="transformationconfig" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="addQueryResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getRegisteredBufferPlacementStrategiesIDs">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getRegisteredBufferPlacementStrategiesIDsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:stringListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="removeQuery">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+      <xs:element name="queryID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="removeQueryResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stopExecution">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="securitytoken" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stopExecutionResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:response" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

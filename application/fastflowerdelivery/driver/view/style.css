@@ -1,0 +1,171 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #DFDFDF;
+	font-size: 12px;
+	font-family: Tahoma, Verdana, Sans Serif;	
+	color: #454545;
+}
+
+div {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid #606060;
+}
+
+div.head {
+	padding: 10px;
+	color: black;
+	font-weight: bold;
+	font-size: 14px;
+	border: none;
+}
+
+div.status {
+	padding-left: 10px;
+}
+
+div.delivery {
+	padding-left: 10px;
+}
+
+div.delivery div {
+	border: none;
+}
+
+div.delivery div.title, div.active div.title {
+	font-weight: bold;
+	color: #232323;
+	padding-bottom: 0;
+}
+
+div.delivery div.customer {
+	padding-bottom: 0;
+}
+
+div.deliveries {
+	padding: 0;
+	border: none;
+	display: none;
+}
+
+div.bidded, div.pickedUp {
+	background-color: #AAAAFF;
+	color: #101010;
+}
+
+div.page {
+	padding: 0;
+	border: none;
+}
+
+div.active {
+	padding-left: 0;
+	border: none;
+	display: none;
+}
+
+#showDialog {
+	background-color: #EFEFEF;
+	padding: 0;
+	font-size: 14px;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+	display: none;
+	z-index: 2000;
+	border: none;
+}
+
+#showDialog div.title {
+	background-color: #404080;
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	padding: 10px;
+	text-align: center;
+}
+
+div.dialogIcon {
+	width: 64px;
+	height: 64px;
+	margin-left: auto;
+	margin-right: auto;
+	border: none;
+	padding: 0;
+}
+
+div.dialogContent {
+	margin-left: 10px;
+	padding-right: 10px;
+	border: none;
+	text-align: center;
+}
+
+div.info {
+	background-image: url('img/info.png');
+}
+div.error {
+	background-image: url('img/error.png');
+}
+
+div.menu {
+	height: 50px;
+	padding: 0;
+	margin: 0;
+	border: none;
+}
+
+div.menu div.requests {
+	height: 50px;
+	width: 50%;
+	padding: 0;
+	float: left;
+	text-align: center;
+	vertical-align: middle; 
+	color: white;
+	border-bottom: none;
+	background-image: url('img/requests.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-color: #404080;
+}
+
+div.menu div.activeRequests {
+	height: 50px;
+	width: 50%;
+	margin-left: 50%;
+	margin-top: -50px;
+	padding: 0;
+	float: left;
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+	border-bottom: none;
+	background-image: url('img/active.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-color: #202020;
+}
+
+div.clear {
+	clear: both;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+div.login: {
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+
+form.login {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	width: 250px;
+}

@@ -1,0 +1,60 @@
+operator ODLTimeWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxInputPorts = 1) {
+	parameter TimeValueItem size;
+				
+	optional parameter TimeValueItem advance;
+		
+	long windowSize;
+	
+	long windowAdvance;
+	
+	on ao_init {
+		TimeUnit baseTimeUnit = getBaseTimeUnit;
+		windowSize = baseTimeUnit.convert(size.time, size.unit);
+				
+		if (advance != null) {
+			windowAdvance = baseTimeUnit.convert(advance.time, advance.unit);
+		}		
+	}	
+	
+	on processNext(Tuple tuple, int port) {
+		ITimeInterval time = tuple.metadata;
+		
+		PointInTime end = null;
+		if (advance != null) {
+			end = new PointInTime((time.start.mainPoint / windowAdvance) * windowAdvance + windowSize);
+		} else {
+			end = time.start.sum(windowSize);
+		}		
+		
+		if (end.after(time.start)) {
+			time.end = end;
+			sendStreamElement(tuple);
+		}
+	}
+	
+	on processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
+	ao getBaseTimeUnit : TimeUnit {
+		TimeUnit baseTimeUnit = TimeUnit::MILLISECONDS;
+		SDFConstraint c = getInputSchema(0).getConstraint(SDFConstraint::BASE_TIME_UNIT);
+		if (c != null) {
+			baseTimeUnit = c.value;
+		} else {
+			Collection attrs = getInputSchema(0).getSDFDatatypeAttributes(SDFDatatype::START_TIMESTAMP);
+			if (attrs.isEmpty) {
+				attrs = getInputSchema(0).getSDFDatatypeAttributes(SDFDatatype::START_TIMESTAMP_STRING);
+			}
+			if (attrs.size > 0) {
+				SDFAttribute attr = attrs.iterator.next;
+				SDFConstraint constr = attr.getDtConstraint(SDFConstraint::BASE_TIME_UNIT);
+				if (constr != null) {
+					baseTimeUnit = constr.value;
+				}
+			}
+		}
+		return baseTimeUnit;
+	}
+	
+}

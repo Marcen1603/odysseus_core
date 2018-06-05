@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OdysseusNet Broadcast Discovery
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.discovery.broadcast
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn
+Require-Bundle: org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.slf4j,
+ com.google.guava;bundle-version="18.0.0",
+ io.netty,
+ de.uniol.inf.is.odysseus.net.discovery,
+ de.uniol.inf.is.odysseus.net,
+ org.json,
+ de.uniol.inf.is.odysseus.net.config,
+ de.uniol.inf.is.odysseus.net.connect,
+ de.uniol.inf.is.odysseus.net.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/broadcastNodeDiscoverer.xml,
+ OSGI-INF/BroadcastDiscoveryPlugInt.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.discovery.broadcast

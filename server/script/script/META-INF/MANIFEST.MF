@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: QueryTextEditor Parser
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.script.parser;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.script.parser.activator.Activator
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.core.server.sla,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
+ de.uniol.inf.is.odysseus.mep,
+ org.eclipse.core.runtime,
+ org.eclipse.core.runtime.jobs,
+ org.eclipse.osgi.framework.console;version="1.1.0",
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ com.google.guava;bundle-version="12.0.0"
+Export-Package: de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.script.parser.keyword,
+ de.uniol.inf.is.odysseus.script.parser.parameter
+Service-Component: OSGI-INF/PreParserKeywordProvider.xml, OSGI-INF/OdysseusScriptParser.xml,OSGI-INF/Executor.xml,OSGI-INF/odysseusScriptConfig.xml,OSGI-INF/querySharingConfigSetting.xml,OSGI-INF/distributeConfigSetting.xml,OSGI-INF/ReplacementProviderManager.xml,OSGI-INF/SystemPropertyReplacementProvider.xml,OSGI-INF/OdysseusScriptConsole.xml,
+ OSGI-INF/RecoveryConfigKeyword.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.script.parser
+Bundle-ActivationPolicy: lazy

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.net.resource.Manager">
+   <implementation class="de.uniol.inf.is.odysseus.net.resource.impl.OdysseusNodeResourceUsageManager"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager"/>
+   </service>
+   <reference bind="bindOdysseusNodeCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator" name="IOdysseusNodeCommunicator" policy="dynamic"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindExecutor"/>
+</scr:component>

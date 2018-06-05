@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Derby Database Support
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.datasource.derby
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: de.uniol.inf.is.odysseus.database,
+ org.apache.derby;bundle-version="10.5.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.derby

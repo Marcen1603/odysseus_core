@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Generic Generaor
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.generator.generic;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.generator.generic.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.eclipse.equinox.app;version="1.1.0",
+ org.eclipse.osgi.framework.console;version="1.1.0",
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.generator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.generator.generic

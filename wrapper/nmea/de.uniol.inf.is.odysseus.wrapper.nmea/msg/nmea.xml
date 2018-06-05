@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NMEA2000>
+	
+	<Message PGN="126992" Name="System Time" Length="8">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unit="None" Scale="1" Description="Sequence ID" Unsigned="true" />
+		<Field Name="Source" BitOffset="8" BitLength="4" Format="None" Unit="None" Scale="1" Description="0 = GPS" Unsigned="true" />
+		<Field Name="Reserved" BitOffset="12" BitLength="4" Format="None" Unit="None" Scale="1" Description="Reserved" Unsigned="true" />
+		<Field Name="Date" BitOffset="16" BitLength="16" Format="Date" Unit="None" Scale="1" Description="Days since January 1, 1970" Unsigned="true" />
+		<Field Name="Time" BitOffset="32" BitLength="32" Format="Time" Unit="None" Scale="0.0001" Description="0 = midnight, range allows for leap seconds, resolution 100 microseconds" Unsigned="true" />
+	</Message>
+	
+	<Message PGN="127251" Name="Rate of Turn" Length="5">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unsigned="true" Unit="None" Scale="1" Description="Sequence ID" />
+		<Field Name="Rate" BitOffset="8" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="degrees/s, resolution = 1e-8" />
+	</Message>
+	
+	<Message PGN="127250" Name="Vessel Heading" Length="8">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unsigned="true" Unit="None" Scale="1" Description="Sequence ID" />
+		<Field Name="Heading" BitOffset="8" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="0..2*pi, resolution = 0.0001" />
+		<Field Name="Deviation" BitOffset="24" BitLength="16" Format="Heading" Unsigned="false" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="Variation" BitOffset="40" BitLength="16" Format="Heading" Unsigned="false" Unit="Degrees" Scale="0.0057295779513082332" Description="-pi..pi, resolution = 0.0001" />
+		<Field Name="Reference" BitOffset="56" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="">
+			<Value Value="0" Name="True" />
+            <Value Value="1" Name="Magnetic" />
+		</Field>
+	</Message>
+	
+	<Message PGN="127258" Name="Magnetic Variation" Length="6">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unsigned="true" Unit="None" Scale="1" Description="Sequence ID" />
+		<Field Name="Source" BitOffset="8" BitLength="4" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Manual entry" />
+            <Value Value="5" Name="WMM2005" />
+		</Field>
+		<Field Name="Reserved" BitOffset="12" BitLength="4" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="Age of service" BitOffset="16" BitLength="16" Format="Date" Unsigned="true" Unit="None" Scale="1" Description="Days since January 1, 1970" />
+		<Field Name="Variation" BitOffset="32" BitLength="16" Format="Heading" Unsigned="false" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+	</Message>
+	
+	<Message PGN="129025" Name="Position, Rapid Update" Length="8">
+		<Field Name="Latitude" BitOffset="0" BitLength="32" Format="Latitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is North, 10e-7 degrees" />
+		<Field Name="Longitude" BitOffset="32" BitLength="32" Format="Longitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is East, 10e-7 degrees" />
+	</Message>
+	
+	<Message PGN="129026" Name="COG and SOG, Rapid Update" Length="8">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unsigned="true" Unit="None" Scale="1" Description="Sequence ID" />
+		<Field Name="COG Reference" BitOffset="8" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="True" />
+            <Value Value="1" Name="Magnetic" />
+		</Field>
+		<Field Name="Reserved" BitOffset="10" BitLength="6" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="COG" BitOffset="16" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="SOG" BitOffset="32" BitLength="16" Format="Speed" Unsigned="true" Unit="mps" Scale="0.01" Description="" />
+		<Field Name="Reserved" BitOffset="48" BitLength="16" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+	</Message>
+	
+	<Message PGN="129029" Name="GNSS Position Data" Length="43">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unsigned="true" Unit="None" Scale="1" Description="Sequence ID" />
+		<Field Name="Date" BitOffset="8" BitLength="16" Format="Date" Unit="None" Scale="1" Description="Days since January 1, 1970" Unsigned="true" />
+		<Field Name="Time" BitOffset="24" BitLength="32" Format="Time" Unit="None" Scale="0.0001" Description="0 = midnight, range allows for leap seconds, resolution 100 microseconds" Unsigned="true" />
+		<Field Name="Latitude" BitOffset="56" BitLength="64" Format="Latitude" Unsigned="false" Unit="Degrees" Scale="1E-16" Description="Positive is North, 10e-16 degrees" />
+		<Field Name="Longitude" BitOffset="120" BitLength="64" Format="Longitude" Unsigned="false" Unit="Degrees" Scale="1E-16" Description="Positive is East, 10e-16 degrees" />
+		<Field Name="Altitude" BitOffset="184" BitLength="64" Format="None" Unsigned="false" Unit="m" Scale="1E-06" Description="" />
+		<Field Name="GNSS type" BitOffset="248" BitLength="4" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="GPS" />
+			<Value Value="1" Name="GLONASS" />
+			<Value Value="2" Name="GPS+GLONASS" />
+			<Value Value="3" Name="GPS+SBAS/WAAS" />
+			<Value Value="4" Name="GPS+SBAS/WAAS+GLONASS" />
+			<Value Value="5" Name="Chayka" />
+			<Value Value="6" Name="integrated" />
+			<Value Value="7" Name="surveyed" />
+			<Value Value="8" Name="Galileo" />
+		</Field>
+		<Field Name="Method" BitOffset="252" BitLength="4" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value='0' Name='no GNSS' />
+            <Value Value='1' Name='GNSS fix' />
+            <Value Value='2' Name='DGNSS fix' />
+            <Value Value='3' Name='Precise GNSS' />
+            <Value Value='4' Name='RTK Fixed Integer' />
+            <Value Value='5' Name='RTK float' />
+            <Value Value='6' Name='Estimated (DR) mode' />
+            <Value Value='7' Name='Manual Input' />
+            <Value Value='8' Name='Simulate mode' />
+		</Field>
+		<Field Name="Integrity" BitOffset="256" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="">
+			<Value Value='0' Name='No integrity checking' />
+            <Value Value='1' Name='Safe' />
+            <Value Value='2' Name='Caution' />
+		</Field>
+		<Field Name="Reserved" BitOffset="258" BitLength="6" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="Number of SVs" BitOffset="264" BitLength="8" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Number of satellites used in solution" />
+		<Field Name="HDOP" BitOffset="272" BitLength="16" Format="None" Unsigned="false" Unit="None" Scale="0.01" Description="Horizontal dilution of precision" />
+		<Field Name="PDOP" BitOffset="288" BitLength="16" Format="None" Unsigned="false" Unit="None" Scale="0.01" Description="Probable dilution of precision" />
+		<Field Name="Geoidal Separation" BitOffset="304" BitLength="16" Format="None" Unsigned="false" Unit="None" Scale="0.01" Description="Geoidal Separation" />
+	</Message>
+	
+	<Message PGN="129033" Name="Time and Date" Length="6">
+		<Field Name="Date" BitOffset="0" BitLength="16" Format="Date" Unit="None" Scale="1" Description="Days since January 1, 1970" Unsigned="true" />
+		<Field Name="Time" BitOffset="16" BitLength="32" Format="Time" Unit="None" Scale="0.0001" Description="0 = midnight, range allows for leap seconds, resolution 100 microseconds" Unsigned="true" />
+	</Message>
+	
+	<Message PGN="129038" Name="AIS Class A Position Report" Length="27">
+		<Field Name="Message ID" BitOffset="0" BitLength="6" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Repeat Indicator" BitOffset="6" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Initial" />
+			<Value Value="1" Name="First retransmission" />
+			<Value Value="2" Name="Second retransmission" />
+			<Value Value="3" Name="Final retransmission" />
+		</Field>
+		<Field Name="MMSI" BitOffset="8" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="Longitude" BitOffset="40" BitLength="32" Format="Longitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is North, 10e-7 degrees" />
+		<Field Name="Latitude" BitOffset="72" BitLength="32" Format="Latitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is East, 10e-7 degrees" />
+		<Field Name="Position Accuracy" BitOffset="104" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="">
+			<Value Value='0' Name='Low' />
+            <Value Value='1' Name='High' />
+		</Field>
+		<Field Name="RAIM" BitOffset="105" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="">
+			<Value Value='0' Name='not in use' />
+            <Value Value='1' Name='in use' />
+		</Field>
+		<Field Name="Time Stamp" BitOffset="106" BitLength="6" Format="Seconds" Unsigned="true" Unit="sec" Scale="1" Description="" />
+		<Field Name="COG" BitOffset="112" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="SOG" BitOffset="128" BitLength="16" Format="Speed" Unsigned="true" Unit="mps" Scale="0.01" Description="" />
+		<Field Name="Communication  State" BitOffset="144" BitLength="19" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Information used by the TDMA slot allocation algorithm and synchronization information" />
+		<Field Name="AIS Transceiver information" BitOffset="163" BitLength="5" Format="Enum" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="">
+			<Value Value='0' Name='Channel A VDL reception' />
+            <Value Value='1' Name='Channel B VDL reception' />
+            <Value Value='2' Name='Channel A VDL transmission' />
+            <Value Value='3' Name='Channel B VDL transmission' />
+            <Value Value='4' Name='Own information not broadcast' />
+            <Value Value='5' Name='Reserved' />
+		</Field>
+		<Field Name="Heading" BitOffset="168" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="0..2*pi, resolution = 0.0001" />
+		<Field Name="Rate of Turn" BitOffset="184" BitLength="16" Format="Radians" Unsigned="true" Unit="Radian" Scale="0.00179049" Description="" />
+		<Field Name="Nav Status" BitOffset="200" BitLength="4" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="">
+			<Value Value='0' Name='Under way using engine' />
+            <Value Value='1' Name='At anchor' />
+            <Value Value='2' Name='Not under command' />
+            <Value Value='3' Name='Restricted manoeuverability' />
+            <Value Value='4' Name='Constrained by her draught' />
+            <Value Value='5' Name='Moored' />
+            <Value Value='6' Name='Aground' />
+            <Value Value='7' Name='Engaged in Fishing' />
+            <Value Value='8' Name='Under way sailing' />
+            <Value Value='9' Name='Hazardous material' />
+            <Value Value='10' Name='Hazardous material' />
+            <Value Value='14' Name='AIS-SART' />
+		</Field>
+		<Field Name="Reserved" BitOffset="204" BitLength="4" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="Regional Application" BitOffset="208" BitLength="1" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Reserved" BitOffset="209" BitLength="7" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+	</Message>
+	
+	<Message PGN="129039" Name="AIS Class B Position Report" Length="26">
+		<Field Name="Message ID" BitOffset="0" BitLength="6" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Repeat Indicator" BitOffset="6" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Initial" />
+			<Value Value="1" Name="First retransmission" />
+			<Value Value="2" Name="Second retransmission" />
+			<Value Value="3" Name="Final retransmission" />
+		</Field>
+		<Field Name="MMSI" BitOffset="8" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="Longitude" BitOffset="40" BitLength="32" Format="Longitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is North, 10e-7 degrees" />
+		<Field Name="Latitude" BitOffset="72" BitLength="32" Format="Latitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is East, 10e-7 degrees" />
+		<Field Name="Position Accuracy" BitOffset="104" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Low" />
+			<Value Value="1" Name="High" />
+		</Field>
+		<Field Name="RAIM" BitOffset="105" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="not in use" />
+			<Value Value="1" Name="in use" />
+		</Field>
+		<Field Name="Time Stamp" BitOffset="106" BitLength="6" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="0-59 = UTC second when the report was generated" >
+			<Value Value="60" Name="Not available" />
+			<Value Value="61" Name="Manual input mode" />
+			<Value Value="62" Name="Dead reckoning mode" />
+			<Value Value="63" Name="Positioning system is inoperative" />
+		</Field>
+		<Field Name="COG" BitOffset="112" BitLength="16" Format="Heading" Unsigned="false" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="SOG" BitOffset="128" BitLength="16" Format="Speed" Unsigned="true" Unit="mps" Scale="0.01" Description="" />
+		<Field Name="Communication State" BitOffset="144" BitLength="19" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="AIS Transceiver information" BitOffset="163" BitLength="5" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Channel A VDL reception" />
+			<Value Value="1" Name="Channel B VDL reception" />
+			<Value Value="2" Name="Channel A VDL transmission" />
+			<Value Value="3" Name="Channel B VDL transmission" />
+			<Value Value="4" Name="Own information not broadcast" />
+			<Value Value='5' Name='Reserved' />
+		</Field>
+		<Field Name="True Heading" BitOffset="168" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="Regional Application" BitOffset="184" BitLength="8" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Regional Application 2" BitOffset="192" BitLength="2" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Unit type" BitOffset="194" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="SOTDMA" />
+			<Value Value="1" Name="CS" />
+		</Field>
+		<Field Name="Integrated Display" BitOffset="195" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="Whether the unit can show messages 12 and 14" >
+			<Value Value="0" Name="No" />
+			<Value Value="1" Name="Yes" />
+		</Field>
+		<Field Name="DSC" BitOffset="196" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="No" />
+			<Value Value="1" Name="Yes" />
+		</Field>
+		<Field Name="Band" BitOffset="197" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="top 525 kHz or marine band" />
+			<Value Value="1" Name="entire marine band" />
+		</Field>
+		<Field Name="Can handle Msg 22" BitOffset="198" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="Whether device supports message 22" >
+			<Value Value="0" Name="No" />
+			<Value Value="1" Name="Yes" />
+		</Field>
+		<Field Name="AIS mode" BitOffset="199" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Autonomous" />
+			<Value Value="1" Name="Assigned" />
+		</Field>
+		<Field Name="AIS communication state" BitOffset="200" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="SOTDMA" />
+			<Value Value="1" Name="ITDMA" />
+		</Field>
+	</Message>
+	
+	<Message PGN="129040" Name="AIS Class B Extended Position Report" Length="54">
+		<Field Name="Message ID" BitOffset="0" BitLength="6" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Repeat Indicator" BitOffset="6" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Initial" />
+			<Value Value="1" Name="First retransmission" />
+			<Value Value="2" Name="Second retransmission" />
+			<Value Value="3" Name="Final retransmission" />
+		</Field>
+		<Field Name="MMSI" BitOffset="8" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="Latitude" BitOffset="40" BitLength="32" Format="Latitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is North, 10e-7 degrees" />
+		<Field Name="Longitude" BitOffset="72" BitLength="32" Format="Longitude" Unsigned="false" Unit="Degrees" Scale="1E-07" Description="Positive is East, 10e-7 degrees" />
+		<Field Name="Position Accuracy" BitOffset="104" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Low" />
+			<Value Value="1" Name="High" />
+		</Field>
+		<Field Name="RAIM" BitOffset="105" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="not in use" />
+			<Value Value="1" Name="in use" />
+		</Field>
+		<Field Name="Time Stamp" BitOffset="106" BitLength="6" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="0-59 = UTC second when the report was generated" >
+			<Value Value="60" Name="Not available" />
+			<Value Value="61" Name="Manual input mode" />
+			<Value Value="62" Name="Dead reckoning mode" />
+			<Value Value="63" Name="Positioning system is inoperative" />
+		</Field>
+		<Field Name="COG" BitOffset="112" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="SOG" BitOffset="128" BitLength="16" Format="Speed" Unsigned="true" Unit="mps" Scale="0.01" Description="" />
+		<Field Name="Regional Application" BitOffset="144" BitLength="8" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Regional Application 2" BitOffset="152" BitLength="4" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Reserved" BitOffset="156" BitLength="4" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="Type of ship" BitOffset="160" BitLength="8" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="unavailable" />
+            <Value Value="20" Name="Wing In Ground" />
+            <Value Value="29" Name="Wing In Ground (no other information)" />
+            <Value Value="30" Name="Fishing" />
+            <Value Value="31" Name="Towing" />
+            <Value Value="32" Name="Towing exceeds 200m or wider than 25m" />
+            <Value Value="33" Name="Engaged in dredging or underwater operations" />
+            <Value Value="34" Name="Engaged in diving operations" />
+            <Value Value="35" Name="Engaged in military operations" />
+            <Value Value="36" Name="Sailing" />
+            <Value Value="37" Name="Pleasure" />
+            <Value Value="40" Name="High speed craft" />
+            <Value Value="71" Name="Cargo ship carrying dangerous goods" />
+            <Value Value="72" Name="Cargo ship hazard cat B" />
+            <Value Value="73" Name="Cargo ship hazard cat C" />
+            <Value Value="74" Name="Cargo ship hazard cat D" />
+            <Value Value="79" Name="Cargo ship (no additional information)" />
+            <Value Value="50" Name="Pilot vessel" />
+            <Value Value="51" Name="SAR" />
+            <Value Value="52" Name="Tug" />
+            <Value Value="53" Name="Port tender" />
+            <Value Value="54" Name="Anti-pollution" />
+            <Value Value="55" Name="Law enforcement" />
+            <Value Value="56" Name="Spare" />
+            <Value Value="57" Name="Spare #2" />
+            <Value Value="58" Name="Medical" />
+            <Value Value="59" Name="RR Resolution No.18" />
+            <Value Value="60" Name="Passenger ship" />
+            <Value Value="69" Name="Passenger ship (no additional information)" />
+            <Value Value="70" Name="Cargo ship" />
+            <Value Value="80" Name="Tanker" />
+            <Value Value="81" Name="Tanker carrying dangerous goods" />
+            <Value Value="82" Name="Tanker hazard cat B" />
+            <Value Value="83" Name="Tanker hazard cat C" />
+            <Value Value="84" Name="Tanker hazard cat D" />
+            <Value Value="89" Name="Tanker (no additional information)" />
+            <Value Value="90" Name="Other" />
+            <Value Value="91" Name="Other carrying dangerous goods" />
+            <Value Value="92" Name="Other hazard cat B" />
+            <Value Value="93" Name="Other hazard cat C" />
+            <Value Value="94" Name="Other hazard cat D" />
+            <Value Value="99" Name="Other (no additional information)" />
+		</Field>
+		<Field Name="True Heading" BitOffset="168" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="Reserved" BitOffset="184" BitLength="4" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="GNSS type" BitOffset="188" BitLength="4" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Undefined" />
+			<Value Value="1" Name="GPS" />
+			<Value Value="2" Name="GLONASS" />
+			<Value Value="3" Name="GPS+GLONASS" />
+			<Value Value="4" Name="Loran-C" />
+			<Value Value="5" Name="Chayka" />
+			<Value Value="6" Name="integrated" />
+			<Value Value="7" Name="surveyed" />
+			<Value Value="8" Name="Galileo" />
+		</Field>
+		<Field Name="Length" BitOffset="192" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Beam" BitOffset="208" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Position reference from Starboard" BitOffset="224" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Position reference from Bow" BitOffset="240" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Name" BitOffset="256" BitLength="160" Format="ASCII" Unsigned="true" Unit="None" Scale="1" Description="0 = unavailable" />
+		<Field Name="DTE" BitOffset="416" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Available" />
+			<Value Value="1" Name="Not available" />
+		</Field>
+		<Field Name="AIS mode" BitOffset="417" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Autonomous" />
+			<Value Value="1" Name="Assigned" />
+		</Field>
+		<Field Name="Reserved" BitOffset="418" BitLength="4" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="AIS Transceiver information" BitOffset="422" BitLength="5" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Channel A VDL reception" />
+			<Value Value="1" Name="Channel B VDL reception" />
+			<Value Value="2" Name="Channel A VDL transmission" />
+			<Value Value="3" Name="Channel B VDL transmission" />
+			<Value Value="4" Name="Own information not broadcast" />
+		</Field>
+	</Message>
+	
+	<Message PGN="129539" Name="GNSS DOPs" Length="8">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unsigned="true" Unit="None" Scale="1" Description="Sequence ID" />
+		<Field Name="Desired Mode" BitOffset="8" BitLength="3" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="1D" />
+            <Value Value="1" Name="2D" />
+            <Value Value="2" Name="3D" />
+            <Value Value="3" Name="Auto" />
+            <Value Value="4" Name="Reserved" />
+            <Value Value="5" Name="Reserved" />
+            <Value Value="6" Name="Error" />
+		</Field>
+		<Field Name="Actual Mode" BitOffset="11" BitLength="3" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="1D" />
+            <Value Value="1" Name="2D" />
+            <Value Value="2" Name="3D" />
+            <Value Value="3" Name="Auto" />
+            <Value Value="4" Name="Reserved" />
+            <Value Value="5" Name="Reserved" />
+            <Value Value="6" Name="Error" />
+		</Field>
+		<Field Name="Reserved" BitOffset="14" BitLength="2" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="HDOP" BitOffset="16" BitLength="16" Format="None" Unsigned="false" Unit="None" Scale="0.01" Description="Horizontal dilution of precision" />
+		<Field Name="VDOP" BitOffset="32" BitLength="16" Format="None" Unsigned="false" Unit="None" Scale="0.01" Description="Vertical dilution of precision" />
+		<Field Name="TDOP" BitOffset="48" BitLength="16" Format="None" Unsigned="false" Unit="None" Scale="0.01" Description="Time dilution of precision" />
+	</Message>
+	
+	<Message PGN="129794" Name="AIS Class A Static and Voyage Related Data" Length="75">
+		<Field Name="Message ID" BitOffset="0" BitLength="6" Format="None" Unsigned="true" Unit="None" Scale="1" Description="" />
+		<Field Name="Repeat Indicator" BitOffset="6" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Initial" />
+			<Value Value="1" Name="First retransmission" />
+			<Value Value="2" Name="Second retransmission" />
+			<Value Value="3" Name="Final retransmission" />
+		</Field>
+		<Field Name="MMSI" BitOffset="8" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="IMO number" BitOffset="40" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="Callsign" BitOffset="72" BitLength="56" Format="ASCII" Unsigned="true" Unit="None" Scale="1" Description="0 = unavailable" />
+		<Field Name="Name" BitOffset="128" BitLength="160" Format="ASCII" Unsigned="true" Unit="None" Scale="1" Description="0 = unavailable" />
+		<Field Name="Type of ship" BitOffset="288" BitLength="8" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="unavailable" />
+            <Value Value="20" Name="Wing In Ground" />
+            <Value Value="29" Name="Wing In Ground (no other information)" />
+            <Value Value="30" Name="Fishing" />
+            <Value Value="31" Name="Towing" />
+            <Value Value="32" Name="Towing exceeds 200m or wider than 25m" />
+            <Value Value="33" Name="Engaged in dredging or underwater operations" />
+            <Value Value="34" Name="Engaged in diving operations" />
+            <Value Value="35" Name="Engaged in military operations" />
+            <Value Value="36" Name="Sailing" />
+            <Value Value="37" Name="Pleasure" />
+            <Value Value="40" Name="High speed craft" />
+            <Value Value="71" Name="Cargo ship carrying dangerous goods" />
+            <Value Value="72" Name="Cargo ship hazard cat B" />
+            <Value Value="73" Name="Cargo ship hazard cat C" />
+            <Value Value="74" Name="Cargo ship hazard cat D" />
+            <Value Value="79" Name="Cargo ship (no additional information)" />
+            <Value Value="50" Name="Pilot vessel" />
+            <Value Value="51" Name="SAR" />
+            <Value Value="52" Name="Tug" />
+            <Value Value="53" Name="Port tender" />
+            <Value Value="54" Name="Anti-pollution" />
+            <Value Value="55" Name="Law enforcement" />
+            <Value Value="56" Name="Spare" />
+            <Value Value="57" Name="Spare #2" />
+            <Value Value="58" Name="Medical" />
+            <Value Value="59" Name="RR Resolution No.18" />
+            <Value Value="60" Name="Passenger ship" />
+            <Value Value="69" Name="Passenger ship (no additional information)" />
+            <Value Value="70" Name="Cargo ship" />
+            <Value Value="80" Name="Tanker" />
+            <Value Value="81" Name="Tanker carrying dangerous goods" />
+            <Value Value="82" Name="Tanker hazard cat B" />
+            <Value Value="83" Name="Tanker hazard cat C" />
+            <Value Value="84" Name="Tanker hazard cat D" />
+            <Value Value="89" Name="Tanker (no additional information)" />
+            <Value Value="90" Name="Other" />
+            <Value Value="91" Name="Other carrying dangerous goods" />
+            <Value Value="92" Name="Other hazard cat B" />
+            <Value Value="93" Name="Other hazard cat C" />
+            <Value Value="94" Name="Other hazard cat D" />
+            <Value Value="99" Name="Other (no additional information)" />
+		</Field>
+		<Field Name="Length" BitOffset="296" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Beam" BitOffset="312" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Position reference from Starboard" BitOffset="328" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Position reference from Bow" BitOffset="344" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.1" Description="" />
+		<Field Name="ETA Date" BitOffset="360" BitLength="16" Format="Date" Unit="None" Scale="1" Description="Days since January 1, 1970" Unsigned="true" />
+		<Field Name="ETA Time" BitOffset="376" BitLength="32" Format="Time" Unit="None" Scale="0.0001" Description="0 = midnight, range allows for leap seconds, resolution 100 microseconds" Unsigned="true" />
+		<Field Name="Draught" BitOffset="408" BitLength="16" Format="None" Unsigned="false" Unit="m" Scale="0.01" Description="" />
+		<Field Name="Destination" BitOffset="424" BitLength="160" Format="ASCII" Unsigned="true" Unit="None" Scale="1" Description="0 = unavailable" />
+		<Field Name="AIS version indicator" BitOffset="584" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="ITU-R M.1371-1" />
+			<Value Value="1" Name="ITU-R M.1371-3" />
+			<Value Value="2" Name="Future" />
+			<Value Value="3" Name="Future" />
+		</Field>
+		<Field Name="GNSS type" BitOffset="586" BitLength="4" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Undefined" />
+			<Value Value="1" Name="GPS" />
+			<Value Value="2" Name="GLONASS" />
+			<Value Value="3" Name="GPS+GLONASS" />
+			<Value Value="4" Name="Loran-C" />
+			<Value Value="5" Name="Chayka" />
+			<Value Value="6" Name="integrated" />
+			<Value Value="7" Name="surveyed" />
+			<Value Value="8" Name="Galileo" />
+		</Field>
+		<Field Name="DTE" BitOffset="590" BitLength="1" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Available" />
+			<Value Value="1" Name="Not available" />
+		</Field>
+		<Field Name="Reserved" BitOffset="591" BitLength="1" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="AIS Transceiver information" BitOffset="592" BitLength="5" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Channel A VDL reception" />
+			<Value Value="1" Name="Channel B VDL reception" />
+			<Value Value="2" Name="Channel A VDL transmission" />
+			<Value Value="3" Name="Channel B VDL transmission" />
+			<Value Value="4" Name="Own information not broadcast" />
+		</Field>
+	</Message>
+	
+	<Message PGN="130306" Name="Wind Data" Length="6">
+		<Field Name="SID" BitOffset="0" BitLength="8" Format="SID" Unsigned="true" Unit="None" Scale="1" Description="Sequence ID" />
+		<Field Name="Wind Speed" BitOffset="8" BitLength="16" Format="None" Unsigned="false" Unit="m p s" Scale="0.01" Description="" />
+		<Field Name="Wind Angle" BitOffset="24" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
+		<Field Name="Reference" BitOffset="40" BitLength="3" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Ground+SOG+True" />
+            <Value Value="1" Name="Ground+SOG+Magnetic" />
+            <Value Value="2" Name="Apparent" />
+            <Value Value="3" Name="True Boat+SOG" />
+            <Value Value="4" Name="True boat" />
+		</Field>
+	</Message>
+		
+	<Message PGN="129810" Name="AIS Class B static data (msg 24 Part B)" Length="33">
+		<Field Name="Message ID" BitOffset="0" BitLength="6" Format="Message ID" Unsigned="true" Unit="None" Scale="1" Description="Message ID" />
+		<Field Name="Repeat Indicator" BitOffset="6" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Initial" />
+			<Value Value="1" Name="First retransmission" />
+			<Value Value="2" Name="Second retransmission" />
+			<Value Value="3" Name="Final retransmission" />
+		</Field>
+		<Field Name="MMSI" BitOffset="8" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="Type of ship" BitOffset="40" BitLength="8" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="unavailable" />
+            <Value Value="20" Name="Wing In Ground" />
+            <Value Value="29" Name="Wing In Ground (no other information)" />
+            <Value Value="30" Name="Fishing" />
+            <Value Value="31" Name="Towing" />
+            <Value Value="32" Name="Towing exceeds 200m or wider than 25m" />
+            <Value Value="33" Name="Engaged in dredging or underwater operations" />
+            <Value Value="34" Name="Engaged in diving operations" />
+            <Value Value="35" Name="Engaged in military operations" />
+            <Value Value="36" Name="Sailing" />
+            <Value Value="37" Name="Pleasure" />
+            <Value Value="40" Name="High speed craft" />
+            <Value Value="71" Name="Cargo ship carrying dangerous goods" />
+            <Value Value="72" Name="Cargo ship hazard cat B" />
+            <Value Value="73" Name="Cargo ship hazard cat C" />
+            <Value Value="74" Name="Cargo ship hazard cat D" />
+            <Value Value="79" Name="Cargo ship (no additional information)" />
+            <Value Value="50" Name="Pilot vessel" />
+            <Value Value="51" Name="SAR" />
+            <Value Value="52" Name="Tug" />
+            <Value Value="53" Name="Port tender" />
+            <Value Value="54" Name="Anti-pollution" />
+            <Value Value="55" Name="Law enforcement" />
+            <Value Value="56" Name="Spare" />
+            <Value Value="57" Name="Spare #2" />
+            <Value Value="58" Name="Medical" />
+            <Value Value="59" Name="RR Resolution No.18" />
+            <Value Value="60" Name="Passenger ship" />
+            <Value Value="69" Name="Passenger ship (no additional information)" />
+            <Value Value="70" Name="Cargo ship" />
+            <Value Value="80" Name="Tanker" />
+            <Value Value="81" Name="Tanker carrying dangerous goods" />
+            <Value Value="82" Name="Tanker hazard cat B" />
+            <Value Value="83" Name="Tanker hazard cat C" />
+            <Value Value="84" Name="Tanker hazard cat D" />
+            <Value Value="89" Name="Tanker (no additional information)" />
+            <Value Value="90" Name="Other" />
+            <Value Value="91" Name="Other carrying dangerous goods" />
+            <Value Value="92" Name="Other hazard cat B" />
+            <Value Value="93" Name="Other hazard cat C" />
+            <Value Value="94" Name="Other hazard cat D" />
+            <Value Value="99" Name="Other (no additional information)" />
+		</Field>
+		<Field Name="Vendor ID" BitOffset="48" BitLength="56" Format="ASCII" Unsigned="true" Unit="ASCII" Scale="1" Description="" />
+		<Field Name="Call Sign" BitOffset="104" BitLength="56" Format="ASCII" Unsigned="true" Unit="ASCII" Scale="1" Description="" />
+		<Field Name="Length" BitOffset="160" BitLength="16" Format="Length" Unsigned="true" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Beam" BitOffset="176" BitLength="16" Format="Beam" Unsigned="true" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Position Reference from Starboard" BitOffset="192" BitLength="16" Format="Beam" Unsigned="true" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Position Reference from Bow" BitOffset="208" BitLength="16" Format="Beam" Unsigned="true" Unit="m" Scale="0.1" Description="" />
+		<Field Name="Mothership MMSI" BitOffset="224" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="Reserved" BitOffset="256" BitLength="2" Format="None" Unsigned="true" Unit="None" Scale="1" Description="Reserved" />
+		<Field Name="Spare" BitOffset="258" BitLength="6" Format="None" Unsigned="true" Unit="None" Scale="0.1" Description="0 = unavailable" />
+	</Message>
+	<Message PGN="129809" Name="AIS Class B static data (msg 24 Part A)" Length="25">
+		<Field Name="Message ID" BitOffset="0" BitLength="6" Format="Message ID" Unsigned="true" Unit="None" Scale="1" Description="Message ID" />
+		<Field Name="Repeat Indicator" BitOffset="6" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="" >
+			<Value Value="0" Name="Initial" />
+			<Value Value="1" Name="First retransmission" />
+			<Value Value="2" Name="Second retransmission" />
+			<Value Value="3" Name="Final retransmission" />
+		</Field>
+		<Field Name="MMSI" BitOffset="8" BitLength="32" Format="None" Unsigned="false" Unit="None" Scale="1" Description="" />
+		<Field Name="Name" BitOffset="40" BitLength="160" Format="ASCII" Unsigned="true" Unit="ASCII" Scale="1" Description="" />
+	</Message>
+</NMEA2000>

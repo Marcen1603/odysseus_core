@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.10" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="MANHATTAN">  
+  <class id="1" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.physicaloperator.NeuralNetworkLearnerPO" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/physicaloperator/NeuralNetworkLearnerPO.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="184" y="198"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.physicaloperator.NeuralNetworkPO" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/physicaloperator/NeuralNetworkPO.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="471" y="198"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe" 
+    project="de.uniol.inf.is.odysseus.core.server" 
+    file="/de.uniol.inf.is.odysseus.core.server/src/de/uniol/inf/is/odysseus/core/server/physicaloperator/AbstractPipe.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="321" y="105"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="4" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.networks.INeuralNetwork" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/networks/INeuralNetwork.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="471" y="291"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </interface>  
+  <interface id="5" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.strategy.IStrategy" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/strategy/IStrategy.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="184" y="291"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="6" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.networks.EncogNeuralNetwork" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/networks/EncogNeuralNetwork.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="471" y="378"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.strategy.DefaultStrategy" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/strategy/DefaultStrategy.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="184" y="381"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.util.DataNormalizer" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/util/DataNormalizer.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="723" y="414"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.util.DataConverter" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/util/DataConverter.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="723" y="338"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="10" language="java" name="de.uniol.inf.is.odysseus.neuralnetworks.networks.INeuralNetwork.Task" 
+    project="de.uniol.inf.is.odysseus.neuralnetworks" 
+    file="/de.uniol.inf.is.odysseus.neuralnetworks/src/de/uniol/inf/is/odysseus/neuralnetworks/networks/INeuralNetwork.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="722" y="260"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </enumeration>  
+  <note id="11">    
+    <position height="58" width="137" x="24" y="27"/>    
+    <text><![CDATA[Wird von
+Odysseus
+bereitgestellt]]>
+    </text>  
+  </note>  
+  <note id="12">    
+    <position height="24" width="78" x="553" y="454"/>    
+    <background red="255" green="255" blue="255"/>    
+    <text><![CDATA[<<usage>>]]>
+    </text>  
+  </note>  
+  <dependency id="13">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="14">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <dependency id="15">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <association id="16">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="17" name="network"/>      
+      <multiplicity id="18" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <dependency id="20">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <nesting id="21">    
+    <bendpoint x="724" y="295"/>    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </nesting>  
+  <realization id="22">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <text-link id="23">    
+    <link-end type="SOURCE" refId="11"/>    
+    <link-end type="TARGET" refId="3"/>  
+  </text-link>  
+  <generalization id="24">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="25">    
+    <end type="SOURCE" refId="1" navigable="false" variant="ASSOCIATION">      
+      <attribute id="26" name="STRATEGY"/>      
+      <multiplicity id="27" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true" variant="ASSOCIATION"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <realization id="28">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="4"/>  
+  </realization>  
+  <text-link id="29">    
+    <link-end type="SOURCE" refId="12"/>    
+    <link-end type="TARGET" refId="13"/>  
+  </text-link>  
+  <text-link id="30">    
+    <link-end type="SOURCE" refId="12"/>    
+    <link-end type="TARGET" refId="14"/>  
+  </text-link>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="false" package="false" protected="false" private="false" static="true"/>    
+    <operations public="false" package="false" protected="false" private="false" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

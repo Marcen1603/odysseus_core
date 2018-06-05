@@ -1,0 +1,16 @@
+#PARSER PQL
+#RUNQUERY
+PxXxwindfarmidxXx:xXxwkaidxXx := ACCESS({Source='PxXxwindfarmidxXx:xXxwkaidxXx', Wrapper='GenericPush',
+        Schema=[['id','INTEGER'],
+        		['timestamp ','Starttimestamp'],
+                ['wind_speed','DOUBLE'],
+                ['corrected_score','DOUBLE'],
+                ['wind_direction','DOUBLE'],
+                ['gier_angle','DOUBLE'],
+                ['rotational_speed','DOUBLE'],
+                ['phase_shift','DOUBLE'],
+                ['pitch_angle','DOUBLE']],
+                transport='NonBlockingTcp',
+                protocol='SizeByteBuffer',
+                dataHandler='Tuple',
+                Options=[['port','xXxportxXx'], ['host','xXxhostxXx']]})

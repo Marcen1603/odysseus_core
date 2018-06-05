@@ -1,0 +1,21 @@
+#PARSER PQL
+#RUNQUERY
+
+
+input = ACCESS({source='source', 
+  wrapper='GenericPush',
+  transport='Camera',
+  protocol='None',
+  dataHandler='Tuple',
+  options=[['deviceid','0']],
+  schema=[['frame','Image']]
+})
+
+data = MAP({EXPRESSIONS = ['faceDetection(Content)']},input)
+
+output = SENDER({sink='Sink', 
+  wrapper='GenericPush',
+  transport='Camera',
+  protocol='None',
+  dataHandler='Tuple'
+}, data)

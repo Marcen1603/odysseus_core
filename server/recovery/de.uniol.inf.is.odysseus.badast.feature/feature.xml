@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.uniol.inf.is.odysseus.badast.feature"
+      label="BaDaSt Feature"
+      version="1.0.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.7.16" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.script.parser" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.badast" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi" version="3.10.101" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server.console" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.app" version="1.3.300" match="greaterOrEqual"/>
+      <import plugin="org.apache.kafka" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.badast.application" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.zookeeper" version="3.4.6" match="greaterOrEqual"/>
+      <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
+      <import plugin="io.netty" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="org.eclipse.equinox.registry" version="3.4.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.common" version="3.2.0" match="compatible"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.io" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.updater" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.metadata" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.metadata.repository" version="1.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.preferences"/>
+      <import plugin="com.google.guava" version="14.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi" version="3.7.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.common" version="3.7.0" match="compatible"/>
+      <import plugin="org.eclipse.core.jobs" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.preferences" version="3.4.0" match="compatible"/>
+      <import plugin="org.eclipse.core.contenttype" version="3.3.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.app" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.core" version="2.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.engine" version="2.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.operations" version="2.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.artifact.repository" version="1.1.101" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.repository" version="2.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.updatechecker" version="1.1.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.updatesite" version="1.0.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.common" version="3.3.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.p2.metadata.repository" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.artifact.repository" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="com.google.protobuf" version="2.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.preferences" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.registry" version="3.2.0" match="compatible"/>
+   </requires>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.badast"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.badast.application"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.badast.kafka"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.osgi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.script.parser"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.app"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.kafka"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.zookeeper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.core.server"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.core.server.console"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="io.netty"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.osgi.services"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.simpleframework.xml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.mep"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.io"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.updater"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.jobs"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.p2.updatechecker"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.p2.updatesite"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="argparse4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.fasterxml.jackson"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.yammer.metrics"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="joptsimple"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="lz4"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.apache.jena.2.13"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.i0itec.zkclient"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.scala-lang.scala"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.xerial.snappy-java"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="javax.xml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.log4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.jboss.netty"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.contenttype"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.registry"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.protobuf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.simpleconfigurator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.console"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.felix.gogo.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.felix.gogo.shell"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.ds"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.compiler"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

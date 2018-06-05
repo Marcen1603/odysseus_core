@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Yahoo Financial
+Bundle-SymbolicName: cc.kuka.odysseus.wrapper.yahoo
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: cc.kuka.odysseus.wrapper.yahoo.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: org.apache.commons.codec,
+ org.apache.commons.logging,
+ org.json,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Service-Component: OSGI-INF/YahooTransportHandler.xml,
+ OSGI-INF/YahooFinanceTransportHandler.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
+Bundle-ClassPath: commons-httpclient-3.1.jar,
+ .
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.yahoo

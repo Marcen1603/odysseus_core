@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.aggregation.Min">
+   <implementation class="de.uniol.inf.is.odysseus.aggregation.functions.impl.Min"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory"/>
+   </service>
+</scr:component>

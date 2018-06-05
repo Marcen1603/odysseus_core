@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.BaseWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.BaseWheelConfigurer"
+            icon="icons/gears.png"
+            name="Wheel">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.Base3DWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.Base3DWheelConfigurer"
+            icon="icons/gears.png"
+            name="3D Wheel">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ColorWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ColorWheelConfigurer"
+            icon="icons/gears.png"
+            name="Color Wheel">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.GaugeWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.GaugeWheelConfigurer"
+            icon="icons/gears.png"
+            name="Gauge Wheel">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.TextWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.TextWheelConfigurer"
+            icon="icons/gears.png"
+            name="Text Wheel">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ArrowWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ArrowWheelConfigurer"
+            icon="icons/gears.png"
+            name="Arrow Wheel">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.LiquidGaugeWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.LiquidGaugeWheelConfigurer"
+            icon="icons/gears.png"
+            name="Liquid Wheel">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.compass.CompassDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.compass.CompassConfigurer"
+            icon="icons/gears.png"
+            name="Compass">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.gauge.LiquidGaugeDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.gauge.LiquidGaugeConfigurer"
+            icon="icons/gears.png"
+            name="Liquid Gauge">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.voronoi.VoronoiDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.voronoi.VoronoiConfigurer"
+            icon="icons/gears.png"
+            name="Voronoi">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorchart.ColorChartDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorchart.ColorChartConfigurer"
+            icon="icons/gears.png"
+            name="Color Chart">
+      </dashboardPart>     
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.quadtree.QuadTreeDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.quadtree.QuadTreeConfigurer"
+            icon="icons/gears.png"
+            name="Quad Tree">
+      </dashboardPart> 
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial.TrackDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial.TrackConfigurer"
+            icon="icons/gears.png"
+            name="Track">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorgrid.ColorGridDashboadPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorgrid.ColorGridConfigurer"
+            icon="icons/gears.png"
+            name="ColorGrid (dashboadPart)">
+      </dashboardPart> 
+   </extension>
+
+</plugin>

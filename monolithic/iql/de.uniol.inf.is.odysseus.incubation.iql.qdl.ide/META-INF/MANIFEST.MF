@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IQL QDL IDE
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.incubation.iql.qdl.ide
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.xtext.ide;bundle-version="2.12.0",
+ de.uniol.inf.is.odysseus.iql.qdl,
+ de.uniol.inf.is.odysseus.iql.basic
+Export-Package: de.uniol.inf.is.odysseus.iql.qdl.ide,
+ de.uniol.inf.is.odysseus.iql.qdl.ide.contentassist.antlr,
+ de.uniol.inf.is.odysseus.iql.qdl.ide.contentassist.antlr.internal
+Automatic-Module-Name: de.uniol.inf.is.odysseus.incubation.iql.qdl.ide

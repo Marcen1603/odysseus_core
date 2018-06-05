@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Distributed Recovery
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.recovery
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.net,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.parser.pql.generator,
+ de.uniol.inf.is.odysseus.net.data,
+ org.json,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ de.uniol.inf.is.odysseus.core.server,
+ com.google.guava;bundle-version="18.0.0",
+ de.uniol.inf.is.odysseus.net.querydistribute
+Export-Package: de.uniol.inf.is.odysseus.net.recovery.backupinfo
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/BackupInformationManager.xml,OSGI-INF/LocalBackupInformationFeeder.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.recovery

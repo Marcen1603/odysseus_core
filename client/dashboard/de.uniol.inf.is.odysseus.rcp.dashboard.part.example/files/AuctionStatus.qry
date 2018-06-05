@@ -1,0 +1,14 @@
+#PARSER CQL
+#TRANSCFG Standard
+#RUNQUERY
+/// Streams
+DROP STREAM nexmark:bid2 IF EXISTS;
+ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL 134.106.56.61 : 65442;
+GRANT READ ON nexmark:bid2 TO Public;
+
+#PARSER PQL
+#RUNQUERY
+windowed = WINDOW({size = 900000, type = 'time'}, ACCESS({source = 'nexmark:bid2'}))
+aggregated = AGGREGATE({group_by=['auction'], aggregations=[ ['COUNT', 'price', 'bidCount', 'long']]}, windowed)
+mapped = MAP({expressions = ['eif(bidCount<2,0, eif(bidCount<10, 1, 2) )', 'bidCount', 'auction']}, aggregated)
+result = RENAME({aliases = ['status', 'bidCount', 'auction']}, mapped)

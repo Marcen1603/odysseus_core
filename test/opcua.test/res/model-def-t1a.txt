@@ -1,0 +1,31 @@
+
+/R/N[1]/_ = I:objects|U:i=85|C:Object|B:s=Root|F:
+/R/N[1]/T/_ = L:en|V:Objects
+/R/N[1]/D/_ = L:en|V:All objects
+/R/N[1]/P/Q = #device_set
+
+/R/N[2]/_ = I:device_set|U:ns=1;i=91|C:Object|B:ns=1;s=devset|F:
+/R/N[2]/T/_ = L:en|V:DeviceSet
+/R/N[2]/D/_ = L:en|V:All devices
+/R/N[2]/P[1]/Q = #base_object_type
+/R/N[2]/P[2]/Q = #bhkw
+
+/R/N[3]/_ = I:bhkw|U:ns=1;i=92|C:Object|B:ns=1;s=bhkw|F:
+/R/N[3]/T/_ = L:en|V:BHKW
+/R/N[3]/D/_ = L:en|V:The heating.
+/R/N[3]/P[1]/Q = #device_type
+/R/N[3]/P[2]/Q = #electrical_power
+/R/N[3]/P[3]/Q = #is_online
+/R/N[3]/P[4]/Q = #set_in_maintenance
+/R/N[3]/P[5]/Q = #vendor
+/R/N[3]/P[6]/Q = #thermal_energy
+
+/R/N[4]/_ = I:thermal_energy|U:ns=1;i=93|C:Variable|B:ns=1;s=ThermalEnergy|F:
+/R/N[4]/T/_ = L:en|V:ThermalEnergy
+/R/N[4]/D/_ = L:en|V:The heating's warmth
+/R/N[4]/P[1]/Q = #eu_range
+/R/N[4]/P[2]/Q = #analog_item_type
+
+/R/N[5]/_ = I:electrical_power|U:ns=1;i=94|C:Variable|B:ns=1;s=CurrentPower|F:
+/R/N[5]/T/_ = L:en|V:CurrentPower
+/R/N[5]/D/_ = L:en|V:The heating's power

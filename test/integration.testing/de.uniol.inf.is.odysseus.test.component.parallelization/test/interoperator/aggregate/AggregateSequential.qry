@@ -1,0 +1,31 @@
+#PARSER PQL
+#ADDQUERY
+ 
+ 
+bid = ACCESS({source='bid',
+		wrapper='GenericPull',
+		transport='File',
+		protocol='CSV',
+		dataHandler='Tuple',
+		options=[['filename', '${BUNDLE-ROOT}\test\testdata\bidTestData.csv']],
+		schema=[
+		['timestamp', 'STARTTIMESTAMP'],
+		['auction', 'INTEGER'],
+		['bidder', 'INTEGER'],
+		['datetime', 'LONG'],
+		['price', 'DOUBLE']]
+		})
+
+windowBid = TIMEWINDOW({SIZE = [1, 'MINUTES'],
+                  advance = [10, 'SECONDS']
+                  }, bid)
+ 
+out = AGGREGATE({ID = 'aggregateId',
+                              aggregations = [
+                                ['SUM', 'price', 'sum_price_bidder']
+                              ],                                                                  
+                            GROUP_BY = ['bidder'],
+                              FASTGROUPING = true                                                                   
+                            },
+                            windowBid
+                          )

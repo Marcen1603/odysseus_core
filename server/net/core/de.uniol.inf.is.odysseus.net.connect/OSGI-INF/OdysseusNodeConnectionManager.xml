@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.net.connect.ConnectionManager">
+   <implementation class="de.uniol.inf.is.odysseus.net.connect.impl.OdysseusNodeConnectionManager"/>
+   <reference bind="bindOdysseusNodeManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNodeManager" name="IOdysseusNodeManager" policy="dynamic" unbind="unbindOdysseusNodeManager"/>
+   <reference bind="bindOdysseusNodeConnectionSelectorManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionSelectorManager" name="IOdysseusNodeConnectionSelectorManager" policy="dynamic" unbind="unbindOdysseusNodeConnectionSelectorManager"/>
+   <reference bind="bindOdysseusNodeConnector" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnector" name="IOdysseusNodeConnector" policy="dynamic" unbind="unbindOdysseusNodeConnector"/>
+   <reference bind="bindOdysseusNodeConnectionManagerListener" cardinality="0..n" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListener" name="IOdysseusNodeConnectionManagerListener" policy="dynamic" unbind="unbindOdysseusNodeConnectionManagerListener"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager"/>
+   </service>
+</scr:component>

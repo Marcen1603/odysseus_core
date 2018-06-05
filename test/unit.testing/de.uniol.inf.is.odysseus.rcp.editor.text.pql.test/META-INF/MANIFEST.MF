@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests of rcp.editor.text.pql
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.text.pql.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor.text.pql,
+ org.eclipse.ui;bundle-version="3.7.0",
+ TestNG6.8
+Import-Package: de.uniol.inf.is.odysseus.testng
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.editor.text.pql.test

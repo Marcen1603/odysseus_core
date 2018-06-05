@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rdf
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rdf
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.mep
+Export-Package: de.uniol.inf.is.odysseus.rdf.datamodel,
+ handler
+Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rdf
+Bundle-ActivationPolicy: lazy

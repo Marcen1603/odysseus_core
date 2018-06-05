@@ -1,0 +1,12 @@
+<trips>
+	<vType id="type1" accel="0.8" decel="4.9" sigma="0.5" length="5" maxSpeed="80"/>
+	<vType id="ente" accel="1.3" decel="8.0" sigma="1" length="7" maxSpeed="200" />
+	
+	<trip id="0" depart="0" from="32820139" to="31824597" type="type1" color="0,1,1"/> 
+	<trip id="1" depart="50" from="30081497#2" to="32479518#1" type="ente" color="1,1,1"/>
+	<trip id="2" depart="100" from="30081497#2" to="32479518#1" type="ente" color="1,1,1"/>
+	<trip id="3" depart="150" from="30081497#2" to="32479518#1" type="ente" color="1,1,1"/>
+	<trip id="4" depart="200" from="30081497#2" to="32479518#1" type="ente" color="1,1,1"/>
+	<trip id="5" depart="250" from="30081497#2" to="32479518#1" type="ente" color="1,1,1"/>
+	
+</trips>

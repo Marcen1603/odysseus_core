@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmmigration.MigrationStrategyRegistry">
+   <implementation class="de.uniol.inf.is.odysseus.planmigration.MigrationStrategyRegistry"/>
+   <reference bind="registerStrategy" cardinality="1..n" interface="de.uniol.inf.is.odysseus.planmigration.IMigrationStrategy" name="IPlanMigrationStrategy" policy="dynamic" unbind="unregisterStrategy"/>
+</scr:component>

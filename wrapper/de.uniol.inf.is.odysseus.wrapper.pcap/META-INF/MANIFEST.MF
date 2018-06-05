@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pcap Wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.pcap
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.jnetpcap;bundle-version="1.3.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j
+Service-Component: OSGI-INF/PcapFileTransportHandler.xml
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.pcap

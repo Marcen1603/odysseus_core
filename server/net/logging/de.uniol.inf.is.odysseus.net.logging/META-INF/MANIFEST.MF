@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Logging
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.logging
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.net.data,
+ org.json,
+ de.uniol.inf.is.odysseus.net,
+ com.google.guava;bundle-version="18.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.net.config,
+ de.uniol.inf.is.odysseus.net.communication
+Service-Component: OSGI-INF/OdysseusNetLoggingComponent.xml,
+ OSGI-INF/LogDestinationDistributedDataListener.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.logging
+Bundle-ActivationPolicy: lazy

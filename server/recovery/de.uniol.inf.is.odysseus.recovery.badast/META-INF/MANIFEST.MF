@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: BaDaSt Recovery Component
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.badast
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.recovery,
+ de.uniol.inf.is.odysseus.badast,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.trust,
+ org.apache.commons.lang,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.relational_interval,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ com.google.guava;bundle-version="18.0.0",
+ de.uniol.inf.is.odysseus.recovery.recoverytime
+Service-Component: OSGI-INF/SubscriberControllerProvider.xml,
+ OSGI-INF/FullReplayRecoveryExecutor.xml
+Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.recovery.badast,
+ de.uniol.inf.is.odysseus.recovery.duplicatesdetector
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.badast

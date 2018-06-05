@@ -1,0 +1,3 @@
+#PARSER CQL
+#QUERY
+CREATE STREAM stream1 (attr1 Integer) FILE 'this/is/a/filename.file' AS SimpleCSV;

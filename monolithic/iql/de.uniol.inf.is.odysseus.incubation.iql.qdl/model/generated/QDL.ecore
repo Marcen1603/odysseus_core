@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="qDL" nsURI="http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
+    nsPrefix="qDL">
+  <eClassifiers xsi:type="ecore:EClass" name="QDLQuery" eSuperTypes="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmGenericType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metadataList" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataList"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="statements" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLStatement"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IQLSubscribeExpression" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="op" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rightOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IQLPortExpression" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="op" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rightOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="QDLMetadataValueSingleID" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Standard Bufferplacement Strategy
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Service-Component: OSGI-INF/StandardBufferPlacementStrategy.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core.server
+Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
+ org.slf4j
+Export-Package: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy
+Bundle-ActivationPolicy: lazy

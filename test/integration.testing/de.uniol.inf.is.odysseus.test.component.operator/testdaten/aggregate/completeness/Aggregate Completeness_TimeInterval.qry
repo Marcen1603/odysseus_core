@@ -1,0 +1,45 @@
+/// Odysseus Testcase: Aggregate Completeness
+/// Operator: AGGREGATE
+/// Date: Mon May 11 22:05:46 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  AGGREGATIONS: [['completeness','x','completeness_x']]
+///  SUPPRESSPUNCTUATIONS: 
+///  NAME: 
+///  FASTGROUPING: 
+///  GROUP_BY: 
+///  DRAINATDONE: 
+///  OUTPUTPA: 
+///  DRAINATCLOSE: 
+///  DESTINATION: 
+///  ID: 
+///  DRAIN: 
+///  DEBUG: 
+///  DUMPATVALUECOUNT: 
+
+
+#PARSER PQL
+
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
+
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source0_TimeInterval',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    metaattribute=[
+                  'TimeInterval'
+                  ],
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/aggregate/completeness/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double']]})
+
+output = AGGREGATE({AGGREGATIONS=[['completeness','x','completeness_x']]}, ELEMENTWINDOW({SIZE = 3}, input0))

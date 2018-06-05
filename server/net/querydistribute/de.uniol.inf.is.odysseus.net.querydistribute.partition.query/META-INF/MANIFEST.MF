@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Query
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.querydistribute.partition.query
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Service-Component: OSGI-INF/QueryCloudPartition.xml
+Require-Bundle: de.uniol.inf.is.odysseus.net,
+ de.uniol.inf.is.odysseus.net.querydistribute,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.net.util,
+ com.google.guava;bundle-version="18.0.0"
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.partition.query
+Bundle-ActivationPolicy: lazy

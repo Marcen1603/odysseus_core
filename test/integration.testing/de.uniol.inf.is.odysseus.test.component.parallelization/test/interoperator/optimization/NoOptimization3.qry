@@ -1,0 +1,67 @@
+#PARSER PQL
+#PARALLELIZATION (degree=8) (type=INTER_OPERATOR) (threadedbuffer=true) (buffersize=AUTO) (optimization=false) 
+#DOREWRITE false
+#ADDQUERY
+ 
+bid = ACCESS({source='bid',
+		wrapper='GenericPull',
+		transport='File',
+		protocol='CSV',
+		dataHandler='Tuple',
+		options=[['filename', '${BUNDLE-ROOT}\test\testdata\bidTestData.csv']],
+		schema=[
+		['timestamp', 'STARTTIMESTAMP'],
+		['auction', 'INTEGER'],
+		['bidder', 'INTEGER'],
+		['datetime', 'LONG'],
+		['price', 'DOUBLE']]
+		})
+		
+auction = ACCESS({source='auction',
+		wrapper='GenericPull',
+		transport='File',
+		protocol='CSV',
+		dataHandler='Tuple',
+		options=[['filename', '${BUNDLE-ROOT}\test\testdata\auctionTestData.csv']],
+		schema=[
+		['timestamp', 'STARTTIMESTAMP'],
+		['id', 'INTEGER'],
+		['itemname', 'STRING'],
+		['description', 'STRING'],
+		['initialbid', 'INTEGER'],
+		['reserve', 'INTEGER'],
+		['expires', 'LONG'],
+		['seller', 'INTEGER'],
+		['category', 'INTEGER']]
+		})
+ 
+windowBid = TIMEWINDOW({SIZE = [1, 'MINUTES'],
+                  advance = [1, 'SECONDS']
+                  }, bid)
+              
+windowAuction = TIMEWINDOW({SIZE = [10, 'MINUTES'],
+                  advance = [1, 'SECONDS']
+                  }, auction)    
+                
+
+sum_price_bidder = AGGREGATE({ID = 'aggregateId',
+                              aggregations = [
+                                ['SUM', 'price', 'sum_price_bidder']
+                              ],                                                                  
+                            GROUP_BY = ['auction'],
+                              FASTGROUPING = true                                                                   
+                            },
+                            windowBid
+                          )
+
+selectBidder = SELECT({ID = 'selectId', PREDICATE = 'bid.auction < 100'}, sum_price_bidder)
+
+mappedBidder = MAP({ID = 'mapId', expressions = [
+              ['bid.auction * 5','auctionMult'],
+              'bid.auction',
+              'sum_price_bidder']
+             }, selectBidder)
+                          
+joinResult = JOIN({id='joinId',PREDICATE = 'bid.auction == auction.id'}, mappedBidder, windowAuction)
+
+out = PROJECT({ATTRIBUTES = ['bid.auction', 'auction.id', 'sum_price_bidder', 'auctionMult']},joinResult)

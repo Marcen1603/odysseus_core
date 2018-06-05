@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Common Graph
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.graph.common
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ gs-core;bundle-version="1.3.0"
+Service-Component: OSGI-INF/SDFGraphDatatype.xml
+Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.graph.datatype
+Automatic-Module-Name: de.uniol.inf.is.odysseus.graph.common

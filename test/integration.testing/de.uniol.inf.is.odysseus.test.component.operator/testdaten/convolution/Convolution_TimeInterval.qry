@@ -1,0 +1,39 @@
+/// Odysseus Testcase: Convolution
+/// Operator: CONVOLUTION
+/// Date: Thu Apr 30 01:35:49 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  FUNCTION: 'gaussian'
+///  SUPPRESSPUNCTUATIONS: 
+///  NAME: 
+///  GROUP_BY: 
+///  ATTRIBUTES: ['x']
+///  DESTINATION: 
+///  ID: 
+///  SIZE: 3
+///  OPTIONS: 
+///  DEBUG: 
+
+
+#PARSER PQL
+
+#DROPALLSOURCES
+#DROPALLQUERIES
+
+#METADATA TimeInterval
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/convolution/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+
+output = CONVOLUTION({FUNCTION='gaussian', ATTRIBUTES=['x'], SIZE=3}, input0)

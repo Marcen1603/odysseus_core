@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Query Buffer Placement
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core
+Import-Package: de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.core.physicaloperator,
+ org.slf4j
+Service-Component: OSGI-INF/QueryBufferPlacementStrategy.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement
+Bundle-ActivationPolicy: lazy

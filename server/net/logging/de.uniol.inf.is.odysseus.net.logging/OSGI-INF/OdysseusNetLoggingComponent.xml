@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.logging.OdysseusNetComponent">
+   <implementation class="de.uniol.inf.is.odysseus.net.logging.OdysseusNetLoggingComponent"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.net.IOdysseusNetComponent"/>
+   </service>
+   <reference bind="bindDistributedDataManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.data.IDistributedDataManager" name="IDistributedDataManager" policy="dynamic" unbind="unbindDistributedDataManager"/>
+   <reference bind="bindOdysseusNodeCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator" name="IOdysseusNodeCommunicator" policy="dynamic" unbind="unbindOdysseusNodeCommunicator"/>
+</scr:component>

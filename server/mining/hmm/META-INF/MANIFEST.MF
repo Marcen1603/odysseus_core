@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hmm
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.hmm
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.hmm.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.slf4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule
+Automatic-Module-Name: de.uniol.inf.is.odysseus.hmm
+

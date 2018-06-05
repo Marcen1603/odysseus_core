@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hive2 Datasource
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.datasource.hive2
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.database
+Service-Component: OSGI-INF/hive2.xml
+Bundle-ClassPath: .,
+ lib/hive-jdbc-0.14.0-standalone.jar
+Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.hive2
+Bundle-ActivationPolicy: lazy

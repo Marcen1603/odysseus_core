@@ -1,0 +1,54 @@
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+drop tenant tenant1;
+drop tenant tenant2;
+drop tenant tenant3;
+drop tenant tenant4;
+drop tenant tenant5;
+drop tenant tenant6;
+drop tenant tenant7;
+drop tenant tenant8;
+drop tenant tenant9;
+drop tenant tenant10;
+drop tenant tenant11;
+drop tenant tenant12;
+drop tenant tenant13;
+drop tenant tenant14;
+drop tenant tenant15;
+drop tenant tenant16;
+drop tenant tenant17;
+drop tenant tenant18;
+drop tenant tenant19;
+drop tenant tenant20;
+drop tenant tenant21;
+drop tenant tenant22;
+drop tenant tenant23;
+drop tenant tenant24;
+drop tenant tenant25;
+
+drop user test1;
+drop user test2;
+drop user test3;
+drop user test4;
+drop user test5;
+drop user test6;
+drop user test7;
+drop user test8;
+drop user test9;
+drop user test10;
+drop user test11;
+drop user test12;
+drop user test13;
+drop user test14;
+drop user test15;
+drop user test16;
+drop user test17;
+drop user test18;
+drop user test19;
+drop user test20;
+drop user test21;
+drop user test22;
+drop user test23;
+drop user test24;
+drop user test25;

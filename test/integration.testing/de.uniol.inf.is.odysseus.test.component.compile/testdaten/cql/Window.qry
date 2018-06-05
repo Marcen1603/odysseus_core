@@ -1,0 +1,32 @@
+#PARSER CQL
+#DROPALLQUERIES
+#QUERY 
+DROP STREAM person IF EXISTS
+#QUERY
+CREATE STREAM person (timestamp STARTTIMESTAMP, id INTEGER, name STRING, email STRING, creditcard STRING, city STRING, state STRING) CHANNEL localhost : 65440
+#QUERY 
+DROP STREAM bid IF EXISTS
+#QUERY
+CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65442', 'host' 'localhost')
+#QUERY 
+DROP STREAM category IF EXISTS
+#QUERY
+CREATE STREAM category (id INTEGER, name STRING, description STRING, parentid INTEGER) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65443', 'host' 'localhost')
+
+#QUERY
+SELECT * FROM bid [UNBOUNDED];
+#QUERY
+SELECT * FROM bid [SIZE 5 MINUTES TIME];
+#QUERY
+SELECT auction, bidder, P.id, C.id 
+FROM bid [SIZE 5 TUPLE], person [SIZE 5 MINUTES TIME] AS P, category AS C;

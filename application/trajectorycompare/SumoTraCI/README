@@ -1,0 +1,19 @@
+Description:
+
+This little projects starts a sumo simulation and exposes its data through a socket server.
+In order to run the application sumo must be installed on your machine and has to be in the search path.
+
+Get Sumo From here:
+	http://www.dlr.de/ts/en/desktopdefault.aspx/tabid-9883/16931_read-41000/
+	Arch Linux PKGBUILD: https://aur.archlinux.org/packages/sumo
+
+Usage:
+The application in its current state expects an Sumo project folder where all neccessary configuration 
+files can be found and and a seed for the pseudorandom number generator. These values are passed by program arguments. 
+For example:
+	-p=Scenario/test/ -s=3
+where "-p" is the absolute or relative path of the sumo project folder and "-s" the seed for the 
+pseudorandom number generator.
+
+Further Information:
+You can learn how to use Sumo by reading their documentation.

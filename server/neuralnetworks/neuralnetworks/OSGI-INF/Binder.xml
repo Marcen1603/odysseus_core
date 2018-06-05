@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.neuralnetworks.operatorBuilderFactory">
+   <implementation class="de.uniol.inf.is.odysseus.neuralnetworks.Activator"/>
+   <reference bind="bindNeuralNetwork" cardinality="0..n" interface="de.uniol.inf.is.odysseus.neuralnetworks.networks.INeuralNetwork" name="INeuralNetwork" policy="dynamic" unbind="unbindNeuralNetwork"/>
+   <reference bind="bindStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.neuralnetworks.strategy.IStrategy" name="IStrategy" policy="dynamic" unbind="unbindStrategy"/> 
+</scr:component>

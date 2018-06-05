@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Checkpointing
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.checkpointing
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
+Export-Package: de.uniol.inf.is.odysseus.recovery.checkpointing
+Service-Component: OSGI-INF/CheckpointManagerRegistry.xml,OSGI-INF/SystemTimeCheckpointManager.xml,
+ OSGI-INF/CheckpointingRecoveryComponent.xml
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.recovery.checkpointing

@@ -1,0 +1,17 @@
+#PARSER PQL
+#RUNQUERY
+xYxStreamxXxwkaidxXx = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx:corrected_score'})yYy
+xYxCSVFileSourcexXxwkaidxXx = CSVFileSource({SCHEMA=[['Date', 'StartTimestampString'], ['wind_speed', 'Double'], ['rated_score', 'Double'], ['LITE_score', 'Double'], ['corrected_score', 'Double']], DELIMITER=',', FILENAME='xXxfilepathxXx', SOURCE='NrelxXxwkaidxXx', DATEFORMAT='yyyy-MM-dd HH:mm:ss', READFIRSTLINE='false', TRIM='true'})yYy
+xYxPROJECTxXxwkaidxXxstream = PROJECT({ATTRIBUTES=['PxXxwindfarmidxXx:xXxwkaidxXx:corrected_score.corrected_score']}, 0:StreamxXxwkaidxXx)yYy
+COMBINE1 = COMBINE({WAITFORALLCHANGED='true', BUFFERNEWINPUTELEMENTS='true'}, xZx0:PROJECTxXxwkaidxXxstreamyZy)
+xYxPROJECTxXxwkaidxXx = PROJECT({ATTRIBUTES=['NRELxXxwkaidxXx.corrected_score']}, 0:CSVFileSourcexXxwkaidxXx)yYy
+COMBINE2 = COMBINE({WAITFORALLCHANGED='true', BUFFERNEWINPUTELEMENTS='true'}, xZx0:PROJECTxXxwkaidxXxyZy)
+MAP1 = MAP({EVALUATEONPUNCTUATION='false', EXPRESSIONS=[xZx['NrelxXxwkaidxXx.PortxXxcounterxXx_corrected_score', '']yZy, ['Year(StreamDate())', 'Year']]}, 0:COMBINE2)
+Timestamp1 = Timestamp({MONTH='', HOUR='', CLEAREND='true', MINUTE='', SYSTEMTIME='false', YEAR='Year', SECOND=''}, 0:MAP1)
+PROJECT1 = PROJECT({ATTRIBUTES=[xZx'NrelxXxwkaidxXx.PortxXxcounterxXx_corrected_score'yZy]}, 0:Timestamp1)
+SAMPLE1 = SAMPLE({SAMPLERATE=100}, 0:PROJECT1)
+CLASSIFICATION_LEARN1 = CLASSIFICATION_LEARN({CLASS='NrelxXxwkaidxXx.Port0_corrected_score',OPTIONS=[['iterations', '500'], ['rows', '10'], ['cols', '10'], ['metric','euclides'],['topology','matrix'],['radius','6']], LEARNER='kohonen', ALGORITHM='WTM'}, 0:SAMPLE1)
+Timestamp2 = Timestamp({CLEAREND='true', SYSTEMTIME='false', MINUTE='', SECOND='', DAY='', END='', HOUR='', MONTH=''}, 0:CLASSIFICATION_LEARN1)
+CLASSIFY1 = CLASSIFY({CLASSIFIER='classifier', ONECLASSIFIER='true'}, 0:COMBINE1, 0:Timestamp2)
+MAP2 = MAP({EVALUATEONPUNCTUATION='false', EXPRESSIONS=[['DoubleToInteger(elementAt(toList(clazz),0)*25)', 'red'], ['DoubleToInteger(elementAt(toList(clazz),1)*25)', 'green'], ['ToInteger(120)', 'blue'], ['StreamDate()', 'timestamp'], ['false', 'warning'], ['false', 'error']]}, 0:CLASSIFY1)
+PxXxwindfarmidxXx:kohonen ::= CACHE({MAXELEMENTS=100},0:MAP2)

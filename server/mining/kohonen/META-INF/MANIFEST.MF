@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Java Kohonen Neural Network Library
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.kohonen
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: kohonen,
+ learningFactorFunctional,
+ metrics,
+ network,
+ topology
+Automatic-Module-Name: de.uniol.inf.is.odysseus.kohonen

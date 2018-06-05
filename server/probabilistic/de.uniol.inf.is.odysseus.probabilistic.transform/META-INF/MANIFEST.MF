@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Probabilistic Transform
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.probabilistic.transform
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.probabilistic.transform.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.probabilistic,
+ de.uniol.inf.is.odysseus.probabilistic.common
+Import-Package: de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.relational.base.predicate,
+ de.uniol.inf.is.odysseus.relational.transform,
+ de.uniol.inf.is.odysseus.relational_interval,
+ de.uniol.inf.is.odysseus.relational_interval.transform,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ de.uniol.inf.is.odysseus.server.intervalapproach.transform.join,
+ de.uniol.inf.is.odysseus.sweeparea,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ de.uniol.inf.is.odysseus.transform.rules,
+ org.osgi.framework,
+ org.slf4j
+Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: de.uniol.inf.is.odysseus.probabilistic.transform

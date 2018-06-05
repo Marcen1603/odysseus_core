@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Fast Flower Delivery - Driver</title>
+	<meta name="viewport" description="width=device-width, height=device-height, user-scalable=no" />
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript" src="js/data.js"></script>
+	<script type="text/javascript" src="js/view.js"></script>
+	<script type="text/javascript" src="js/update.js"></script>
+	<script type="text/javascript" src="js/init.js"></script>
+</head>
+<body>
+
+<div class="head">FastFlowerDelivery - <span class="driverName">Driver</span></div>
+<div class="menu">
+	<div class="requests"></div>
+	<div class="activeRequests"></div>
+	<div class="clear"></div>
+</div>
+<div class="page">
+	<div class="login">
+		<form class="login">
+			<input type="text" name="name" />
+			<input type="submit" value="Login" />
+		</form>
+	</div>
+	<div class="deliveries">
+		<div class="delivery" id="1">
+			<div class="title"><span class="store">Store1</span> #<span class="requestId">42</span></div>
+			<div class="customer">Hubert, Wechloy</div>
+			<div class="time">Pickup: <span class="pickupTime">10:31</span> Delivery: <span class="deliveryTime">10:45</span></div>
+		</div>
+		<div class="delivery bidded" id="1">
+			<div class="store">Store1</div>
+			<div class="customer">Hubert, Wechloy</div>
+			<div class="time">Pickup: <span class="pickupTime">10:31</span> Delivery: <span class="deliveryTime">10:45</span></div>
+		</div>
+		<div class="delivery" id="1">
+			<div class="store">Store1</div>
+			<div class="customer">Hubert, Wechloy</div>
+			<div class="time">Pickup: <span class="pickupTime">10:31</span> Delivery: <span class="deliveryTime">10:45</span></div>
+		</div>
+	</div>
+	<div class="active">
+		<div class="delivery" id="1">
+			<div class="title"><span class="store">Store1</span> #<span class="requestId">42</span></div>
+			<div class="customer">Hubert, Wechloy</div>
+			<div class="time">Pickup: <span class="pickupTime">10:31</span> Delivery: <span class="deliveryTime">10:45</span></div>
+		</div>
+	</div>
+</div>
+
+	<div id="showDialog">
+		<div class="title">Info</div>
+		<div class="dialogIcon"></div>
+		<div class="dialogContent"></div>
+	</div>
+
+</body>
+</html>

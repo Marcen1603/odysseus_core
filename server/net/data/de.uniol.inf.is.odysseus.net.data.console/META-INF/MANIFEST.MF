@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Console
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.data.console
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.net.data,
+ de.uniol.inf.is.odysseus.slf4j,
+ com.google.guava;bundle-version="18.0.0",
+ org.eclipse.osgi,
+ org.json,
+ de.uniol.inf.is.odysseus.net
+Service-Component: OSGI-INF/DistributedDataConsole.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.data.console
+Bundle-ActivationPolicy: lazy

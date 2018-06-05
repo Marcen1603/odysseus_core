@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XML
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.xml
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.apache.jlibs,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.ruleengine,
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.mep
+Export-Package: de.uniol.inf.is.odysseus.server.xml,
+ de.uniol.inf.is.odysseus.server.xml.predicate
+Service-Component: OSGI-INF/*
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.server.xml
+Import-Package: org.osgi.framework
+Bundle-ClassPath: .

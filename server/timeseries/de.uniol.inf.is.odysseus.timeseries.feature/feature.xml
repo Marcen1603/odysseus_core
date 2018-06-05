@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.uniol.inf.is.odysseus.timeseries.feature"
+      label="Time Series"
+      version="1.0.0.qualifier"
+      provider-name="University of Oldenburg">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
+   </url>
+
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.aggregation" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.recommendation"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.slf4j.api"/>
+      <import feature="de.uniol.inf.is.odysseus.recommendation.feature" version="1.0.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.timeseries"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.math3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

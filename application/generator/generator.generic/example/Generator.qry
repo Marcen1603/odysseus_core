@@ -1,0 +1,11 @@
+#PARSER PQL
+#ADDQUERY
+
+input = ACCESS({source='Source',
+wrapper='GenericPush',
+transport='NonBlockingTcp',
+protocol='SizeByteBuffer',
+dataHandler='Tuple',
+options=[['port', '54325'],['host','localhost'],['ByteOrder','Little_Endian']],
+schema=[['time', 'Timestamp'],['x','Vector']]
+})

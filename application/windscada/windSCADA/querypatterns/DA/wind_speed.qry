@@ -1,0 +1,13 @@
+#PARSER PQL
+#RUNQUERY
+Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})
+
+PROJECT2 = PROJECT({ATTRIBUTES=['PxXxwindfarmidxXx:xXxwkaidxXx.wind_speed']}, 0:Stream1)
+
+TIMEWINDOW3 = TIMEWINDOW({SIZE=[10, 'MINUTES'], SLIDE=[10, 'MINUTES']}, 0:PROJECT2)
+
+AGGREGATE4 = AGGREGATE({AGGREGATIONS=[['AVG','wind_speed','AVG_wind_speed','Double']]}, 0:TIMEWINDOW3)
+
+MAP5 = MAP({EXPRESSIONS=[['AVG_wind_speed', 'wind_speed'], ['AVG_wind_speed > 30', 'warning'], ['AVG_wind_speed > 40', 'error']]}, 0:AGGREGATE4)
+
+PxXxwindfarmidxXx:xXxwkaidxXx:wind_speed ::= CACHE({MAXELEMENTS=100}, 0:MAP5)

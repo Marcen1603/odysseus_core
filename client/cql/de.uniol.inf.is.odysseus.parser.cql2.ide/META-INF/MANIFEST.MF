@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.uniol.inf.is.odysseus.parser.cql2.ide
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.cql2.ide;singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.uniol.inf.is.odysseus.parser.cql2,
+ org.eclipse.xtext.ide;bundle-version="2.10.0",
+ org.antlr.runtime,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.uniol.inf.is.odysseus.parser.cql2.ide.contentassist.antlr,
+ de.uniol.inf.is.odysseus.parser.cql2.ide.contentassist.antlr.internal,
+ de.uniol.inf.is.odysseus.parser.cql2.ide.contentassist.antlr.lexer
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.cql2.ide
+

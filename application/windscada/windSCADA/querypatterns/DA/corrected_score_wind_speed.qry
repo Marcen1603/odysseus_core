@@ -1,0 +1,7 @@
+#PARSER PQL
+#RUNQUERY
+Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})
+PROJECT2 = PROJECT({ATTRIBUTES=['PxXxwindfarmidxXx:xXxwkaidxXx.corrected_score', 'PxXxwindfarmidxXx:xXxwkaidxXx.wind_speed']}, 0:Stream1)
+TIMEWINDOW3 = TIMEWINDOW({SIZE=[5, 'SECONDS'], SLIDE=[5, 'SECONDS']}, 0:PROJECT2)
+AGGREGATE4 = AGGREGATE({DRAINATDONE='false', DRAINATCLOSE='false', OUTPUTPA='false', FASTGROUPING='false', AGGREGATIONS=[['AVG','corrected_score','AVG_corrected_score','Double'], ['AVG','wind_speed','AVG_wind_speed','Double']]}, 0:TIMEWINDOW3)
+PxXxwindfarmidxXx:xXxwkaidxXx:corrected_score_wind_speed ::= CACHE({MAXELEMENTS=100}, 0:AGGREGATE4)

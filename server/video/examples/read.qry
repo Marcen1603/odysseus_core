@@ -1,0 +1,28 @@
+#PARSER PQL
+#RUNQUERY
+///Reads a video file from disk, rotates and displays it
+///Tuple image timestamp will start at the date the video file has been modified last (timeStampMode parameter)
+
+video =  ACCESS({source='Video', 
+				 wrapper='GenericPull', 
+				 transport='VideoFile', 
+				 protocol='none', 
+				 datahandler='Tuple',
+				 options=[
+							['videoUrl', 'd:/file.avi'],
+							['timeStampMode', 'filetime'],
+							['useDelay', 'true']
+					     ],					     
+				schema=	 [								
+        					['image', 			'IMAGEJCV'],
+        					['starttimestamp', 	'STARTTIMESTAMP'],
+        					['endtimestamp', 	'ENDTIMESTAMP']
+        				 ]})
+					     
+video2 = MAP({
+              expressions = [
+                                'rotateCV(image, 10)'
+                            ]
+             }, video)					     
+					     
+output = UDO({class='ShowImageJCV', init='0'}, video2)

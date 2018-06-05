@@ -1,0 +1,39 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Raspberry Pi GPIO TransportHandler
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.rpi.gpio
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.rpi.gpio.Activator
+Bundle-Vendor: Andrej Albrecht
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.core
+Service-Component: OSGI-INF/RPiGPIOTransportHandler.xml,OSGI-INF/RPiGPIOPushTransportHandler.xml
+Bundle-NativeCode: lib/native/linux/libpi4j.so ;
+  osname=linux;  processor=x86_64,
+  lib/native/linux/libpi4j.so ;
+  osname=linux;  processor=x86,
+  *
+Bundle-ClassPath: .,
+ lib/pi4j-core.jar,
+ lib/pi4j-device.jar,
+ lib/pi4j-gpio-extension.jar,
+ lib/pi4j-service.jar
+Import-Package: de.uniol.inf.is.odysseus.core.collection,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
+ de.uniol.inf.is.odysseus.core.server.util,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.osgi.framework;version="1.6.0",
+ org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.rpi.gpio
+Bundle-ActivationPolicy: lazy

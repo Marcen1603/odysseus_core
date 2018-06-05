@@ -1,0 +1,24 @@
+///OdysseusScript
+#PARSER PQL
+#METADATA TimeInterval
+#METADATA Probabilistic
+#ADDQUERY
+data = ACCESS({
+    source='source', 
+    wrapper='GenericPull',
+    transport='file', 
+    protocol='SimpleCSV',
+    dataHandler='ProbabilisticTuple', 
+    options=[
+        ['filename', '${BUNDLE-ROOT}\test\em\input0.csv'], 
+///        ['filename', '${ROOT}/input0.csv'], 
+        ['csv.delimiter', ','],
+        ['csv.trim', 'true']
+        ], 
+    schema=[
+        ['timestamp', 'STARTTIMESTAMP'], 
+        ['x', 'Double'],
+        ['y', 'Double']
+]})
+
+out = EM({MIXTURES = 3, ATTRIBUTES = ['x','y']}, data)

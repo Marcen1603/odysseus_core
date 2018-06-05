@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Login
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.login;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.login.RCPLoginPlugIn
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.google.guava;bundle-version="14.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.rcp.config
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.uniol.inf.is.odysseus.rcp.login
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.login

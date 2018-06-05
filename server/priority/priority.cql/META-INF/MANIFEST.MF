@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Priority Cql
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.priority.cql
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: de.uniol.inf.is.odysseus.parser.cql
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.priority
+Automatic-Module-Name: de.uniol.inf.is.odysseus.priority.cql

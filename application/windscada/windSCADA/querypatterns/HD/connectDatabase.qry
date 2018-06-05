@@ -1,0 +1,3 @@
+#PARSER CQL
+#RUNQUERY
+CREATE DATABASE CONNECTION conHD AS mysql TO xXxdatabasexXx AT xXxhostxXx : xXxportxXx WITH USER xXxusernamexXx PASSWORD xXxpasswordxXx NO_LAZY_CONNECTION_CHECK

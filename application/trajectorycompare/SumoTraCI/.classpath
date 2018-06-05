@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/guice-3.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/guice-3.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/guice-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/javatuples-1.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/javatuples-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/javax.inject-1.jar"/>
+	<classpathentry kind="lib" path="lib/jeromq-0.3.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/jeromq-0.3.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jeromq-0.3.4.jar"/>
+	<classpathentry kind="lib" path="lib/jts-1.13.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/proj4j-0.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/traci-1.6.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

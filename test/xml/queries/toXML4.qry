@@ -1,0 +1,92 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#PARSER PQL
+#DEFINE filename toXML4
+#METADATA TimeInterval
+#ADDQUERY
+input = ACCESS({
+            source='source4',
+            protocol='XML',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='Tuple',
+            METAATTRIBUTE = 'TimeInterval',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/document2.xml'],
+              ['nickname', '/users/user/nickname'],
+              ['fname', '/users/user/fname'],
+              ['lname', '/users/user/lname'],
+              ['email', '/users/user/email'],
+              ['role', '/users/user/roles/role'],
+              ['age', '/users/user/age'],
+              ['user_id', '/users/user/@id'],
+              ['role_1', '/users/user/roles/role[1]'],
+              ['role_2', '/users/user/roles/role[2]'],
+              ['role_3', '/users/user/roles/role[3]']
+            ],
+            schema=[
+              ['nickname','String'],
+              ['fname', 'String'],
+              ['lname', 'String'],
+              ['email', 'String'],
+              ['role', 'String'],
+              ['age', 'Integer'],
+              ['user_id', 'Integer'],
+              ['role_1', 'String'],
+              ['role_2', 'String'],
+              ['role_3', 'String']
+            ]                                                                                                                                              
+          }                                                                                                                  
+        )
+              
+transform1 = TOXML({
+                rootelement = 'user',
+                xsdfile = '${BUNDLE-ROOT}/queries/schema2.xsd',
+                options = [
+                  ['user_id', '/user/@id'],
+                  ['role_1', '/user/roles/role[1]'],
+                  ['role_2', '/user/roles/role[2]'],
+                  ['role_3', '/user/roles/role[3]']
+                ]                            
+              },
+              input
+            )
+            
+transform2 = XMLTOTUPLE({
+expressions = [
+                  ['nickname','/user/nickname'],
+                  ['fname', '/user/fname'],
+                  ['lname', '/user/lname'],
+                  ['email', '/user/email'],
+                  ['role', '/user/roles/role'],
+                  ['age', '/user/age']
+                  ],
+                  schema = [              
+                  ['nickname','String'],
+                  ['fname', 'String'],
+                  ['lname', 'String'],
+                  ['email', 'String'],
+                  ['role', 'String'],
+                  ['age', 'String']
+                  ]
+                },
+               TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']},  transform1)  
+              )   
+              
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='SimpleCSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  writemetadata = 'true',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ],
+///                    ['csv.delimiter', '|'],
+///                    ['csv.trim', 'true']
+///                  ]                                   
+///                },
+///                transform2
+///              )              
+///            

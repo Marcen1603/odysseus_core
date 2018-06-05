@@ -1,0 +1,39 @@
+/// Odysseus Testcase: Rename
+/// Operator: RENAME
+/// Date: Thu Apr 30 01:13:16 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  SUPPRESSPUNCTUATIONS: 
+///  NOOP: true
+///  NAME: 
+///  ALIASES: ['timestamp','a','b','c']
+///  ISNOOP: 
+///  DESTINATION: 
+///  ID: 
+///  PAIRS: 
+///  DEBUG: 
+///  TYPE: 
+
+
+#PARSER PQL
+
+#DROPALLSOURCES
+#DROPALLQUERIES
+
+#METADATA TimeInterval
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/rename/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+
+output = RENAME({NOOP=true, ALIASES=['timestamp','a','b','c']}, input0)

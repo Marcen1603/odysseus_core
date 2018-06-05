@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sensor Ontology RCP
+Bundle-SymbolicName: cc.kuka.odysseus.ontology.rcp;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: cc.kuka.odysseus.ontology.rcp.SensorRegistryPlugIn
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.core,
+ org.eclipse.ui,
+ org.eclipse.ui.workbench,
+ de.uniol.inf.is.odysseus.rcp.base, de.uniol.inf.is.odysseus.slf4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: cc.kuka.odysseus.ontology.common,
+ cc.kuka.odysseus.ontology.common.model,
+ cc.kuka.odysseus.ontology.common.model.condition,
+ cc.kuka.odysseus.ontology.common.model.property,
+ org.apache.commons.math3.util;version="3.2.0",
+ org.eclipse.ui.actions
+Service-Component: OSGI-INF/SensorOntologyService.xml
+Bundle-Vendor: Christian Kuka
+Automatic-Module-Name: cc.kuka.odysseus.ontology.rcp

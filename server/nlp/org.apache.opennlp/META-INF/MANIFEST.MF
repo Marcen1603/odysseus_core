@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenNLP
+Bundle-SymbolicName: org.apache.opennlp
+Bundle-Version: 1.7.2.qualifier
+Bundle-Activator: org.apache.opennlp.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.core.collection,
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.nlp
+Bundle-ClassPath: .,
+ lib/opennlp-tools-1.7.2.jar
+Automatic-Module-Name: org.apache.opennlp

@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jasper Wrapper
+Bundle-SymbolicName: cc.kuka.odysseus.wrapper.jasper
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: cc.kuka.odysseus.wrapper.jasper.Activator
+Bundle-Vendor: Christian Kuka
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.core.collection,
+ de.uniol.inf.is.odysseus.core.datahandler,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
+ org.apache.commons.collections.map,
+ org.apache.commons.digester,
+ org.apache.commons.logging,
+ org.osgi.framework,
+ org.slf4j
+Bundle-ClassPath: lib/jasperreports-5.6.0.jar,
+ lib/iText-2.1.7.js2.jar,
+ .
+Service-Component: OSGI-INF/JasperProtocolHandler.xml
+Require-Bundle:  de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ org.eclipse.jdt.core;bundle-version="3.7.3"
+Automatic-Module-Name: cc.kuka.odysseus.wrapper.jasper

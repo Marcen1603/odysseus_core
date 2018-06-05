@@ -1,0 +1,221 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #DFDFDF;
+}
+
+div.main {
+
+	margin: 0;
+	width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	font-size: 12px;
+	font-family: Tahoma, Verdana, Sans Serif;	
+	color: #454545;
+}
+
+div.head {
+	height: 34px;
+	background-image: url('img/head_bg.png');
+	background-repeat:repeat-x;
+	padding-top: 10px;
+}
+
+div.headText {
+	width: 189px;
+	height: 24px;
+	background-image: url('img/head_text.png');
+	margin-left: 13px;
+}
+
+div.odysseus {
+	width: 43px;
+	height: 38px;
+	background-image: url('img/odysseus.png');
+	margin-left: 840px;
+	margin-top: -31px;
+	float: left;
+}
+
+div.banner {
+	height: 175px;
+	background-image: url('img/banner_bg.png');
+	background-repeat:repeat-x;
+	padding-top: 40px;
+}
+
+div.bannerText {
+	width: 368px;
+	height: 88px;
+	background-image: url('img/banner_text.png');
+	margin-left: 43px;
+	float: left;
+}
+
+div.bannerImage {
+	width: 414px;
+	height: 208px;
+	background-image: url('img/banner_image.png');
+	margin-left: 43px;
+	float: left;
+	margin-top: -25px;
+}
+
+div.content {
+	border-top: 2px solid #999;
+	padding: 20px;
+	padding-top: 30px;
+	margin-top: 7px;
+	background-color: white;
+}
+
+div.menu {
+	width: 370px;
+	float: left;
+	margin-left: 10px;
+}
+
+div.item {
+	width: 350px;
+	padding: 10px;
+	font-size: 15px;
+	font-weight: bold;
+	color: #454545;
+	margin-bottom: 15px;
+	cursor: pointer;
+}
+
+div.item:hover {
+	background-image: url('img/item.png');
+	background-repeat: no-repeat;
+}
+
+div.page {
+	width: 430px;
+	margin-left: 380px;
+	padding: 0;
+	padding-bottom: 20px;
+	background-color: #e2f0ff;
+}
+
+div.text {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+div.input {
+	padding-left: 30px;
+	margin-bottom: 10px;
+}
+
+div.label {
+	padding-left: 20px;
+}
+
+div.title {
+	padding: 10px;
+	margin-bottom: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	background-color: #656565; 
+	font-size: 15px;
+	font-weight: bold;
+	color: white;
+}
+
+div.footer {
+	background-color: #AAA;
+	color: #EFEFEF;
+	text-align: center;
+	font-size: 10px;
+	padding: 5px;
+}
+
+#showDialog {
+	border-bottom: 2px solid #656565;
+	border-left: 2px solid #656565;
+	border-right: 2px solid #656565;
+	background-color: #EFEFEF;
+	padding: 0;
+	font-size: 14px;
+	width: 340px;
+	height: 130px;
+	position: absolute;
+	margin-top: -400px;
+	margin-left: 250px;
+	cursor: pointer;
+	display: none;
+	z-index: 2000;
+}
+
+div.dialogIcon {
+	width: 64px;
+	height: 64px;
+	float: left;
+	margin-left: 10px;
+}
+
+div.dialogContent {
+	float: left;
+	margin-left: 85px;
+	margin-top: -60px;
+	padding-right: 10px;
+}
+
+div.info {
+	background-image: url('img/info.png');
+}
+div.error {
+	background-image: url('img/error.png');
+}
+
+div.newRequest {
+	display: none;
+}
+
+div.editRequest {
+	display: none;
+}
+
+div.data {
+	padding: 10px;
+	padding-left: 30px;
+	margin-left: 10px;
+	color: #656565;
+}
+
+div.clear {
+	clear: both;
+}
+
+div.spacer {
+	height: 20px;
+}
+
+div.information {
+	float: left;
+	overflow: hidden;
+	width: 50%;
+}
+
+div.management {
+	float: left;
+	overflow: hidden;
+	width: 50%;
+	margin-left: 50%;
+	margin-top: -240px;
+}
+
+div.driver {
+	padding-left: 20px;
+	padding-bottom: 10px;
+	cursor: pointer;
+}
+
+div.assigned {
+	cursor: default !important;
+	font-weight: bold;
+	color: black;
+}

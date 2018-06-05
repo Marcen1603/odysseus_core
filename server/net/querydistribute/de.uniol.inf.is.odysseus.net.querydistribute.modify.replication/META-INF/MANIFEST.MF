@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Replication Modifier
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.querydistribute.modify.replication
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: com.google.guava;bundle-version="18.0.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.net.querydistribute,
+ de.uniol.inf.is.odysseus.net,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.server.replication,
+ de.uniol.inf.is.odysseus.net.util
+Service-Component: OSGI-INF/ReplicationQueryPartModifier.xml,OSGI-INF/ReplicationRuleHelper.xml,
+ OSGI-INF/SinkReplicationRule.xml
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.modify.replication

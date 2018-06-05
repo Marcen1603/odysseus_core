@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: s100
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.s100
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.s100.Activator
+Bundle-Vendor: 
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.google.common.base,
+ de.uniol.inf.is.odysseus.mep,
+ org.osgi.framework;version="1.6.0",
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.s100.common
+Bundle-ClassPath: .
+Service-Component: OSGI-INF/*
+Automatic-Module-Name: de.uniol.inf.is.odysseus.s100
+Bundle-ActivationPolicy: lazy

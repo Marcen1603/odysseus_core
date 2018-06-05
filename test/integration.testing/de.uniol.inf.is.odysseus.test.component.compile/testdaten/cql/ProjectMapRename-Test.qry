@@ -1,0 +1,145 @@
+/// THIS IS A TEST FOR PROJECT, MAP AND RENAME
+/// ALL PROVIDED EXAMPLE SHOULD WORK
+#PARSER CQL
+#TRANSCFG Standard
+#DOREWRITE false
+#DROPALLQUERIES
+#QUERY
+DROP STREAM bid IF EXISTS
+#QUERY
+ATTACH STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) CHANNEL localhost : 65442
+#QUERY
+DROP STREAM person IF EXISTS
+#QUERY
+ATTACH STREAM person (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440
+
+/// SIMPLE PROJECTS
+#QUERY 
+SELECT * FROM bid
+#QUERY
+SELECT bid.* FROM bid
+#QUERY
+SELECT price FROM bid
+#QUERY
+SELECT bidder, price FROM bid
+#QUERY
+SELECT timestamp, auction, bidder, datetime, price FROM bid
+
+/// PROJECTS WITH RENAMED SOURCE BUT NO USE IN PROJECT
+#QUERY 
+SELECT * FROM bid AS b
+#QUERY
+SELECT bid.* FROM bid AS b
+#QUERY
+SELECT price FROM bid AS b
+#QUERY
+SELECT bidder, price FROM bid AS b
+#QUERY
+SELECT timestamp, auction, bidder, datetime, price FROM bid AS b
+
+
+/// PROJECTS WITH RENAMED SOURCE WITH USE IN PROJECT
+#QUERY 
+SELECT * FROM bid AS b
+#QUERY
+SELECT b.* FROM bid AS b
+#QUERY
+SELECT b.price FROM bid AS b
+#QUERY
+SELECT b.bidder, b.price FROM bid AS b
+#QUERY
+SELECT b.timestamp, b.auction, b.bidder, b.datetime, b.price FROM bid AS b
+
+/// PROJECTS WITH RENAMED ATTRIBUTES
+#QUERY
+SELECT price AS p FROM bid
+#QUERY
+SELECT price AS p, bidder FROM bid
+#QUERY
+SELECT price AS p, bidder AS b FROM bid
+
+/// PROJECTS WITH RENAMED ATTRIBUTES AND SOURCES
+#QUERY
+SELECT price AS p FROM bid AS b
+#QUERY
+SELECT b.price AS p FROM bid AS b
+#QUERY
+SELECT b.price AS p, b.bidder FROM bid AS b
+#QUERY
+SELECT b.price AS p, b.bidder AS b FROM bid AS b
+
+
+/// PROJECTS WITH CONSTANTS, FUNCTIONS AND EXPRESSIONS
+#QUERY
+SELECT bidder + price AS d FROM bid
+#QUERY
+SELECT 123.4 * price AS d FROM bid
+#QUERY
+SELECT 123.4 AS d FROM bid
+#QUERY
+SELECT 123.4 AS d, price FROM bid
+#QUERY
+SELECT DolToEur(price) AS d FROM bid
+#QUERY
+SELECT DolToEur(price) AS d, price FROM bid
+#QUERY
+SELECT DolToEur(price) * auction AS d FROM bid
+#QUERY
+SELECT DolToEur(price) * price AS d FROM bid
+#QUERY
+SELECT DolToEur(price) * auction AS d, price FROM bid
+#QUERY
+SELECT DolToEur(123.4) AS d FROM bid
+#QUERY
+SELECT 'test' AS s FROM bid
+#QUERY
+SELECT 'test' AS s, 123.4 AS d FROM bid
+#QUERY
+SELECT 'test' AS s, 123.4 AS d, price FROM bid
+
+
+/// PROJECTS AND SELECTS WITH RENAMED SOURCE WITH USE IN SELECT
+#QUERY 
+SELECT * FROM bid AS b WHERE b.bidder > 10
+#QUERY
+SELECT b.* FROM bid AS b WHERE b.bidder > 10
+#QUERY
+SELECT b.price FROM bid AS b WHERE b.price < 150.0
+#QUERY
+SELECT b.bidder, b.price FROM bid AS b WHERE b.bidder =  1
+#QUERY
+SELECT b.timestamp, b.auction, b.bidder, b.datetime, b.price FROM bid AS b WHERE b.price > 100.0
+
+/// PROJECTS WITH RENAMED ATTRIBUTES
+#QUERY
+SELECT price AS p FROM bid WHERE p < 100
+#QUERY
+SELECT price AS p, bidder FROM bid WHERE p > 100
+#QUERY
+SELECT price AS p, bidder AS b FROM bid WHERE b=1 AND p <100
+
+
+/// AGGREGATES ARE NOT HANDLED LIKE FUNCTIONS AND MAY HAVE A GROUPING ETC.
+#QUERY
+SELECT AVG(price) AS aprice FROM bid
+#QUERY
+SELECT AVG(price) AS aprice FROM bid GROUP BY auction
+#QUERY
+SELECT auction, AVG(price) AS aprice FROM bid GROUP BY auction
+#QUERY
+SELECT auction, AVG(price) AS aprice FROM bid GROUP BY auction HAVING aprice<100.0
+
+
+/// JOINS AND SELFJOINS
+#QUERY
+SELECT auction, bidder FROM bid, person WHERE bid.bidder = person.id
+#QUERY
+SELECT auction FROM bid AS b, person AS p WHERE b.bidder = p.id
+#QUERY
+SELECT auction AS a, bidder AS b FROM bid, person WHERE a = b
+#QUERY
+SELECT auction, bidder FROM bid, person WHERE bid.bidder = person.id
+#QUERY
+SELECT left.* FROM bid AS left, bid AS right WHERE left.bidder = right.bidder
+#QUERY
+SELECT a.auction AS aid FROM bid AS a, bid AS b WHERE aid=b.auction

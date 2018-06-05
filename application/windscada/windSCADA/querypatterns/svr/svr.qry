@@ -1,0 +1,18 @@
+#PARSER PQL
+#RUNQUERY
+xYxCSVFileSourcexXxwkaidxXx = CSVFileSource({SOURCE='svrxXxwkaidxXxtrainingxXxwkaposxXx', READFIRSTLINE='false', TRIM='true', SCHEMA=[['date', 'StartTimestampString'], ['wind_speed', 'Double'], ['rated_score', 'Double'], ['score_LITE', 'Double'], ['corrected_score', 'Double']], DELIMITER=',', DATEFORMAT='yyyy-MM-dd HH:mm:ss', FILENAME='xXxfilepathxXx'})yYy
+xYxStreamxXxwkaidxXx = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})yYy
+xYxPROJECTxXxwkaidxXxhd = PROJECT({ATTRIBUTES=['svrxXxwkaidxXxtrainingxXxwkaposxXx.corrected_score']}, 0:CSVFileSourcexXxwkaidxXx)yYy
+xYxPROJECTxXxwkaidxXx = PROJECT({ATTRIBUTES=['PxXxwindfarmidxXx:xXxwkaidxXx.corrected_score']}, 0:StreamxXxwkaidxXx)yYy
+COMBINE1 = COMBINE({WAITFORALLCHANGED='true', BUFFERNEWINPUTELEMENTS='true'}, xZx0:PROJECTxXxwkaidxXxhdyZy)
+COMBINE2 = COMBINE({WAITFORALLCHANGED='true', BUFFERNEWINPUTELEMENTS='true'}, xZx0:PROJECTxXxwkaidxXxyZy)
+STATEMAP1 = STATEMAP({EVALUATEONPUNCTUATION='false', EXPRESSIONS=[xZx['__last_1.svrxXxwkaidxXxtrainingxXxwkaposxXx.PortxXxcounterxXx_corrected_score', 'featurexXxwkaidxXx_1'], ['__last_2.svrxXxwkaidxXxtrainingxXxwkaposxXx.PortxXxcounterxXx_corrected_score', 'featurexXxwkaidxXx_2'], ['__last_3.svrxXxwkaidxXxtrainingxXxwkaposxXx.PortxXxcounterxXx_corrected_score', 'featurexXxwkaidxXx_3']yZy, ['svrxXxwkaidxXxtrainingxXxwkaposxXx.PortxXxwkaposxXx_corrected_score', 'class'], ['Year(StreamDate())', 'Year']], ALLOWNULLINOUTPUT='false'}, 0:COMBINE1)
+STATEMAP2 = STATEMAP({ALLOWNULLINOUTPUT='false', EXPRESSIONS=[xZx['PxXxwindfarmidxXx:xXxwkaidxXx.PortxXxcounterxXx_corrected_score', 'featurexXxwkaidxXx_1'], ['__last_1.PxXxwindfarmidxXx:xXxwkaidxXx.PortxXxcounterxXx_corrected_score', 'featurexXxwkaidxXx_2'], ['__last_2.PxXxwindfarmidxXx:xXxwkaidxXx.PortxXxcounterxXx_corrected_score', 'featurexXxwkaidxXx_3']yZy], EVALUATEONPUNCTUATION='false'}, 0:COMBINE2)
+Timestamp1 = Timestamp({MILLISECOND='', SYSTEMTIME='false', SECOND='', YEAR='Year', MONTH='', CLEAREND='true', MINUTE='', HOUR=''}, 0:STATEMAP1)
+PROJECT1 = PROJECT({ATTRIBUTES=[xZx'featurexXxwkaidxXx_1', 'featurexXxwkaidxXx_2', 'featurexXxwkaidxXx_3'yZy, 'svrxXxwkaidxXxtrainingxXxwkaposxXx.class']}, 0:Timestamp1)
+SAMPLE1 = SAMPLE({SAMPLERATE=1}, 0:PROJECT1)
+CLASSIFICATION_LEARN1 = CLASSIFICATION_LEARN({LEARNER='weka', ALGORITHM='LIB-SVM', CLASS='svrxXxwkaidxXxtrainingxXxwkaposxXx.class', OPTIONS=[['arguments', '-S 3 -K 2 -H -G 0.0001 -C 100']]}, 0:SAMPLE1)
+Timestamp2 = Timestamp({MONTH='', MINUTE='', MILLISECOND='', SYSTEMTIME='false', HOUR='', CLEAREND='true', SECOND='', DAY=''}, 0:CLASSIFICATION_LEARN1)
+CLASSIFY1 = CLASSIFY({CLASSIFIER='classifier', ONECLASSIFIER='true'}, 0:Timestamp2, 0:STATEMAP2)
+MAP1 = MAP({EVALUATEONPUNCTUATION='false', EXPRESSIONS=[['clazz', 'svrxXxwkaidxXxclass'], ['DateInMillis(StreamDate())+600000', 'newStart']]}, 0:CLASSIFY1)
+PxXxwindfarmidxXx:xXxwkaidxXx:svr ::= Timestamp({SYSTEMTIME='false', HOUR='', SECOND='', CLEAREND='true', YEAR='', DAY='', MILLISECOND='', MONTH='', START='newStart', MINUTE=''}, 0:MAP1)

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLACostMonitoringDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLACostMonitoringConfigurer"
+            name="SLA Cost Monitoring">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceVisualizationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceVisualizationConfigurer"
+            name="SLA UpdateRateSource Visualization">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceViolationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceViolationConfigurer"
+            name="SLA UpdateRateSource Violation">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkVisualizationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkVisualizationConfigurer"
+            name="SLA UpdateRateSink Visualization">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkViolationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkViolationConfigurer"
+            name="SLA UpdateRateSink Violation">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpRaSiLatencyVisualizationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpRaSiLatencyVisualizationConfigurer"
+            name="SLA UpdateRateSink Latency Visualization">
+      </dashboardPart>
+   </extension>
+
+</plugin>

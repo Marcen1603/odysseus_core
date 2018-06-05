@@ -1,0 +1,18 @@
+#PARSER PQL
+#TRANSCFG Standard
+#ADDQUERY
+///Your first pql-query here
+
+in = ACCESS({
+TRANSPORT = 'POP3', 
+DATAHANDLER = 'Tuple', 
+Source = 'MailIn',
+WRAPPER = 'GenericPull', 
+PROTOCOL = 'CSV',
+schema = [['x', 'Double']],
+OPTIONS = [
+ ['host','pop3.uni-oldenburg.de'],
+ ['username',''],
+ ['password','']
+ ]
+})

@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OPC-UA Wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.opcua;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.opcua.Activator
+Bundle-Vendor: Georg Berendt
+Import-Package: de.uniol.inf.is.odysseus.mep,
+ org.osgi.framework,
+ org.slf4j
+Bundle-ClassPath: .,
+ lib/stack-client-1.0.0-SNAPSHOT.jar
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.opcua.common
+Service-Component: OSGI-INF/*.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.opcua
+Bundle-ActivationPolicy: lazy

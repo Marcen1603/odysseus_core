@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PQL Relational
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.pql.relational;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.relational.base.predicate,
+ org.osgi.framework;version="1.5.0"
+Export-Package: de.uniol.inf.is.odysseus.parser.pql.relational
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.mep
+Service-Component: OSGI-INF/RelationalPredicateBuilder.xml
+Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.pql.relational

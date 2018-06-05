@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rcp
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.context.rcp;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.context.rcp.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.context
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.core.server.metadata,
+ de.uniol.inf.is.odysseus.relational.base,
+ org.slf4j
+Automatic-Module-Name: de.uniol.inf.is.odysseus.context.rcp

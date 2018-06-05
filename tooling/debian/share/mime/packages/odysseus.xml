@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+	<mime-type type="application/odysseus">
+		<comment>Odysseus Query</comment>
+		<glob pattern="*.qry"/>
+	</mime-type>
+</mime-info>
