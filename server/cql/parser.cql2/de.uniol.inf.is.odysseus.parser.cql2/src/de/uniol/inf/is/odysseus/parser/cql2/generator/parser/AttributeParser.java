@@ -55,7 +55,7 @@ public class AttributeParser implements IAttributeParser {
 	@Inject
 	public AttributeParser(IUtilityService utilityService, ICacheService cacheService,
 			IExpressionParser expressionParser) {
-		this.utilityService = utilityService;
+//		this.utilityService = utilityService;
 		this.cacheService = cacheService;
 		this.expressionParser = expressionParser;
 		this.aggregates = new ArrayList<>();
@@ -387,7 +387,8 @@ public class AttributeParser implements IAttributeParser {
 			sourcename = sourcename + "." + attribute.getName();
 			obj.setName(sourcename);
 		}
-
+		
+		@SuppressWarnings(value = { "deprecation" })
 		Attribute clone = EcoreUtil2.clone(attribute);
 		obj.setAlias(clone.getAlias());
 

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.parser.cql2.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -39,7 +40,6 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 		return "CQL";
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public List<Terminal> getTerminals() {
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
@@ -60,7 +60,7 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 			}
 			// then, add also all datatypes
 			for (String dataType : OdysseusRCPEditorTextPlugIn.getDatatypeNames())
-				if (!tokens.contains(dataType))
+				if (!tokens.stream().map(e -> e.getName()).collect(Collectors.toList()).contains(dataType))
 					tokens.add(new Terminal(dataType, false));
 		}
 		return tokens;
