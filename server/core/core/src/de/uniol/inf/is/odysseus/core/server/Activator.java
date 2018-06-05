@@ -18,10 +18,13 @@ package de.uniol.inf.is.odysseus.core.server;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.LogicalOperatorBuilder;
+
 public class Activator implements BundleActivator {
 	
 
 	private static BundleContext bundleContext;
+	private LogicalOperatorBuilder logicalOperatorBuilder;
 	
 	
 	public static BundleContext getBundleContext(){
@@ -36,8 +39,8 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {		
-		//OperatorBuilderFactory.addOperatorBuilder(new AccessAOBuilder());
-		//OperatorBuilderFactory.addOperatorBuilder(new SenderAOBuilder());
+		logicalOperatorBuilder = new LogicalOperatorBuilder();
+		logicalOperatorBuilder.start(context);
 		
 		bundleContext = context;
 	}
@@ -50,6 +53,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		logicalOperatorBuilder.stop(context);
 		bundleContext = null;
 	}
 

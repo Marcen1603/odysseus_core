@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rabbitmq Wrapper
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.rabbitmq
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.rabbitmq;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,

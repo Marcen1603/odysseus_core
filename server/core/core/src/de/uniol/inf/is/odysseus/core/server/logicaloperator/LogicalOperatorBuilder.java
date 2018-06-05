@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.logicaloperator;
+package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
