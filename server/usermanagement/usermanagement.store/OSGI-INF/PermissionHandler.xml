@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="de.uniol.inf.is.odysseus.usermanagement.filestore.permissionHandler">
+   <implementation class="de.uniol.inf.is.odysseus.usermanagement.filestore.service.impl.UserManagementServiceImpl"/>
+   <reference bind="bindPermissionProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.usermanagement.IPermissionProvider" name="IPermissionProvider" policy="dynamic" unbind="unbindPermissionProvider"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement"/>
+   </service>
+</scr:component>

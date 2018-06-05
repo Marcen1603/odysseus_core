@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.usermanagement.filestore.service.impl;
+package de.uniol.inf.is.odysseus.usermanagement.store.service.impl;
 
 import java.io.IOException;
 
@@ -24,12 +24,12 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagemen
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.PrivilegeDAO;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.RoleDAO;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.UserDAO;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Privilege;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Role;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
+import de.uniol.inf.is.odysseus.usermanagement.store.service.dao.PrivilegeDAO;
+import de.uniol.inf.is.odysseus.usermanagement.store.service.dao.RoleDAO;
+import de.uniol.inf.is.odysseus.usermanagement.store.service.dao.UserDAO;
+import de.uniol.inf.is.odysseus.usermanagement.store.service.domain.Privilege;
+import de.uniol.inf.is.odysseus.usermanagement.store.service.domain.Role;
+import de.uniol.inf.is.odysseus.usermanagement.store.service.domain.User;
 
 public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> {
 
