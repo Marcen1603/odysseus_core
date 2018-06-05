@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net,
  de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/OdysseusNetConfigStartup.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.startup
+Bundle-ActivationPolicy: lazy

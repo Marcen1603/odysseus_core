@@ -11,3 +11,4 @@ Export-Package: de.uniol.inf.is.odysseus.rdf.datamodel,
  handler
 Service-Component: OSGI-INF/*
 Automatic-Module-Name: de.uniol.inf.is.odysseus.rdf
+Bundle-ActivationPolicy: lazy

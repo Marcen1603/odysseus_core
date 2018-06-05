@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.memstore.mdastore
 Service-Component: OSGI-INF/*
 Automatic-Module-Name: de.uniol.inf.is.odysseus.debsgc2015
+Bundle-ActivationPolicy: lazy

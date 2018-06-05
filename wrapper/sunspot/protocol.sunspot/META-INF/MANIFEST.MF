@@ -11,3 +11,4 @@ Import-Package: de.uniol.inf.is.odysseus.slf4j,
 Require-Bundle: de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/ProtocolHandler.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.protocol.sunspot
+Bundle-ActivationPolicy: lazy

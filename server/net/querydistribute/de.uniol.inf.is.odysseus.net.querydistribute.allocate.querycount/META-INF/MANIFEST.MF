@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.net.resource
 Service-Component: OSGI-INF/QueryCountAllocator.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.allocate.querycount
+Bundle-ActivationPolicy: lazy

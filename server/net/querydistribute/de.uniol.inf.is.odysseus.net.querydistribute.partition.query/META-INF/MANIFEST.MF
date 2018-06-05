@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net,
  de.uniol.inf.is.odysseus.net.util,
  com.google.guava;bundle-version="18.0.0"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.partition.query
+Bundle-ActivationPolicy: lazy

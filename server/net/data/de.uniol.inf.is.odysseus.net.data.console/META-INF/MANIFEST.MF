@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.data,
  de.uniol.inf.is.odysseus.net
 Service-Component: OSGI-INF/DistributedDataConsole.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.data.console
+Bundle-ActivationPolicy: lazy

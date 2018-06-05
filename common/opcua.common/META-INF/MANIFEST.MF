@@ -104,3 +104,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/*.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.opcua.common
+Bundle-ActivationPolicy: lazy

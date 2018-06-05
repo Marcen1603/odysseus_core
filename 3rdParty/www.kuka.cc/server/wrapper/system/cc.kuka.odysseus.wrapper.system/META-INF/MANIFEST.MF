@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/SystemTransportHandler.xml,  
  OSGI-INF/PingTransportHandler.xml
 Automatic-Module-Name: cc.kuka.odysseus.wrapper.system
+Bundle-ActivationPolicy: lazy

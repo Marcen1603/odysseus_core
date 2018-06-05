@@ -9,3 +9,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Export-Package: de.uniol.inf.is.odysseus.trust
 Service-Component: OSGI-INF/Trust.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.trust
+Bundle-ActivationPolicy: lazy

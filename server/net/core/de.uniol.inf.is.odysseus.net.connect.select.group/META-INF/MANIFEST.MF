@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.connect,
  de.uniol.inf.is.odysseus.net.config
 Service-Component: OSGI-INF/GroupSelectorComponent.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.connect.select.group
+Bundle-ActivationPolicy: lazy

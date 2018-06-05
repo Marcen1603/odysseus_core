@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.communication,
 Service-Component: OSGI-INF/OdysseusNodeUpdater.xml
 Export-Package: de.uniol.inf.is.odysseus.net.update
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.update
+Bundle-ActivationPolicy: lazy

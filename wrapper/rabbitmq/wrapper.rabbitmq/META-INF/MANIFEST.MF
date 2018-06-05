@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.rabbitmq;bundle-version="5.2.0"
 Service-Component: OSGI-INF/TransportHandler.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.rabbitmq
+Bundle-ActivationPolicy: lazy

@@ -10,3 +10,4 @@ Import-Package: de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.core.phy
  org.slf4j
 Service-Component: OSGI-INF/QueryBufferPlacementStrategy.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement
+Bundle-ActivationPolicy: lazy

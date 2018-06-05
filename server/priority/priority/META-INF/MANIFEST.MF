@@ -24,3 +24,4 @@ Service-Component: OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/Priorit
 Require-Bundle: de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.priority
+Bundle-ActivationPolicy: lazy

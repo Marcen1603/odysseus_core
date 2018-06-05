@@ -24,3 +24,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/BenchmarkPreTransformationHandler.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.parallelization.benchmark
+Bundle-ActivationPolicy: lazy

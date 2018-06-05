@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.querydistribute,
 Service-Component: OSGI-INF/RoundRobinAllocator.xml,
  OSGI-INF/RoundRobinWithLocalAllocator.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.allocate.roundrobin
+Bundle-ActivationPolicy: lazy

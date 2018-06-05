@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.core.commands
 Automatic-Module-Name: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.factorys
+Bundle-ActivationPolicy: lazy

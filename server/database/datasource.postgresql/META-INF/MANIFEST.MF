@@ -10,3 +10,4 @@ Bundle-ClassPath: lib/postgresql-9.1-901.jdbc4.jar,
 Service-Component: OSGI-INF/postgresssource.xml,
  OSGI-INF/ConnectionFactory.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.postgresql
+Bundle-ActivationPolicy: lazy

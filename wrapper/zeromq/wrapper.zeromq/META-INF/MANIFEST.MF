@@ -11,3 +11,4 @@ Service-Component: OSGI-INF/TransportHandler.xml
 Bundle-ClassPath: .
 Import-Package: de.uniol.inf.is.odysseus.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.zeromq
+Bundle-ActivationPolicy: lazy

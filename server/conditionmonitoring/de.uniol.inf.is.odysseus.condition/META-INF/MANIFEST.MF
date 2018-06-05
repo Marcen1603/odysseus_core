@@ -28,3 +28,4 @@ Import-Package: com.google.gson,
 Export-Package: de.uniol.inf.is.odysseus.condition.logicaloperator
 Service-Component: OSGI-INF/ConditionRuleProvider.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.condition
+Bundle-ActivationPolicy: lazy

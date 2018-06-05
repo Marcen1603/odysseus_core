@@ -24,3 +24,4 @@ Bundle-NativeCode: lib/win/amd64/BaslerJava.dll ;  osname=win32; osname=Windows 
   *
 Export-Package: de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.baslercamera
+Bundle-ActivationPolicy: lazy

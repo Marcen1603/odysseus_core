@@ -12,3 +12,4 @@ Export-Package: cc.kuka.odysseus.signal.common.datatype,
  cc.kuka.odysseus.signal.common.sdf.schema
 Service-Component: OSGI-INF/SignalDatatypeProvider.xml
 Automatic-Module-Name: cc.kuka.odysseus.signal.common
+Bundle-ActivationPolicy: lazy
