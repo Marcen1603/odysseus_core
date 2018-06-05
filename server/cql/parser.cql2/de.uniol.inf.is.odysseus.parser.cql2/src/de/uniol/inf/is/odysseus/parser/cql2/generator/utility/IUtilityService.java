@@ -40,7 +40,7 @@ public interface IUtilityService {
 	String generateListString(Collection<String> strings);
 	String generateListString(String s1);
 	String generateKeyValueString(List<String> l1, List<String> l2, String s);
-	String generateKeyValueString(String[] s);
+	String generateKeyValueString(String ... s);
 	Collection<String> getAttributeNamesFromSource(String name);
 	Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery);
 	String getSourcenameFromAlias(String name);

@@ -324,6 +324,7 @@ public class UtilityService implements IUtilityService {
 		return "";
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public Collection<QueryAttribute> getAttributesFrom(QuerySource querySource) {
 		 return cacheService.getQueryCache().getAllQueryAttributes()
 				.stream()
@@ -331,6 +332,7 @@ public class UtilityService implements IUtilityService {
 				.collect(Collectors.toList());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<QueryAttribute> getQueryAttribute(Attribute attribute) {
 		

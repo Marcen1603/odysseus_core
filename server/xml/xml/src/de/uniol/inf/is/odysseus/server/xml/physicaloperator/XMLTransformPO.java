@@ -38,12 +38,12 @@ public class XMLTransformPO<T extends IMetaAttribute> extends AbstractPipe<XMLSt
 	private String xslt;
 	private int xsltSchemaHash;
 	private boolean dynamicXSD;
-	private OptionMap options;
+//	private OptionMap options;
 	private Properties properties;
 
 	public XMLTransformPO(Path xsdFile, String xsdString, boolean isDynamic, OptionMap optionsMap) throws IOException {
 
-		this.options = optionsMap;
+//		this.options = optionsMap;
 		this.dynamicXSD = isDynamic;
 
 		try {

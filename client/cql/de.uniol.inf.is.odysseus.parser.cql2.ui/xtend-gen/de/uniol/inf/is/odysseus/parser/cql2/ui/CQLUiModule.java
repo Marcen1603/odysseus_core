@@ -8,24 +8,22 @@ import de.uniol.inf.is.odysseus.parser.cql2.ui.Activator;
 import de.uniol.inf.is.odysseus.parser.cql2.ui.CQLEditor;
 import de.uniol.inf.is.odysseus.parser.cql2.ui.internal.Cql2Activator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
  */
-@FinalFieldsConstructor
 @SuppressWarnings("all")
 public class CQLUiModule extends AbstractCQLUiModule {
+  public CQLUiModule(final AbstractUIPlugin plugin) {
+    super(plugin);
+  }
+  
   public Class<? extends XtextEditor> bindXtextEditor() {
     return CQLEditor.class;
   }
   
   public Class<? extends Cql2Activator> bindCqlActivator() {
     return Activator.class;
-  }
-  
-  public CQLUiModule(final AbstractUIPlugin plugin) {
-    super(plugin);
   }
 }
