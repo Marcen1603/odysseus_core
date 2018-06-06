@@ -13,13 +13,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("all")
 public class AttributeNameParser implements IAttributeNameParser {
-  private final Logger log = LoggerFactory.getLogger(AttributeNameParser.class);
-  
   private IUtilityService utilityService;
   
   private ICacheService cacheService;
