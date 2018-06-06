@@ -11,7 +11,8 @@ Require-Bundle: org.apache.jlibs,
  de.uniol.inf.is.odysseus.ruleengine,
  de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.transform,
- de.uniol.inf.is.odysseus.mep
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.server.xml,
  de.uniol.inf.is.odysseus.server.xml.predicate
 Service-Component: OSGI-INF/*
