@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Anomaly Detection
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.anomalydetection
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.anomalydetection.Activator
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
@@ -16,5 +15,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework;version="1.6.0"
 Export-Package: de.uniol.inf.is.odysseus.anomalydetection.logicaloperator
 Automatic-Module-Name: de.uniol.inf.is.odysseus.anomalydetection
-Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .

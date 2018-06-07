@@ -27,7 +27,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
-
    <includes
          id="de.uniol.inf.is.odysseus.client.platform.feature"
          version="0.0.0"/>
@@ -261,10 +260,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.condition.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.parallelization.feature"
          version="0.0.0"/>
 
@@ -310,6 +305,10 @@ limitations under the License.
 
    <includes
          id="de.uniol.inf.is.odysseus.rest.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.anomalydetection.feature"
          version="0.0.0"/>
 
 </feature>
