@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Condition Monitoring
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.condition
+Bundle-Name: Anomaly Detection
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.anomalydetection
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.condition.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.anomalydetection.Activator
 Bundle-Vendor: Brandt
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
@@ -25,7 +25,7 @@ Import-Package: com.google.gson,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.6.0"
-Export-Package: de.uniol.inf.is.odysseus.condition.logicaloperator
-Service-Component: OSGI-INF/ConditionRuleProvider.xml
-Automatic-Module-Name: de.uniol.inf.is.odysseus.condition
+Export-Package: de.uniol.inf.is.odysseus.anomalydetection.logicaloperator
+Service-Component: OSGI-INF/AnomalyDetectionRuleProvider.xml
+Automatic-Module-Name: de.uniol.inf.is.odysseus.anomalydetection
 Bundle-ActivationPolicy: lazy
