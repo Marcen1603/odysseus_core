@@ -163,7 +163,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@SuppressWarnings("rawtypes")
 	private Map<ClientReceiver, Integer> opReceivers = new HashMap<>();
 
-	private Map<String, WebserviceServer> server = new HashMap<String, WebserviceServer>();
+	private Map<String, WebserviceServer> server = new HashMap<>();
 
 	@Override
 	public synchronized void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
@@ -181,7 +181,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		if (l != null) {
 			l.remove(listener);
 			if (l.isEmpty()) {
-				updateEventListener.remove(l);
+				updateEventListener.get(session.getConnectionName()).remove(l);
 			}
 		}
 	}
@@ -689,7 +689,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession caller) {
 		assureLogin(caller);
-		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		List<IPhysicalOperator> roots = new ArrayList<>();
 		Optional<ClientReceiver> receiver = createClientReceiver(this, queryID, caller);
 		if (receiver.isPresent()) {
 			roots.add(receiver.get());
@@ -701,7 +701,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	private Optional<ClientReceiver> createClientReceiver(IExecutor exec, int queryId, ISession caller) {
 		assureLogin(caller);
 
-		if (receivers.containsKey(queryId)) {
+		if (receivers.get(caller.getConnectionName()).containsKey(queryId)) {
 			return Optional.of(receivers.get(caller.getConnectionName()).get(queryId));
 		}
 
@@ -742,7 +742,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		receiver.addOwner(this);
 		Map<Integer, ClientReceiver> r = receivers.get(caller.getConnectionName());
 		if (r == null) {
-			r = new HashMap<Integer, ClientReceiver>();
+			r = new HashMap<>();
 			receivers.put(caller.getConnectionName(), r);
 		}
 		r.put(queryId, receiver);
@@ -756,7 +756,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	public void done(IOwnedOperator op) {
 		Integer queryID = opReceivers.get(op);
 		if (queryID != null) {
-			opReceivers.remove(op);
+			Integer o = opReceivers.remove(op);
 			receivers.remove(queryID);
 		}
 	}

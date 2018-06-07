@@ -28,3 +28,4 @@ Service-Component: OSGI-INF/RewriteRuleProvider.xml,OSGI-INF/SensorOntologyServi
  OSGI-INF/QualityTimeIntervalMetadata.xml
 Export-Package: cc.kuka.odysseus.ontology.metadata
 Automatic-Module-Name: cc.kuka.odysseus.ontology
+Bundle-ActivationPolicy: lazy

@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.config,
 Service-Component: OSGI-INF/odysseusNodeCommunicator.xml
 Export-Package: de.uniol.inf.is.odysseus.net.communication
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.communication
+Bundle-ActivationPolicy: lazy

@@ -9,3 +9,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.connect,
  de.uniol.inf.is.odysseus.net
 Service-Component: OSGI-INF/ConnectAllSelector.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.connect.select.all
+Bundle-ActivationPolicy: lazy

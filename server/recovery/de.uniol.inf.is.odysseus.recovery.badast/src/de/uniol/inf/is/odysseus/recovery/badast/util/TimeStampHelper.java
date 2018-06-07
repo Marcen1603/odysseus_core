@@ -86,6 +86,7 @@ public class TimeStampHelper {
 	 *            The factory to clone.
 	 * @return A copy of {@code fac}.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static IMetadataUpdater<?, ?> cloneIntervalFactory(RelationalTimestampAttributeTimeIntervalMFactory fac) {
 		if (fac.getStartAttrPos() != -1) {
 			return new RelationalTimestampAttributeTimeIntervalMFactory(fac.getStartAttrPos(), fac.getEndAttrPos(),
@@ -119,6 +120,7 @@ public class TimeStampHelper {
 	 *            {@link MetadataUpdatePO#getMetadataFactory()} shall be copied.
 	 * @return A clone of the original metadata factory.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static IMetadataUpdater<?, ?> copyInitializer(MetadataUpdatePO<?, ?> operator) {
 		IMetadataUpdater<?, ?> fac = operator.getMetadataFactory();
 		if(fac == null) {
@@ -137,6 +139,7 @@ public class TimeStampHelper {
 	 *            {@link ReceiverPO#getMetadataFactory()} shall be copied.
 	 * @return A clone of the original metadata factory.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static IMetadataUpdater<?, ?> copyInitializer(ReceiverPO<?, ?> operator) {
 		IMetadataUpdater<?, ?> fac = operator.getMetadataFactory();
 		if(fac == null) {

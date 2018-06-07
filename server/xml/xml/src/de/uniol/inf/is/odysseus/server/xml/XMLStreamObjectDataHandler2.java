@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -37,7 +36,7 @@ public class XMLStreamObjectDataHandler2 extends AbstractStreamObjectDataHandler
 	
 	protected static List<String> types = new ArrayList<String>();
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObjectDataHandler2.class);
-	private static DocumentBuilder docBuilder;
+//	private static DocumentBuilder docBuilder;
 	private Transformer transformer;
 	private Charset charset = Charset.forName("UTF-8");
 
@@ -50,11 +49,11 @@ public class XMLStreamObjectDataHandler2 extends AbstractStreamObjectDataHandler
 	public XMLStreamObjectDataHandler2() {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		docFactory.setNamespaceAware(false);
-		try {
-			docBuilder = docFactory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			docBuilder = docFactory.newDocumentBuilder();
+//		} catch (ParserConfigurationException e) {
+//			e.printStackTrace();
+//		}
 		
 		try {
 			this.transformer = TransformerFactory.newInstance().newTransformer();

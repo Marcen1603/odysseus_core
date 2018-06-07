@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net,
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/UserAllocator.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.allocate.user
+Bundle-ActivationPolicy: lazy

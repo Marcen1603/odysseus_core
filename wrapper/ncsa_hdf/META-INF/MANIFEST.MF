@@ -28,4 +28,5 @@ Bundle-NativeCode: lib/win32/x86_64/jhdf.dll;lib/win32/x86_64/jhdf5.dll;
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.ncsa_hdf
+Bundle-ActivationPolicy: lazy
 

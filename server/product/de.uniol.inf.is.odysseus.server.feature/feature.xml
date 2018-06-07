@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.server.feature"
-      label="Server"
+      label="Server Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
@@ -44,10 +44,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.core.server.feature"
          version="0.0.0"/>
 
@@ -61,6 +57,10 @@ limitations under the License.
 
    <includes
          id="de.uniol.inf.is.odysseus.memstore.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.usermanagement.store.feature"
          version="0.0.0"/>
 
 </feature>

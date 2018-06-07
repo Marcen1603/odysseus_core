@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
  de.uniol.inf.is.odysseus.net.querydistribute
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.postprocess.localsink
+Bundle-ActivationPolicy: lazy

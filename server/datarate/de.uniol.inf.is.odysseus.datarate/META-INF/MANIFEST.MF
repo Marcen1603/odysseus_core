@@ -19,3 +19,4 @@ Export-Package: de.uniol.inf.is.odysseus.datarate,
  de.uniol.inf.is.odysseus.datarate.logicaloperator,
  de.uniol.inf.is.odysseus.datarate.physicaloperator
 Automatic-Module-Name: de.uniol.inf.is.odysseus.datarate
+Bundle-ActivationPolicy: lazy

@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.querydistribute,
  de.uniol.inf.is.odysseus.net
 Service-Component: OSGI-INF/SourcePreProcessor.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.preprocess.source
+Bundle-ActivationPolicy: lazy

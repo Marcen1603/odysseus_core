@@ -9,3 +9,4 @@ Require-Bundle: com.google.protobuf;bundle-version="2.4.1",
  de.uniol.inf.is.odysseus.wrapper.protobuf
 Service-Component: OSGI-INF/DatatypeProvider.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012
+Bundle-ActivationPolicy: lazy

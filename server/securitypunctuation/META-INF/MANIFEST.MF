@@ -22,7 +22,6 @@ Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
- de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain,
  org.apache.commons.lang;version="2.6.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j

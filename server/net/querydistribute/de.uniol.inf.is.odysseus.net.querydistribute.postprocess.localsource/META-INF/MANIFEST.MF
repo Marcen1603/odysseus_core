@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net,
  de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/LocalSourcesPostProcessor.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.querydistribute.postprocess.localsource
+Bundle-ActivationPolicy: lazy

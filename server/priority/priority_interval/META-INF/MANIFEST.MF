@@ -18,3 +18,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.sweeparea
 Service-Component: OSGI-INF/IntervalPriority.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.priority_interval
+Bundle-ActivationPolicy: lazy

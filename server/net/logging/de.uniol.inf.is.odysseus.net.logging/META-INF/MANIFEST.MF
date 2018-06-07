@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.data,
 Service-Component: OSGI-INF/OdysseusNetLoggingComponent.xml,
  OSGI-INF/LogDestinationDistributedDataListener.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.net.logging
+Bundle-ActivationPolicy: lazy

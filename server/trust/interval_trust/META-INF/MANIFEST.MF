@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/IntervalTrust.xml
 Export-Package: de.uniol.inf.is.odysseus.interval_trust
 Automatic-Module-Name: de.uniol.inf.is.odysseus.interval_trust
+Bundle-ActivationPolicy: lazy

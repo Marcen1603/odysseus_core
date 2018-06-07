@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.system
+Bundle-ActivationPolicy: lazy

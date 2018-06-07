@@ -17,15 +17,7 @@
             id="de.uniol.inf.is.odysseus.developer.mep.command.TestMEPFunctionCommand"
             name="Test MEP Function">
       </command>     
-       </extension>
-       <extension
-         point="org.eclipse.ui.commands">
-              <command
-            defaultHandler="de.uniol.inf.is.odysseus.developer.mep.command.RunMEPCalculatorCommand"
-            id="de.uniol.inf.is.odysseus.developer.mep.command.RunMEPCalculatorCommand"
-            name="MEP Calculator">
-      </command>     
-       </extension>
+       </extension>  
            <extension
          point="org.eclipse.ui.menus">
             <menuContribution
