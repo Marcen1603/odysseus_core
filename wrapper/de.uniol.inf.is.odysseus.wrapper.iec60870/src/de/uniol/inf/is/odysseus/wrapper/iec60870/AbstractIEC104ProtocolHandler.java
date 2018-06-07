@@ -193,7 +193,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 				try {
 					apduHandler.buildAndSendAPDU((ASDU) firstAttribute);
 				} catch (IEC608705104ProtocolException | IOException e) {
-					getLogger().error("Error while building and sending ASDU from {}", firstAttribute);
+					getLogger().error("Error while building and sending ASDU from " + firstAttribute, e);
 				}
 			} else {
 				getLogger().error("Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
@@ -220,8 +220,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 			try {
 				apduHandler.buildAndSendAPDU(new ASDU((DataUnitIdentifier) firstAttribute, ioList));
 			} catch (IEC608705104ProtocolException | IOException e) {
-				getLogger().error("Error while building and sending ASDU from {} and {}", firstAttribute,
-						secondAttribute);
+				getLogger().error("Error while building and sending ASDU from " + firstAttribute + " and " + secondAttribute, e);
 			}
 			break;
 		default:
