@@ -48,13 +48,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.condition.rest"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="restlet-osgi-2.3.1"
          download-size="0"
          install-size="0"
@@ -63,6 +56,13 @@ limitations under the License.
 
    <plugin
          id="jama"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.anomalydetection.rest"
          download-size="0"
          install-size="0"
          version="0.0.0"
