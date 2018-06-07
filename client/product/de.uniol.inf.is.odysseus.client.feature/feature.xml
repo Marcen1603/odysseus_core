@@ -52,7 +52,7 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"
+         id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature"
          version="0.0.0"/>
 
    <plugin
