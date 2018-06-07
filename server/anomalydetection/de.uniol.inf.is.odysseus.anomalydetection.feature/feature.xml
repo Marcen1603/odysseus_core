@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.condition.feature"
+      id="de.uniol.inf.is.odysseus.anomalydetection.feature"
       label="Anomaly Detection Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
