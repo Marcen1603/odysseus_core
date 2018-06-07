@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -Declipse.log.level=ERROR
+      <vmArgs>-Xms1500M -Xmx1500M -Declipse.log.level=ERROR
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
