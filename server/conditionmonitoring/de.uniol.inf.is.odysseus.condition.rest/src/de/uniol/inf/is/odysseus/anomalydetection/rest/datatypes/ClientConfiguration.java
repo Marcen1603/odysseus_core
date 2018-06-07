@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.condition.rest.datatypes;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.condition.rest.dto.response.CollectionInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.dto.response.CollectionInformation;
 
 /**
  * Configuration for the client application which only has to show what the

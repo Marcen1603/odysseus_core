@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.condition.rest;
+package de.uniol.inf.is.odysseus.anomalydetection.rest;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;

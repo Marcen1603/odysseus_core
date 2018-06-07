@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.condition.rest.dto.request;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.dto.request;
 
 public class GetCMConfigurationListRequestDTO {
 

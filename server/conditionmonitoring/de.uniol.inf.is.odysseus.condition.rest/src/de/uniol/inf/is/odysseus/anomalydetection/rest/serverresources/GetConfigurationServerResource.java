@@ -1,15 +1,15 @@
-package de.uniol.inf.is.odysseus.condition.rest.serverresources;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.serverresources;
 
 import java.util.List;
 
 import org.restlet.resource.Post;
 import org.restlet.resource.ResourceException;
 
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConfigurationDescription;
-import de.uniol.inf.is.odysseus.condition.rest.dto.request.GetCMConfigurationListRequestDTO;
-import de.uniol.inf.is.odysseus.condition.rest.dto.response.CMConfigurationListResponseDTO;
-import de.uniol.inf.is.odysseus.condition.rest.service.ConfigurationService;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.Configuration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ConfigurationDescription;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.dto.request.GetCMConfigurationListRequestDTO;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.dto.response.CMConfigurationListResponseDTO;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.service.ConfigurationService;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 

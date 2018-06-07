@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.condition.rest.serverresources;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.serverresources;
 
 import org.restlet.resource.Post;
 
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ClientConfiguration;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
-import de.uniol.inf.is.odysseus.condition.rest.dto.request.RunConfigurationRequestDTO;
-import de.uniol.inf.is.odysseus.condition.rest.service.ConfigurationService;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ClientConfiguration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.Configuration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.dto.request.RunConfigurationRequestDTO;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.service.ConfigurationService;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 

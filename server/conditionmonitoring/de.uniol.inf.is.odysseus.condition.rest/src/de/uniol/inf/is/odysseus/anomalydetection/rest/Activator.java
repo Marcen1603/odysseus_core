@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.condition.rest;
+package de.uniol.inf.is.odysseus.anomalydetection.rest;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

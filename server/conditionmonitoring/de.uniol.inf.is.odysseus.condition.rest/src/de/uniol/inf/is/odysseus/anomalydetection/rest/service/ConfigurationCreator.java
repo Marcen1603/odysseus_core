@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.condition.rest.service;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,15 +10,15 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.AreaChartVisualizationInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ClientConfiguration;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.CollectionColoringInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConnectionInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.GaugeVisualizationInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.OverviewInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ServerConfiguration;
-import de.uniol.inf.is.odysseus.condition.rest.dto.response.CollectionInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.AreaChartVisualizationInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ClientConfiguration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.CollectionColoringInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.Configuration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ConnectionInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.GaugeVisualizationInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.OverviewInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ServerConfiguration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.dto.response.CollectionInformation;
 
 /**
  * This class gives an example of how to create a configuration for the

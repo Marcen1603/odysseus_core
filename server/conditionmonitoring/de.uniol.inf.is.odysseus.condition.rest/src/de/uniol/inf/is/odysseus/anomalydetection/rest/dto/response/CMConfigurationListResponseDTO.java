@@ -1,9 +1,9 @@
-package de.uniol.inf.is.odysseus.condition.rest.dto.response;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConfigurationDescription;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ConfigurationDescription;
 
 public class CMConfigurationListResponseDTO {
 	

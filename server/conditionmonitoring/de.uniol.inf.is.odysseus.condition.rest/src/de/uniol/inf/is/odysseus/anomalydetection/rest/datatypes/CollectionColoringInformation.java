@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.condition.rest.datatypes;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes;
 
 /**
  * Information about the coloring in the client application

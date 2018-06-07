@@ -1,13 +1,13 @@
-package de.uniol.inf.is.odysseus.condition.rest.dto.response;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.AreaChartVisualizationInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.CollectionColoringInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConnectionInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.GaugeVisualizationInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.AreaChartVisualizationInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.CollectionColoringInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ConnectionInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.GaugeVisualizationInformation;
 
 /**
  * @author Tobias Brandt

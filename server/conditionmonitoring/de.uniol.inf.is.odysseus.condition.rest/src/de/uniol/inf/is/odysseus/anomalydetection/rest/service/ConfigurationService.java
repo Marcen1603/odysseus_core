@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.condition.rest.service;
+package de.uniol.inf.is.odysseus.anomalydetection.rest.service;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -14,10 +14,10 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-import de.uniol.inf.is.odysseus.condition.rest.ExecutorServiceBinding;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.QueryInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.ServerConfiguration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.ExecutorServiceBinding;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.Configuration;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.QueryInformation;
+import de.uniol.inf.is.odysseus.anomalydetection.rest.datatypes.ServerConfiguration;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
