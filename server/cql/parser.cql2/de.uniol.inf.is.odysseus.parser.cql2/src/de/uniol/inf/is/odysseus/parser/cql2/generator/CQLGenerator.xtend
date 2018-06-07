@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IRenameP
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ISelectParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.UtilityModule
-import java.util.List
 import java.util.Map
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess2

@@ -5,13 +5,13 @@
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-    This feature bundle all dependencies that are needed to use Xtext-related features such as the IQL Feature.
+      This feature bundle all dependencies that are needed to use Xtext-related features such as the IQL Feature.
    </description>
 
    <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
-   
+
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -342,5 +342,12 @@ limitations under the License.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
+   <plugin
+         id="org.eclipse.emf.ecore.change"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
