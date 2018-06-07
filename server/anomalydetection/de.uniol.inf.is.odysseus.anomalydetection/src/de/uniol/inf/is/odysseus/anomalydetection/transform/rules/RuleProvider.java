@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider;
 
 /**
- * Rule provider for condition monitoring operators
+ * Rule provider for anomaly detection operators
  * 
  * @author Tobias Brandt
  *

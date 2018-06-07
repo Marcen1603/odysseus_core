@@ -5,27 +5,16 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.anomalydetection
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.anomalydetection.Activator
 Bundle-Vendor: University of Oldenburg
-Require-Bundle: de.uniol.inf.is.odysseus.core,
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine,
- jama,
- de.uniol.inf.is.odysseus.slf4j,
- restlet-osgi-2.3.1
+ com.google.code.gson;bundle-version="2.2.4",
+ de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: com.google.gson,
- de.uniol.inf.is.odysseus.core.collection,
- de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.core.physicaloperator,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.logicaloperator,
- de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
- de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
- de.uniol.inf.is.odysseus.core.server.physicaloperator,
- de.uniol.inf.is.odysseus.physicaloperator.relational,
- de.uniol.inf.is.odysseus.transform.rule,
- org.osgi.framework;version="1.6.0"
+Import-Package: org.osgi.framework;version="1.6.0"
 Export-Package: de.uniol.inf.is.odysseus.anomalydetection.logicaloperator
-Service-Component: OSGI-INF/AnomalyDetectionRuleProvider.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.anomalydetection
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
