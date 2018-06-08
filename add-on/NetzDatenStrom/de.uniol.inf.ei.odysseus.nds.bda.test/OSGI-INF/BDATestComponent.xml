@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.ei.odysseus.nds.bda.test.BDATestComponent">
+   <implementation class="de.uniol.inf.ei.odysseus.nds.test.BDATestComponent"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.test.component.ITestComponent"/>
+   </service>
+</scr:component>
