@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="cc.kuka.odysseus.ontology.rewrite.RewriteRuleProvider">
-   <implementation class="cc.kuka.odysseus.ontology.RewriteRuleProvider"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider"/>
-   </service>
-</scr:component>
