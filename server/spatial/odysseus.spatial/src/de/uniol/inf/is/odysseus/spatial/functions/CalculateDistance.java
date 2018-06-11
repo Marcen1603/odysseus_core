@@ -19,10 +19,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
+/**
+ * Calculates the distance based on the haversine formula.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class CalculateDistance extends AbstractFunction<Double> {
 
 	private static final long serialVersionUID = 5262980729413311930L;
-	
+
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER },
 			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER },
@@ -43,10 +49,8 @@ public class CalculateDistance extends AbstractFunction<Double> {
 		double earthRadius = 6371; // earthRadius in Kilometers
 		double dLat = Math.toRadians(targetLat - sourceLat);
 		double dLng = Math.toRadians(targetLong - sourceLong);
-		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-				+ Math.cos(Math.toRadians(sourceLat))
-				* Math.cos(Math.toRadians(targetLat)) * Math.sin(dLng / 2)
-				* Math.sin(dLng / 2);
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(sourceLat))
+				* Math.cos(Math.toRadians(targetLat)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double distance = earthRadius * c;
 		return distance;
