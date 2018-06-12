@@ -94,7 +94,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return createTemporalPoint(currentPoint, oldestPoint, currentPointInTime, oldestPointInTime);
 	}
 
-	protected Object[] createTemporalPoint(Geometry currentPoint, Geometry oldestPoint, PointInTime currentPointInTime,
+	public Object[] createTemporalPoint(Geometry currentPoint, Geometry oldestPoint, PointInTime currentPointInTime,
 			PointInTime oldestPointInTime) {
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(oldestPoint, currentPoint);
 		long timeInstancesTravelled = currentPointInTime.minus(oldestPointInTime).getMainPoint();
@@ -143,14 +143,14 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return geom;
 	}
 
-	protected T popOldestElement(Collection<T> elements) {
+	public T popOldestElement(Collection<T> elements) {
 		if (elements.isEmpty()) {
 			return null;
 		}
 		return elements.iterator().next();
 	}
 
-	protected T getNewestElement(Collection<T> elements) {
+	public T getNewestElement(Collection<T> elements) {
 		Iterator<T> iterator = elements.iterator();
 		T newestElement = null;
 		while (iterator.hasNext()) {
