@@ -30,6 +30,9 @@ import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
  * spline function. Only works for 3 and more points of the moving object in the
  * window. If less, a linear function is used instead.
  * 
+ * Idea to use two spline functions from here:
+ * https://math.stackexchange.com/a/578971/569340
+ * 
  * @author Tobias Brandt
  *
  * @param <M>
