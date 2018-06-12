@@ -86,7 +86,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return handleFilledHistory(newestElement, oldestElement, elements);
 	}
 
-	protected Object[] handleNoElement(T trigger) {
+	public Object[] handleNoElement(T trigger) {
 		Geometry triggerPoint = getGeometryFromElement(trigger);
 		Point zeroPoint = GeometryFactory.createPointFromInternalCoord(new Coordinate(0, 0), triggerPoint);
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(zeroPoint,
@@ -96,7 +96,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return temporalPoint;
 	}
 
-	protected Object[] handleEmptyHistory(T newestElement) {
+	public Object[] handleEmptyHistory(T newestElement) {
 		Geometry currentPoint = getGeometryFromElement(newestElement);
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
 				newestElement.getMetadata().getStart(), 0, 0);
@@ -105,7 +105,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return temporalPoint;
 	}
 
-	protected Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
+	public Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
 		Geometry currentPoint = getGeometryFromElement(newestElement);
 		Geometry oldestPoint = getGeometryFromElement(oldestElement);
 		PointInTime oldestPointInTime = oldestElement.getMetadata().getStart();

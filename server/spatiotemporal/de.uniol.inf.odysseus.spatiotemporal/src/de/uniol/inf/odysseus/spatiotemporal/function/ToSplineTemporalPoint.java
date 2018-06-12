@@ -82,7 +82,9 @@ public class ToSplineTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		double[] t = this.getAllTimestamps(elements);
 
 		// Splines work with 3 or more points. If less, use simple linear function.
-		if (elements.size() < 2) {
+		if (elements.size() < 1) {
+			return fallBackFunction.handleNoElement(trigger);
+		} else if (elements.size() < 2) {
 			T newestElement = fallBackFunction.getNewestElement(elements);
 			return fallBackFunction.handleEmptyHistory(newestElement);
 		} else if (elements.size() < 3) {
