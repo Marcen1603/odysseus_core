@@ -10,6 +10,8 @@ import org.geotools.referencing.GeodeticCalculator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
@@ -41,7 +43,7 @@ import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
-	private static final long serialVersionUID = -564559788689771841L; 
+	private static final long serialVersionUID = -564559788689771841L;
 
 	// For OSGi
 	public ToLinearTemporalPoint() {
@@ -71,10 +73,27 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		T oldestElement = popOldestElement(elements);
 		T newestElement = getNewestElement(elements);
 
-		if (oldestElement == null) {
+		if (oldestElement == null && newestElement != null) {
+			// We have only one element in history
 			return handleEmptyHistory(newestElement);
+		} else if (newestElement == null) {
+			/*
+			 * We don't have any element (happens if evaluated at outdating for a certain
+			 * group)
+			 */
+			return handleNoElement(trigger);
 		}
 		return handleFilledHistory(newestElement, oldestElement, elements);
+	}
+
+	protected Object[] handleNoElement(T trigger) {
+		Geometry triggerPoint = getGeometryFromElement(trigger);
+		Point zeroPoint = GeometryFactory.createPointFromInternalCoord(new Coordinate(0, 0), triggerPoint);
+		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(zeroPoint,
+				trigger.getMetadata().getStart(), 0, 0);
+		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
+		return temporalPoint;
 	}
 
 	protected Object[] handleEmptyHistory(T newestElement) {
@@ -111,7 +130,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
 		return temporalPoint;
 	}
-	
+
 	protected GeodeticCalculator getGeodeticCalculator(Coordinate from, Coordinate to) {
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 		double startLongitude = from.y;
