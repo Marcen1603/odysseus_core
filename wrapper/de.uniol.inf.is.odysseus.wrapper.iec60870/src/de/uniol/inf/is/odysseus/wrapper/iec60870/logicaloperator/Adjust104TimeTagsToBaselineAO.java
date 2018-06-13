@@ -69,6 +69,7 @@ public class Adjust104TimeTagsToBaselineAO extends UnaryLogicalOp {
 		iosAttribute = other.iosAttribute;
 		baseline = other.baseline;
 		acceleration = other.acceleration;
+		delay = other.delay;
 	}
 
 	@Override
