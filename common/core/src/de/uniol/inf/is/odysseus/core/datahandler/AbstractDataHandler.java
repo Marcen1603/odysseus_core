@@ -125,11 +125,13 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
     
     // ----
     
-    final protected	IDataHandler<?> getDataHandler(SDFDatatype dataType, SDFSchema schema){
+    @SuppressWarnings("deprecation")
+	final protected	IDataHandler<?> getDataHandler(SDFDatatype dataType, SDFSchema schema){
     	return DataHandlerRegistry.instance.getDataHandler(dataType, schema);
     }
     
-    final protected boolean existsDataHandler(SDFDatatype dataType) {
+    @SuppressWarnings("deprecation")
+	final protected boolean existsDataHandler(SDFDatatype dataType) {
     	return DataHandlerRegistry.instance.containsDataHandler(dataType.getURI());
     }
 

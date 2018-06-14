@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NewFilenamePunctuation;
 
+@SuppressWarnings("deprecation")
 public class PunctAwareByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>>
 		extends ByteBufferHandler<T> {
 
