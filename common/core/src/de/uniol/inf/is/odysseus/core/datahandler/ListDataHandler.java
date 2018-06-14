@@ -70,9 +70,9 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 		if (listType.isTuple()) {
 
 			if (listType.getSchema() != null) {
-				this.handler = DataHandlerRegistry.instance.getDataHandler(SDFDatatype.TUPLE, listType.getSchema());
+				this.handler = getDataHandler(SDFDatatype.TUPLE, listType.getSchema());
 			}else if (subType.getAttribute(0).getDatatype().getSchema() != null){
-				this.handler = DataHandlerRegistry.instance.getDataHandler(SDFDatatype.TUPLE, subType.getAttribute(0).getDatatype().getSchema());
+				this.handler = getDataHandler(SDFDatatype.TUPLE, subType.getAttribute(0).getDatatype().getSchema());
 			}else{
 				throw new IllegalArgumentException("ListDataHandler cannot be initialized with TUPLE without schema");
 			}
@@ -86,14 +86,14 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 
 				SDFSchema newSubSchema = SDFSchemaFactory.createNewTupleSchema("__", attribs);
 
-				this.handler = DataHandlerRegistry.instance.getDataHandler(SDFDatatype.LIST, newSubSchema);
+				this.handler = getDataHandler(SDFDatatype.LIST, newSubSchema);
 			}else{
 				throw new IllegalArgumentException("ListDataHandler cannot be initialized with LIST without a subtype");
 			}
 
 		} else {
 			// Basis type
-			this.handler = DataHandlerRegistry.instance.getDataHandler(listType.getURI(), subType);
+			this.handler = getDataHandler(listType, subType);
 		}
 
 //		// hmmm ... this should be more generic !!

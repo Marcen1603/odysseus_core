@@ -122,4 +122,15 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
     public String toString() {
         return getClass().getSimpleName();
     }
+    
+    // ----
+    
+    final protected	IDataHandler<?> getDataHandler(SDFDatatype dataType, SDFSchema schema){
+    	return DataHandlerRegistry.instance.getDataHandler(dataType, schema);
+    }
+    
+    final protected boolean existsDataHandler(SDFDatatype dataType) {
+    	return DataHandlerRegistry.instance.containsDataHandler(dataType.getURI());
+    }
+
 }
