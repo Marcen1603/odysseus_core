@@ -719,7 +719,7 @@ public class WebserviceServer {
 		}
 		Class<? extends IStreamObject> typeClass = root.getOutputSchema().getType();
 
-		handler = DataHandlerRegistry.getStreamObjectDataHandler(typeClass.getSimpleName(), root.getOutputSchema());
+		handler = DataHandlerRegistry.instance.getStreamObjectDataHandler(typeClass.getSimpleName(), root.getOutputSchema());
 
 
 //		if (nullValues) {
@@ -1116,21 +1116,21 @@ public class WebserviceServer {
 	public StringListResponse getProtocolValues(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
-		ImmutableList<String> names = ProtocolHandlerRegistry.getHandlerNames();
+		ImmutableList<String> names = ProtocolHandlerRegistry.instance.getHandlerNames();
 		return new StringListResponse(names, true);
 	}
 
 	public StringListResponse getDataHandlerValues(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
-		ImmutableList<String> names = DataHandlerRegistry.getHandlerNames();
+		ImmutableList<String> names = DataHandlerRegistry.instance.getHandlerNames();
 		return new StringListResponse(names, true);
 	}
 
 	public StringListResponse getTransportValues(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
-		ImmutableList<String> names = TransportHandlerRegistry.getHandlerNames();
+		List<String> names = TransportHandlerRegistry.instance.getHandlerNames();
 		return new StringListResponse(names, true);
 	}
 

@@ -20,8 +20,8 @@ public class PunctAwareByteBufferHandler<T extends IStreamObject<? extends IMeta
 	static public final List<IStreamObjectDataHandler<?>> dataHandlerList = new ArrayList<IStreamObjectDataHandler<?>>();
 	{
 		// fill with know punctuations --> move to other place sometimes
-		dataHandlerList.add(DataHandlerRegistry.getStreamObjectDataHandler("tuple", Heartbeat.schema));
-		dataHandlerList.add(DataHandlerRegistry.getStreamObjectDataHandler("tuple", NewFilenamePunctuation.schema));
+		dataHandlerList.add(DataHandlerRegistry.instance.getStreamObjectDataHandler("tuple", Heartbeat.schema));
+		dataHandlerList.add(DataHandlerRegistry.instance.getStreamObjectDataHandler("tuple", NewFilenamePunctuation.schema));
 	}
 	
 	IPunctuation punctuation = null;

@@ -707,7 +707,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
 		String type = outputSchema.getType().getSimpleName();
-		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.getStreamObjectDataHandler(type, outputSchema);
+		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.instance.getStreamObjectDataHandler(type, outputSchema);
 
 		if (dataHandler == null){
 			throw new RuntimeException("Cannot find data handler for type "+type);
@@ -730,11 +730,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		options.setOption("init", caller.getToken() + "\n");
 
 		// TODO username and password get from anywhere
-		IProtocolHandler h = ProtocolHandlerRegistry.getInstance("SizeByteBuffer", ITransportDirection.IN,
+		IProtocolHandler h = ProtocolHandlerRegistry.instance.getInstance("SizeByteBuffer", ITransportDirection.IN,
 				IAccessPattern.PUSH, options, dataHandler);
 		// Must be done to add the transport to the protocoll ... seems not
 		// really intuitive ...
-		ITransportHandler th = TransportHandlerRegistry.getInstance(NonBlockingTcpClientHandler.NAME, h, options);
+		ITransportHandler th = TransportHandlerRegistry.instance.getInstance(NonBlockingTcpClientHandler.NAME, h, options);
 		h.setTransportHandler(th);
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.setOutputSchema(outputSchema);

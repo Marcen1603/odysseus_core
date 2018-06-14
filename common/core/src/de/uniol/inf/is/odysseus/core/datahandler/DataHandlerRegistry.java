@@ -32,20 +32,25 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Andr� Bolles, Marco Grawunder
  *
  */
-public class DataHandlerRegistry {
+public class DataHandlerRegistry implements IDataHandlerRegistry{
 
 	static Logger logger = LoggerFactory.getLogger(DataHandlerRegistry.class);
+	
+	// TODO: Remove
+	@Deprecated
+	public static IDataHandlerRegistry instance;
 
 	public DataHandlerRegistry() {
 		logger.trace("Created new DataHandler registry");
+		instance = this;
 	}
 
 	/**
 	 * HashMap from datatype to data handler
 	 */
-	private static HashMap<String, IDataHandler<?>> dataHandlers = new HashMap<String, IDataHandler<?>>();
+	private HashMap<String, IDataHandler<?>> dataHandlers = new HashMap<String, IDataHandler<?>>();
 
-	public static void registerDataHandler(IDataHandler<?> handler) {
+	public void registerDataHandler(IDataHandler<?> handler) {
 		String errMsg = "";
 		logger.trace("Register DataHandler " + handler + " for Datatypes "
 				+ handler.getSupportedDataTypes());
@@ -62,7 +67,7 @@ public class DataHandlerRegistry {
 		}
 	}
 
-	public static void removeDataHandler(IDataHandler<?> handler) {
+	public void removeDataHandler(IDataHandler<?> handler) {
 		for (String type : handler.getSupportedDataTypes()) {
 			if (dataHandlers.containsKey(type.toLowerCase())) {
 				dataHandlers.remove(type.toLowerCase());
@@ -70,7 +75,8 @@ public class DataHandlerRegistry {
 		}
 	}
 
-	public static IStreamObjectDataHandler<?> getStreamObjectDataHandler(String dataType,
+	@Override
+	public IStreamObjectDataHandler<?> getStreamObjectDataHandler(String dataType,
 			SDFSchema schema) {
 		IDataHandler<?> h = getDataHandler(dataType, schema);
 		if (h == null){
@@ -82,12 +88,14 @@ public class DataHandlerRegistry {
 		return (IStreamObjectDataHandler<?>) h;
 	}
 
-	public static IDataHandler<?> getDataHandler(SDFDatatype dataType,
+	@Override
+	public IDataHandler<?> getDataHandler(SDFDatatype dataType,
 			SDFSchema schema) {
 		return getDataHandler(dataType.getURI(), schema);
 	}
 
-	public static IDataHandler<?> getDataHandler(String dataType,
+	@Override
+	public IDataHandler<?> getDataHandler(String dataType,
 			SDFSchema schema) {
 		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase());
 		if (ret != null) {
@@ -96,11 +104,13 @@ public class DataHandlerRegistry {
 		return ret;
 	}
 
-	public static boolean containsDataHandler(String dataType) {
+	@Override
+	public boolean containsDataHandler(String dataType) {
 		return dataHandlers.containsKey(dataType.toLowerCase());
 	}
 
-	public static IStreamObjectDataHandler<?> getStreamObjectDataHandler(String dataType,
+	@Override
+	public IStreamObjectDataHandler<?> getStreamObjectDataHandler(String dataType,
 			List<SDFDatatype> schema) {
 		IDataHandler<?> h = getDataHandler(dataType, schema);
 		if (h == null){
@@ -112,7 +122,8 @@ public class DataHandlerRegistry {
 		return (IStreamObjectDataHandler<?>) h;
 	}
 
-	public static IDataHandler<?> getDataHandler(String dataType,
+	@Override
+	public IDataHandler<?> getDataHandler(String dataType,
 			List<SDFDatatype> schema) {
 		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase());
 		if (ret != null) {
@@ -121,13 +132,15 @@ public class DataHandlerRegistry {
 		return ret;
 	}
 
-	public static ImmutableList<String> getHandlerNames() {
+	@Override
+	public ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(dataHandlers.keySet());
 
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Class<? extends IStreamObject> getCreatedType(
+	@Override
+	public Class<? extends IStreamObject> getCreatedType(
 			String dhandlerText) {
 		Class<? extends IStreamObject> type = null;
 		if (dhandlerText != null) {
@@ -146,7 +159,8 @@ public class DataHandlerRegistry {
 		return type;
 	}
 
-	public static IDataHandler<?> getIDataHandlerClass(
+	@Override
+	public IDataHandler<?> getIDataHandlerClass(
 			String dhandlerText) {
 		if (dhandlerText != null) {
 			IDataHandler<?> dh = dataHandlers.get(dhandlerText.toLowerCase());
@@ -155,8 +169,8 @@ public class DataHandlerRegistry {
 		return null;
 	}
 
-
-	public static List<String> getStreamableDataHandlerNames() {
+	@Override
+	public List<String> getStreamableDataHandlerNames() {
 		List<String> list = new ArrayList<>();
 		for (String name : getHandlerNames()) {
 			IDataHandler<?> dh=null;
@@ -176,27 +190,4 @@ public class DataHandlerRegistry {
 		return list;
 	}
 
-	/**
-	 * This method should only be used, if the data handler are used in a non
-	 * OSGi environment! In other cases there should be declarative services that
-	 * register new data handler!!
-	 */
-	public static void initDefaultHandler() {
-		registerDataHandler(new BooleanHandler());
-		registerDataHandler(new ByteDataHandler());
-		registerDataHandler(new CharDataHandler());
-		registerDataHandler(new ShortDataHandler());
-		registerDataHandler(new DateHandler());
-		registerDataHandler(new FloatDataHandler());
-		registerDataHandler(new DoubleHandler());
-		registerDataHandler(new IntegerHandler());
-		registerDataHandler(new ListDataHandler());
-		registerDataHandler(new LongHandler());
-		registerDataHandler(new ObjectDataHandler());
-		registerDataHandler(new StringHandler());
-		registerDataHandler(new VectorDataHandler());
-		registerDataHandler(new MatrixDataHandler());
-		registerDataHandler(new TupleDataHandler());
-		registerDataHandler(new ObjectMapDataHandler());
-	}
 }

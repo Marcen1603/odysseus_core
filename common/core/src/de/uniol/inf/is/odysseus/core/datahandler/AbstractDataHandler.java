@@ -39,7 +39,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	protected AbstractDataHandler(){
 		this.schema = null;
 	}
-	
+		
 	@Override
 	final public IDataHandler<T> createInstance(List<SDFDatatype> schema) {
 		return getInstance(schema);

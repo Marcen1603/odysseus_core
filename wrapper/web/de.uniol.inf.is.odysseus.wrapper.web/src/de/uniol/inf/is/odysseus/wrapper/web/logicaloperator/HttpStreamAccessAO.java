@@ -42,7 +42,7 @@ public class HttpStreamAccessAO extends AbstractAccessAO{
 	}
 	
 	public List<String> getProtocolValues(){
-		return ProtocolHandlerRegistry.getHandlerNames();
+		return ProtocolHandlerRegistry.instance.getHandlerNames();
 	}
 	
 	@Override

@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -30,11 +29,9 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -44,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationExcepti
 import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -197,7 +195,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 			OptionMap options) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
-			transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler,
+			transportHandler = TransformationExecutor.getTransportHandlerRegistry().getInstance(operator.getTransportHandler(), protocolHandler,
 					options);
 		}
 		return transportHandler;
@@ -212,15 +210,15 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            The current data handler
 	 * @return The protocol handler
 	 */
-	private static IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator,
-			IStreamObjectDataHandler<?> dataHandler, OptionMap options) {
+	private  IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator, IStreamObjectDataHandler<?> dataHandler,
+			OptionMap options) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+				protocolHandler = getDataDictionary().getProtocolHandlerRegistry(getCaller()).getInstance(operator.getProtocolHandler(),
 						ITransportDirection.OUT, IAccessPattern.PULL, options, dataHandler);
 			} else {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+				protocolHandler = getDataDictionary().getProtocolHandlerRegistry(getCaller()).getInstance(operator.getProtocolHandler(),
 						ITransportDirection.OUT, IAccessPattern.PUSH, options, dataHandler);
 			}
 		}
@@ -234,7 +232,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            The {@link AbstractSenderAO}
 	 * @return The data handler
 	 */
-	private static IStreamObjectDataHandler<?> getDataHandler(AbstractSenderAO operator) {
+	private IStreamObjectDataHandler<?> getDataHandler(AbstractSenderAO operator) {
 		IDataHandler<?> dataHandler = null;
 		String dataHandlerText = operator.getDataHandler();
 		if (dataHandlerText == null) {
@@ -244,7 +242,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 		}
 		if (dataHandlerText != null) {
 			if (operator.getOutputSchema() != null) {
-				dataHandler = DataHandlerRegistry.getDataHandler(dataHandlerText, operator.getOutputSchema());
+				dataHandler = getDataDictionary().getDataHandlerRegistry(getCaller()).getDataHandler(dataHandlerText, operator.getOutputSchema());
 			}
 		}
 		if (dataHandler != null) {

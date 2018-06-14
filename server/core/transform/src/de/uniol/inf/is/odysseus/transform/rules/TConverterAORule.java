@@ -4,10 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ConverterAO;
@@ -39,21 +37,21 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 
 		OptionMap options = new OptionMap(operator.getOptionMap());
 
-		IStreamObjectDataHandler<?> outputDataHandler = DataHandlerRegistry
+		IStreamObjectDataHandler<?> outputDataHandler = getDataDictionary().getDataHandlerRegistry(getCaller())
 				.getStreamObjectDataHandler(operator.getOutputDataHandler(), operator.getOutputSchema());
 		if (outputDataHandler == null) {
 			LOG.error("No output data handler {} found.", operator.getOutputDataHandler());
 			throw new TransformationException("No data handler " + operator.getOutputDataHandler() + " found.");
 		}
 
-		IStreamObjectDataHandler<?> inputDataHandler = DataHandlerRegistry
+		IStreamObjectDataHandler<?> inputDataHandler = getDataDictionary().getDataHandlerRegistry(getCaller())
 				.getStreamObjectDataHandler(operator.getInputDataHandler(), operator.getInputSchema());
 		if (inputDataHandler == null) {
 			LOG.error("No input data handler {} found.", operator.getInputDataHandler());
 			throw new TransformationException("No data handler " + operator.getInputDataHandler() + " found.");
 		}
 
-		IProtocolHandler<?> protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+		IProtocolHandler<?> protocolHandler = getDataDictionary().getProtocolHandlerRegistry(getCaller()).getInstance(operator.getProtocolHandler(),
 				ITransportDirection.IN, IAccessPattern.PULL, options, outputDataHandler);
 
 		if (protocolHandler == null) {

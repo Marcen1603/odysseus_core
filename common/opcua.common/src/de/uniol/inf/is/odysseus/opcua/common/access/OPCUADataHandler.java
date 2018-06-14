@@ -76,11 +76,11 @@ public class OPCUADataHandler<T> extends AbstractDataHandler<OPCValue<T>> implem
 		String dataType = child.getAttribute(0).getAttributeName();
 		SDFSchema schema = child;
 		// Get data handler (for example: DOUBLE)
-		IDataHandler<?> myValueHandler = DataHandlerRegistry.getDataHandler(dataType, schema);
+		IDataHandler<?> myValueHandler = DataHandlerRegistry.instance.getDataHandler(dataType, schema);
 		// Maybe-hack for handling of KeyValueObject
 		if (myValueHandler == null && child.getAttribute(0).getDatatype().getSubType() != null) {
 			dataType = child.getAttribute(0).getDatatype().getSubType().toString();
-			myValueHandler = DataHandlerRegistry.getDataHandler(dataType, schema);
+			myValueHandler = DataHandlerRegistry.instance.getDataHandler(dataType, schema);
 		}
 		// Set it once
 		valueHandler = myValueHandler;
