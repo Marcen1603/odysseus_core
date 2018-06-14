@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.net.recovery.BackupInformationManager">
+   <implementation class="de.uniol.inf.is.odysseus.net.recovery.backupinfo.internal.BackupInformationManager"/>
+   <reference bind="bindDataManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.data.IDistributedDataManager" name="IDistributedDataManager" policy="dynamic" unbind="unbindDataManager"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.net.recovery.backupinfo.IBackupInformationManager"/>
+   </service>
+</scr:component>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.discovery.DiscovererComponent">
-   <implementation class="de.uniol.inf.is.odysseus.net.discovery.impl.OdysseusNetDiscovererComponent"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.net.IOdysseusNetComponent"/>
-   </service>
-   <reference bind="bindNodeManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNodeManager" name="IOdysseusNodeManager" policy="dynamic" unbind="unbindNodeManager"/>
-   <reference bind="bindNodeDiscovererManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager" name="IOdysseusNodeDiscovererManager" policy="dynamic" unbind="unbindNodeDiscovererManager"/>
-</scr:component>

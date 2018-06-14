@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.net.recovery.LocalBackupInformationFeeder">
+   <implementation class="de.uniol.inf.is.odysseus.net.recovery.backupinfo.internal.LocalBackupInformationFeeder"/>
+   <reference bind="bindServerExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindServerExecutor"/>
+   <reference bind="bindStartupManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager" name="IOdysseusNetStartupManager" policy="dynamic"/>
+   <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="dynamic" unbind="unbindPQLGenerator"/>
+   <reference bind="bindBackupInformationManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.recovery.backupinfo.IBackupInformationManager" name="IBackupInformationManager" policy="dynamic" unbind="unbindBackupInformationManager"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.net.querydistribute.IQueryPartControllerListener"/>
+   </service>
+</scr:component>

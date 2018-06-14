@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.recovery.CrashDetector">
+   <implementation class="de.uniol.inf.is.odysseus.recovery.crashdetector.internal.CrashDetector"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.recovery.crashdetector.ICrashDetector"/>
+   </service>
+   <reference bind="bindSystemLog" cardinality="1..1" interface="de.uniol.inf.is.odysseus.systemlog.ISystemLog" name="ISystemLog" policy="dynamic" unbind="unbindSystemLog"/>
+</scr:component>
