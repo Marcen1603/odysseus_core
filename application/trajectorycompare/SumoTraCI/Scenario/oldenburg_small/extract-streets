@@ -1,1 +1,0 @@
-osmosis --read-xml oldenburg.osm --tf reject-relations --tf accept-ways highway=* --tf reject-ways highway=pedestrian,footway,path,track,construction,cycleway,steps,bridleway --tf reject-ways access=private --un --write-xml file=new.osm
