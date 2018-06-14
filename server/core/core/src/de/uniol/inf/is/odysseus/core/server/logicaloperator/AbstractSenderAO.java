@@ -338,7 +338,7 @@ public abstract class AbstractSenderAO extends AbstractLogicalOperator {
 		SDFSchema schema = null;
 
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dataHandler);
+		Class<? extends IStreamObject> type = DataHandlerRegistry.instance.getCreatedType(dataHandler);
 		if (type == null) {
 			type = Tuple.class;
 		}
