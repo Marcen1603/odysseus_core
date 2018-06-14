@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.querydistribute.allocate.querycount.Allocator">
-   <implementation class="de.uniol.inf.is.odysseus.net.querydistribute.allocate.querycount.QueryCountAllocator"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.net.querydistribute.IQueryPartAllocator"/>
-   </service>
-   <reference bind="bindOdysseusNodeResourceUsageManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager" name="IOdysseusNodeResourceUsageManager" policy="dynamic" unbind="unbindOdysseusNodeResourceUsageManager"/>
-</scr:component>
