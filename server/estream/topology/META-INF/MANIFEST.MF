@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  com.fasterxml.jackson
 Automatic-Module-Name: de.uniol.inf.is.odysseus.estream.topology
+Bundle-ActivationPolicy: lazy

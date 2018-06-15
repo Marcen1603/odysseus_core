@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.server.moitoringCPU.CPUUsage.SystemUsage;
 public class MonitoringCPU implements IUpdateEventListener {
 
 	private static MonitoringCPU instance;
+	@SuppressWarnings("unused")
 	private static SystemUsage thread = new SystemUsage();
 	private IServerExecutor executor;
 

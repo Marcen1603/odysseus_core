@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.wrapper.pcap;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapClosedException;
@@ -153,11 +152,13 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 					public void nextPacket(JPacket packet, PcapFileTransportHandler pcapHandler) {
 						if (packet.hasHeader(tcp)) {
 							byte[] bytes = tcp.getPayload();
-							pcapHandler.fireProcess(ByteBuffer.wrap(Arrays.copyOfRange(bytes, 1, bytes.length)));
+							pcapHandler.fireProcess(ByteBuffer.wrap(bytes));
 						}
 					}
 
 				}, PcapFileTransportHandler.this);
+
+				fireDone();
 			};
 
 		}.start();
@@ -175,7 +176,7 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public void processOutOpen() throws IOException {
-		throw new RuntimeException("PcapFileHanlder is currently only implemented to READ files!");
+		throw new RuntimeException("PcapFileHandler is currently only implemented to READ files!");
 	}
 
 	@Override
@@ -185,7 +186,7 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		throw new RuntimeException("PcapFileHanlder is currently only implemented to READ files!");
+		throw new RuntimeException("PcapFileHandler is currently only implemented to READ files!");
 
 	}
 }

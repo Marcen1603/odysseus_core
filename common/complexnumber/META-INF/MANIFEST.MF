@@ -12,3 +12,4 @@ Service-Component: OSGI-INF/DatatypeProvider.xml,OSGI-INF/DatatypeHandler.xml,
  OSGI-INF/MepFunctionProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.complexnumber
 Automatic-Module-Name: de.uniol.inf.is.odysseus.complexnumber
+Bundle-ActivationPolicy: lazy

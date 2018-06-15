@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -50,9 +51,26 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TransformationExecutor implements ITransformation {
 
+	static ITransportHandlerRegistry transportHandlerRegistry; 
+	
 	public static final Logger LOGGER = LoggerFactory.getLogger("transform");
 
 	public TransformationExecutor() {
+	}
+
+	//	called by OSGi-DS
+	public void unbindTransportHandlerRegistry(ITransportHandlerRegistry registry) {
+		transportHandlerRegistry = null;
+	}
+
+	// called by OSGi-DS
+	public void bindTransportHandlerRegistry(ITransportHandlerRegistry registry) {
+	            	
+		transportHandlerRegistry = registry;
+	}	
+	
+	public static ITransportHandlerRegistry getTransportHandlerRegistry() {
+		return transportHandlerRegistry;
 	}
 
 	@Override

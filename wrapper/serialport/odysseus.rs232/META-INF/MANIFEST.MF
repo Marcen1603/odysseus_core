@@ -28,4 +28,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
 Export-Package: gnu.io
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.rs232
+Bundle-ActivationPolicy: lazy
 

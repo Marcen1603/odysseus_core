@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
@@ -118,7 +118,7 @@ public class StreamAO extends AbstractLogicalOperator {
 	// "The name of the datahandler to use, e.g. Tuple or Document.")
 	@Parameter(type = StringParameter.class, name = "DataHandler", optional = true, doc = "The name of the datahandler to use, e.g. Tuple or Document.")
 	public void setDataHandler(String dataHandler) {
-		type = DataHandlerRegistry.getCreatedType(dataHandler);
+		type = RegistryBinder.getDataHandlerRegistry().getCreatedType(dataHandler);
 	}
 	
 	public String getDataHandler() {
@@ -126,7 +126,7 @@ public class StreamAO extends AbstractLogicalOperator {
 	}
 
 	public List<String> getDataHandlerValues() {
-		return DataHandlerRegistry.getStreamableDataHandlerNames();
+		return RegistryBinder.getDataHandlerRegistry().getStreamableDataHandlerNames();
 	}
 
 	public List<SDFAttribute> getAttributes() {

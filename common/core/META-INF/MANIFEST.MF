@@ -42,10 +42,11 @@ Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.streamconnection,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.core.util
-Service-Component: OSGI-INF/*
+Service-Component: OSGI-INF/registries/*, OSGI-INF/protocol/*, OSGI-INF/datahandler/*, OSGI-INF/transport/*
 Require-Bundle: com.google.guava;bundle-version="12.0.0",
- io.netty,
- de.uniol.inf.is.odysseus.slf4j,
+ io.netty;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  org.eclipse.osgi
 Automatic-Module-Name: de.uniol.inf.is.odysseus.core
+Bundle-ActivationPolicy: lazy
 

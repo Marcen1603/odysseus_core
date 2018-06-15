@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.net.querydistribute.QueryPartController">
-   <implementation class="de.uniol.inf.is.odysseus.net.querydistribute.transmit.QueryPartController"/>
-   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindExecutor"/>
-   <reference bind="bindOdysseusNodeCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator" name="IOdysseusNodeCommunicator" policy="dynamic" unbind="unbindOdysseusNodeCommunicator"/>
-   <reference bind="bindListener" cardinality="0..n" interface="de.uniol.inf.is.odysseus.net.querydistribute.IQueryPartControllerListener" name="IQueryPartControllerListener" policy="dynamic" unbind="unbindListener"/>
-</scr:component>

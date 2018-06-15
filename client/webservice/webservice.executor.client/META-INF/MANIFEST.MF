@@ -17,3 +17,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
 Bundle-Vendor: University of Oldenburg
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client
 Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client
+Bundle-ActivationPolicy: lazy

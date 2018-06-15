@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.mining.feature"
-      label="Mining and Machine Learning"
+      label="Mining and Machine Learning Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 

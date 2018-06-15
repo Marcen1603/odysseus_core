@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.querydistribute.modify.replication.ReplicationRuleHelper">
-   <implementation class="de.uniol.inf.is.odysseus.net.querydistribute.modify.replication.rule.ReplicationRuleHelper"/>
-   <reference bind="bindReplicationRule" cardinality="0..n" interface="de.uniol.inf.is.odysseus.net.querydistribute.modify.replication.rule.IReplicationRule" name="IReplicationRule" policy="dynamic" unbind="unbindReplicationRule"/>
-</scr:component>

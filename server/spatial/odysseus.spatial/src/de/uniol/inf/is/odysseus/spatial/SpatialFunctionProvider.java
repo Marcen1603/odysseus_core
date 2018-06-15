@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.spatial.functions.ApproximateDistance;
 import de.uniol.inf.is.odysseus.spatial.functions.AsCartesianCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.AsGeometry;
 import de.uniol.inf.is.odysseus.spatial.functions.AsGeometryCollection;
@@ -116,6 +117,7 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 
 		functions.add(new SpatialDistance());
 		functions.add(new OrthodromicDistance());
+		functions.add(new ApproximateDistance());
 
 		functions.add(new CalculateBearing());
 		functions.add(new CalculateEndingCoordinates());

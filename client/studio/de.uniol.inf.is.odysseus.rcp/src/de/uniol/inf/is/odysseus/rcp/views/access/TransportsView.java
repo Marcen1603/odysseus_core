@@ -114,7 +114,7 @@ public class TransportsView extends ViewPart {
 
                 @Override
                 public void run() {
-                    final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
+                    final List<String> transports = new ArrayList<>(TransportHandlerRegistry.instance.getHandlerNames());
                     Collections.sort(transports);
                     TransportsView.this.tableViewer.setInput(transports);
                     TransportsView.this.tableViewer.refresh();

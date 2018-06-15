@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.co
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.pql
+Bundle-ActivationPolicy: lazy

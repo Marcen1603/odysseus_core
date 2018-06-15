@@ -6,7 +6,7 @@
       provider-name="Christian Kuka">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+    The image feature provides image data types and image functions to represent and process image data inside Odysseus.
    </description>
 
    <copyright>

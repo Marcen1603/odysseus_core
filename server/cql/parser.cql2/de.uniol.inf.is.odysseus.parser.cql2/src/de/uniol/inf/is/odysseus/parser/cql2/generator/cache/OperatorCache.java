@@ -355,7 +355,7 @@ public class OperatorCache implements Cache {
 				
 				long count = 0L;
 				final String operator = iter.next();
-				final String value = mapping.get(operator);
+//				final String value = mapping.get(operator);
 //TODO not working properly
 //				// 1) remove multiple definitions of the same operator
 //				mapping.entrySet()

@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Import-Package: org.slf4j
 Service-Component: OSGI-INF/WebsocketServerHandler.xml,OSGI-INF/WebsocketClientHandler.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.websocket
+Bundle-ActivationPolicy: lazy

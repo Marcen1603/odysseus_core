@@ -4,7 +4,6 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class QueryEventListener implements IPOEventListener {
 	private Measurement measurement;

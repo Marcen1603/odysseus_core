@@ -459,7 +459,8 @@ public class IntervalTest {
         System.out.println("Test took: " + timer);
     }
 
-    private void whenUsingLastResult() {
+    @SuppressWarnings("unused")
+	private void whenUsingLastResult() {
         this.interval = this.resultInterval.clone();
     }
 
@@ -602,7 +603,8 @@ public class IntervalTest {
         assertThat("Interval do not intersect", this.interval.intersects(other), is(true));
     }
 
-    private void thenIntervalIsEmpty() {
+    @SuppressWarnings("unused")
+	private void thenIntervalIsEmpty() {
         assertThat("Interval is not empty", this.interval.isEmpty(), is(true));
     }
 
@@ -634,7 +636,8 @@ public class IntervalTest {
         assertThat(String.format("Invalid result %s", this.resultInterval), this.resultInterval, is(new Interval(inf, sup)));
     }
 
-    private void thenResultIsNot(double inf, double sup) {
+    @SuppressWarnings("unused")
+	private void thenResultIsNot(double inf, double sup) {
         assertThat(String.format("Invalid result %s", this.resultInterval), this.resultInterval, is(not(new Interval(inf, sup))));
     }
 

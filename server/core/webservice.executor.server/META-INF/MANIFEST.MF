@@ -43,3 +43,4 @@ Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.serv
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response
 Bundle-Vendor: University of Oldenburg
 Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server
+Bundle-ActivationPolicy: lazy

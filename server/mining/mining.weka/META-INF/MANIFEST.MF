@@ -17,3 +17,4 @@ Service-Component: OSGI-INF/clusterer.xml,
 Export-Package: de.uniol.inf.is.odysseus.mining.weka.classification,
  de.uniol.inf.is.odysseus.mining.weka.mapping
 Automatic-Module-Name: de.uniol.inf.is.odysseus.mining.weka
+Bundle-ActivationPolicy: lazy

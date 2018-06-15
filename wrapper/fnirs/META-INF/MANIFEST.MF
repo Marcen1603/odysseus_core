@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.fnirs
+Bundle-ActivationPolicy: lazy

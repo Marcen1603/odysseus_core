@@ -24,3 +24,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.parser.cql2,
  de.uniol.inf.is.odysseus.parser.cql2.server
 Automatic-Module-Name: de.uniol.inf.is.odysseus.context.cql
+Bundle-ActivationPolicy: lazy

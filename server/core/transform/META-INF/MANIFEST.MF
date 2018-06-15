@@ -19,3 +19,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  org.apache.commons.lang3;bundle-version="3.1.0", de.uniol.inf.is.odysseus.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.transform
+Bundle-ActivationPolicy: lazy

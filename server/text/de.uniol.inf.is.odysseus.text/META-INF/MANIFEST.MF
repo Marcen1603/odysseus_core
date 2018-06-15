@@ -16,3 +16,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.apache.commons.codec_1_7;bundle-version="1.7.0"
 Service-Component: OSGI-INF/TextFunctionProvider.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.text
+Bundle-ActivationPolicy: lazy

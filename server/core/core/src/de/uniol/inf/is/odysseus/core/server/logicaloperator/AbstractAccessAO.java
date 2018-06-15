@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
+import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOSourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -148,7 +149,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	}
 
 	public List<String> getDataHandlerValues() {
-		return DataHandlerRegistry.getStreamableDataHandlerNames();
+		return RegistryBinder.getDataHandlerRegistry().getStreamableDataHandlerNames();
 	}
 
 	public String getDataHandler() {
@@ -399,7 +400,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		Map<String, SDFConstraint> constraints = new HashMap<>();
 
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dataHandler);
+		Class<? extends IStreamObject> type = RegistryBinder.getDataHandlerRegistry().getCreatedType(dataHandler);
 		if (type == null) {
 			type = Tuple.class;
 		}
@@ -409,7 +410,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		OptionMap options = new OptionMap(optionsMap);
 
 		@SuppressWarnings("rawtypes")
-		IProtocolHandler ph = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandler);
+		IProtocolHandler ph = RegistryBinder.getProtocolHandlerRegistry().getIProtocolHandlerClass(protocolHandler);
 
 		if (getOverWrittenSchema() == null && ph != null) {
 			setOverWrittenSchema(ph.getSchema());
@@ -417,7 +418,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		// For cases where the schema depends on the options, create a real
 		// instance of transport handler
 		if (getOverWrittenSchema() == null) {
-			ITransportHandler th = TransportHandlerRegistry.getInstance(transportHandler, ph, options);
+			ITransportHandler th =  RegistryBinder.getTransportHandlerRegistry().getInstance(transportHandler, ph, options);
 			setOverWrittenSchema(th != null ? th.getSchema() : null);
 		}
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;

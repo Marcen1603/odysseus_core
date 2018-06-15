@@ -8,12 +8,10 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttribu
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IRenameParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Optional
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 class AttributeNameParser implements IAttributeNameParser {
 
-	val Logger log = LoggerFactory.getLogger(AttributeNameParser)
+//	val Logger log = LoggerFactory.getLogger(AttributeNameParser)
 
 	var IUtilityService utilityService
 	var ICacheService cacheService

@@ -34,16 +34,13 @@ Unless required by applicable law or agreed to in writing, software
          id="de.uniol.inf.is.odysseus.rest.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.script.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
    </requires>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.logicaloperator.builder"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.pql"

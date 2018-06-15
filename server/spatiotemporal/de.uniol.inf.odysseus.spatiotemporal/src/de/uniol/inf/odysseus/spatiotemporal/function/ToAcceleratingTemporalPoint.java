@@ -58,7 +58,7 @@ public class ToAcceleratingTemporalPoint<M extends ITimeInterval, T extends Tupl
 	}
 
 	@Override
-	protected Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
+	public Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
 		Geometry basePoint = getGeometryFromElement(oldestElement);
 		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
 

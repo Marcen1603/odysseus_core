@@ -1,3 +1,0 @@
-#PARSER PQL
-#RUNQUERY
-Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx:wind_speed'})

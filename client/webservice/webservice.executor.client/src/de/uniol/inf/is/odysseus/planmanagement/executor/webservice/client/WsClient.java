@@ -163,7 +163,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@SuppressWarnings("rawtypes")
 	private Map<ClientReceiver, Integer> opReceivers = new HashMap<>();
 
-	private Map<String, WebserviceServer> server = new HashMap<String, WebserviceServer>();
+	private Map<String, WebserviceServer> server = new HashMap<>();
 
 	@Override
 	public synchronized void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
@@ -181,7 +181,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		if (l != null) {
 			l.remove(listener);
 			if (l.isEmpty()) {
-				updateEventListener.remove(l);
+				updateEventListener.get(session.getConnectionName()).remove(l);
 			}
 		}
 	}
@@ -689,7 +689,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession caller) {
 		assureLogin(caller);
-		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		List<IPhysicalOperator> roots = new ArrayList<>();
 		Optional<ClientReceiver> receiver = createClientReceiver(this, queryID, caller);
 		if (receiver.isPresent()) {
 			roots.add(receiver.get());
@@ -701,13 +701,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	private Optional<ClientReceiver> createClientReceiver(IExecutor exec, int queryId, ISession caller) {
 		assureLogin(caller);
 
-		if (receivers.containsKey(queryId)) {
+		if (receivers.get(caller.getConnectionName()).containsKey(queryId)) {
 			return Optional.of(receivers.get(caller.getConnectionName()).get(queryId));
 		}
 
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
 		String type = outputSchema.getType().getSimpleName();
-		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.getStreamObjectDataHandler(type, outputSchema);
+		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.instance.getStreamObjectDataHandler(type, outputSchema);
 
 		if (dataHandler == null){
 			throw new RuntimeException("Cannot find data handler for type "+type);
@@ -730,11 +730,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		options.setOption("init", caller.getToken() + "\n");
 
 		// TODO username and password get from anywhere
-		IProtocolHandler h = ProtocolHandlerRegistry.getInstance("SizeByteBuffer", ITransportDirection.IN,
+		IProtocolHandler h = ProtocolHandlerRegistry.instance.getInstance("SizeByteBuffer", ITransportDirection.IN,
 				IAccessPattern.PUSH, options, dataHandler);
 		// Must be done to add the transport to the protocoll ... seems not
 		// really intuitive ...
-		ITransportHandler th = TransportHandlerRegistry.getInstance(NonBlockingTcpClientHandler.NAME, h, options);
+		ITransportHandler th = TransportHandlerRegistry.instance.getInstance(NonBlockingTcpClientHandler.NAME, h, options);
 		h.setTransportHandler(th);
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.setOutputSchema(outputSchema);
@@ -742,7 +742,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		receiver.addOwner(this);
 		Map<Integer, ClientReceiver> r = receivers.get(caller.getConnectionName());
 		if (r == null) {
-			r = new HashMap<Integer, ClientReceiver>();
+			r = new HashMap<>();
 			receivers.put(caller.getConnectionName(), r);
 		}
 		r.put(queryId, receiver);
@@ -756,7 +756,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	public void done(IOwnedOperator op) {
 		Integer queryID = opReceivers.get(op);
 		if (queryID != null) {
-			opReceivers.remove(op);
+			Integer o = opReceivers.remove(op);
 			receivers.remove(queryID);
 		}
 	}
