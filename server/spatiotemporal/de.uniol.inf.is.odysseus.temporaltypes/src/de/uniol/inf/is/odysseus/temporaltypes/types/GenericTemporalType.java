@@ -84,6 +84,11 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 		 */
 		return (T[]) returnObject;
 	}
+	
+	@Override
+	public double getTrust(PointInTime time) {
+		return 1;
+	}
 
 	/**
 	 * To get all values from this temporal type. This is not a copy, so don't
@@ -150,5 +155,4 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 			return value.toString();
 		}
 	}
-
 }

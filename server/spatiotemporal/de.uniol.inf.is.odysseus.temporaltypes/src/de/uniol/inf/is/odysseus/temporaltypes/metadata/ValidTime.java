@@ -267,7 +267,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 
 	@Override
 	public int size() {
-		return 2;
+		return (int) this.getValidStart().minus(this.getValidEnd()).getMainPoint();
 	}
 
 	@Override

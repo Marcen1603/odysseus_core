@@ -34,5 +34,7 @@ public interface TemporalType<T> {
 	 *         function
 	 */
 	public T[] getValues(TimeInterval interval);
+	
+	public double getTrust(PointInTime time);
 
 }

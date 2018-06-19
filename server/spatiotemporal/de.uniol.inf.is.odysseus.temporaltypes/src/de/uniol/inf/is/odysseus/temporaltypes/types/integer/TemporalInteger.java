@@ -50,6 +50,11 @@ public class TemporalInteger implements IClone, Cloneable, Serializable, Tempora
 		}
 		return results;
 	}
+	
+	@Override
+	public double getTrust(PointInTime time) {
+		return 1;
+	}
 
 	@Override
 	public TemporalInteger clone() {
@@ -60,5 +65,6 @@ public class TemporalInteger implements IClone, Cloneable, Serializable, Tempora
 	public String toString() {
 		return "tinteger: " + this.function.toString();
 	}
+
 
 }

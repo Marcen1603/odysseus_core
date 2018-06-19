@@ -50,6 +50,11 @@ public class TemporalGeometry implements IClone, Cloneable, Serializable, Tempor
 		return results;
 	}
 	
+	@Override
+	public double getTrust(PointInTime time) {
+		return 1;
+	}
+	
 	public TemporalFunction<GeometryWrapper> getFunction() {
 		return this.function;
 	}
