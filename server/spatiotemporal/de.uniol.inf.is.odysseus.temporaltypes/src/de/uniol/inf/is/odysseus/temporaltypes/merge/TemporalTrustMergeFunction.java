@@ -23,8 +23,8 @@ public class TemporalTrustMergeFunction implements IInlineMetadataMergeFunction<
 		result = (ITemporalTrust) inLeft.clone();
 		
 		for (PointInTime time : inRight.getTemporalPoints()) {
-			ITrust rightTrust = inRight.getTrust(time);
-			ITrust leftTrust = inLeft.getTrust(time);
+			ITrust rightTrust = inRight.getTrustValue(time);
+			ITrust leftTrust = inLeft.getTrustValue(time);
 			if (leftTrust == null) {
 				result.setTrust(time, rightTrust);
 			} else {

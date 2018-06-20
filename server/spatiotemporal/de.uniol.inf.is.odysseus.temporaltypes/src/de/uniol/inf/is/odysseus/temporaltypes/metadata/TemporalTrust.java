@@ -9,18 +9,20 @@ import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.temporaltypes.merge.TemporalTrustMergeFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 
-public class TemporalTrust extends AbstractBaseMetaAttribute implements ITemporalTrust {
+public class TemporalTrust extends AbstractBaseMetaAttribute implements ITemporalTrust, TemporalType<ITrust> {
 
 	private static final long serialVersionUID = 8229050105151227196L;
-	
+
 	private static final String TRUSTVALUE = "trustvalues";
 	private static final String NAME = "TemporalTrust";
 
@@ -34,13 +36,13 @@ public class TemporalTrust extends AbstractBaseMetaAttribute implements ITempora
 		attributes.add(new SDFAttribute(NAME, TRUSTVALUE, SDFDatatype.DOUBLE));
 		schema.add(SDFSchemaFactory.createNewMetaSchema(NAME, Tuple.class, attributes, ITemporalTrust.class));
 	}
-	
+
 	private GenericTemporalType<ITrust> trusts;
-	
+
 	public TemporalTrust() {
 		trusts = new GenericTemporalType<>();
 	}
-	
+
 	public TemporalTrust(TemporalTrust other) {
 		this.trusts = new GenericTemporalType<>(other.trusts);
 	}
@@ -66,13 +68,13 @@ public class TemporalTrust extends AbstractBaseMetaAttribute implements ITempora
 		Tuple t = new Tuple(1, false);
 		t.setAttribute(0, this.trusts);
 		values.add(t);
-		
+
 	}
 
 	@Override
 	public void writeValue(Tuple<?> value) {
 		this.trusts = value.getAttribute(0);
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,23 +94,48 @@ public class TemporalTrust extends AbstractBaseMetaAttribute implements ITempora
 	}
 
 	@Override
-	public void setTrust(PointInTime time, ITrust trust) {
-		trusts.setValue(time, trust);
-	}
-
-	@Override
-	public ITrust getTrust(PointInTime time) {
-		return trusts.getValue(time);
-	}
-
-	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
 		return new TemporalTrustMergeFunction();
 	}
 
 	@Override
+	public ITrust getValue(PointInTime time) {
+		return this.trusts.getValue(time);
+	}
+
+	@Override
+	public ITrust[] getValues(TimeInterval interval) {
+		
+		int size = (int) interval.getEnd().minus(interval.getStart()).getMainPoint();
+		ITrust[] trusts = new ITrust[size];
+		
+		int i = 0;
+		for (PointInTime time = interval.getStart(); time.before(interval.getEnd()); time = time.plus(1)) {
+			trusts[i] = this.getValue(time);
+			i++;
+		}
+		return trusts;
+	}
+
+	@Override
+	public void setTrust(PointInTime time, ITrust trust) {
+		this.trusts.setValue(time, trust);
+	}
+
+	@Override
 	public Set<PointInTime> getTemporalPoints() {
-		return trusts.getValues().keySet();
+		return this.trusts.getValues().keySet();
+	}
+
+	@Override
+	public double getTrust(PointInTime time) {
+		// This is like "How trustworthy is the trust value"
+		return 1;
+	}
+
+	@Override
+	public ITrust getTrustValue(PointInTime time) {
+		return this.trusts.getValue(time);
 	}
 
 }

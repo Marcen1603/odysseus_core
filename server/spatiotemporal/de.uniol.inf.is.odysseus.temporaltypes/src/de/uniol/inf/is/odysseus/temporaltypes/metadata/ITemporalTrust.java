@@ -10,7 +10,7 @@ public interface ITemporalTrust extends IMetaAttribute {
 
 	public void setTrust(PointInTime time, ITrust trust);
 
-	public ITrust getTrust(PointInTime time);
+	public ITrust getTrustValue(PointInTime time);
 	
 	public Set<PointInTime> getTemporalPoints();
 	
