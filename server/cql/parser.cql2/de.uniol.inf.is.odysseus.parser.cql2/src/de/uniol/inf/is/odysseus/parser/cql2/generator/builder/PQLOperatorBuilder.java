@@ -81,14 +81,15 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 	@SuppressWarnings("rawtypes")
 	private StringBuilder buildArguments(final Class<?> operator, Map<String, String> map) throws PQLOperatorBuilderException {
 		List<Parameter> parameters = new ArrayList<>(getParameters(operator));
-		List<Parameter> mandatoryParameters = new ArrayList<>();
+		List<String> mandatoryParameters = new ArrayList<>();
 
 		// build arguments
 		for (Parameter parameter : parameters) {
 			final Class<? extends IParameter> type = parameter.type;
+			final String par_name = parameter.name.toLowerCase().trim();
 			// collect all mandatory arguments
-			if (!parameter.optional && !mandatoryParameters.contains(parameter)) {
-				mandatoryParameters.add(parameter);
+			if (!parameter.optional && !mandatoryParameters.contains(par_name)) {
+				mandatoryParameters.add(par_name);
 			}
 
 			for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -100,7 +101,7 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 						// remove argument from mandatoryParameters, if it could be resolved
 						if (value != null) {
 							builder.append(name + "=" + value + ",");
-							mandatoryParameters.remove(parameter);
+							mandatoryParameters.removeIf(e -> e.equals(name));
 						}
 					}
 				}
@@ -110,13 +111,14 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 
 		// check if all mandatory arguments could be resolved, otherwise throw PQLOperatorBuilderException
 		if (!mandatoryParameters.isEmpty()) {
-			builder = new StringBuilder();
-			for (Parameter parameter : mandatoryParameters) {
-				if (parameter.name != null && parameter.name != "") {
-					builder.append(parameter.toString()).append("\n");
+			StringBuilder par_builder = new StringBuilder();
+			for (String par_name : mandatoryParameters) {
+				if (par_name != null && par_name != "") {
+					par_builder.append(par_name.toString()).append("\n");
 				}
 			}
-			throw new PQLOperatorBuilderException(operator.getSimpleName() + " misses parameters: " + builder.toString());
+			throw new PQLOperatorBuilderException(operator.getSimpleName() + " misses parameter(s): " + par_builder.toString()
+					+ "\n current state of builder: " + builder.toString());
 		}
 
 		builder.deleteCharAt(builder.toString().length() - 1);
