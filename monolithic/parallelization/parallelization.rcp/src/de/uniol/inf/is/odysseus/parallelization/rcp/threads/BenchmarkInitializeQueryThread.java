@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
-import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.configuration.PreTransformationHandlerPreParserKeyword;
 
 /**
  * Thread for initializing currently selected query
