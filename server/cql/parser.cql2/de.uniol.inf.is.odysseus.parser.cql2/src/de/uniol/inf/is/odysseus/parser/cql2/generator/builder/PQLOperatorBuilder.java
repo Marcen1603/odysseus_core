@@ -110,16 +110,17 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 		}
 
 		// check if all mandatory arguments could be resolved, otherwise throw PQLOperatorBuilderException
-		if (!mandatoryParameters.isEmpty()) {
-			StringBuilder par_builder = new StringBuilder();
-			for (String par_name : mandatoryParameters) {
-				if (par_name != null && par_name != "") {
-					par_builder.append(par_name.toString()).append("\n");
-				}
-			}
-			throw new PQLOperatorBuilderException(operator.getSimpleName() + " misses parameter(s): " + par_builder.toString()
-					+ "\n current state of builder: " + builder.toString());
-		}
+		// REMOVED. TODO: CHECK, WHY THIS IS PART OF THE CODE ...
+		//		if (!mandatoryParameters.isEmpty()) {
+//			StringBuilder par_builder = new StringBuilder();
+//			for (String par_name : mandatoryParameters) {
+//				if (par_name != null && par_name != "") {
+//					par_builder.append(par_name.toString()).append("\n");
+//				}
+//			}
+//			throw new PQLOperatorBuilderException(operator.getSimpleName() + " misses parameter(s): " + par_builder.toString()
+//					+ "\n current state of builder: " + builder.toString());
+//		}
 
 		builder.deleteCharAt(builder.toString().length() - 1);
 		return builder;
