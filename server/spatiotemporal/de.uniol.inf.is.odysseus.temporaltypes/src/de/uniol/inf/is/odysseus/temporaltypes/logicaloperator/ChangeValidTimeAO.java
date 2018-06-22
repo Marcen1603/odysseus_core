@@ -67,13 +67,13 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.valueToAddEnd = valueToAddEnd;
 	}
 	
+	@Parameter(name = "baseTimeUnit", doc = "The basetime unit for the valid time.", type = StringParameter.class, optional = true)
+	public void setPredictionBaseTimeUnit(String baseTimeUnitName) {
+		this.baseTimeUnit = TimeUnit.valueOf(baseTimeUnitName);
+	}
+		
 	public TimeUnit getBaseTimeUnit() {
 		return baseTimeUnit;
-	}
-
-	@Parameter(name = "baseTimeUnit", doc = "The basetime unit for the valid time.", type = StringParameter.class, optional = true)
-	public void setBaseTimeUnit(String baseTimeUnitName) {
-		this.baseTimeUnit = TimeUnit.valueOf(baseTimeUnitName);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		return alignAtEnd;
 	}
 
-	@Parameter(name = "alignAtEnd", doc = "The values set as the ValidTime are aligned at the end timestamp of the streamtime. Default: false..", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "alignAtEnd", doc = "The values set as the ValidTime are aligned at the end timestamp of the streamtime. Default: false.", type = BooleanParameter.class, optional = true)
 	public void setAlignAtEnd(boolean alignAtEnd) {
 		this.alignAtEnd = alignAtEnd;
 	}
