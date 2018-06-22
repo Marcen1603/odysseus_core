@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.temporaltypes.metadata;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -32,5 +33,20 @@ public interface IValidTimes extends IMetaAttribute {
 	 * Removes all valid times from the list.
 	 */
 	public void clear();
+
+	/**
+	 * The TimeUnit of the valid times, which can differ from the TimeUnit of the
+	 * stream.
+	 */
+	public TimeUnit getTimeUnit();
+
+	/**
+	 * Sets the TimeUnit for the ValidTime, which can differ from the stream
+	 * basetime.
+	 * 
+	 * @param timeUnit
+	 *            The new timeunit for the ValidTime
+	 */
+	public void setTimeUnit(TimeUnit timeUnit);
 
 }

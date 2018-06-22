@@ -39,7 +39,7 @@ public class TemporalRelationalMapPO<T extends IValidTimes> extends RelationalMa
 			 */
 			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i])
 					&& !isTemporalFunction(expr[i])) {
-				this.expressions[i] = new TemporalRelationalExpression<>(expr[i]);
+				this.expressions[i] = new TemporalRelationalExpression<>(expr[i], schema.determineTimeUnit());
 			} else {
 				this.expressions[i] = new RelationalExpression<T>(expr[i]);
 			}

@@ -39,6 +39,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 	private TimeValueItem valueToAddEnd;
 	private boolean alingAtStreamEnd;
 	private TimeUnit streamBaseTimeUnit;
+	private TimeUnit predictionBaseTimeUnit;
 
 	public ChangeValidTimePO(ChangeValidTimeAO ao) {
 		this.valueToAddStart = ao.getValueToAddStart();
@@ -46,6 +47,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		this.alingAtStreamEnd = ao.isAlignAtEnd();
 		this.streamBaseTimeUnit = ao.getBaseTimeUnit();
 		this.copyTimeInterval = ao.isCopyTimeInterval();
+		this.predictionBaseTimeUnit = ao.getBaseTimeUnit();
 	}
 
 	@Override
@@ -66,9 +68,15 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			object = setTimeInterval(object, valueToAddStart, valueToAddEnd, alingAtStreamEnd);
 		}
 
+		IValidTimes validTimes = (IValidTimes) object.getMetadata();
+
+		// The base time could be changed
+		if (this.predictionBaseTimeUnit != null) {
+			validTimes.setTimeUnit(predictionBaseTimeUnit);
+		}
+
 		// If the trust value is used, it needs to be set here
 		if (object.getMetadata() instanceof IValidTimes) {
-			IValidTimes validTimes = (IValidTimes) object.getMetadata();
 			changeTrust(object, validTimes);
 		}
 
@@ -80,9 +88,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		if (metadata instanceof ITimeInterval) {
 			// Use the stream time as the starting point for the calculations
 			ITimeInterval streamTime = (ITimeInterval) metadata;
-			PointInTime newValidStart = streamTime.getStart();
-			PointInTime newValidEnd = streamTime.getEnd();
-			changeValidTime(metadata, newValidStart, newValidEnd);
+			changeValidTime(metadata, streamTime.getStart(), streamTime.getEnd());
 		}
 		return object;
 	}
@@ -171,9 +177,31 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			IValidTimes validTime = (IValidTimes) metadata;
 			validTime.clear();
 			IValidTime newTime = new ValidTime();
-			newTime.setValidStartAndEnd(newValidStart, newValidEnd);
+			
+			PointInTime validStart = convertPointInTime(newValidStart);
+			PointInTime validEnd = convertPointInTime(newValidEnd);
+			
+			newTime.setValidStartAndEnd(validStart, validEnd);
 			validTime.addValidTime(newTime);
 		}
 		return metadata;
+	}
+
+	/**
+	 * Converts the timestamp to be for a different time unit, e.g., from
+	 * milliseconds to seconds.
+	 * 
+	 * @param streamTime
+	 *            The timestamp in the steam time
+	 * @return The timestamp in the prediction time
+	 */
+	private PointInTime convertPointInTime(PointInTime streamTime) {
+		if (predictionBaseTimeUnit == null) {
+			return streamTime;
+		}
+
+		long convertedValidTime = predictionBaseTimeUnit.convert(streamTime.getMainPoint(), streamBaseTimeUnit);
+		PointInTime newValidTime = new PointInTime(convertedValidTime);
+		return newValidTime;
 	}
 }

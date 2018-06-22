@@ -40,7 +40,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 				temporalSelect = new TemporalSelectPO<>(expression);
 			} else {
 				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
-						expression);
+						expression, operator.getBaseTimeUnit());
 				temporalSelect = new TemporalSelectPO<>(temporalExpression);
 			}
 			this.defaultExecute(operator, temporalSelect, config, true, true);
