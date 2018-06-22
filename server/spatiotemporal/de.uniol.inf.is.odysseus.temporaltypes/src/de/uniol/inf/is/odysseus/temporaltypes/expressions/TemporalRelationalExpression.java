@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.temporaltypes.expressions;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -25,13 +27,17 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 public class TemporalRelationalExpression<T extends IValidTimes> extends RelationalExpression<T> {
 
 	private static final long serialVersionUID = 7516261668144789244L;
+	
+	private TimeUnit streamBaseTimeUnit;
 
-	public TemporalRelationalExpression(SDFExpression expression) {
+	public TemporalRelationalExpression(SDFExpression expression, TimeUnit streamBaseTimeUnit) {
 		super(expression);
+		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
-	public TemporalRelationalExpression(RelationalExpression<T> expression) {
+	public TemporalRelationalExpression(RelationalExpression<T> expression, TimeUnit streamBaseTimeUnit) {
 		super(expression);
+		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
 	@Override
@@ -49,7 +55,11 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 		 * types at the points in time, fill a Tuple with it and do the normal
 		 * evaluation process for this filled tuple.
 		 */
-		for (IValidTime validTime : object.getMetadata().getValidTimes()) {
+		T metadata = object.getMetadata();
+		List<IValidTime> validTimes = metadata.getValidTimes();
+		TimeUnit predictionTimeUnit = metadata.getTimeUnit();
+		
+		for (IValidTime validTime : validTimes) {
 			PointInTime validStart = validTime.getValidStart();
 			PointInTime validEnd = validTime.getValidEnd();
 			
@@ -95,7 +105,7 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 	
 	@Override
 	public TemporalRelationalExpression<T> clone() {		
-		return new TemporalRelationalExpression<>(this);
+		return new TemporalRelationalExpression<>(this, this.streamBaseTimeUnit);
 	}
 
 }
