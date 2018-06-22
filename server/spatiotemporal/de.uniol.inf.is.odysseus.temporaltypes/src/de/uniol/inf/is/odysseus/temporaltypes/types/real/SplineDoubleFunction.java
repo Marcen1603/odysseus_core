@@ -7,14 +7,20 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 
+/**
+ * Uses a spline function to inter- and extrapolate a function of double values.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class SplineDoubleFunction implements TemporalFunction<Double> {
 
 	private PolynomialSplineFunction function;
-	
+
 	public SplineDoubleFunction(double[] tempDimension, double[] yDimension) {
 		function = new SplineInterpolator().interpolate(tempDimension, yDimension);
 	}
-	
+
 	@Override
 	public Double getValue(PointInTime time) {
 
@@ -35,9 +41,9 @@ public class SplineDoubleFunction implements TemporalFunction<Double> {
 		} else {
 			value = function.value(time.getMainPoint());
 		}
-		
+
 		return value;
-		
+
 	}
 
 }

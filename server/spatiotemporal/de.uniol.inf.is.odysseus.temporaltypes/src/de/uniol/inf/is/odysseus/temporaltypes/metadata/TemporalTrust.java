@@ -19,6 +19,14 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 
+/**
+ * An attribute that hold temporal trust values, which are noting else than
+ * temporal double values. This meta attribute can be used in data streams which
+ * use temporal types to represent how trustworthy the predictions are.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TemporalTrust extends AbstractBaseMetaAttribute implements ITemporalTrust, TemporalType<ITrust> {
 
 	private static final long serialVersionUID = 8229050105151227196L;
@@ -105,10 +113,10 @@ public class TemporalTrust extends AbstractBaseMetaAttribute implements ITempora
 
 	@Override
 	public ITrust[] getValues(TimeInterval interval) {
-		
+
 		int size = (int) interval.getEnd().minus(interval.getStart()).getMainPoint();
 		ITrust[] trusts = new ITrust[size];
-		
+
 		int i = 0;
 		for (PointInTime time = interval.getStart(); time.before(interval.getEnd()); time = time.plus(1)) {
 			trusts[i] = this.getValue(time);

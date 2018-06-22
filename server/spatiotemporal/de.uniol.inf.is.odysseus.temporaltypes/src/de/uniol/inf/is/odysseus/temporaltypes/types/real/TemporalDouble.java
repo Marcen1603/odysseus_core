@@ -8,6 +8,12 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
+/**
+ * A double value that changes over time.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TemporalDouble implements IClone, Cloneable, Serializable, TemporalType<Double> {
 
 	private static final long serialVersionUID = 4092352140046641136L;
