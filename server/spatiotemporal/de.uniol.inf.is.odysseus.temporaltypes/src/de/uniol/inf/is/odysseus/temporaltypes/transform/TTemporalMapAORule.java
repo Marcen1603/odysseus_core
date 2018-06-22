@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.temporaltypes.transform;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -58,44 +57,11 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	 */
 	protected boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions, SDFSchema inputSchema) {
 		for (SDFExpression expression : expressions) {
-			if (expressionHasTemporalAttribute(expression, inputSchema)) {
+			if (TemporalDatatype.expressionHasTemporalAttribute(expression, inputSchema)) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Checks if an expression contains a temporal attribute
-	 * 
-	 * @param expression
-	 *            The expression to check
-	 * @return True, if is has a temporal attribute, false otherwise
-	 */
-	protected boolean expressionHasTemporalAttribute(SDFExpression expression, SDFSchema inputSchema) {
-		for (SDFAttribute attribute : expression.getAllAttributes()) {
-
-			SDFAttribute attributeFromSchema = getAttributeFromSchema(inputSchema, attribute);
-			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * The search needs to be done on the input schema, because the temporal
-	 * constraints are added to the input schema, not to the attributes in the
-	 * expression. That's why this method searches for the same attribute in the
-	 * schema.
-	 */
-	protected SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
-		for (SDFAttribute attribute : inputSchema.getAttributes()) {
-			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
-				return attribute;
-			}
-		}
-		return attributeToSearch;
 	}
 
 }
