@@ -20,6 +20,7 @@ public class TemporalInteger implements IClone, Cloneable, Serializable, Tempora
 	private static final long serialVersionUID = 6537783520942392777L;
 
 	private TemporalFunction<Integer> function;
+	private TemporalFunction<Double> trustFunction;
 
 	/**
 	 * 
@@ -28,6 +29,11 @@ public class TemporalInteger implements IClone, Cloneable, Serializable, Tempora
 	 */
 	public TemporalInteger(TemporalFunction<Integer> function) {
 		this.function = function;
+	}
+	
+	public TemporalInteger(TemporalFunction<Integer> function, TemporalFunction<Double> trustFunction) {
+		this.function = function;
+		this.trustFunction = trustFunction;
 	}
 
 	@Override
@@ -50,6 +56,15 @@ public class TemporalInteger implements IClone, Cloneable, Serializable, Tempora
 		}
 		return results;
 	}
+	
+	@Override
+	public double getTrust(PointInTime time) {
+		if (this.trustFunction == null) {
+			return 1;
+		}
+		
+		return this.trustFunction.getValue(time);
+	}
 
 	@Override
 	public TemporalInteger clone() {
@@ -60,5 +75,6 @@ public class TemporalInteger implements IClone, Cloneable, Serializable, Tempora
 	public String toString() {
 		return "tinteger: " + this.function.toString();
 	}
+
 
 }

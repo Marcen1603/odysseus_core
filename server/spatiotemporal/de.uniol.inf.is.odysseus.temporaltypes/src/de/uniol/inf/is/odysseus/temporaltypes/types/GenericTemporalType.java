@@ -26,12 +26,20 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	private static final long serialVersionUID = -903000410292576845L;
 	private SortedMap<PointInTime, T> values;
 
+	private TemporalType<Double> trustFunction;
+
 	public GenericTemporalType() {
 		this.values = new TreeMap<>();
 	}
 
+	public GenericTemporalType(TemporalType<Double> trustFunction) {
+		this.values = new TreeMap<>();
+		this.trustFunction = trustFunction;
+	}
+
 	public GenericTemporalType(GenericTemporalType<T> other) {
 		this.values = other.copyMap();
+		this.trustFunction = other.trustFunction;
 	}
 
 	/**
@@ -83,6 +91,14 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 		 * generic arrays.
 		 */
 		return (T[]) returnObject;
+	}
+
+	@Override
+	public double getTrust(PointInTime time) {
+		if (trustFunction == null) {
+			return 1;
+		}
+		return trustFunction.getTrust(time);
 	}
 
 	/**
@@ -150,5 +166,4 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 			return value.toString();
 		}
 	}
-
 }

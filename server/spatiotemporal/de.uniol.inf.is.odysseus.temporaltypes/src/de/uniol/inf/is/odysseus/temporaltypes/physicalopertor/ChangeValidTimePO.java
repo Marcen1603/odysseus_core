@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
 
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -10,9 +11,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangeValidTimeAO;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.ITemporalTrust;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
+import de.uniol.inf.is.odysseus.trust.ITrust;
+import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
  * This operator manipulates the ValidTimes metadata. It is doing this based on
@@ -60,9 +65,16 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		} else {
 			object = setTimeInterval(object, valueToAddStart, valueToAddEnd, alingAtStreamEnd);
 		}
+
+		// If the trust value is used, it needs to be set here
+		if (object.getMetadata() instanceof IValidTimes) {
+			IValidTimes validTimes = (IValidTimes) object.getMetadata();
+			changeTrust(object, validTimes);
+		}
+
 		transfer(object);
 	}
-	
+
 	private T copyTimeInterval(T object) {
 		IMetaAttribute metadata = object.getMetadata();
 		if (metadata instanceof ITimeInterval) {
@@ -74,15 +86,14 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		}
 		return object;
 	}
-	
+
 	private T setTimeInterval(T object, TimeValueItem addToStart, TimeValueItem addToEnd, boolean alignAtStreamEnd) {
 		IMetaAttribute metadata = object.getMetadata();
 		if (metadata instanceof ITimeInterval) {
 			// Use the stream time as the starting point for the calculations
 			ITimeInterval streamTime = (ITimeInterval) metadata;
 
-			long convertedValueToAddStart = streamBaseTimeUnit.convert(addToStart.getTime(),
-					addToStart.getUnit());
+			long convertedValueToAddStart = streamBaseTimeUnit.convert(addToStart.getTime(), addToStart.getUnit());
 			long convertedValueToAddEnd = streamBaseTimeUnit.convert(addToEnd.getTime(), addToEnd.getUnit());
 
 			PointInTime baseTime;
@@ -92,13 +103,69 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 				baseTime = streamTime.getEnd();
 			}
 			PointInTime newValidStart = baseTime.plus(convertedValueToAddStart);
-			PointInTime newValidEnd = baseTime.plus(convertedValueToAddEnd);				
+			PointInTime newValidEnd = baseTime.plus(convertedValueToAddEnd);
 			changeValidTime(metadata, newValidStart, newValidEnd);
 		}
 		return object;
 	}
-	
-	private IMetaAttribute changeValidTime(IMetaAttribute metadata, PointInTime newValidStart, PointInTime newValidEnd) {
+
+	private void changeTrust(T streamElement, IValidTimes validTimes) {
+		IMetaAttribute metadata = streamElement.getMetadata();
+
+		if (metadata instanceof ITemporalTrust && streamElement instanceof Tuple) {
+			// Put the trusts in the meta attribute
+			ITemporalTrust oldTempTrust = (ITemporalTrust) metadata;
+
+			for (IValidTime validTime : validTimes.getValidTimes()) {
+				double[] trusts = getTrusts((Tuple<?>) streamElement, validTime);
+				insertTrusts(trusts, validTime, oldTempTrust);
+			}
+		}
+	}
+
+	private void insertTrusts(double[] trusts, IValidTime validTime, ITemporalTrust temporalTrust) {
+		int i = 0;
+		for (PointInTime time = validTime.getValidStart(); time.before(validTime.getValidEnd()); time = time.plus(1)) {
+			ITrust trust = new Trust();
+			trust.setTrust(trusts[i]);
+			temporalTrust.setTrust(time, trust);
+			i++;
+		}
+	}
+
+	private double[] getTrusts(Tuple<?> tuple, IValidTime validTime) {
+
+		int size = (int) validTime.getValidEnd().minus(validTime.getValidStart()).getMainPoint();
+		double[] trusts = new double[size];
+
+		int i = 0;
+		for (PointInTime time = validTime.getValidStart(); time.before(validTime.getValidEnd()); time = time.plus(1)) {
+			double trust = getTrust(tuple, time);
+			trusts[i] = trust;
+			i++;
+		}
+
+		return trusts;
+	}
+
+	private double getTrust(Tuple<?> tuple, PointInTime validTime) {
+		// Use lowest trust of all temporal attributes
+		double minTrust = 1;
+		Object[] attributes = tuple.getAttributes();
+		for (int i = 0; i < attributes.length; i++) {
+			if (attributes[i] instanceof TemporalType) {
+				TemporalType<?> temporalAttribute = (TemporalType<?>) attributes[i];
+				double thisTrust = temporalAttribute.getTrust(validTime);
+				if (thisTrust < minTrust) {
+					minTrust = thisTrust;
+				}
+			}
+		}
+		return minTrust;
+	}
+
+	private IMetaAttribute changeValidTime(IMetaAttribute metadata, PointInTime newValidStart,
+			PointInTime newValidEnd) {
 		if (metadata instanceof IValidTimes) {
 			// Use the calculated start and end timestamps for the ValidTime
 			IValidTimes validTime = (IValidTimes) metadata;

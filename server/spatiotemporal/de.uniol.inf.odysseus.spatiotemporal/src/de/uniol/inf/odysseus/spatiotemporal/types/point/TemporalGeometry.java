@@ -21,13 +21,20 @@ public class TemporalGeometry implements IClone, Cloneable, Serializable, Tempor
 	private static final long serialVersionUID = 7337746723249079888L;
 
 	protected TemporalFunction<GeometryWrapper> function;
+	protected TemporalFunction<Double> trustFunction;
 
 	public TemporalGeometry(TemporalFunction<GeometryWrapper> function) {
 		this.function = function;
 	}
 
+	public TemporalGeometry(TemporalFunction<GeometryWrapper> function, TemporalFunction<Double> trustFunction) {
+		this.function = function;
+		this.trustFunction = trustFunction;
+	}
+
 	public TemporalGeometry(TemporalGeometry other) {
 		this.function = other.function;
+		this.trustFunction = other.trustFunction;
 	}
 
 	@Override
@@ -49,7 +56,16 @@ public class TemporalGeometry implements IClone, Cloneable, Serializable, Tempor
 		}
 		return results;
 	}
-	
+
+	@Override
+	public double getTrust(PointInTime time) {
+		if (this.trustFunction == null) {
+			return 1;
+		}
+
+		return this.trustFunction.getValue(time);
+	}
+
 	public TemporalFunction<GeometryWrapper> getFunction() {
 		return this.function;
 	}

@@ -79,8 +79,9 @@ public class ToLinearMovingRegion<M extends ITimeInterval, T extends Tuple<M>> e
 			Coordinate newCorner = newestCoordinates[i];
 			Point oldPoint = GeometryFactory.createPointFromInternalCoord(oldCorner, oldestPolygon);
 			Point newPoint = GeometryFactory.createPointFromInternalCoord(newCorner, newestPolygon);
+			TemporalFunction<Double> trustFunction = createTrustFunction(elements);
 			Object[] temporalPoint = createTemporalPoint(newPoint, oldPoint, newestElement.getMetadata().getStart(),
-					oldestElement.getMetadata().getStart());
+					oldestElement.getMetadata().getStart(), trustFunction);
 			TemporalFunction<GeometryWrapper> function = temporalPoint[0] instanceof TemporalGeometry
 					? ((TemporalGeometry) temporalPoint[0]).getFunction()
 					: null;
