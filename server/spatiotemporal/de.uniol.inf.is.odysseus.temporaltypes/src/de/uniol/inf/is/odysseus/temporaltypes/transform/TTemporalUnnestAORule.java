@@ -26,7 +26,7 @@ public class TTemporalUnnestAORule extends AbstractTransformationRule<UnNestAO> 
 	public void execute(UnNestAO operator, TransformationConfiguration config) throws RuleException {
 		RelationalUnNestPO<IValidTimes> po = new RelationalUnNestPO<IValidTimes>(operator.getInputSchema(),
 				operator.getAttributePosition(), operator.isMultiValue() || operator.isListValue());
-		TemporalRelationalUnnestPO<IValidTimes> temporalPo = new TemporalRelationalUnnestPO<>(po);
+		TemporalRelationalUnnestPO<IValidTimes> temporalPo = new TemporalRelationalUnnestPO<>(po, operator.getBaseTimeUnit());
 		defaultExecute(operator, temporalPo, config, true, true);
 	}
 

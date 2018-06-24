@@ -38,7 +38,7 @@ public interface IValidTimes extends IMetaAttribute {
 	 * The TimeUnit of the valid times, which can differ from the TimeUnit of the
 	 * stream.
 	 */
-	public TimeUnit getTimeUnit();
+	public TimeUnit getPredictionTimeUnit();
 
 	/**
 	 * Sets the TimeUnit for the ValidTime, which can differ from the stream

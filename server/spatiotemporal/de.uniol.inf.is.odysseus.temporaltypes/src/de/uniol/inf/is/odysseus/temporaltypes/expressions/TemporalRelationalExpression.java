@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -27,7 +26,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 public class TemporalRelationalExpression<T extends IValidTimes> extends RelationalExpression<T> {
 
 	private static final long serialVersionUID = 7516261668144789244L;
-	
+
 	private TimeUnit streamBaseTimeUnit;
 
 	public TemporalRelationalExpression(SDFExpression expression, TimeUnit streamBaseTimeUnit) {
@@ -57,16 +56,33 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 		 */
 		T metadata = object.getMetadata();
 		List<IValidTime> validTimes = metadata.getValidTimes();
-		TimeUnit predictionTimeUnit = metadata.getTimeUnit();
-		
+		TimeUnit predictionTimeUnit = metadata.getPredictionTimeUnit();
+		if (predictionTimeUnit == null) {
+			// The prediction time unit does not differ from the stream time unit
+			predictionTimeUnit = streamBaseTimeUnit;
+		}
+
 		for (IValidTime validTime : validTimes) {
 			PointInTime validStart = validTime.getValidStart();
 			PointInTime validEnd = validTime.getValidEnd();
-			
+
 			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
-				Tuple<T> nonTemporalObject = this.atTimeInstance(object, i);
+
+				/*
+				 * Convert this point in time so the stream time, as all prediction functions
+				 * use the stream time.
+				 */
+				long streamTime = streamBaseTimeUnit.convert(i.getMainPoint(), predictionTimeUnit);
+				PointInTime inStreamTime = new PointInTime(streamTime);
+
+				Tuple<T> nonTemporalObject = this.atTimeInstance(object, inStreamTime);
 				Object result = super.evaluate(nonTemporalObject, sessions, history);
-				temporalType.setValue(i, result);
+
+				/*
+				 * Store the value in the stream time, not the prediction time, as we convert
+				 * the times to the stream time before accessing them.
+				 */
+				temporalType.setValue(inStreamTime, result);
 			}
 		}
 
@@ -102,9 +118,9 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 
 		return nonTemporalTuple;
 	}
-	
+
 	@Override
-	public TemporalRelationalExpression<T> clone() {		
+	public TemporalRelationalExpression<T> clone() {
 		return new TemporalRelationalExpression<>(this, this.streamBaseTimeUnit);
 	}
 

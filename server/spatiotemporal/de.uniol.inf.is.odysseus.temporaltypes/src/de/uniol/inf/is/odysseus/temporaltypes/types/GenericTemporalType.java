@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -120,14 +121,26 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	 * 
 	 * @param validTimes
 	 *            The valid times which are needed. Others can be removed
+	 * 
+	 * @param streamTimeUnit
+	 *            The base time unit of the stream, which can differ from the base
+	 *            time unit of the prediction
 	 */
-	public void trim(IValidTimes validTimes) {
+	public void trim(IValidTimes validTimes, TimeUnit streamTimeUnit) {
 
 		List<PointInTime> toRemove = new ArrayList<>();
 
 		for (PointInTime point : this.values.keySet()) {
-			if (!validTimes.includes(point)) {
-				toRemove.add(point);
+
+			/*
+			 * The values in this object are stored as stream points in time, so we have to
+			 * convert from the potentially different prediction time base time first
+			 */
+			long inStreamTime = streamTimeUnit.convert(point.getMainPoint(), validTimes.getPredictionTimeUnit());
+			PointInTime asStreamTime = new PointInTime(inStreamTime);
+
+			if (!validTimes.includes(asStreamTime)) {
+				toRemove.add(asStreamTime);
 			}
 		}
 		toRemove.stream().forEach(e -> this.values.remove(e));
