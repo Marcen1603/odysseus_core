@@ -33,7 +33,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	private TimeValueItem valueToAddEnd;
 	private boolean alignAtEnd = false;
 	private boolean copyTimeInterval;
-	private TimeUnit baseTimeUnit;
+	private TimeUnit predictionBaseTimeUnit;
 
 	public ChangeValidTimeAO() {
 
@@ -45,7 +45,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.valueToAddEnd = other.getValueToAddEnd();
 		this.copyTimeInterval = other.isCopyTimeInterval();
 		this.alignAtEnd = other.isAlignAtEnd();
-		this.baseTimeUnit = other.getBaseTimeUnit();
+		this.predictionBaseTimeUnit = other.getPredictionBaseTimeUnit();
 	}
 
 	@Parameter(name = "copyTimeInterval", doc = "Set to true if the ValidTimes shall equal the TimeInterval.", type = BooleanParameter.class, optional = true)
@@ -67,13 +67,13 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.valueToAddEnd = valueToAddEnd;
 	}
 	
-	@Parameter(name = "baseTimeUnit", doc = "The basetime unit for the valid time.", type = StringParameter.class, optional = true)
-	public void setPredictionBaseTimeUnit(String baseTimeUnitName) {
-		this.baseTimeUnit = TimeUnit.valueOf(baseTimeUnitName);
+	@Parameter(name = "predictionBaseTimeUnit", doc = "The basetime unit for the valid time.", type = StringParameter.class, optional = true)
+	public void setTimeUnit(String predictionBaseTimeUnitName) {
+		this.predictionBaseTimeUnit = TimeUnit.valueOf(predictionBaseTimeUnitName);
 	}
 		
-	public TimeUnit getBaseTimeUnit() {
-		return baseTimeUnit;
+	public TimeUnit getPredictionBaseTimeUnit() {
+		return predictionBaseTimeUnit;
 	}
 
 	/**

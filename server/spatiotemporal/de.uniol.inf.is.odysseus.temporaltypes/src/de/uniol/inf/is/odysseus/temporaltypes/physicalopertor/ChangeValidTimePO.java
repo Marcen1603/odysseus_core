@@ -47,7 +47,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		this.alingAtStreamEnd = ao.isAlignAtEnd();
 		this.streamBaseTimeUnit = ao.getBaseTimeUnit();
 		this.copyTimeInterval = ao.isCopyTimeInterval();
-		this.predictionBaseTimeUnit = ao.getBaseTimeUnit();
+		this.predictionBaseTimeUnit = ao.getPredictionBaseTimeUnit();
 	}
 
 	@Override
@@ -178,8 +178,8 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			validTime.clear();
 			IValidTime newTime = new ValidTime();
 			
-			PointInTime validStart = convertPointInTime(newValidStart);
-			PointInTime validEnd = convertPointInTime(newValidEnd);
+			PointInTime validStart = convertToPredictionTime(newValidStart);
+			PointInTime validEnd = convertToPredictionTime(newValidEnd);
 			
 			newTime.setValidStartAndEnd(validStart, validEnd);
 			validTime.addValidTime(newTime);
@@ -195,7 +195,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 	 *            The timestamp in the steam time
 	 * @return The timestamp in the prediction time
 	 */
-	private PointInTime convertPointInTime(PointInTime streamTime) {
+	private PointInTime convertToPredictionTime(PointInTime streamTime) {
 		if (predictionBaseTimeUnit == null) {
 			return streamTime;
 		}

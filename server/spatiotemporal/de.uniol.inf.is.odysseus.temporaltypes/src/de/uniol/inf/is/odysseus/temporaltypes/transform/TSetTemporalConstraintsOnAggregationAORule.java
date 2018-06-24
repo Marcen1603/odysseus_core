@@ -37,7 +37,7 @@ public class TSetTemporalConstraintsOnAggregationAORule extends TTemporalAggrega
 	protected void updateOutputSchema(AggregationAO operator) {
 
 		List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> temporalIncrementalFunction = getIncrementalFunction(
-				operator.getAggregations());
+				operator.getAggregations(), operator);
 		List<Integer> attributesToChange = collectAttributesToAddTemporalConstraint(temporalIncrementalFunction);
 
 		// Add the temporal constraint

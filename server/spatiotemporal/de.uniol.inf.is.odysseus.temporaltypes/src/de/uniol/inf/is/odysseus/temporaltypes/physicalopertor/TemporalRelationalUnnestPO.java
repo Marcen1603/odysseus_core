@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
@@ -13,9 +15,12 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
  * @author Tobias Brandt
  */
 public class TemporalRelationalUnnestPO<T extends IValidTimes> extends RelationalUnNestPO<T> {
+	
+	private TimeUnit streamBaseTimeUnit;
 
-	public TemporalRelationalUnnestPO(RelationalUnNestPO<T> po) {
+	public TemporalRelationalUnnestPO(RelationalUnNestPO<T> po, TimeUnit streamBaseTimeUnit) {
 		super(po);
+		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
 	@Override
@@ -24,9 +29,11 @@ public class TemporalRelationalUnnestPO<T extends IValidTimes> extends Relationa
 		if (attribute instanceof TemporalType) {
 			TemporalType<?> tempType = (TemporalType<?>) attribute;
 			for (IValidTime validTime : tuple.getMetadata().getValidTimes()) {
-				for (PointInTime time = validTime.getValidStart(); time
-						.before(validTime.getValidEnd()); time = time.plus(1)) {
-					Tuple<T> nonTemporalTuple = getNonTemporalTuple(tuple, time, tempType);
+				for (PointInTime inPredictionTime = validTime.getValidStart(); inPredictionTime
+						.before(validTime.getValidEnd()); inPredictionTime = inPredictionTime.plus(1)) {
+					long inStreamTime = streamBaseTimeUnit.convert(inPredictionTime.getMainPoint(), tuple.getMetadata().getPredictionTimeUnit());
+					PointInTime asStreamTime = new PointInTime(inStreamTime);
+					Tuple<T> nonTemporalTuple = getNonTemporalTuple(tuple, asStreamTime, tempType);
 					unnestTuple(nonTemporalTuple);
 				}
 			}

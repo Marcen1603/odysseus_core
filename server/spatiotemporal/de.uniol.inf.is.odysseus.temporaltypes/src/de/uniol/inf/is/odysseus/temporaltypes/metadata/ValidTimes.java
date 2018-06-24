@@ -54,6 +54,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute
 		for (IValidTime validTime : toCopy.validTimes) {
 			this.validTimes.add(validTime);
 		}
+		this.timeUnit = toCopy.getPredictionTimeUnit();
 	}
 
 	@Override
@@ -120,7 +121,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute
 	 * The TimeUnit of the valid times, which can differ from the TimeUnit of the
 	 * stream.
 	 */
-	public TimeUnit getTimeUnit() {
+	public TimeUnit getPredictionTimeUnit() {
 		return timeUnit;
 	}
 
