@@ -26,12 +26,16 @@ public class TemporalRelationalUnnestPO<T extends IValidTimes> extends Relationa
 	@Override
 	protected void process_next(final Tuple<T> tuple, final int port) {
 		Object attribute = tuple.getAttribute(this.nestedAttributePos);
+		TimeUnit predictionTimeUnit = tuple.getMetadata().getPredictionTimeUnit();
+		if (predictionTimeUnit == null) {
+			predictionTimeUnit = streamBaseTimeUnit;
+		}
 		if (attribute instanceof TemporalType) {
 			TemporalType<?> tempType = (TemporalType<?>) attribute;
 			for (IValidTime validTime : tuple.getMetadata().getValidTimes()) {
 				for (PointInTime inPredictionTime = validTime.getValidStart(); inPredictionTime
 						.before(validTime.getValidEnd()); inPredictionTime = inPredictionTime.plus(1)) {
-					long inStreamTime = streamBaseTimeUnit.convert(inPredictionTime.getMainPoint(), tuple.getMetadata().getPredictionTimeUnit());
+					long inStreamTime = streamBaseTimeUnit.convert(inPredictionTime.getMainPoint(), predictionTimeUnit);
 					PointInTime asStreamTime = new PointInTime(inStreamTime);
 					Tuple<T> nonTemporalTuple = getNonTemporalTuple(tuple, asStreamTime, tempType);
 					unnestTuple(nonTemporalTuple);
