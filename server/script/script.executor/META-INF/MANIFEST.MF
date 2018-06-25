@@ -24,6 +24,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.updater,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.uniol.inf.is.odysseus.script.keyword
+Export-Package: de.uniol.inf.is.odysseus.script.keyword,
+ de.uniol.inf.is.odysseus.script.keyword.configuration
 Automatic-Module-Name: de.uniol.inf.is.odysseus.script.executor
 Bundle-ActivationPolicy: lazy

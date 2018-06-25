@@ -997,16 +997,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		List<String> rights = (List<String>) node.jjtGetChild(0).jjtAccept(
 				this, data);
-		// Validate if rights are User Actions
-		List<IPermission> operations = new ArrayList<IPermission>();
-		for (String r : rights) {
-			IPermission action = PermissionFactory.valueOf(r);
-			if (action != null) {
-				operations.add(action);
-			} else {
-				throw new QueryParseException("Right " + r + " not defined.");
-			}
-		}
 
 		List<String> objects = null;
 		String userName = null;
@@ -1017,7 +1007,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		}
 		GrantPermissionCommand cmd = new GrantPermissionCommand(userName,
-				operations, objects, caller);
+				rights, objects, caller);
 		commands.add(cmd);
 		return null;
 	}

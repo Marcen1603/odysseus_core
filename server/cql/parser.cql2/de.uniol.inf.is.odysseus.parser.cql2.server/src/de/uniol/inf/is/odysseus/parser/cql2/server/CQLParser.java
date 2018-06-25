@@ -62,8 +62,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.GrantRoleCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.RevokePermissionCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.RevokeRoleCommand;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
-import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.FunctionStore;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -334,19 +332,11 @@ public class CQLParser implements IQueryParser {
 			RightsManagement cast = ((RightsManagement) commandType);
 			if ((isGrant = cast.getName().toUpperCase().equals("GRANT"))
 					|| cast.getName().toUpperCase().equals("REVOKE")) {
-				List<IPermission> operations = new ArrayList<IPermission>();
-				for (String r : cast.getOperations()) {
-					IPermission action = PermissionFactory.valueOf(r.toUpperCase());
-					if (action != null)
-						operations.add(action);
-					else
-						throw new QueryParseException("Right " + r + " not defined.");
-				}
 				List<String> objects = cast.getOperations2() == null ? new ArrayList<String>() : cast.getOperations2();
 				if (isGrant)
-					executorCommand = new GrantPermissionCommand(cast.getUser(), operations, objects, user);
+					executorCommand = new GrantPermissionCommand(cast.getUser(), cast.getOperations(), objects, user);
 				else
-					executorCommand = new RevokePermissionCommand(cast.getUser(), operations, objects, user);
+					executorCommand = new RevokePermissionCommand(cast.getUser(), cast.getOperations(), objects, user);
 			}
 		} else if (commandType instanceof RoleManagement) {
 			RoleManagement cast = ((RoleManagement) commandType);
