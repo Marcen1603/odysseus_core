@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.script.executor;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.GrantPermissionCommand;
 import de.uniol.inf.is.odysseus.script.executor.permission.GrantPermissionPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.executor.permission.GrantRolesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.executor.permission.RevokePermissionPreParserKeyword;
@@ -56,7 +55,9 @@ import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropAllSinksPreParse
 import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropAllSourcesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropSinkPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropSourcePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.user.CreateRolePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.user.CreateUserPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.user.DropRolePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.user.DropUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.user.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.user.LogoutUserPreParserKeyword;
@@ -111,6 +112,9 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(DropSinkPreParserKeyword.NAME, DropSinkPreParserKeyword.class);
 		keywords.put(CreateUserPreParserKeyword.NAME, CreateUserPreParserKeyword.class);
 		keywords.put(DropUserPreParserKeyword.NAME, DropUserPreParserKeyword.class);
+		
+		keywords.put(CreateRolePreParserKeyword.NAME, CreateRolePreParserKeyword.class);
+		keywords.put(DropRolePreParserKeyword.NAME, DropRolePreParserKeyword.class);	
 		
 		keywords.put(GrantRolesPreParserKeyword.NAME, GrantRolesPreParserKeyword.class);
 		keywords.put(GrantPermissionPreParserKeyword.NAME, GrantPermissionPreParserKeyword.class);
