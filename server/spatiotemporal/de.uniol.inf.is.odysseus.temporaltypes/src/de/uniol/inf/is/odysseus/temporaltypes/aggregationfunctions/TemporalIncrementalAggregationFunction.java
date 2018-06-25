@@ -120,8 +120,9 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		 * non-temporal elements, not the temporal ones.
 		 */
 		for (T outdatedElement : outdatedElements) {
+			List<Tuple<M>> outdated = this.nonTemporalElements.get(outdatedElement);
 			this.nonTemporalFunctions.values().stream().forEach(f -> f
-					.removeOutdated((List<T>) this.nonTemporalElements.get(outdatedElement), trigger, pointInTime));
+					.removeOutdated((List<T>) outdated, trigger, pointInTime));
 
 			// Also remove from this temporary storage
 			this.nonTemporalElements.remove(outdatedElement);
