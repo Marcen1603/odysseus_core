@@ -129,6 +129,10 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	public void trim(IValidTimes validTimes, TimeUnit streamTimeUnit) {
 
 		List<PointInTime> toRemove = new ArrayList<>();
+		TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();
+		if (predictionTimeUnit == null) {
+			predictionTimeUnit = streamTimeUnit;
+		}
 
 		for (PointInTime point : this.values.keySet()) {
 
@@ -136,7 +140,7 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 			 * The values in this object are stored as stream points in time, so we have to
 			 * convert from the potentially different prediction time base time first
 			 */
-			long inStreamTime = streamTimeUnit.convert(point.getMainPoint(), validTimes.getPredictionTimeUnit());
+			long inStreamTime = streamTimeUnit.convert(point.getMainPoint(), predictionTimeUnit);
 			PointInTime asStreamTime = new PointInTime(inStreamTime);
 
 			if (!validTimes.includes(asStreamTime)) {
