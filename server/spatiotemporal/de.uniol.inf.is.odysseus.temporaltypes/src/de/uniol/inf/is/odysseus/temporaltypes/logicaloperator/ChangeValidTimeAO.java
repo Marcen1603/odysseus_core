@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.temporaltypes.logicaloperator;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
@@ -30,6 +33,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	private TimeValueItem valueToAddEnd;
 	private boolean alignAtEnd = false;
 	private boolean copyTimeInterval;
+	private TimeUnit predictionBaseTimeUnit;
 
 	public ChangeValidTimeAO() {
 
@@ -41,6 +45,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.valueToAddEnd = other.getValueToAddEnd();
 		this.copyTimeInterval = other.isCopyTimeInterval();
 		this.alignAtEnd = other.isAlignAtEnd();
+		this.predictionBaseTimeUnit = other.getPredictionBaseTimeUnit();
 	}
 
 	@Parameter(name = "copyTimeInterval", doc = "Set to true if the ValidTimes shall equal the TimeInterval.", type = BooleanParameter.class, optional = true)
@@ -61,6 +66,15 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	public void setAddEndValue(TimeValueItem valueToAddEnd) {
 		this.valueToAddEnd = valueToAddEnd;
 	}
+	
+	@Parameter(name = "predictionBaseTimeUnit", doc = "The basetime unit for the valid time.", type = StringParameter.class, optional = true)
+	public void setTimeUnit(String predictionBaseTimeUnitName) {
+		this.predictionBaseTimeUnit = TimeUnit.valueOf(predictionBaseTimeUnitName);
+	}
+		
+	public TimeUnit getPredictionBaseTimeUnit() {
+		return predictionBaseTimeUnit;
+	}
 
 	/**
 	 * 
@@ -73,7 +87,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 
 	/**
 	 * 
-	 * @return The value that is addd to the start timestamp of the stream time to
+	 * @return The value that is added to the start timestamp of the stream time to
 	 *         create end end timestamp of the ValidTime.
 	 */
 	public TimeValueItem getValueToAddEnd() {
@@ -84,7 +98,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		return alignAtEnd;
 	}
 
-	@Parameter(name = "alignAtEnd", doc = "The values set as the ValidTime are aligned at the end timestamp of the streamtime. Default: false..", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "alignAtEnd", doc = "The values set as the ValidTime are aligned at the end timestamp of the streamtime. Default: false.", type = BooleanParameter.class, optional = true)
 	public void setAlignAtEnd(boolean alignAtEnd) {
 		this.alignAtEnd = alignAtEnd;
 	}

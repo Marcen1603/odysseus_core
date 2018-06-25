@@ -35,4 +35,19 @@ public interface TemporalType<T> {
 	 */
 	public T[] getValues(TimeInterval interval);
 
+	/**
+	 * The trust value can give an indicator how trustworthy a value is for a
+	 * certain point in time. If the temporal type (i.e., the function) can give a
+	 * value with high probability, the trust value is high, if not, its low. The
+	 * trust function can, but are not obligated to, give a value between 0 and 1 as
+	 * the non-temporal trust value does. Nevertheless, functions can differ from
+	 * this.
+	 * 
+	 * @param time
+	 *            The time for which the trust value shall be given
+	 * @return The trust value at this time. Lower means lower trust. 1 is high
+	 *         trust, 0 is low trust.
+	 */
+	public double getTrust(PointInTime time);
+
 }

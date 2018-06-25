@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.real.SplineDoubleFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 
@@ -110,11 +111,12 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		Geometry oldestPoint = getGeometryFromElement(oldestElement);
 		PointInTime oldestPointInTime = oldestElement.getMetadata().getStart();
 		PointInTime currentPointInTime = newestElement.getMetadata().getStart();
-		return createTemporalPoint(currentPoint, oldestPoint, currentPointInTime, oldestPointInTime);
+		TemporalFunction<Double> trustFunction = createTrustFunction(history);
+		return createTemporalPoint(currentPoint, oldestPoint, currentPointInTime, oldestPointInTime, trustFunction);
 	}
 
 	public Object[] createTemporalPoint(Geometry currentPoint, Geometry oldestPoint, PointInTime currentPointInTime,
-			PointInTime oldestPointInTime) {
+			PointInTime oldestPointInTime, TemporalFunction<Double> trustFunction) {
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(oldestPoint, currentPoint);
 		long timeInstancesTravelled = currentPointInTime.minus(oldestPointInTime).getMainPoint();
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
@@ -127,8 +129,71 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
 				currentPointInTime, speedMetersPerTimeInstance, azimuth);
 		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
-		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction, trustFunction);
 		return temporalPoint;
+	}
+
+	/**
+	 * Estimate the trust value of the temporal values
+	 * 
+	 * @return
+	 */
+	protected TemporalFunction<Double> createTrustFunction(Collection<T> history) {
+
+		List<Double> tempDim = new ArrayList<>();
+		List<Double> trustDim = new ArrayList<>();
+
+		T prevValue = null;
+		for (T element : history) {
+
+			// Only the first loop
+			if (prevValue == null) {
+				// Before our real history, the trust is low
+				tempDim.add((double) (element.getMetadata().getStart().minus(2).getMainPoint()));
+				trustDim.add(0.0);
+
+				// Now its getting slightly better
+				tempDim.add((double) element.getMetadata().getStart().minus(1).getMainPoint());
+				trustDim.add(0.5);
+			} else if (prevValue != null
+					&& element.getMetadata().getStart().minus(prevValue.getMetadata().getStart()).getMainPoint() > 2) {
+				/*
+				 * There has been some time between the last known value and this one, lower the
+				 * trust in between
+				 */
+
+				long diff = element.getMetadata().getStart().minus(prevValue.getMetadata().getStart()).getMainPoint();
+				long middle = prevValue.getMetadata().getStart().plus(diff / 2).getMainPoint();
+
+				tempDim.add((double) middle);
+				trustDim.add(0.0);
+			}
+
+			// When we have information in the history, the trust is high
+			tempDim.add((double) element.getMetadata().getStart().getMainPoint());
+			trustDim.add(1.0);
+
+			prevValue = element;
+		}
+
+		// At the end, reduce the trust again
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(1).getMainPoint());
+		trustDim.add(0.5);
+
+		// Now its getting slightly better
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(2).getMainPoint());
+		trustDim.add(0.0);
+
+		double[] tempDimension = new double[tempDim.size()];
+		double[] trustDimension = new double[trustDim.size()];
+
+		for (int i = 0; i < tempDim.size(); i++) {
+			tempDimension[i] = tempDim.get(i);
+			trustDimension[i] = trustDim.get(i);
+		}
+
+		TemporalFunction<Double> trustFunction = new SplineDoubleFunction(tempDimension, trustDimension);
+		return trustFunction;
 	}
 
 	protected GeodeticCalculator getGeodeticCalculator(Coordinate from, Coordinate to) {
