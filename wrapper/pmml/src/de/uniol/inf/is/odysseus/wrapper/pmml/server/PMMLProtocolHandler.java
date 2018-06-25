@@ -6,11 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Base64.Decoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;

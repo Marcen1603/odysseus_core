@@ -14,14 +14,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NewFilenamePunctuation;
 
+@SuppressWarnings("deprecation")
 public class PunctAwareByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>>
 		extends ByteBufferHandler<T> {
 
 	static public final List<IStreamObjectDataHandler<?>> dataHandlerList = new ArrayList<IStreamObjectDataHandler<?>>();
 	{
 		// fill with know punctuations --> move to other place sometimes
-		dataHandlerList.add(DataHandlerRegistry.getStreamObjectDataHandler("tuple", Heartbeat.schema));
-		dataHandlerList.add(DataHandlerRegistry.getStreamObjectDataHandler("tuple", NewFilenamePunctuation.schema));
+		dataHandlerList.add(DataHandlerRegistry.instance.getStreamObjectDataHandler("tuple", Heartbeat.schema));
+		dataHandlerList.add(DataHandlerRegistry.instance.getStreamObjectDataHandler("tuple", NewFilenamePunctuation.schema));
 	}
 	
 	IPunctuation punctuation = null;

@@ -39,7 +39,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	protected AbstractDataHandler(){
 		this.schema = null;
 	}
-	
+		
 	@Override
 	final public IDataHandler<T> createInstance(List<SDFDatatype> schema) {
 		return getInstance(schema);
@@ -122,4 +122,17 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
     public String toString() {
         return getClass().getSimpleName();
     }
+    
+    // ----
+    
+    @SuppressWarnings("deprecation")
+	final protected	IDataHandler<?> getDataHandler(SDFDatatype dataType, SDFSchema schema){
+    	return DataHandlerRegistry.instance.getDataHandler(dataType, schema);
+    }
+    
+    @SuppressWarnings("deprecation")
+	final protected boolean existsDataHandler(SDFDatatype dataType) {
+    	return DataHandlerRegistry.instance.containsDataHandler(dataType.getURI());
+    }
+
 }

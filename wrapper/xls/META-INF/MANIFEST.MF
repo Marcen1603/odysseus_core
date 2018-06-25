@@ -18,3 +18,4 @@ Bundle-ClassPath: lib/OpenXLS.jar,
  .
 Service-Component: OSGI-INF/XLSProtocolHandler.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.xls
+Bundle-ActivationPolicy: lazy

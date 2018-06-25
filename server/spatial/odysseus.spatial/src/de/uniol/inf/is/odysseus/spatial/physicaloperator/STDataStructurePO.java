@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.STDataStructureAO;
  *
  * @param <T>
  */
+@SuppressWarnings("deprecation")
 public class STDataStructurePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
 	private ISpatioTemporalDataStructure dataStructure;

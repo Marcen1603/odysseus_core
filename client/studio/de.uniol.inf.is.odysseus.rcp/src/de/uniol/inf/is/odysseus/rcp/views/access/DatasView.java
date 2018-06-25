@@ -114,7 +114,7 @@ public class DatasView extends ViewPart {
 
                 @Override
                 public void run() {
-                    final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
+                    final List<String> datas = new ArrayList<>(DataHandlerRegistry.instance.getHandlerNames());
                     Collections.sort(datas);
                     DatasView.this.tableViewer.setInput(datas);
                     DatasView.this.tableViewer.refresh();

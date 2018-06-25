@@ -8,3 +8,4 @@ Service-Component: OSGI-INF/StandardCompiler.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Import-Package: org.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler
+Bundle-ActivationPolicy: lazy

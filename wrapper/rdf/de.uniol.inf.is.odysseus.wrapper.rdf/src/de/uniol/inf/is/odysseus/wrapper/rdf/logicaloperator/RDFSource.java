@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -13,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.wrapper.rdf.RDFProtocolHandler;
 import handler.TripleDataHandler;
 
@@ -60,24 +58,6 @@ public class RDFSource extends AbstractAccessAO {
 		return getOption(RDFProtocolHandler.FORMAT);
 	}
 	
-	@Override
-	@Parameter(type = StringParameter.class, name = "Wrapper", optional = false, possibleValues="getWrapperValues", doc = "The name of the wrapper to use, e.g. GenericPush or GenericPull.")
-	public void setWrapper(String wrapper) {
-		super.setWrapper(wrapper);
-	}
-	
-	public List<String> getWrapperValues(){
-		return WrapperRegistry.getWrapperNames();
-	}
-	
-	@Override
-	@Parameter(type = StringParameter.class, name = "transport", optional = false, possibleValues="getTransportValues", doc = "The name of the transport handler to use, e.g. File or TcpServer.")
-	public void setTransportHandler(String transportHandler) {
-		super.setTransportHandler(transportHandler);
-	}
-	
-	public List<String> getTransportValues(){
-		return TransportHandlerRegistry.getHandlerNames();
-	}
+
 
 }

@@ -15,3 +15,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.priority;bundle-version="1.0.1",
  de.uniol.inf.is.odysseus.priority_interval
 Automatic-Module-Name: de.uniol.inf.is.odysseus.interval_latency_priority
+Bundle-ActivationPolicy: lazy

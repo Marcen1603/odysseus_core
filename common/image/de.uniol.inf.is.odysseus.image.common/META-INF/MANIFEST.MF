@@ -15,4 +15,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/*
 Automatic-Module-Name: de.uniol.inf.is.odysseus.image.common
+Bundle-ActivationPolicy: lazy
 

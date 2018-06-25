@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.ISpatioTemporalDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
+@SuppressWarnings("deprecation")
 public class SpatialQueryPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 	private ISpatioTemporalDataStructure dataStructure;

@@ -27,3 +27,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.script.keyword,
  de.uniol.inf.is.odysseus.script.keyword.configuration
 Automatic-Module-Name: de.uniol.inf.is.odysseus.script.executor
+Bundle-ActivationPolicy: lazy

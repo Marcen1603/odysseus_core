@@ -29,7 +29,7 @@ public class RelationalElementPartialAggregateDataHandler extends AbstractDataHa
 	@Override
 	public RelationalElementPartialAggregate readData(ByteBuffer buffer) {
 		String type = typeHandler.readData(buffer);
-		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(type, (SDFSchema)null);
+		IDataHandler<?> contentHandler = getDataHandler(new SDFDatatype(type), (SDFSchema)null);
 		if (contentHandler != null){
 			Object data = contentHandler.readData(buffer);
 			return new RelationalElementPartialAggregate(data, type);
@@ -47,7 +47,7 @@ public class RelationalElementPartialAggregateDataHandler extends AbstractDataHa
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		RelationalElementPartialAggregate agg = (RelationalElementPartialAggregate) data;
-		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(agg.getDatatype(), (SDFSchema)null);
+		IDataHandler<?> contentHandler = getDataHandler(new SDFDatatype(agg.getDatatype()), (SDFSchema)null);
 		if (contentHandler != null){
 			typeHandler.writeData(buffer, agg.getDatatype());
 			contentHandler.writeData(buffer, agg.getValue());
@@ -59,7 +59,7 @@ public class RelationalElementPartialAggregateDataHandler extends AbstractDataHa
 	@Override
 	public int memSize(Object attribute) {
 		RelationalElementPartialAggregate agg = (RelationalElementPartialAggregate) attribute;
-		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(agg.getDatatype(), (SDFSchema)null);
+		IDataHandler<?> contentHandler = DataHandlerRegistry.instance.getDataHandler(agg.getDatatype(), (SDFSchema)null);
 		int size = 0;
 		if (contentHandler != null){
 			size += typeHandler.memSize(agg.getDatatype());

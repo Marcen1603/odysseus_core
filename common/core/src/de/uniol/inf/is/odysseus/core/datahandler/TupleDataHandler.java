@@ -329,20 +329,10 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		for (SDFAttribute attribute : schema) {
 
 			SDFDatatype type = attribute.getDatatype();
-			String uri = attribute.getDatatype().getURI(false);
-			;
 
-			// is this really needed??
-			if (type.isTuple()) {
-				uri = "TUPLE";
-			} else if (type.isMultiValue()) {
-				uri = "MULTI_VALUE";
-			} else if (type.isListValue()) {
-				uri = "LIST";
-			}
 
-			if (!DataHandlerRegistry.containsDataHandler(uri)) {
-				throw new IllegalArgumentException("Datatype "+uri+" of Attribute "+attribute+" cannot be used in transport!" );
+			if (!existsDataHandler(type)) {
+				throw new IllegalArgumentException("Datatype "+type+" of Attribute "+attribute+" cannot be used in transport!" );
 			}
 
 			SDFSchema subSchema;
@@ -355,7 +345,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				}
 			}
 
-			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, subSchema);
+			dataHandlers[i++] = getDataHandler(type, subSchema);
 
 		}
 	}
@@ -365,7 +355,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		int i = 0;
 		for (SDFDatatype attribute : schema) {
 
-			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(attribute.toString(), (SDFSchema) null);
+			IDataHandler<?> handler = getDataHandler(attribute, (SDFSchema) null);
 
 			if (handler == null) {
 				throw new IllegalArgumentException("Unregistered datatype " + attribute);

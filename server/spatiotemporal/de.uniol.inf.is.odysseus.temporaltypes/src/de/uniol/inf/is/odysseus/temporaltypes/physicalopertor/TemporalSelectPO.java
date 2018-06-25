@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
@@ -21,13 +22,17 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
  * @param <T>
  */
 public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> {
+	
+	private TimeUnit streamBaseTimeUnit;
 
-	public TemporalSelectPO(RelationalExpression<IValidTimes> expression) {
+	public TemporalSelectPO(RelationalExpression<IValidTimes> expression, TimeUnit streamBaseTimeUnit) {
 		super(expression);
+		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
-	public TemporalSelectPO(boolean predicateIsUpdateable, RelationalExpression<IValidTimes> expression) {
+	public TemporalSelectPO(boolean predicateIsUpdateable, RelationalExpression<IValidTimes> expression, TimeUnit streamBaseTimeUnit) {
 		super(predicateIsUpdateable, expression);
+		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
 	@Override
@@ -44,7 +49,8 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 
 		@SuppressWarnings("unchecked")
 		GenericTemporalType<Boolean> temporalType = (GenericTemporalType<Boolean>) expressionResult;
-		List<IValidTime> validTimeIntervals = constructValidTimeIntervals(temporalType);
+		TimeUnit predictionTimeUnit = object.getMetadata().getPredictionTimeUnit();
+		List<IValidTime> validTimeIntervals = constructValidTimeIntervals(temporalType, predictionTimeUnit);
 		T newObject = createOutputTuple(object, validTimeIntervals);
 		if (validTimeIntervals.size() > 0) {
 			transfer(newObject);
@@ -70,7 +76,7 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		return newObject;
 	}
 
-	private List<IValidTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType) {
+	private List<IValidTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType, TimeUnit predictionTimeUnit) {
 		List<IValidTime> validTimeIntervals = new ArrayList<>();
 		IValidTime currentInterval = null;
 		PointInTime lastTime = null;
@@ -79,8 +85,14 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		 * Loop over all single results and build the time intervals for the ValidTime.
 		 * If there is no valid time interval, nothing will be transferred.
 		 */
-		for (PointInTime time : temporalType.getValues().keySet()) {
-			Object timeValue = temporalType.getValues().get(time);
+		// streamTime -> stream base time is used here, e.g., milliseconds
+		for (PointInTime inStreamTime : temporalType.getValues().keySet()) {
+			
+			// predictionTime -> prediction base time is used here, e.g., seconds
+			long predictionTime = predictionTimeUnit.convert(inStreamTime.getMainPoint(), streamBaseTimeUnit);
+			PointInTime inPredictionTime = new PointInTime(predictionTime);
+			
+			Object timeValue = temporalType.getValues().get(inStreamTime);
 
 			/*
 			 * The values are not necessarily always a boolean. E.g., an atMin function
@@ -90,21 +102,21 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 			 */
 			boolean useValue = true;
 			if (timeValue instanceof Boolean) {
-				useValue = temporalType.getValues().get(time);
+				useValue = temporalType.getValues().get(inStreamTime);
 			}
 
 			if (useValue) {
 				if (currentInterval == null) {
-					currentInterval = new ValidTime(time);
+					currentInterval = new ValidTime(inPredictionTime);
 				}
 			} else {
 				if (currentInterval != null) {
-					currentInterval.setValidEnd(time);
+					currentInterval.setValidEnd(inPredictionTime);
 					validTimeIntervals.add(currentInterval);
 					currentInterval = null;
 				}
 			}
-			lastTime = time;
+			lastTime = inPredictionTime;
 		}
 
 		/*

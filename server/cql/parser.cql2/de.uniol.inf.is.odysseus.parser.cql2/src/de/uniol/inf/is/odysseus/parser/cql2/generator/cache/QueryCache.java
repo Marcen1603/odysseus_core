@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedAttrib
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IParsedObject;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IParsedObject.Type;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IPredicateParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class QueryCache implements Cache {
@@ -39,13 +38,11 @@ public class QueryCache implements Cache {
 	private Map<SimpleSelect, QueryPredicate>				predicateEntries 	= new HashMap<>();
 
 	private static IUtilityService utilityService;
-	private static IPredicateParser predicateParser;
 	private static QueryCache queryCache;
 	
 	public QueryCache() {
 		queryCache = this;
 		utilityService = CQLGenerator.injector.getInstance(IUtilityService.class);
-		predicateParser = CQLGenerator.injector.getInstance(IPredicateParser.class);
 	}
 	
 	public Collection<QueryAttribute> getProjectionAttributes(SimpleSelect query) {

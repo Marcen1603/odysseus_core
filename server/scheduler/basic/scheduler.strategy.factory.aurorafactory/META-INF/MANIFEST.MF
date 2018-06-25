@@ -19,3 +19,4 @@ Export-Package: de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactor
  de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory
+Bundle-ActivationPolicy: lazy

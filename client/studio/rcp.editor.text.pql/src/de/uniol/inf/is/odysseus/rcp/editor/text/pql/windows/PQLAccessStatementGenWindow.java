@@ -149,13 +149,13 @@ public class PQLAccessStatementGenWindow {
 		dateFormatText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		createLabel(generalComposite, "Transport Handler");
-		transportHandlerCombo = createCombo(generalComposite, TransportHandlerRegistry.getHandlerNames());
+		transportHandlerCombo = createCombo(generalComposite, TransportHandlerRegistry.instance.getHandlerNames());
 
 		createLabel(generalComposite, "Protocol Handler");
-		protocolHandlerCombo = createCombo(generalComposite, ProtocolHandlerRegistry.getHandlerNames());
+		protocolHandlerCombo = createCombo(generalComposite, ProtocolHandlerRegistry.instance.getHandlerNames());
 
 		createLabel(generalComposite, "Data Handler");
-		dataHandlerCombo = createCombo(generalComposite, DataHandlerRegistry.getHandlerNames());
+		dataHandlerCombo = createCombo(generalComposite, DataHandlerRegistry.instance.getHandlerNames());
 	}
 
 	private void insertOutputSchemaContent(Composite outputSchemaComposite) {

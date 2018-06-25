@@ -20,11 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.DoubleHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IntegerHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.LongHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.opcua.common.core.OPCValue;
 import de.uniol.inf.is.odysseus.opcua.common.core.SDFOPCUADatatype;
@@ -73,14 +73,14 @@ public class OPCUADataHandler<T> extends AbstractDataHandler<OPCValue<T>> implem
 			return;
 		}
 		// Extract parameters
-		String dataType = child.getAttribute(0).getAttributeName();
+		SDFDatatype dataType = child.getAttribute(0).getDatatype();
 		SDFSchema schema = child;
 		// Get data handler (for example: DOUBLE)
-		IDataHandler<?> myValueHandler = DataHandlerRegistry.getDataHandler(dataType, schema);
+		IDataHandler<?> myValueHandler = getDataHandler(dataType, schema);
 		// Maybe-hack for handling of KeyValueObject
 		if (myValueHandler == null && child.getAttribute(0).getDatatype().getSubType() != null) {
-			dataType = child.getAttribute(0).getDatatype().getSubType().toString();
-			myValueHandler = DataHandlerRegistry.getDataHandler(dataType, schema);
+			dataType = child.getAttribute(0).getDatatype().getSubType();
+			myValueHandler = getDataHandler(dataType, schema);
 		}
 		// Set it once
 		valueHandler = myValueHandler;

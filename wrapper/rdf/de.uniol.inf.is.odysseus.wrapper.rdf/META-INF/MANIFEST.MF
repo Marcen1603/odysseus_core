@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.rdf,
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.wrapper.rdf
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.rdf
+Bundle-ActivationPolicy: lazy

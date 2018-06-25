@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
  * @author Tobias Brandt
  *
  */
+@SuppressWarnings("deprecation")
 public class SpatialDataStructureTest {
 
 	private static final String DATA_STRUCTURE_NAME = "test";

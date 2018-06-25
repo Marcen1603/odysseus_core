@@ -10,3 +10,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy
 Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy
+Bundle-ActivationPolicy: lazy

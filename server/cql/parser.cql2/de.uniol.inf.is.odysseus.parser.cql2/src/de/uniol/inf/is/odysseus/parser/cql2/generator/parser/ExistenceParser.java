@@ -42,6 +42,7 @@ public class ExistenceParser implements IExistenceParser {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	@Override
 	public List<String> parse(ComplexPredicate predicate, SimpleSelect parent, List<String> predicateString, boolean negated) {
 		

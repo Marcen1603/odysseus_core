@@ -218,6 +218,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void propagateDone() {
+		getTransfer().propagateDone();
+	}
 
 	@Override
 	public boolean hasNext() throws IOException {

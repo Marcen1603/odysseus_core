@@ -576,7 +576,7 @@ public class SocketService extends Observable {
 			if (dataType.equals("Tuple")) {
 				dataType = "ntuple";
 			}
-			IStreamObjectDataHandler handler = DataHandlerRegistry.getStreamObjectDataHandler(dataType,
+			IStreamObjectDataHandler handler = DataHandlerRegistry.instance.getStreamObjectDataHandler(dataType,
 					root.getOutputSchema(rootOutputPort));
 
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(

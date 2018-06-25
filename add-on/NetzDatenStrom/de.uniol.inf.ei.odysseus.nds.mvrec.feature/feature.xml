@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.uniol.inf.ei.odysseus.nds.mvrec.feature"
+      label="NetzDatenStrom BDA Feature"
+      version="1.0.0.qualifier">
+
+   <description>
+      This feature bundles all plug-ins that are needed for the use cases of the module named &quot;middle voltage data recorder (MVRec)&quot; of the research project NetzDatenStrom (NDS).
+      (1) read IEC 60870-5-104 telegrams from a Pcap file, (2) change the timestamp of the first telegram,
+      (3) change the timestamp of all other telegrams accordingly, and (4) send changed telegrams as IEC 60870-5-104, 
+      using the timespam between timestamps of two subsequent telegrams as waiting time between sending the telegrams.
+   </description>
+
+   <copyright>
+      Copyright by the University of Oldenburg
+   </copyright>
+
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
+      Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+   </license>
+
+   <plugin
+         id="de.uniol.inf.ei.odysseus.nds.mvrec.autostart"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.ei.odysseus.nds"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

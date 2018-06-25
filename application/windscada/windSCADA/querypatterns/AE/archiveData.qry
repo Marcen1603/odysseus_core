@@ -1,5 +1,0 @@
-#PARSER PQL
-#RUNQUERY
-Stream1 = STREAM({SOURCE='System.AE'})
-Map2 = MAP({expressions=[['0','id'],['AE.wka_id','wka_id'],['AE.farm_id','wp_id'],['AE.type','type'],['AE.warning','warning'],['AE.error','error'],['false','confirmed'],['AE.meta_valid_start','starttime'],['AE.meta_valid_end','endtime'],['''','comment']]},0:Stream1)
-hdsink = DATABASESINK({connection='CONHD',table='AEarchive', tableschema=['Integer','Integer','Integer','Text','Boolean','Boolean','Boolean','LONG','LONG','Text'], LAZY_CONNECTION_CHECK='false'},0:Map2)

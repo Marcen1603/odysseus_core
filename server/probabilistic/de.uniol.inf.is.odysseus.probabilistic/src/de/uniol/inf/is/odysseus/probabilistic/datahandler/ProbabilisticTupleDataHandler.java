@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -417,23 +416,15 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 				probabilisticType = null;
 			}
 
-			String uri = attribute.getDatatype().getURI(false);
-
-			// is this really needed??
-			if (type.isTuple()) {
-				uri = "TUPLE";
-			} else if (type.isMultiValue()) {
-				uri = "MULTI_VALUE";
-			}
 			if (probabilisticType != null) {
 				this.requiresDeepClone = true;
 				this.maxDistributions++;
 			}
-			if (!DataHandlerRegistry.containsDataHandler(uri)) {
-				throw new IllegalArgumentException("Unregistered datatype " + uri);
+			if (!existsDataHandler(type)) {
+				throw new IllegalArgumentException("Unregistered datatype " + type);
 			}
 
-			this.dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, SDFSchemaFactory.createNewSchema("",
+			this.dataHandlers[i++] = getDataHandler(type, SDFSchemaFactory.createNewSchema("",
 					(Class<? extends IStreamObject<?>>) ProbabilisticTuple.class, attribute));
 
 		}
@@ -452,7 +443,7 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 		int i = 0;
 		for (final SDFDatatype attribute : schema) {
 
-			final IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(attribute.toString(), (SDFSchema) null);
+			final IDataHandler<?> handler = getDataHandler(attribute, (SDFSchema) null);
 
 			if (handler == null) {
 				throw new IllegalArgumentException("Unregistered datatype " + attribute);

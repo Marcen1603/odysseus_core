@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.wrapper.iec60870-5-104.IEC104ServerTransportHandler">
-   <implementation class="de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.server.IEC104ServerTransportHandler"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler"/>
-   </service>
-</scr:component>

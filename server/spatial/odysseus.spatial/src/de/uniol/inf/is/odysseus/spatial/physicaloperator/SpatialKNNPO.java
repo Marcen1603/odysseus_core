@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialKNNAO;
  *
  * @param <T>
  */
+@SuppressWarnings("deprecation")
 public class SpatialKNNPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 	private ISpatioTemporalDataStructure dataStructure;

@@ -17,3 +17,4 @@ Service-Component: OSGI-INF/DatarateSystemLoad.xml,OSGI-INF/LatencyDatarateSyste
  OSGI-INF/TimeIntervalLatencyDatarateSystemLoad.xml
 Export-Package: de.uniol.inf.is.odysseus.datarate_systemload
 Automatic-Module-Name: de.uniol.inf.is.odysseus.datarate_systemload
+Bundle-ActivationPolicy: lazy

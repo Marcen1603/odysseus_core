@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
 Service-Component: OSGI-INF/GraphMEPFunctions.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.graph.mep
+Bundle-ActivationPolicy: lazy

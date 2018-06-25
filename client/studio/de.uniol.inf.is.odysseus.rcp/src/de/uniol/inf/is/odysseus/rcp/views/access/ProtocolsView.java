@@ -114,7 +114,7 @@ public class ProtocolsView extends ViewPart {
 
                 @Override
                 public void run() {
-                    final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
+                    final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.instance.getHandlerNames());
                     Collections.sort(protocols);
                     ProtocolsView.this.tableViewer.setInput(protocols);
                     ProtocolsView.this.tableViewer.refresh();

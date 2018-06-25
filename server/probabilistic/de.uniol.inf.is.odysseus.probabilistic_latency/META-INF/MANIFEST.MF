@@ -17,3 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.latency
 Service-Component: OSGI-INF/*
 Automatic-Module-Name: de.uniol.inf.is.odysseus.probabilistic_latency
+Bundle-ActivationPolicy: lazy

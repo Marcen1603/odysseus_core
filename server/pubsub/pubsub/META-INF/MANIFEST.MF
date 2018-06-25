@@ -21,3 +21,4 @@ Export-Package: de.uniol.inf.is.odysseus.pubsub,
  de.uniol.inf.is.odysseus.pubsub.broker.topology,
  de.uniol.inf.is.odysseus.pubsub.physicaloperator
 Automatic-Module-Name: de.uniol.inf.is.odysseus.pubsub
+Bundle-ActivationPolicy: lazy

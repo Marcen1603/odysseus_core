@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.database
 Service-Component: OSGI-INF/ConnectionFacctory.xml,
  OSGI-INF/sqlite.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.database.datasource.sqlite
+Bundle-ActivationPolicy: lazy
