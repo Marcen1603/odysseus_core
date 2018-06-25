@@ -35,7 +35,7 @@ public class TrimFunction extends AbstractFunction<TemporalType<?>> implements T
 		GenericTemporalType<?> temporalType = this.getInputValue(0);
 		GenericTemporalType<?> workingObject = temporalType.clone();
 		IValidTimes validTimes = this.getInputValue(1);
-		workingObject.trim(validTimes);
+		workingObject.trim(validTimes, this.getBaseTimeUnit());
 		return workingObject;
 	}
 

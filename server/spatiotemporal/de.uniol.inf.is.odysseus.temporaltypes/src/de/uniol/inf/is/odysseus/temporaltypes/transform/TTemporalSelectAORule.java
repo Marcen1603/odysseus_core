@@ -34,11 +34,11 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 				 * In case that the function can directly work on a temporal type do not use a
 				 * temporal expression
 				 */
-				temporalSelect = new TemporalSelectPO<>(expression);
+				temporalSelect = new TemporalSelectPO<>(expression, operator.getBaseTimeUnit());
 			} else {
 				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
-						expression);
-				temporalSelect = new TemporalSelectPO<>(temporalExpression);
+						expression, operator.getBaseTimeUnit());
+				temporalSelect = new TemporalSelectPO<>(temporalExpression, operator.getBaseTimeUnit());
 			}
 			this.defaultExecute(operator, temporalSelect, config, true, true);
 		}
