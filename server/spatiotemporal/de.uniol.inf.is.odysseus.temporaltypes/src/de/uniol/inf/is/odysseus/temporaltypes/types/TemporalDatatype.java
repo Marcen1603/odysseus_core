@@ -63,7 +63,7 @@ public class TemporalDatatype extends SDFDatatype {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * The search needs to be done on the input schema, because the temporal
 	 * constraints are added to the input schema, not to the attributes in the
@@ -71,14 +71,13 @@ public class TemporalDatatype extends SDFDatatype {
 	 * schema.
 	 */
 	public static SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
-		for (SDFAttribute attribute : inputSchema.getAttributes()) {
-			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
-				return attribute;
-			}
+		SDFAttribute findAttribute = inputSchema.findAttribute(attributeToSearch.getAttributeName());
+		if (findAttribute != null) {
+			return findAttribute;
 		}
 		return attributeToSearch;
 	}
-	
+
 	/**
 	 * Checks if an expression contains a temporal attribute
 	 * 
