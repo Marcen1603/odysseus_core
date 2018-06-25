@@ -142,6 +142,11 @@ public class ValidTimes extends AbstractBaseMetaAttribute
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+
+		if (this.timeUnit != null) {
+			builder.append(this.timeUnit + ": ");
+		}
+		
 		builder.append("[");
 
 		boolean first = true;
