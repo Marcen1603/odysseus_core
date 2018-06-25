@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropAllSinksPreParse
 import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropAllSourcesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropSinkPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.sourcessinks.DropSourcePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.user.AlterUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.user.CreateRolePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.user.CreateUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.user.DropRolePreParserKeyword;
@@ -112,6 +113,8 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(DropSinkPreParserKeyword.NAME, DropSinkPreParserKeyword.class);
 		keywords.put(CreateUserPreParserKeyword.NAME, CreateUserPreParserKeyword.class);
 		keywords.put(DropUserPreParserKeyword.NAME, DropUserPreParserKeyword.class);
+		keywords.put(AlterUserPreParserKeyword.NAME, AlterUserPreParserKeyword.class);
+		keywords.put(AlterUserPreParserKeyword.NAME2, AlterUserPreParserKeyword.class);
 		
 		keywords.put(CreateRolePreParserKeyword.NAME, CreateRolePreParserKeyword.class);
 		keywords.put(DropRolePreParserKeyword.NAME, DropRolePreParserKeyword.class);	
