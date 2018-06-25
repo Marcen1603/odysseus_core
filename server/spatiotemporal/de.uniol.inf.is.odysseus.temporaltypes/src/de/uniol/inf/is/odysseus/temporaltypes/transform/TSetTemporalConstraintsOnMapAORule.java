@@ -118,27 +118,12 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 	protected boolean containsTemporalAttribute(List<SDFAttribute> attributes, SDFSchema inputSchema) {
 		for (SDFAttribute attribute : attributes) {
 
-			SDFAttribute attributeFromSchema = getAttributeFromSchema(inputSchema, attribute);
+			SDFAttribute attributeFromSchema = TemporalDatatype.getAttributeFromSchema(inputSchema, attribute);
 			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * The search needs to be done on the input schema, because the temporal
-	 * constraints are added to the input schema, not to the attributes in the
-	 * expression. That's why this method searches for the same attribute in the
-	 * schema.
-	 */
-	protected SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
-		for (SDFAttribute attribute : inputSchema.getAttributes()) {
-			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
-				return attribute;
-			}
-		}
-		return attributeToSearch;
 	}
 
 	@Override
