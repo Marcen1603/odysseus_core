@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.temporaltypes.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
@@ -51,17 +50,8 @@ public class TTemporalUnnestAORule extends AbstractTransformationRule<UnNestAO> 
 	}
 
 	private boolean unnestAttributeIsTemporal(UnNestAO operator) {
-		SDFAttribute attribute = getAttributeFromSchema(operator.getInputSchema(), operator.getAttribute());
+		SDFAttribute attribute = TemporalDatatype.getAttributeFromSchema(operator.getInputSchema(), operator.getAttribute());
 		return TemporalDatatype.isTemporalAttribute(attribute);
-	}
-
-	protected SDFAttribute getAttributeFromSchema(SDFSchema inputSchema, SDFAttribute attributeToSearch) {
-		for (SDFAttribute attribute : inputSchema.getAttributes()) {
-			if (attribute.getAttributeName().equals(attributeToSearch.getAttributeName())) {
-				return attribute;
-			}
-		}
-		return attributeToSearch;
 	}
 
 }
