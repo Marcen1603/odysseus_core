@@ -263,7 +263,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		ITransportHandler transportHandler = getTransportHandler();
 		byte[] bytes = apdu.toBytes();
 		transportHandler.send(bytes);
-		getLogger().trace("Sent (APDU): {}", apdu);
+		getLogger().debug("Sent (APDU): {}", apdu);
 		getLogger().trace("Sent (bytes): {}", bytes);
 	}
 
