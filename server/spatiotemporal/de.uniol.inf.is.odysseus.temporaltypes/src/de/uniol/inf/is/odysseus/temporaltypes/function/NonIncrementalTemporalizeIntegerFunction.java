@@ -107,7 +107,7 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 		long temporalDistance = Math.abs(trigger.getMetadata().getStart().minus(oldestStartTime).getMainPoint());
 		if (temporalDistance != 0) {
 			// Oldest and newest element are not valid at the same time -> we have a slope
-			m = (Math.abs(newestValue - oldestValue)) / temporalDistance;			
+			m = ((double) Math.abs(newestValue - oldestValue)) / temporalDistance;			
 		}
 		
 		// Calculate y axis intercept
