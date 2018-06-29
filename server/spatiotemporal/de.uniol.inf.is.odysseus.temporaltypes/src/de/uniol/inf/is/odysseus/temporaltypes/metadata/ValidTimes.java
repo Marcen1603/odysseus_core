@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
@@ -26,13 +27,15 @@ import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesIntersectionMetada
  * @author Tobias Brandt
  *
  */
-public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes, Cloneable, Serializable, List<IValidTime> {
+public class ValidTimes extends AbstractBaseMetaAttribute
+		implements IValidTimes, Cloneable, Serializable, List<IValidTime> {
 
 	private static final long serialVersionUID = -7851387086652619437L;
 
 	private final static String METADATA_NAME = "ValidTimes";
 
-	List<IValidTime> validTimes = new ArrayList<>();
+	private List<IValidTime> validTimes = new ArrayList<>();
+	private TimeUnit timeUnit;
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IValidTimes.class };
@@ -51,6 +54,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 		for (IValidTime validTime : toCopy.validTimes) {
 			this.validTimes.add(validTime);
 		}
+		this.timeUnit = toCopy.getPredictionTimeUnit();
 	}
 
 	@Override
@@ -102,7 +106,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	public void clear() {
 		this.validTimes = new ArrayList<>();
 	}
-	
+
 	@Override
 	public boolean includes(PointInTime time) {
 		for (IValidTime validTime : this.validTimes) {
@@ -111,6 +115,18 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * The TimeUnit of the valid times, which can differ from the TimeUnit of the
+	 * stream.
+	 */
+	public TimeUnit getPredictionTimeUnit() {
+		return timeUnit;
+	}
+
+	public void setTimeUnit(TimeUnit timeUnit) {
+		this.timeUnit = timeUnit;
 	}
 
 	@Override
@@ -126,6 +142,11 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+
+		if (this.timeUnit != null) {
+			builder.append(this.timeUnit + ": ");
+		}
+		
 		builder.append("[");
 
 		boolean first = true;

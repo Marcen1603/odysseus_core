@@ -37,10 +37,11 @@ public class TTemporalAggregationAORule extends TAggregationAORule {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> getIncrementalFunction(
-			List<IAggregationFunction> allFunctions) {
+			List<IAggregationFunction> allFunctions, AggregationAO operator) {
 		return allFunctions.stream().filter(f -> f.isIncremental())
 				.map(f -> (new TemporalIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>(
-						(AbstractIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f)))
+						(AbstractIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f,
+						operator.getBaseTimeUnit())))
 				.collect(Collectors.toList());
 	}
 

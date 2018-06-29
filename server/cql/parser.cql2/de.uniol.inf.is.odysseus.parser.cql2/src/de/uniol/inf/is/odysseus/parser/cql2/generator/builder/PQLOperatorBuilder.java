@@ -79,44 +79,24 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private StringBuilder buildArguments(final Class<?> operator, Map<String, String> map) throws PQLOperatorBuilderException {
+	private StringBuilder buildArguments(final Class<?> operator, Map<String, String> map) {
 		List<Parameter> parameters = new ArrayList<>(getParameters(operator));
-		List<Parameter> mandatoryParameters = new ArrayList<>();
 
 		// build arguments
 		for (Parameter parameter : parameters) {
 			final Class<? extends IParameter> type = parameter.type;
-			// collect all mandatory arguments
-			if (!parameter.optional && !mandatoryParameters.contains(parameter)) {
-				mandatoryParameters.add(parameter);
-			}
 
 			for (Map.Entry<String, String> entry : map.entrySet()) {
 				final String name = parameter.name.toLowerCase().trim();
 				final String givenName = entry.getKey().toLowerCase().trim();
-				if (name.equals(givenName)) {
-					if (!name.equals("input")) {
-						String value = getValue(type, entry.getValue());
-						// remove argument from mandatoryParameters, if it could be resolved
-						if (value != null) {
-							builder.append(name + "=" + value + ",");
-							mandatoryParameters.remove(parameter);
-						}
+				if (name.equals(givenName) && !name.equals("input")) {
+					String value = getValue(type, entry.getValue());
+					if (value != null) {
+						builder.append(name + "=" + value + ",");
 					}
 				}
 			}
 
-		}
-
-		// check if all mandatory arguments could be resolved, otherwise throw PQLOperatorBuilderException
-		if (!mandatoryParameters.isEmpty()) {
-			builder = new StringBuilder();
-			for (Parameter parameter : mandatoryParameters) {
-				if (parameter.name != null && parameter.name != "") {
-					builder.append(parameter.toString()).append("\n");
-				}
-			}
-			throw new PQLOperatorBuilderException(operator.getSimpleName() + " misses parameters: " + builder.toString());
 		}
 
 		builder.deleteCharAt(builder.toString().length() - 1);

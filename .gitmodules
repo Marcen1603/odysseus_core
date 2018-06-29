@@ -1,0 +1,3 @@
+[submodule "add-on/netzdatenstrom"]
+	path = add-on/netzdatenstrom
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/oi/netzdatenstrom.git

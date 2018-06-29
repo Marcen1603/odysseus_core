@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
  * @author Tobias Brandt
  *
  */
-public class TrimFunction extends AbstractFunction<TemporalType<?>> {
+public class TrimFunction extends AbstractFunction<TemporalType<?>> implements TemporalFunction {
 
 	private static final long serialVersionUID = 2645182798670576378L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT },
@@ -35,7 +35,7 @@ public class TrimFunction extends AbstractFunction<TemporalType<?>> {
 		GenericTemporalType<?> temporalType = this.getInputValue(0);
 		GenericTemporalType<?> workingObject = temporalType.clone();
 		IValidTimes validTimes = this.getInputValue(1);
-		workingObject.trim(validTimes);
+		workingObject.trim(validTimes, this.getBaseTimeUnit());
 		return workingObject;
 	}
 

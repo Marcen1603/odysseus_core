@@ -57,7 +57,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 		final List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> nonIncrementalFunctions = getNonIncrementalFunction(
 				operator.getAggregations(), operator.getInputSchema());
 		final List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> incrementalFunctions = getIncrementalFunction(
-				operator.getAggregations());
+				operator.getAggregations(), operator);
 
 		operator.getInputSchema();
 
@@ -124,7 +124,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 
 	@SuppressWarnings("unchecked")
 	protected List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> getIncrementalFunction(
-			List<IAggregationFunction> allFunctions) {
+			List<IAggregationFunction> allFunctions, AggregationAO operator) {
 		return allFunctions.stream().filter(f -> f.isIncremental())
 				.map(f -> ((IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f))
 				.collect(Collectors.toList());
