@@ -22,7 +22,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 		super();
 	}
 
-	public SampleSignalAO(SampleSignalAO sampleSignalAO) {
+	public SampleSignalAO(final SampleSignalAO sampleSignalAO) {
 		super(sampleSignalAO);
 		this.interpolationPolicy = sampleSignalAO.interpolationPolicy;
 		this.sampleInterval = sampleSignalAO.sampleInterval;
@@ -35,7 +35,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "SAMPLE_INTERVAL", aliasname="INTERVAL", doc = "todo")
-	public void setSampleInterval(int sampleInterval) {
+	public void setSampleInterval(final int sampleInterval) {
 		this.sampleInterval = sampleInterval;
 	}
 
@@ -44,7 +44,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 	}
 
 	@Parameter(type = EnumParameter.class, name = "INTERPOLATION_POLICY", aliasname="INTERPOLATION", doc = "todo")
-	public void setInterpolationPolicy(InterpolationPolicy interpolationPolicy) {
+	public void setInterpolationPolicy(final InterpolationPolicy interpolationPolicy) {
 		this.interpolationPolicy = interpolationPolicy;
 	}
 
@@ -53,7 +53,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 	}
 	
 	@Parameter(type = BooleanParameter.class, optional=true, name = "FILL_WITH_ZEROS", doc = "todo")
-	public void setFillWithZeros(boolean fillWithZeros) {
+	public void setFillWithZeros(final boolean fillWithZeros) {
 		this.fillWithZeros = fillWithZeros;
 	}
 

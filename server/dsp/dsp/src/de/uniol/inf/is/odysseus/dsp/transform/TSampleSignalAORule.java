@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.dsp.logicaloperator.SampleSignalAO;
 import de.uniol.inf.is.odysseus.dsp.physicaloperator.ConstantInterpolation;
 import de.uniol.inf.is.odysseus.dsp.physicaloperator.InterpolationMethod;
+import de.uniol.inf.is.odysseus.dsp.physicaloperator.LinearInterpolation;
 import de.uniol.inf.is.odysseus.dsp.physicaloperator.SampleSignalPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -22,8 +23,7 @@ public class TSampleSignalAORule extends AbstractTransformationRule<SampleSignal
 			interpolationMethod = new ConstantInterpolation();
 			break;
 		case LINEAR:
-			// todo
-			interpolationMethod = new ConstantInterpolation();
+			interpolationMethod = new LinearInterpolation();
 			break;
 		default:
 			interpolationMethod = new ConstantInterpolation();

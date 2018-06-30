@@ -13,6 +13,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.aggregation.functions.factory,
  de.uniol.inf.is.odysseus.complexnumber,
+ org.apache.commons.math3.analysis.interpolation;version="3.6.1",
+ org.apache.commons.math3.analysis.polynomials;version="3.6.1",
  org.apache.commons.math3.complex;version="3.6.1",
  org.apache.commons.math3.transform;version="3.6.1",
  org.apache.commons.math3.util;version="3.6.1"

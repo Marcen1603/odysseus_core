@@ -69,7 +69,7 @@ public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe
 
 	public static Tuple<ITimeInterval> createCloneWithNewTime(final Tuple<ITimeInterval> toBeCloned,
 			final PointInTime pointInTime) {
-		Tuple<ITimeInterval> clone = toBeCloned.clone();
+		final Tuple<ITimeInterval> clone = toBeCloned.clone();
 		clone.setMetadata((ITimeInterval) toBeCloned.getMetadata().clone());
 		clone.getMetadata().setStartAndEnd(pointInTime, PointInTime.INFINITY);
 		return clone;
