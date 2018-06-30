@@ -41,8 +41,10 @@ public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe
 		PointInTime to = newObject.getMetadata().getStart();
 
 		for (PointInTime sampleTime = from; PointInTime.before(sampleTime, to); sampleTime = sampleTime.plus(this.sampleInterval)) {
-			// todo interpolation window
-			transfer(this.interpolationMethod.interpolate(sampleTime, this.lastObject, newObject));
+			if (this.interpolationMethod.canInterpolate(sampleTime, this.lastObject, newObject)) {
+				transfer(this.interpolationMethod.interpolate(sampleTime, this.lastObject, newObject));
+			}
+			// nan or zero handling
 		}
 	}
 
