@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.dsp.sample.physicaloperator;
+package de.uniol.inf.is.odysseus.dsp.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 

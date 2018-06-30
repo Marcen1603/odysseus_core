@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.dsp.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.dsp.sample.logicaloperator.SampleSignalAO;
-import de.uniol.inf.is.odysseus.dsp.sample.physicaloperator.ConstantInterpolation;
-import de.uniol.inf.is.odysseus.dsp.sample.physicaloperator.InterpolationMethod;
-import de.uniol.inf.is.odysseus.dsp.sample.physicaloperator.SampleSignalPO;
+import de.uniol.inf.is.odysseus.dsp.logicaloperator.SampleSignalAO;
+import de.uniol.inf.is.odysseus.dsp.physicaloperator.ConstantInterpolation;
+import de.uniol.inf.is.odysseus.dsp.physicaloperator.InterpolationMethod;
+import de.uniol.inf.is.odysseus.dsp.physicaloperator.SampleSignalPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
