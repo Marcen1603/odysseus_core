@@ -133,10 +133,10 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 	private void process(byte[] message) {
 		try {
 			getLogger().trace("Received (bytes): {}", message);
-
+			
 			APDU apdu = new APDU();
 			apdu.fromBytes(message);
-			getLogger().trace("Received (APDU): {}", message);
+			getLogger().debug("Received (APDU): {}", message);
 
 			apduHandler.handleAPDU(apdu);
 		} catch (IEC608705104ProtocolException | IOException e) {
@@ -263,7 +263,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		ITransportHandler transportHandler = getTransportHandler();
 		byte[] bytes = apdu.toBytes();
 		transportHandler.send(bytes);
-		getLogger().trace("Sent (APDU): {}", apdu);
+		getLogger().debug("Sent (APDU): {}", apdu);
 		getLogger().trace("Sent (bytes): {}", bytes);
 	}
 
