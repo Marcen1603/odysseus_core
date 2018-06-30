@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
@@ -15,6 +16,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -531044957735085573L;
 	private int sampleInterval;
 	private InterpolationPolicy interpolationPolicy;
+	private boolean fillWithZeros;
 
 	public SampleSignalAO() {
 		super();
@@ -24,6 +26,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 		super(sampleSignalAO);
 		this.interpolationPolicy = sampleSignalAO.interpolationPolicy;
 		this.sampleInterval = sampleSignalAO.sampleInterval;
+		this.fillWithZeros = sampleSignalAO.fillWithZeros;
 	}
 
 	@Override
@@ -31,7 +34,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 		return new SampleSignalAO(this);
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "sampleinterval", doc = "todo")
+	@Parameter(type = IntegerParameter.class, name = "SAMPLE_INTERVAL", aliasname="INTERVAL", doc = "todo")
 	public void setSampleInterval(int sampleInterval) {
 		this.sampleInterval = sampleInterval;
 	}
@@ -40,7 +43,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 		return sampleInterval;
 	}
 
-	@Parameter(type = EnumParameter.class, name = "interpolationpolicy", doc = "todo")
+	@Parameter(type = EnumParameter.class, name = "INTERPOLATION_POLICY", aliasname="INTERPOLATION", doc = "todo")
 	public void setInterpolationPolicy(InterpolationPolicy interpolationPolicy) {
 		this.interpolationPolicy = interpolationPolicy;
 	}
@@ -48,5 +51,13 @@ public class SampleSignalAO extends UnaryLogicalOp {
 	public InterpolationPolicy getInterpolationPolicy() {
 		return interpolationPolicy;
 	}
+	
+	@Parameter(type = BooleanParameter.class, optional=true, name = "FILL_WITH_ZEROS", doc = "todo")
+	public void setFillWithZeros(boolean fillWithZeros) {
+		this.fillWithZeros = fillWithZeros;
+	}
 
+	public boolean getFillWithZeros() {
+		return this.fillWithZeros;
+	}
 }

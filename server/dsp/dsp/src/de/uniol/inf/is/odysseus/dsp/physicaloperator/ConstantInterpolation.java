@@ -13,9 +13,6 @@ public class ConstantInterpolation<T extends Tuple<ITimeInterval>> implements In
 	@SuppressWarnings("unchecked")
 	@Override
 	public T interpolate(PointInTime pointInTime, T lastObject, T newObject) {
-		T clone = (T) lastObject.clone();
-		clone.setMetadata((ITimeInterval) lastObject.getMetadata().clone());
-		clone.getMetadata().setStartAndEnd(pointInTime, PointInTime.INFINITY);
-		return clone;
+		return (T) SampleSignalPO.createCloneWithNewTime(lastObject, pointInTime);
 	}
 }
