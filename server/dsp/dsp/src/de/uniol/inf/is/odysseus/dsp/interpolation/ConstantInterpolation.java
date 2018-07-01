@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.dsp.physicaloperator;
+package de.uniol.inf.is.odysseus.dsp.interpolation;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.dsp.physicaloperator.SampleSignalPO;
 
 public class ConstantInterpolation<T extends Tuple<ITimeInterval>> implements InterpolationMethod<T> {
 	@Override

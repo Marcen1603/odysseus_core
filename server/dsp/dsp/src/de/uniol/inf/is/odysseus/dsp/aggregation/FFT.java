@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.dsp;
+package de.uniol.inf.is.odysseus.dsp.aggregation;
 
 import java.util.ArrayList;
 import java.util.Arrays;

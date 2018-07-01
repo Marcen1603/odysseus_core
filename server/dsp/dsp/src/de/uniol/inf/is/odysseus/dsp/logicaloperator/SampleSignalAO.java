@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationPolicy;
 
 @LogicalOperator(name = "SAMPLESIGNAL", minInputPorts = 1, maxInputPorts = 1, doc = "todo", url = "todo", category = {
 		LogicalOperatorCategory.PROCESSING })

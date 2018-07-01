@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.dsp.physicaloperator;
+package de.uniol.inf.is.odysseus.dsp.interpolation;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 

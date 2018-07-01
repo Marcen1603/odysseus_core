@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.dsp;
+package de.uniol.inf.is.odysseus.dsp.aggregation;
 
 import java.util.Map;
 
@@ -7,17 +7,15 @@ import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctio
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 
-public class CrossCorrelationAggregationFunctionFactory implements IAggregationFunctionFactory {
+public class FFTAggregationFunctionFactory implements IAggregationFunctionFactory {
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		final boolean checkInputLength = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
-				attributeResolver, 0, false).length == 2;
 		final boolean checkInputOutputLength = AggregationFunctionParseOptionsHelper
 				.checkInputAttributesLengthEqualsOutputAttributesLength(parameters, attributeResolver);
 		final boolean checkNumericInput = AggregationFunctionParseOptionsHelper.checkNumericInput(parameters,
 				attributeResolver);
-		return checkInputLength && checkInputOutputLength && checkNumericInput;
+		return checkInputOutputLength && checkNumericInput;
 	}
 
 	@Override
@@ -27,12 +25,12 @@ public class CrossCorrelationAggregationFunctionFactory implements IAggregationF
 		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters,
 				attributeResolver);
 
-		return new CrossCorrelation<>(inputAttributes, outputNames);
+		return new FFT<>(inputAttributes, outputNames);
 	}
 
 	@Override
 	public String getFunctionName() {
-		return "CrossCorrelation";
+		return "FFT";
 	}
 
 }

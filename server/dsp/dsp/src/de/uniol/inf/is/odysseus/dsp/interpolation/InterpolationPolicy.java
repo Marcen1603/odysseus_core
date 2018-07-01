@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.dsp.logicaloperator;
+package de.uniol.inf.is.odysseus.dsp.interpolation;
 
 public enum InterpolationPolicy {
 	CONSTANT, LINEAR

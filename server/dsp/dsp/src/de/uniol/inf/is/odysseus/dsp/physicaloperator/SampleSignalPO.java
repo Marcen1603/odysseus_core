@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationMethod;
 
 public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 

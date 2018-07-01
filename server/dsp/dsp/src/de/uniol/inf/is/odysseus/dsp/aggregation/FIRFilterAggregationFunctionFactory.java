@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.dsp;
+package de.uniol.inf.is.odysseus.dsp.aggregation;
 
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
@@ -7,7 +8,9 @@ import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctio
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 
-public class FFTAggregationFunctionFactory implements IAggregationFunctionFactory {
+public class FIRFilterAggregationFunctionFactory implements IAggregationFunctionFactory {
+
+	private static final String COEFFICIENTS = "COEFFICIENTS";
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
@@ -15,7 +18,12 @@ public class FFTAggregationFunctionFactory implements IAggregationFunctionFactor
 				.checkInputAttributesLengthEqualsOutputAttributesLength(parameters, attributeResolver);
 		final boolean checkNumericInput = AggregationFunctionParseOptionsHelper.checkNumericInput(parameters,
 				attributeResolver);
-		return checkInputOutputLength && checkNumericInput;
+		final Object coefficientsParameter = AggregationFunctionParseOptionsHelper.getFunctionParameter(parameters,
+				COEFFICIENTS);
+		final boolean checkCoefficientsParameter = coefficientsParameter != null
+				&& coefficientsParameter instanceof List && ((List<?>) coefficientsParameter).size() > 0
+				&& ((List<?>) coefficientsParameter).stream().allMatch(value -> value instanceof Number);
+		return checkInputOutputLength && checkNumericInput && checkCoefficientsParameter;
 	}
 
 	@Override
@@ -24,13 +32,15 @@ public class FFTAggregationFunctionFactory implements IAggregationFunctionFactor
 				attributeResolver, 0, false);
 		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters,
 				attributeResolver);
-
-		return new FFT<>(inputAttributes, outputNames);
+		final List<?> coefficientsParameter = (List<?>) AggregationFunctionParseOptionsHelper
+				.getFunctionParameter(parameters, COEFFICIENTS);
+		return new FIRFilter<>(inputAttributes, outputNames,
+				coefficientsParameter.stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray());
 	}
 
 	@Override
 	public String getFunctionName() {
-		return "FFT";
+		return "FIR";
 	}
 
 }
