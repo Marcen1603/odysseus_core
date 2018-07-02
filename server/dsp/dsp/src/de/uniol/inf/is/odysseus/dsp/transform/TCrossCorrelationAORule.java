@@ -9,45 +9,44 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.dsp.aggregation.FIRFilterAggregationFunctionFactory;
-import de.uniol.inf.is.odysseus.dsp.logicaloperator.FIRFilterAO;
+import de.uniol.inf.is.odysseus.dsp.aggregation.CrossCorrelationAggregationFunctionFactory;
+import de.uniol.inf.is.odysseus.dsp.logicaloperator.CrossCorrelationAO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO> implements IAggregationSubstitutionRule<FIRFilterAO> {
+public class TCrossCorrelationAORule extends AbstractTransformationRule<CrossCorrelationAO> implements IAggregationSubstitutionRule<CrossCorrelationAO> {
 
 	@Override
 	public IAggregationFunctionFactory getAggregationFunctionFactory() {
-		return new FIRFilterAggregationFunctionFactory();
+		return new CrossCorrelationAggregationFunctionFactory();
 	}
 
 	@Override
-	public List<String> getInputAttributes(FIRFilterAO operator) {
+	public List<String> getInputAttributes(CrossCorrelationAO operator) {
 		return operator.getInputAttributes();
 	}
 
 	@Override
-	public List<String> getOutputAttributes(FIRFilterAO operator) {
+	public List<String> getOutputAttributes(CrossCorrelationAO operator) {
 		return operator.getOutputAttributes();
 	}
 
 	@Override
-	public void setAdditionalParameters(FIRFilterAO operator, Builder<String, Object> parameterMapBuilder) {
-		parameterMapBuilder.put(FIRFilterAggregationFunctionFactory.COEFFICIENTS, operator.getCoefficients());
+	public void setAdditionalParameters(CrossCorrelationAO operator, Builder<String, Object> parameterMapBuilder) {
 	}
 
 	@Override
-	public AbstractWindowAO getWindowAO(FIRFilterAO operator) {
+	public AbstractWindowAO getWindowAO(CrossCorrelationAO operator) {
 		final ElementWindowAO window = new ElementWindowAO();
 		window.setBaseTimeUnit(operator.getBaseTimeUnit());
-		window.setWindowSizeE((long) operator.getCoefficients().size());
+		window.setWindowSizeE((long) operator.getWindowSize());
 		return window;
 	}
 	
 	@Override
-	public void replaceAO(FIRFilterAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
+	public void replaceAO(CrossCorrelationAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
 			TransformationConfiguration config) {
 		replace(originalAO, windowAO, config);
 		retract(originalAO);
@@ -61,13 +60,13 @@ public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO> im
 	}
 
 	@Override
-	public boolean isExecutable(FIRFilterAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(CrossCorrelationAO operator, TransformationConfiguration config) {
 		return true;
 	}
 
 	@Override
-	public void execute(FIRFilterAO operator, TransformationConfiguration config) throws RuleException {
-		new AggregationSubstitutionRuleExecutor<FIRFilterAO>(this).execute(operator, config);
+	public void execute(CrossCorrelationAO operator, TransformationConfiguration config) throws RuleException {
+		new AggregationSubstitutionRuleExecutor<CrossCorrelationAO>(this).execute(operator, config);
 	}
 
 	@Override

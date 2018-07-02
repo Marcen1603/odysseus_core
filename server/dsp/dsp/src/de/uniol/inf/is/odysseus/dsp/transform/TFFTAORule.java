@@ -9,45 +9,45 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.dsp.aggregation.FIRFilterAggregationFunctionFactory;
-import de.uniol.inf.is.odysseus.dsp.logicaloperator.FIRFilterAO;
+import de.uniol.inf.is.odysseus.dsp.aggregation.FFTAggregationFunctionFactory;
+import de.uniol.inf.is.odysseus.dsp.logicaloperator.FFTAO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO> implements IAggregationSubstitutionRule<FIRFilterAO> {
+public class TFFTAORule extends AbstractTransformationRule<FFTAO> implements IAggregationSubstitutionRule<FFTAO> {
 
 	@Override
 	public IAggregationFunctionFactory getAggregationFunctionFactory() {
-		return new FIRFilterAggregationFunctionFactory();
+		return new FFTAggregationFunctionFactory();
 	}
 
 	@Override
-	public List<String> getInputAttributes(FIRFilterAO operator) {
+	public List<String> getInputAttributes(FFTAO operator) {
 		return operator.getInputAttributes();
 	}
 
 	@Override
-	public List<String> getOutputAttributes(FIRFilterAO operator) {
+	public List<String> getOutputAttributes(FFTAO operator) {
 		return operator.getOutputAttributes();
 	}
 
 	@Override
-	public void setAdditionalParameters(FIRFilterAO operator, Builder<String, Object> parameterMapBuilder) {
-		parameterMapBuilder.put(FIRFilterAggregationFunctionFactory.COEFFICIENTS, operator.getCoefficients());
+	public void setAdditionalParameters(FFTAO operator, Builder<String, Object> parameterMapBuilder) {
 	}
 
 	@Override
-	public AbstractWindowAO getWindowAO(FIRFilterAO operator) {
+	public AbstractWindowAO getWindowAO(FFTAO operator) {
 		final ElementWindowAO window = new ElementWindowAO();
 		window.setBaseTimeUnit(operator.getBaseTimeUnit());
-		window.setWindowSizeE((long) operator.getCoefficients().size());
+		window.setWindowSizeE((long) operator.getWindowSize());
+		window.setWindowSlideE((long) operator.getWindowSize());
 		return window;
 	}
 	
 	@Override
-	public void replaceAO(FIRFilterAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
+	public void replaceAO(FFTAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
 			TransformationConfiguration config) {
 		replace(originalAO, windowAO, config);
 		retract(originalAO);
@@ -58,16 +58,18 @@ public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO> im
 	
 	@Override
 	public void setAdditionalAggregationSettings(AggregationAO aggregationAO) {
+		aggregationAO.setEvaluateAtNewElement(false);
+		aggregationAO.setEvaluateBeforeRemovingOutdatingElements(true);
 	}
 
 	@Override
-	public boolean isExecutable(FIRFilterAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(FFTAO operator, TransformationConfiguration config) {
 		return true;
 	}
 
 	@Override
-	public void execute(FIRFilterAO operator, TransformationConfiguration config) throws RuleException {
-		new AggregationSubstitutionRuleExecutor<FIRFilterAO>(this).execute(operator, config);
+	public void execute(FFTAO operator, TransformationConfiguration config) throws RuleException {
+		new AggregationSubstitutionRuleExecutor<FFTAO>(this).execute(operator, config);
 	}
 
 	@Override

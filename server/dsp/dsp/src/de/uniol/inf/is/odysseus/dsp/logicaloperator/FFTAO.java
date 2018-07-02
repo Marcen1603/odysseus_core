@@ -8,33 +8,32 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.dsp.aggregation.FIRFilterAggregationFunctionFactory;
 
-@LogicalOperator(name = "FIR", minInputPorts = 1, maxInputPorts = 1, category = {
+@LogicalOperator(name = "FFT", minInputPorts = 1, maxInputPorts = 1, category = {
 		LogicalOperatorCategory.PROCESSING }, doc = "todo")
-public class FIRFilterAO extends UnaryLogicalOp {
+public class FFTAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -5633148709801986786L;
 	private List<String> inputAttributes;
 	private List<String> outputAttributes;
-	private List<Double> coefficients;
+	private int windowSize;
 
-	public FIRFilterAO() {
+	public FFTAO() {
 		super();
 	}
 
-	public FIRFilterAO(FIRFilterAO firFilterAO) {
-		super(firFilterAO);
-		this.inputAttributes = firFilterAO.inputAttributes;
-		this.outputAttributes = firFilterAO.outputAttributes;
-		this.coefficients = firFilterAO.coefficients;
+	public FFTAO(FFTAO fftAO) {
+		super(fftAO);
+		this.inputAttributes = fftAO.inputAttributes;
+		this.outputAttributes = fftAO.outputAttributes;
+		this.windowSize = fftAO.windowSize;
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new FIRFilterAO(this);
+		return new FFTAO(this);
 	}
 
 	@Parameter(name = AggregationFunctionParseOptionsHelper.INPUT_ATTRIBUTES, optional = true, type = StringParameter.class, isList = true)
@@ -47,9 +46,9 @@ public class FIRFilterAO extends UnaryLogicalOp {
 		this.outputAttributes = attributes;
 	}
 
-	@Parameter(name = FIRFilterAggregationFunctionFactory.COEFFICIENTS, type = DoubleParameter.class, isList = true)
-	public void setCoefficients(final List<Double> coefficients) {
-		this.coefficients = coefficients;
+	@Parameter(name = "WINDOW_SIZE", type = IntegerParameter.class)
+	public void setWindowSize(final int windowSize) {
+		this.windowSize = windowSize;
 	}
 
 	public List<String> getInputAttributes() {
@@ -60,8 +59,8 @@ public class FIRFilterAO extends UnaryLogicalOp {
 		return outputAttributes;
 	}
 
-	public List<Double> getCoefficients() {
-		return coefficients;
+	public int getWindowSize() {
+		return windowSize;
 	}
 
 }
