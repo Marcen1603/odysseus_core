@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.dsp.aggregation.FFT;
 
 @LogicalOperator(name = "FFT", minInputPorts = 1, maxInputPorts = 1, category = {
-		LogicalOperatorCategory.PROCESSING }, doc = "todo")
+		LogicalOperatorCategory.PROCESSING }, doc = "Divides a signal into its frequency components by using the Fast Fourier transform.")
 public class FFTAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -5633148709801986786L;

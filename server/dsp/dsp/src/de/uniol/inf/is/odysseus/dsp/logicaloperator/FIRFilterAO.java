@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.dsp.aggregation.FIRFilter;
 import de.uniol.inf.is.odysseus.dsp.aggregation.FIRFilterAggregationFunctionFactory;
 
 @LogicalOperator(name = "FIR", minInputPorts = 1, maxInputPorts = 1, category = {
-		LogicalOperatorCategory.PROCESSING }, doc = "todo")
+		LogicalOperatorCategory.PROCESSING }, doc = "Filters signals using a finite impulse response filter.")
 public class FIRFilterAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -5633148709801986786L;

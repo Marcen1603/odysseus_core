@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.dsp.aggregation.CrossCorrelation;
 
 @LogicalOperator(name = "CROSSCORRELATION", minInputPorts = 1, maxInputPorts = 1, category = {
-		LogicalOperatorCategory.PROCESSING }, doc = "todo")
+		LogicalOperatorCategory.PROCESSING }, doc = "Measures the similarity of two signals while sliding one signal relative to the other.")
 public class CrossCorrelationAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -5633148709801986786L;

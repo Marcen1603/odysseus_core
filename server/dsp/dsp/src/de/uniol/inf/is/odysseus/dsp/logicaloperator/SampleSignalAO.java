@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationPolicy;
 
-@LogicalOperator(name = "SAMPLESIGNAL", minInputPorts = 1, maxInputPorts = 1, doc = "todo", category = {
+@LogicalOperator(name = "SAMPLESIGNAL", minInputPorts = 1, maxInputPorts = 1, doc = "Samples a signal with a fixed time interval while using interpolation to fix misaligned and missing values.", category = {
 		LogicalOperatorCategory.PROCESSING })
 public class SampleSignalAO extends UnaryLogicalOp {
 
