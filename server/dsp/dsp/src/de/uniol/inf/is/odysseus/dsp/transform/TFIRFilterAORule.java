@@ -16,7 +16,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO> implements IAggregationSubstitutionRule<FIRFilterAO> {
+public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO>
+		implements IAggregationSubstitutionRule<FIRFilterAO> {
 
 	@Override
 	public IAggregationFunctionFactory getAggregationFunctionFactory() {
@@ -45,17 +46,17 @@ public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO> im
 		window.setWindowSizeE((long) operator.getCoefficients().size());
 		return window;
 	}
-	
+
 	@Override
-	public void replaceAO(FIRFilterAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
-			TransformationConfiguration config) {
-		replace(originalAO, windowAO, config);
-		retract(originalAO);
+	public void replaceAO(FIRFilterAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO) {
+		LogicalPlan.insertOperatorBefore(windowAO, originalAO);
 		insert(windowAO);
 		LogicalPlan.insertOperatorBefore(aggregationAO, windowAO);
 		insert(aggregationAO);
+		LogicalPlan.removeOperator(originalAO, false);
+		retract(originalAO);
 	}
-	
+
 	@Override
 	public void setAdditionalAggregationSettings(AggregationAO aggregationAO) {
 	}
@@ -67,7 +68,7 @@ public class TFIRFilterAORule extends AbstractTransformationRule<FIRFilterAO> im
 
 	@Override
 	public void execute(FIRFilterAO operator, TransformationConfiguration config) throws RuleException {
-		new AggregationSubstitutionRuleExecutor<FIRFilterAO>(this).execute(operator, config);
+		new AggregationSubstitutionRuleExecutor<FIRFilterAO>(this).execute(operator);
 	}
 
 	@Override

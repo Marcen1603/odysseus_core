@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 
 public class AggregationSubstitutionRuleExecutor<T extends UnaryLogicalOp> {
@@ -24,10 +23,10 @@ public class AggregationSubstitutionRuleExecutor<T extends UnaryLogicalOp> {
 		this.aggregationSubstitutionRule = aggregationSubstitutionRule;
 	}
 
-	public void execute(T operator, TransformationConfiguration config) throws RuleException {
+	public void execute(T operator) throws RuleException {
 		final AbstractWindowAO windowAO = aggregationSubstitutionRule.getWindowAO(operator);
 		final AggregationAO aggregationAO = buildAggregationAO(operator);
-		aggregationSubstitutionRule.replaceAO(operator, windowAO, aggregationAO, config);
+		aggregationSubstitutionRule.replaceAO(operator, windowAO, aggregationAO);
 	}
 
 	private AggregationAO buildAggregationAO(T operator) {

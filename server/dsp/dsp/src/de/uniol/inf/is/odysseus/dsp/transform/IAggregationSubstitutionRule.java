@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 public interface IAggregationSubstitutionRule<T> {
 	IAggregationFunctionFactory getAggregationFunctionFactory();
@@ -20,8 +19,7 @@ public interface IAggregationSubstitutionRule<T> {
 
 	AbstractWindowAO getWindowAO(T operator);
 
-	void replaceAO(T originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
-			TransformationConfiguration config);
+	void replaceAO(T originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO);
 
 	void setAdditionalAggregationSettings(AggregationAO aggregationAO);
 }

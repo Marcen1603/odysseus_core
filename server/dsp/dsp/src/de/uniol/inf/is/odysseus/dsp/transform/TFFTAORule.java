@@ -45,17 +45,17 @@ public class TFFTAORule extends AbstractTransformationRule<FFTAO> implements IAg
 		window.setWindowSlideE((long) operator.getWindowSize());
 		return window;
 	}
-	
+
 	@Override
-	public void replaceAO(FFTAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
-			TransformationConfiguration config) {
-		replace(originalAO, windowAO, config);
-		retract(originalAO);
+	public void replaceAO(FFTAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO) {
+		LogicalPlan.insertOperatorBefore(windowAO, originalAO);
 		insert(windowAO);
 		LogicalPlan.insertOperatorBefore(aggregationAO, windowAO);
 		insert(aggregationAO);
+		LogicalPlan.removeOperator(originalAO, false);
+		retract(originalAO);
 	}
-	
+
 	@Override
 	public void setAdditionalAggregationSettings(AggregationAO aggregationAO) {
 		aggregationAO.setEvaluateAtNewElement(false);
@@ -69,7 +69,7 @@ public class TFFTAORule extends AbstractTransformationRule<FFTAO> implements IAg
 
 	@Override
 	public void execute(FFTAO operator, TransformationConfiguration config) throws RuleException {
-		new AggregationSubstitutionRuleExecutor<FFTAO>(this).execute(operator, config);
+		new AggregationSubstitutionRuleExecutor<FFTAO>(this).execute(operator);
 	}
 
 	@Override

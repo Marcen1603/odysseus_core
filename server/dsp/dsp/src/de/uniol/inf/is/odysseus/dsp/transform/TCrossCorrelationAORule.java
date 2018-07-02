@@ -16,7 +16,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TCrossCorrelationAORule extends AbstractTransformationRule<CrossCorrelationAO> implements IAggregationSubstitutionRule<CrossCorrelationAO> {
+public class TCrossCorrelationAORule extends AbstractTransformationRule<CrossCorrelationAO>
+		implements IAggregationSubstitutionRule<CrossCorrelationAO> {
 
 	@Override
 	public IAggregationFunctionFactory getAggregationFunctionFactory() {
@@ -44,17 +45,17 @@ public class TCrossCorrelationAORule extends AbstractTransformationRule<CrossCor
 		window.setWindowSizeE((long) operator.getWindowSize());
 		return window;
 	}
-	
+
 	@Override
-	public void replaceAO(CrossCorrelationAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO,
-			TransformationConfiguration config) {
-		replace(originalAO, windowAO, config);
-		retract(originalAO);
+	public void replaceAO(CrossCorrelationAO originalAO, AbstractWindowAO windowAO, AggregationAO aggregationAO) {
+		LogicalPlan.insertOperatorBefore(windowAO, originalAO);
 		insert(windowAO);
 		LogicalPlan.insertOperatorBefore(aggregationAO, windowAO);
 		insert(aggregationAO);
+		LogicalPlan.removeOperator(originalAO, false);
+		retract(originalAO);
 	}
-	
+
 	@Override
 	public void setAdditionalAggregationSettings(AggregationAO aggregationAO) {
 	}
@@ -66,7 +67,7 @@ public class TCrossCorrelationAORule extends AbstractTransformationRule<CrossCor
 
 	@Override
 	public void execute(CrossCorrelationAO operator, TransformationConfiguration config) throws RuleException {
-		new AggregationSubstitutionRuleExecutor<CrossCorrelationAO>(this).execute(operator, config);
+		new AggregationSubstitutionRuleExecutor<CrossCorrelationAO>(this).execute(operator);
 	}
 
 	@Override
