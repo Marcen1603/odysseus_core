@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationPolicy;
 
-@LogicalOperator(name = "SAMPLESIGNAL", minInputPorts = 1, maxInputPorts = 1, doc = "todo", url = "todo", category = {
+@LogicalOperator(name = "SAMPLESIGNAL", minInputPorts = 1, maxInputPorts = 1, doc = "todo", category = {
 		LogicalOperatorCategory.PROCESSING })
 public class SampleSignalAO extends UnaryLogicalOp {
 
@@ -35,7 +35,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 		return new SampleSignalAO(this);
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "SAMPLE_INTERVAL", aliasname="INTERVAL", doc = "todo")
+	@Parameter(type = IntegerParameter.class, name = "SAMPLE_INTERVAL", aliasname = "INTERVAL")
 	public void setSampleInterval(final int sampleInterval) {
 		this.sampleInterval = sampleInterval;
 	}
@@ -44,7 +44,7 @@ public class SampleSignalAO extends UnaryLogicalOp {
 		return sampleInterval;
 	}
 
-	@Parameter(type = EnumParameter.class, name = "INTERPOLATION_POLICY", aliasname="INTERPOLATION", doc = "todo")
+	@Parameter(type = EnumParameter.class, name = "INTERPOLATION_POLICY", aliasname = "INTERPOLATION")
 	public void setInterpolationPolicy(final InterpolationPolicy interpolationPolicy) {
 		this.interpolationPolicy = interpolationPolicy;
 	}
@@ -52,8 +52,8 @@ public class SampleSignalAO extends UnaryLogicalOp {
 	public InterpolationPolicy getInterpolationPolicy() {
 		return interpolationPolicy;
 	}
-	
-	@Parameter(type = BooleanParameter.class, optional=true, name = "FILL_WITH_ZEROS", doc = "todo")
+
+	@Parameter(type = BooleanParameter.class, optional = true, name = "FILL_WITH_ZEROS")
 	public void setFillWithZeros(final boolean fillWithZeros) {
 		this.fillWithZeros = fillWithZeros;
 	}

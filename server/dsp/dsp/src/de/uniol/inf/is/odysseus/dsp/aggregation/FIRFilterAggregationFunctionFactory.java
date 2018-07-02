@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 
 public class FIRFilterAggregationFunctionFactory implements IAggregationFunctionFactory {
 
-	private static final String COEFFICIENTS = "COEFFICIENTS";
+	public static final String COEFFICIENTS = "COEFFICIENTS";
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
