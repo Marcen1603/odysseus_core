@@ -39,7 +39,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 	protected AbstractIncrementalAggregationFunction<M, T> nonTemporalFunction;
 	protected Map<PointInTime, AbstractIncrementalAggregationFunction<M, T>> nonTemporalFunctions;
 	/* For each temporal element, multiple non-temporal elements can exist */
-	protected Map<T, List<Tuple<M>>> nonTemporalElements;
+	protected Map<T, Map<PointInTime, Tuple<M>>> nonTemporalElements;
 	/* To track the valid time */
 	protected List<T> validElements;
 	protected ValidTimesMetadataUnionMergeFunction mergeFunction;
@@ -65,30 +65,38 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 
 	@SuppressWarnings("unchecked")
 	private void addToAllValidTimes(T newElement) {
-		List<Tuple<M>> nonTemporal = new ArrayList<>();
+		Map<PointInTime, Tuple<M>> nonTemporal = new HashMap<>();
 		if (newElement.getMetadata() instanceof IValidTimes) {
 			IValidTimes validTimes = (IValidTimes) newElement.getMetadata();
-			TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();
-			if (predictionTimeUnit == null) {
-				// There is no difference
-				predictionTimeUnit = streamBaseTimeUnit;
-			}
 			for (IValidTime validTime : validTimes.getValidTimes()) {
 				for (PointInTime asPredictionTime = validTime.getValidStart(); asPredictionTime
 						.before(validTime.getValidEnd()); asPredictionTime = asPredictionTime.plus(1)) {
 					// Use the correct aggregation function
 
 					// Convert to stream time from prediction time base time
-					PointInTime asStreamTime = new PointInTime(
-							streamBaseTimeUnit.convert(asPredictionTime.getMainPoint(), predictionTimeUnit));
+					PointInTime asStreamTime = convertToStreamTime(asPredictionTime, validTimes);
 
 					Tuple<M> nonTemporalElement = createNonTemporalElement(newElement, asStreamTime);
-					nonTemporal.add(nonTemporalElement);
+					nonTemporal.put(asStreamTime, nonTemporalElement);
 					this.getAggregationFunction(asStreamTime).addNew((T) nonTemporalElement);
 				}
 			}
 		}
 		this.nonTemporalElements.put(newElement, nonTemporal);
+	}
+	
+	private PointInTime convertToStreamTime(PointInTime asPredictionTime, IValidTimes validTimes) {
+		TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();
+		if (predictionTimeUnit == null) {
+			// There is no difference
+			predictionTimeUnit = streamBaseTimeUnit;
+		}
+		
+		// Convert to stream time from prediction time base time
+		PointInTime asStreamTime = new PointInTime(
+				streamBaseTimeUnit.convert(asPredictionTime.getMainPoint(), predictionTimeUnit));
+		return asStreamTime;
+		
 	}
 
 	private AbstractIncrementalAggregationFunction<M, T> getAggregationFunction(PointInTime time) {
@@ -120,9 +128,21 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		 * non-temporal elements, not the temporal ones.
 		 */
 		for (T outdatedElement : outdatedElements) {
-			List<Tuple<M>> outdated = this.nonTemporalElements.get(outdatedElement);
-			this.nonTemporalFunctions.values().stream().forEach(f -> f
-					.removeOutdated((List<T>) outdated, trigger, pointInTime));
+			Map<PointInTime, Tuple<M>> outdated = this.nonTemporalElements.get(outdatedElement);
+
+			// Only remove from those function which are affected by this element
+			IValidTimes validTimes = (IValidTimes) outdatedElement.getMetadata();
+			for (IValidTime validTime : validTimes.getValidTimes()) {
+				for (PointInTime asPredictionTime = validTime.getValidStart(); asPredictionTime
+						.before(validTime.getValidEnd()); asPredictionTime = asPredictionTime.plus(1)) {
+					// Convert to stream time from prediction time base time
+					PointInTime asStreamTime = convertToStreamTime(asPredictionTime, validTimes);
+					Tuple<M> singleOutdatedElement = outdated.get(asStreamTime);
+					Collection<Tuple<M>> outdatedCollection = new ArrayList<>();
+					outdatedCollection.add(singleOutdatedElement);
+					getAggregationFunction(asStreamTime).removeOutdated((List<T>) outdatedCollection, trigger, pointInTime);
+				}
+			}
 
 			// Also remove from this temporary storage
 			this.nonTemporalElements.remove(outdatedElement);
@@ -156,8 +176,12 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 	private void removeOldFunctions(IValidTimes validTimes) {
 		List<PointInTime> toRemove = new ArrayList<>();
 		for (PointInTime key : this.nonTemporalFunctions.keySet()) {
-			if (!validTimes.includes(key)) {
-				toRemove.add(key);
+			
+			// Convert to stream time from prediction time base time
+			PointInTime asStreamTime = convertToStreamTime(key, validTimes);
+			
+			if (!validTimes.includes(asStreamTime)) {
+				toRemove.add(asStreamTime);
 			}
 		}
 		for (PointInTime remove : toRemove) {
