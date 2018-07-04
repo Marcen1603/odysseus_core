@@ -13,6 +13,7 @@ public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe
 	private final int sampleInterval;
 	private final InterpolationMethod<T> interpolationMethod;
 	private final boolean fillWithZeros;
+	private PointInTime lastSamplePoint;
 
 	public SampleSignalPO(final int sampleInterval, final InterpolationMethod<T> interpolationMethod,
 			final boolean fillWithZeros) {
@@ -25,6 +26,7 @@ public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe
 	@Override
 	public void processPunctuation(final IPunctuation punctuation, final int port) {
 		sendPunctuation(punctuation);
+		interpolate(PointInTime.currentPointInTime(), null);
 	}
 
 	@Override
@@ -34,29 +36,35 @@ public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe
 
 	@Override
 	protected void process_next(final T object, final int port) {
-		if (this.lastObject != null) {
-			interpolate(object);
-		}
+		interpolate(object.getMetadata().getStart(), object);
 		this.lastObject = object;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void interpolate(final T newObject) {
-		final PointInTime from = getNextSampleTime(this.lastObject.getMetadata().getStart());
-		final PointInTime to = newObject.getMetadata().getStart();
+	private void interpolate(final PointInTime currentTime, final T newObject) {
+		if (this.lastObject == null) {
+			return;
+		}
+		if (newObject == null && !this.interpolationMethod.canInterpolateWithoutNewObject()) {
+			return;
+		}
 
-		for (PointInTime sampleTime = from; PointInTime.before(sampleTime,
-				to); sampleTime = sampleTime.plus(this.sampleInterval)) {
+		final PointInTime firstSamplePoint = getNextSampleTime(
+				this.lastSamplePoint != null ? this.lastSamplePoint.plus(1) : this.lastObject.getMetadata().getStart());
+
+		for (PointInTime sampleTime = firstSamplePoint; PointInTime.before(sampleTime,
+				currentTime); sampleTime = sampleTime.plus(this.sampleInterval)) {
+
 			if (this.interpolationMethod.canInterpolate(sampleTime, this.lastObject, newObject)) {
 				transfer(this.interpolationMethod.interpolate(sampleTime, this.lastObject, newObject));
-			}
-			else if (this.fillWithZeros) {
+			} else if (this.fillWithZeros) {
 				final T clone = (T) createCloneWithNewTime(this.lastObject, sampleTime);
 				for (int i = 0; i < clone.size(); i++) {
 					clone.setAttribute(i, 0);
 				}
 				transfer(clone);
 			}
+			this.lastSamplePoint = sampleTime;
 		}
 	}
 

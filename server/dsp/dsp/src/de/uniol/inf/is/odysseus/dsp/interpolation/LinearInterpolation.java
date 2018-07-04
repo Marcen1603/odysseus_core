@@ -24,10 +24,16 @@ public class LinearInterpolation<T extends Tuple<ITimeInterval>> implements Inte
 
 		for (int i = 0; i < lastObject.size(); i++) {
 			final double[] values = new double[] { lastObject.getAttribute(i), newObject.getAttribute(i) };
-			final double interpolatedValue = new LinearInterpolator().interpolate(arguments, values).value(pointInTime.getMainPoint());
+			final double interpolatedValue = new LinearInterpolator().interpolate(arguments, values)
+					.value(pointInTime.getMainPoint());
 			clone.setAttribute(i, interpolatedValue);
 		}
 
 		return clone;
+	}
+
+	@Override
+	public boolean canInterpolateWithoutNewObject() {
+		return false;
 	}
 }
