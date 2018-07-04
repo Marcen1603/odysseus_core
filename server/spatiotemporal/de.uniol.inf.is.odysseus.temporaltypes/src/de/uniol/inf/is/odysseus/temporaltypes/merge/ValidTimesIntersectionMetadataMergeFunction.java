@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTimes;
 
 /**
  * Used to merge two metadata fields with valid times. Merges the lists by doing
@@ -17,6 +18,12 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 
 	@Override
 	public void mergeInto(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
+		/*
+		 * The previous prediction times need to be cleared, because its just a copy of
+		 * the left previous one. But if we would keep it, we would simply copy the left
+		 * one, because the left always already contains the intersection.
+		 */
+		result.clear();
 		result = intersectionMerge(result, inLeft, inRight);
 	}
 
