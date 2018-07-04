@@ -114,7 +114,10 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		// sleep to simulate the timeshift between the messages
 		if (delay) {
 			try {
-				Thread.sleep(timebetweenBaselines);
+				if(timebetweenBaselines < 0) {
+					logger.debug("Telegram out of order respecting smallest time tags! '{}'", object);
+				}
+				Thread.sleep(Math.abs(timebetweenBaselines));
 			} catch (InterruptedException e) {
 				logger.error("Error while sleeping to simulate the timeshift between the messages", e);
 			}
@@ -148,10 +151,9 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		// current original timestamp
 		long originalTS = io.getTimeTag().get().getTimestamp();
 
-		// difference to original timestamp of the first information element sequence of
-		// the last tuple
+		// difference to minimal original timestamp of the last tuple
 		long diffToPreviousBaselinedTS = previousOriginalTS == -1 ? 0
-				: (long) (Math.abs(originalTS - previousOriginalTS) / acceleration);
+				: (long) ((originalTS - previousOriginalTS) / acceleration);
 
 		// new baselined timestamp is the baselined timestamp of the previous tuple +
 		// the calculated difference
@@ -160,8 +162,8 @@ public class Adjust104TimeTagsToBaselinePO extends AbstractPipe<Tuple<IMetaAttri
 		adjustTimeTags(io, baselinedTS);
 
 		// set newPreviousOriginalTS and newPreviousBaselinedTS
-		newPreviousOriginalTS = newPreviousOriginalTS == -1 ? originalTS : newPreviousOriginalTS;
-		newPreviousBaselinedTS = newPreviousBaselinedTS == -1 ? baselinedTS : newPreviousBaselinedTS;
+		newPreviousOriginalTS = newPreviousOriginalTS == -1 ? originalTS : Math.min(originalTS, newPreviousOriginalTS);
+		newPreviousBaselinedTS = newPreviousBaselinedTS == -1 ? baselinedTS : Math.min(baselinedTS, newPreviousBaselinedTS);
 	}
 
 	private void adjustTimeTags(InformationElementSequence io, long newTS) {
