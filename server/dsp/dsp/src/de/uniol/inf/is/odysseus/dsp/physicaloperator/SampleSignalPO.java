@@ -10,12 +10,12 @@ import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationMethod;
 public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private T lastObject;
-	private final int sampleInterval;
+	private final long sampleInterval;
 	private final InterpolationMethod<T> interpolationMethod;
 	private final boolean fillWithZeros;
 	private PointInTime lastSamplePoint;
 
-	public SampleSignalPO(final int sampleInterval, final InterpolationMethod<T> interpolationMethod,
+	public SampleSignalPO(final long sampleInterval, final InterpolationMethod<T> interpolationMethod,
 			final boolean fillWithZeros) {
 		super();
 		this.sampleInterval = sampleInterval;

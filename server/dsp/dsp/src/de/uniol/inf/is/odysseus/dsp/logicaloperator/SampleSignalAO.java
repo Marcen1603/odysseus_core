@@ -7,7 +7,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationPolicy;
 
 @LogicalOperator(name = "SAMPLESIGNAL", minInputPorts = 1, maxInputPorts = 1, doc = "Samples a signal with a fixed time interval while using interpolation to fix misaligned and missing values.", category = {
@@ -15,7 +16,7 @@ import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationPolicy;
 public class SampleSignalAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -531044957735085573L;
-	private int sampleInterval;
+	private TimeValueItem sampleInterval;
 	private InterpolationPolicy interpolationPolicy;
 	private boolean fillWithZeros;
 
@@ -35,12 +36,12 @@ public class SampleSignalAO extends UnaryLogicalOp {
 		return new SampleSignalAO(this);
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "SAMPLE_INTERVAL", aliasname = "INTERVAL")
-	public void setSampleInterval(final int sampleInterval) {
+	@Parameter(type = TimeParameter.class, name = "SAMPLE_INTERVAL", aliasname = "INTERVAL")
+	public void setSampleInterval(final TimeValueItem sampleInterval) {
 		this.sampleInterval = sampleInterval;
 	}
 
-	public int getSampleInterval() {
+	public TimeValueItem getSampleInterval() {
 		return sampleInterval;
 	}
 

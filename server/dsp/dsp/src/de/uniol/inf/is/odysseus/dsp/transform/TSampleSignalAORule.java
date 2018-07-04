@@ -29,8 +29,11 @@ public class TSampleSignalAORule extends AbstractTransformationRule<SampleSignal
 			interpolationMethod = new ConstantInterpolation();
 			break;
 		}
-		defaultExecute(sampleSignalAO, new SampleSignalPO(sampleSignalAO.getSampleInterval(), interpolationMethod,
-				sampleSignalAO.getFillWithZeros()), config, true, true);
+		final long sampleInterval = sampleSignalAO.getBaseTimeUnit()
+				.convert(sampleSignalAO.getSampleInterval().getTime(), sampleSignalAO.getSampleInterval().getUnit());
+		defaultExecute(sampleSignalAO,
+				new SampleSignalPO(sampleInterval, interpolationMethod, sampleSignalAO.getFillWithZeros()), config,
+				true, true);
 	}
 
 	@Override
