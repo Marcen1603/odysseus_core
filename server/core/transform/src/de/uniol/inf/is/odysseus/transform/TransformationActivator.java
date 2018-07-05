@@ -75,7 +75,7 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 
 	private void searchBundles(Bundle[] bundles, Mode mode) {
 		for (Bundle bundle : bundles) {
-			if (bundle.getState() == Bundle.ACTIVE) {
+			if (bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.RESOLVED) {
 				searchBundle(bundle, mode);
 			}
 		}
@@ -90,6 +90,7 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 	@Override
 	public void bundleChanged(BundleEvent event) {
 		switch (event.getType()) {
+		case BundleEvent.LAZY_ACTIVATION:
 		case BundleEvent.STARTED:
 			searchBundle(event.getBundle(), Mode.ADD);
 			break;

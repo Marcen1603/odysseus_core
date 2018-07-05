@@ -5,7 +5,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTimes;
 
 /**
  * Used to merge two metadata fields with valid times. Merges the lists by doing

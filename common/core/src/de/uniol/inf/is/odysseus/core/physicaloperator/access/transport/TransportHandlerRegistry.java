@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

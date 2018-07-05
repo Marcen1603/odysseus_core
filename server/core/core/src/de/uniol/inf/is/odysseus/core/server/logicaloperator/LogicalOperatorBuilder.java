@@ -47,6 +47,8 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 	Logger logger = LoggerFactory.getLogger(LogicalOperatorBuilder.class);
 
 	private List<Class<?>> loadedOperatorClasses = new ArrayList<>();
+
+	private Map<String, Bundle> treatedBundles = new HashMap<>();
 	private static int missingGetterMethodCount = 0;
 
 	// private static final Map<String, GenericOperatorBuilder> operatorBuilders
@@ -66,8 +68,18 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 	}
 
 	private void searchBundles(Bundle[] bundles) {
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace("----------------------------------------------------------------------------------------");
+			logger.trace("Handling the following bundles");
+			for (Bundle bundle: bundles) {
+				logger.trace("-->"+bundle.getSymbolicName());
+			}
+			logger.trace("----------------------------------------------------------------------------------------");
+		}
+		
 		for (Bundle bundle : bundles) {
-			if (bundle.getState() == Bundle.ACTIVE) {
+			if (bundle.getState() == Bundle.ACTIVE  || bundle.getState() == Bundle.RESOLVED) {
 				searchBundle(bundle);
 			}
 		}
@@ -85,7 +97,9 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	@Override
 	public void bundleChanged(BundleEvent event) {
+		logger.trace("Bundle changed "+event.getBundle().getSymbolicName()+" "+event.getType());		
 		switch (event.getType()) {
+		case BundleEvent.RESOLVED:
 		case BundleEvent.STARTED:
 			searchBundle(event.getBundle());
 			break;
@@ -95,9 +109,13 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 		default:
 			break;
 		}
+		
 	}
 
 	private void removeBundle(Bundle bundle) {
+		
+		treatedBundles.remove(bundle);
+		
 		Enumeration<URL> entries = bundle.findEntries("", "*.class", true);
 
 		while (entries.hasMoreElements()) {
@@ -173,11 +191,19 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 		return null;
 	}
 
-	private void searchBundle(Bundle bundle) {
+	private synchronized void searchBundle(Bundle bundle) {
+		
+		if (treatedBundles.get(bundle.getSymbolicName()) != null) {
+			return;
+		}
+		
+		treatedBundles.put(bundle.getSymbolicName(), bundle);
+		
 		Enumeration<URL> entries = bundle.findEntries("/bin/", "*.class", true);
 		// collect logical operators and register parameters first
 		// add logical operators afterwards, because they may need the newly
 		// registered parameters
+		logger.trace("Looking for logical operators in "+bundle.getSymbolicName());
 		if (entries == null) {
 			entries = bundle.findEntries("/", "*.class", true);
 			if (entries == null) {
@@ -209,7 +235,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	}
 
-	private void addLogicalOperator(Class<? extends ILogicalOperator> curOp) {
+	private synchronized void addLogicalOperator(Class<? extends ILogicalOperator> curOp) {
 		// avoid double loading of the same operator
 		if (loadedOperatorClasses.contains(curOp)) {
 			return;
