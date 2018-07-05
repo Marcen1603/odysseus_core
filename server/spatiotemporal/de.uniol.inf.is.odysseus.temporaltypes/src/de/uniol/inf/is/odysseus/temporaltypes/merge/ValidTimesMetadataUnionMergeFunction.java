@@ -41,6 +41,12 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 	}
 
 	private TimeUnit getSmallerTimeUnit(TimeUnit left, TimeUnit right) {
+		if (left == null) {
+			return right;
+		} else if (right == null) {
+			return left;
+		}
+		
 		int timeUnitCompare = left.compareTo(right);
 		if (timeUnitCompare == 0) {
 			return left;
