@@ -75,9 +75,11 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 			if (evaluationResult instanceof GenericTemporalType) {
 				resultObject = (GenericTemporalType) evaluationResult;
 				IValidTimes validTimesMeta = (IValidTimes) element.getMetadata();
-				List<IValidTime> validTimes = constructValidTimeIntervals(resultObject,
-						validTimesMeta.getPredictionTimeUnit());
-				T newObject = createOutputTuple(next, validTimes);
+				TimeUnit biggerTimeUnit = getBiggerTimeUnit(
+						((IValidTimes) element.getMetadata()).getPredictionTimeUnit(),
+						((IValidTimes) next.getMetadata()).getPredictionTimeUnit());
+				List<IValidTime> validTimes = constructValidTimeIntervals(resultObject, biggerTimeUnit);
+				T newObject = createOutputTuple(next, validTimes, biggerTimeUnit);
 				if (validTimes.size() > 0) {
 					result.add(newObject);
 					if (extract) {
@@ -88,19 +90,38 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 		}
 	}
 
+	private TimeUnit getBiggerTimeUnit(TimeUnit left, TimeUnit right) {
+		if (left == null) {
+			return right;
+		} else if (right == null) {
+			return left;
+		}
+
+		int timeUnitCompare = left.compareTo(right);
+		if (timeUnitCompare == 0) {
+			return left;
+		} else if (timeUnitCompare > 0) {
+			return left;
+		} else {
+			return right;
+		}
+	}
+
 	/**
 	 * Combines the valid times into one metadata object for valid times, puts this
-	 * into a new (copied) stream object) and returns this new object.
+	 * into a new (copied) stream object and returns this new object.
 	 * 
 	 * @param originalStreamObject
 	 * @param validTimeIntervals
 	 * @return
 	 */
-	private T createOutputTuple(T originalStreamObject, List<IValidTime> validTimeIntervals) {
+	private T createOutputTuple(T originalStreamObject, List<IValidTime> validTimeIntervals,
+			TimeUnit predictionTimeUnit) {
 		@SuppressWarnings("unchecked")
 		T newObject = (T) originalStreamObject.clone();
 		IValidTimes validTimes = (IValidTimes) newObject.getMetadata();
 		validTimes.clear();
+		validTimes.setTimeUnit(predictionTimeUnit);
 		for (IValidTime validTime : validTimeIntervals) {
 			validTimes.addValidTime(validTime);
 		}
