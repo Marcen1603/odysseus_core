@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesIntersectionMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
@@ -69,7 +70,7 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
 
 				/*
-				 * Convert this point in time so the stream time, as all prediction functions
+				 * Convert this point in time to the stream time, as all prediction functions
 				 * use the stream time.
 				 */
 				long streamTime = streamBaseTimeUnit.convert(i.getMainPoint(), predictionTimeUnit);
@@ -89,16 +90,56 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 		return temporalType;
 	}
 
+	@Override
+	public Object evaluate(Tuple<T> left, Tuple<T> right, List<ISession> sessions, List<Tuple<T>> history) {
+
+		ValidTimesIntersectionMetadataMergeFunction mergeFunction = new ValidTimesIntersectionMetadataMergeFunction(
+				false);
+		IValidTimes resultValidTimes = (IValidTimes) left.getMetadata().clone();
+		mergeFunction.mergeInto(resultValidTimes, (IValidTimes) left.getMetadata(), (IValidTimes) right.getMetadata());
+
+		/*
+		 * The result is always a temporal type. As it is not possible to always
+		 * generate a certain function or so, the result is generic by using a map.
+		 */
+		GenericTemporalType<Object> temporalType = new GenericTemporalType<>();
+
+		for (IValidTime validTime : resultValidTimes.getValidTimes()) {
+			PointInTime validStart = validTime.getValidStart();
+			PointInTime validEnd = validTime.getValidEnd();
+
+			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
+				/*
+				 * Convert this point in time to the stream time, as all prediction functions
+				 * use the stream time.
+				 */
+				long streamTime = streamBaseTimeUnit.convert(i.getMainPoint(),
+						resultValidTimes.getPredictionTimeUnit());
+				PointInTime inStreamTime = new PointInTime(streamTime);
+
+				Tuple<T> leftNonTemporalObject = this.atTimeInstance(left, inStreamTime);
+				Tuple<T> rightNonTemporalObject = this.atTimeInstance(right, inStreamTime);
+				Object result = super.evaluate(leftNonTemporalObject, rightNonTemporalObject, sessions, history);
+
+				/*
+				 * Store the value in the stream time, not the prediction time, as we convert
+				 * the times to the stream time before accessing them.
+				 */
+				temporalType.setValue(inStreamTime, result);
+			}
+		}
+
+		return temporalType;
+	}
+
 	/**
 	 * Copies the given tuple, searches for temporal attributes and fills the
 	 * temporal attributes with the non-temporal counterparts for the given point in
 	 * time.
 	 * 
-	 * @param object
-	 *            The tuple with the temporal attributes to fill
-	 * @param time
-	 *            The point in time to which the temporal functions shall be
-	 *            evaluated
+	 * @param object The tuple with the temporal attributes to fill
+	 * @param time   The point in time to which the temporal functions shall be
+	 *               evaluated
 	 * @return A copy of the given tuple with the temporal attributes filled for the
 	 *         given point in time
 	 */

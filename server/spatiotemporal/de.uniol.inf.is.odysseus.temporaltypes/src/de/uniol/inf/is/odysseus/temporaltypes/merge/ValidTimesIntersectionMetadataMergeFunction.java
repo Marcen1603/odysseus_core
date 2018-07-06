@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
@@ -19,6 +18,16 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
  */
 public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
+	private boolean useSmallerTimeUnit;
+	
+	public ValidTimesIntersectionMetadataMergeFunction() {
+		this.useSmallerTimeUnit = false;
+	}
+
+	public ValidTimesIntersectionMetadataMergeFunction(boolean useSmallerTimeUnit) {
+		this.useSmallerTimeUnit = useSmallerTimeUnit;
+	}
+
 	@Override
 	public void mergeInto(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
 		/*
@@ -31,17 +40,23 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 	}
 
 	private IValidTimes intersectionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
-		
-		TimeUnit smallerTimeUnit = getSmallerTimeUnit(inLeft.getPredictionTimeUnit(), inRight.getPredictionTimeUnit());
-		result.setTimeUnit(smallerTimeUnit);
+
+		TimeUnit targetTimeUnit = null;
+
+		if (useSmallerTimeUnit) {
+			targetTimeUnit = getSmallerTimeUnit(inLeft.getPredictionTimeUnit(), inRight.getPredictionTimeUnit());
+		} else {
+			targetTimeUnit = getBiggerTimeUnit(inLeft.getPredictionTimeUnit(), inRight.getPredictionTimeUnit());
+		}
+		result.setTimeUnit(targetTimeUnit);
 
 		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
 			for (IValidTime rightValidTime : inRight.getValidTimes()) {
 
 				IValidTime convertedLeftValidTime = convertToOtherTimeUnit(leftValidTime,
-						inLeft.getPredictionTimeUnit(), smallerTimeUnit);
+						inLeft.getPredictionTimeUnit(), targetTimeUnit);
 				IValidTime convertedRightValidTime = convertToOtherTimeUnit(rightValidTime,
-						inRight.getPredictionTimeUnit(), smallerTimeUnit);
+						inRight.getPredictionTimeUnit(), targetTimeUnit);
 
 				IValidTime mergedData = ValidTime.intersect(convertedLeftValidTime, convertedRightValidTime);
 				if (mergedData != null && !includesInterval(result, mergedData)) {
@@ -68,11 +83,28 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 		} else if (right == null) {
 			return left;
 		}
-		
+
 		int timeUnitCompare = left.compareTo(right);
 		if (timeUnitCompare == 0) {
 			return left;
 		} else if (timeUnitCompare < 0) {
+			return left;
+		} else {
+			return right;
+		}
+	}
+
+	private TimeUnit getBiggerTimeUnit(TimeUnit left, TimeUnit right) {
+		if (left == null) {
+			return right;
+		} else if (right == null) {
+			return left;
+		}
+
+		int timeUnitCompare = left.compareTo(right);
+		if (timeUnitCompare == 0) {
+			return left;
+		} else if (timeUnitCompare > 0) {
 			return left;
 		} else {
 			return right;
