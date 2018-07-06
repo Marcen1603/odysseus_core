@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalSelectPO;
+import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.TemporalSelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

@@ -1,17 +1,18 @@
 package de.uniol.inf.is.odysseus.temporaltypes.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.TJoinAORule;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.sweeparea.TemporalJoinTISweepArea;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-
 
 public class TTemporalJoinAORule extends TJoinAORule {
 
@@ -24,6 +25,19 @@ public class TTemporalJoinAORule extends TJoinAORule {
 					expression, joinAO.getBaseTimeUnit());
 			joinPO.setJoinPredicate(temporalExpression);
 		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	protected void setSweepArea(JoinTIPO joinPO, JoinAO joinAO) {
+		TemporalJoinTISweepArea<Tuple<? extends ITimeInterval>> sweepArea1 = new TemporalJoinTISweepArea<>(
+				joinAO.getBaseTimeUnit());
+		TemporalJoinTISweepArea<Tuple<? extends ITimeInterval>> sweepArea2 = new TemporalJoinTISweepArea<>(
+				joinAO.getBaseTimeUnit());
+		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+		areas[0] = sweepArea1;
+		areas[1] = sweepArea2;
+		joinPO.setAreas(areas);
 	}
 
 	@Override
@@ -79,7 +93,7 @@ public class TTemporalJoinAORule extends TJoinAORule {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int getPriority() {
 		// The priority needs to be higher than the priority of the normal rule.

@@ -1,62 +1,90 @@
-package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
+package de.uniol.inf.is.odysseus.temporaltypes.sweeparea;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
+import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 
-/**
- * This class extends the select operator so that it can work with expressions
- * that have temporal attributes (temporal expressions / predicates).
- * 
- * @author Tobias Brandt
- *
- * @param <T>
- */
-public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> {
-	
+public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> extends JoinTISweepArea<T> {
+
+	private static final long serialVersionUID = 4566244293129914500L;
+
 	private TimeUnit streamBaseTimeUnit;
 
-	public TemporalSelectPO(RelationalExpression<IValidTimes> expression, TimeUnit streamBaseTimeUnit) {
-		super(expression);
-		this.streamBaseTimeUnit = streamBaseTimeUnit;
-	}
-
-	public TemporalSelectPO(boolean predicateIsUpdateable, RelationalExpression<IValidTimes> expression, TimeUnit streamBaseTimeUnit) {
-		super(predicateIsUpdateable, expression);
+	public TemporalJoinTISweepArea(TimeUnit streamBaseTimeUnit) {
 		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	public Iterator<T> queryCopy(T element, Order order, boolean extract) {
+		LinkedList<T> result = new LinkedList<T>();
+		Iterator<T> iter;
+		synchronized (this.getElements()) {
+			switch (order) {
+			case LeftRight:
+				iter = this.getElements().iterator();
+				while (iter.hasNext()) {
+					T next = iter.next();
+					if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
+						continue;
+					}
+					if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
+						break;
+					}
 
-		Object expressionResult = this.getExpression().evaluate(object, this.getSessions(), null);
-		if (!(expressionResult instanceof GenericTemporalType)) {
-			/*
-			 * A temporal expression should always return a temporal type. If this is not
-			 * the case, we cannot work with the result.
-			 */
-			return;
-		}
+					doTemporalEvaluation(element, next, result, extract, iter);
+				}
+				break;
+			case RightLeft:
+				iter = this.getElements().iterator();
+				while (iter.hasNext()) {
+					T next = iter.next();
+					if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
+						continue;
+					}
+					if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
+						break;
+					}
 
-		@SuppressWarnings("unchecked")
-		GenericTemporalType<Boolean> temporalType = (GenericTemporalType<Boolean>) expressionResult;
-		TimeUnit predictionTimeUnit = object.getMetadata().getPredictionTimeUnit();
-		if (predictionTimeUnit == null) {
-			predictionTimeUnit = this.streamBaseTimeUnit;
+					doTemporalEvaluation(element, next, result, extract, iter);
+				}
+				break;
+			}
 		}
-		List<IValidTime> validTimeIntervals = constructValidTimeIntervals(temporalType, predictionTimeUnit);
-		T newObject = createOutputTuple(object, validTimeIntervals);
-		if (validTimeIntervals.size() > 0) {
-			transfer(newObject);
+		return result.iterator();
+	}
+
+	private void doTemporalEvaluation(T element, T next, LinkedList<T> result, boolean extract, Iterator<T> iter) {
+		GenericTemporalType resultObject = null;
+		if (getQueryPredicate() instanceof TemporalRelationalExpression) {
+			TemporalRelationalExpression queryPredicate2 = (TemporalRelationalExpression) getQueryPredicate();
+			Object evaluationResult = queryPredicate2.evaluate(element, next, null, null);
+			if (evaluationResult instanceof GenericTemporalType) {
+				resultObject = (GenericTemporalType) evaluationResult;
+				IValidTimes validTimesMeta = (IValidTimes) element.getMetadata();
+				List<IValidTime> validTimes = constructValidTimeIntervals(resultObject,
+						validTimesMeta.getPredictionTimeUnit());
+				T newObject = createOutputTuple(next, validTimes);
+				if (validTimes.size() > 0) {
+					result.add(newObject);
+					if (extract) {
+						iter.remove();
+					}
+				}
+			}
 		}
 	}
 
@@ -79,7 +107,8 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		return newObject;
 	}
 
-	private List<IValidTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType, TimeUnit predictionTimeUnit) {
+	private List<IValidTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType,
+			TimeUnit predictionTimeUnit) {
 		List<IValidTime> validTimeIntervals = new ArrayList<>();
 		IValidTime currentInterval = null;
 		PointInTime lastTime = null;
@@ -90,11 +119,11 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		 */
 		// streamTime -> stream base time is used here, e.g., milliseconds
 		for (PointInTime inStreamTime : temporalType.getValues().keySet()) {
-			
+
 			// predictionTime -> prediction base time is used here, e.g., seconds
 			long predictionTime = predictionTimeUnit.convert(inStreamTime.getMainPoint(), streamBaseTimeUnit);
 			PointInTime inPredictionTime = new PointInTime(predictionTime);
-			
+
 			Object timeValue = temporalType.getValues().get(inStreamTime);
 
 			/*
@@ -135,17 +164,4 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		return validTimeIntervals;
 	}
 
-	/**
-	 * As we know that our predicate here is a TemporalRelationalExpression, we can
-	 * use the predicate from the super class as the expression in this class.
-	 * 
-	 * @return The predicate at a TemporalRelationalExpression
-	 */
-	@SuppressWarnings("unchecked")
-	private RelationalExpression<IValidTimes> getExpression() {
-		if (this.getPredicate() instanceof RelationalExpression<?>) {
-			return (RelationalExpression<IValidTimes>) (this.getPredicate());
-		}
-		return null;
-	}
 }

@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalRelationalUnnestPO;
+import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.TemporalRelationalUnnestPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
