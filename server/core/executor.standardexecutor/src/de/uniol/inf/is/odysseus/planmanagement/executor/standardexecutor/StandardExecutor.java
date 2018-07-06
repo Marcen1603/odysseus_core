@@ -103,6 +103,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerVisitor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.statehandling.HandleStatePlanModificationListener;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -131,16 +132,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 * object.
 	 */
 	public void activate() {
-		// store buffer placement strategy in the configuration
-		// Iterator<String> iter;
-		// if (getRegisteredBufferPlacementStrategiesIDs() != null
-		// && (iter = getRegisteredBufferPlacementStrategiesIDs()
-		// .iterator()).hasNext()) {
-		// this.configuration.set(new ParameterBufferPlacementStrategy(
-		// getBufferPlacementStrategy(iter.next())));
-		// } else {
-		// this.configuration.set(new ParameterBufferPlacementStrategy());
-		// }
+		// Experimental
+		this.addPlanModificationListener(new HandleStatePlanModificationListener());
 
 	}
 
@@ -149,7 +142,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.debug("Removing all queries before shutdown");
 		// TODO: What if queries are stored persistently?
 		this.removeAllQueries(SessionManagement.instance.loginSuperUser(null));
-
 	}
 
 	/*
