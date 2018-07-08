@@ -5,17 +5,17 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationMethod;
+import de.uniol.inf.is.odysseus.dsp.interpolation.IInterpolationMethod;
 
 public class SampleSignalPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private T lastObject;
 	private final long sampleInterval;
-	private final InterpolationMethod<T> interpolationMethod;
+	private final IInterpolationMethod<T> interpolationMethod;
 	private final boolean fillWithZeros;
 	private PointInTime lastSamplePoint;
 
-	public SampleSignalPO(final long sampleInterval, final InterpolationMethod<T> interpolationMethod,
+	public SampleSignalPO(final long sampleInterval, final IInterpolationMethod<T> interpolationMethod,
 			final boolean fillWithZeros) {
 		super();
 		this.sampleInterval = sampleInterval;

@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.dsp.physicaloperator.SampleSignalPO;
 
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 
-public class LinearInterpolation<T extends Tuple<ITimeInterval>> implements InterpolationMethod<T> {
+public class LinearInterpolation<T extends Tuple<ITimeInterval>> implements IInterpolationMethod<T> {
 	@Override
 	public boolean canInterpolate(final PointInTime pointInTime, final T lastObject, final T newObject) {
 		return PointInTime.before(newObject.getMetadata().getStart(), lastObject.getMetadata().getEnd());

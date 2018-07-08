@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.dsp.physicaloperator.SampleSignalPO;
 
-public class ConstantInterpolation<T extends Tuple<ITimeInterval>> implements InterpolationMethod<T> {
+public class ConstantInterpolation<T extends Tuple<ITimeInterval>> implements IInterpolationMethod<T> {
 	@Override
 	public boolean canInterpolate(final PointInTime pointInTime, final T lastObject, final T newObject) {
 		return PointInTime.before(pointInTime, lastObject.getMetadata().getEnd());

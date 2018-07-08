@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.dsp.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.dsp.interpolation.ConstantInterpolation;
-import de.uniol.inf.is.odysseus.dsp.interpolation.InterpolationMethod;
+import de.uniol.inf.is.odysseus.dsp.interpolation.IInterpolationMethod;
 import de.uniol.inf.is.odysseus.dsp.interpolation.LinearInterpolation;
 import de.uniol.inf.is.odysseus.dsp.logicaloperator.SampleSignalAO;
 import de.uniol.inf.is.odysseus.dsp.physicaloperator.SampleSignalPO;
@@ -17,7 +17,7 @@ public class TSampleSignalAORule extends AbstractTransformationRule<SampleSignal
 	@Override
 	public void execute(SampleSignalAO sampleSignalAO, TransformationConfiguration config) throws RuleException {
 
-		final InterpolationMethod interpolationMethod;
+		final IInterpolationMethod interpolationMethod;
 		switch (sampleSignalAO.getInterpolationPolicy()) {
 		case CONSTANT:
 			interpolationMethod = new ConstantInterpolation();
