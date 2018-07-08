@@ -18,8 +18,19 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
  */
 public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
+	/*
+	 * It is possible that we have to merge two prediction times that have different
+	 * base time units. In that case, typically the less granular unit is used,
+	 * because for the more granular times the values would be missing in the
+	 * temporal attribute with the less granular prediction time.
+	 * 
+	 * If, for whatever reason, the more granular unit should be used, is can be set
+	 * with this variable.
+	 * 
+	 * Example: Seconds are more granular (have a higher granularity) than minutes.
+	 */
 	private boolean useSmallerTimeUnit;
-	
+
 	public ValidTimesIntersectionMetadataMergeFunction() {
 		this.useSmallerTimeUnit = false;
 	}
@@ -41,13 +52,8 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 
 	private IValidTimes intersectionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
 
-		TimeUnit targetTimeUnit = null;
-
-		if (useSmallerTimeUnit) {
-			targetTimeUnit = getSmallerTimeUnit(inLeft.getPredictionTimeUnit(), inRight.getPredictionTimeUnit());
-		} else {
-			targetTimeUnit = getBiggerTimeUnit(inLeft.getPredictionTimeUnit(), inRight.getPredictionTimeUnit());
-		}
+		TimeUnit targetTimeUnit = getSmallerBiggerTimeUnit(inLeft.getPredictionTimeUnit(),
+				inRight.getPredictionTimeUnit(), useSmallerTimeUnit);
 		result.setTimeUnit(targetTimeUnit);
 
 		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
@@ -77,7 +83,7 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 		return new ValidTime(leftStart, leftEnd);
 	}
 
-	private TimeUnit getSmallerTimeUnit(TimeUnit left, TimeUnit right) {
+	private TimeUnit getSmallerBiggerTimeUnit(TimeUnit left, TimeUnit right, boolean useSmallerTimeUnit) {
 		if (left == null) {
 			return right;
 		} else if (right == null) {
@@ -87,24 +93,7 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 		int timeUnitCompare = left.compareTo(right);
 		if (timeUnitCompare == 0) {
 			return left;
-		} else if (timeUnitCompare < 0) {
-			return left;
-		} else {
-			return right;
-		}
-	}
-
-	private TimeUnit getBiggerTimeUnit(TimeUnit left, TimeUnit right) {
-		if (left == null) {
-			return right;
-		} else if (right == null) {
-			return left;
-		}
-
-		int timeUnitCompare = left.compareTo(right);
-		if (timeUnitCompare == 0) {
-			return left;
-		} else if (timeUnitCompare > 0) {
+		} else if (useSmallerTimeUnit ? timeUnitCompare < 0 : timeUnitCompare > 0) {
 			return left;
 		} else {
 			return right;

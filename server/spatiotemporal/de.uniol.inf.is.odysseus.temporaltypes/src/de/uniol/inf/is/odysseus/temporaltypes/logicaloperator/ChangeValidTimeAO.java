@@ -73,6 +73,11 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	}
 
 	public TimeUnit getPredictionBaseTimeUnit() {
+		/*
+		 * In case that the prediction base time unit is not set, it's simply the stream
+		 * time unit. To avoid null-pointers, the stream time unit is used here instead
+		 * of null.
+		 */
 		this.determineBaseTimeUnit();
 		return predictionBaseTimeUnit != null ? predictionBaseTimeUnit : this.getBaseTimeUnit();
 	}

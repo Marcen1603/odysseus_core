@@ -19,6 +19,27 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
  */
 public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
+	/*
+	 * It is possible that we have to merge two prediction times that have different
+	 * base time units. In that case, typically the less granular unit is used,
+	 * because for the more granular times the values would be missing in the
+	 * temporal attribute with the less granular prediction time.
+	 * 
+	 * If, for whatever reason, the more granular unit should be used, is can be set
+	 * with this variable.
+	 * 
+	 * Example: Seconds are more granular (have a higher granularity) than minutes.
+	 */
+	private boolean useSmallerTimeUnit;
+
+	public ValidTimesMetadataUnionMergeFunction() {
+		this.useSmallerTimeUnit = false;
+	}
+
+	public ValidTimesMetadataUnionMergeFunction(boolean useSmallerTimeUnit) {
+		this.useSmallerTimeUnit = useSmallerTimeUnit;
+	}
+
 	@Override
 	public void mergeInto(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
 		result = unionMerge(result, inLeft, inRight);
@@ -26,7 +47,8 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 
 	private IValidTimes unionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
 
-		TimeUnit smallerTimeUnit = getSmallerTimeUnit(inLeft.getPredictionTimeUnit(), inRight.getPredictionTimeUnit());
+		TimeUnit smallerTimeUnit = getSmallerBiggerTimeUnit(inLeft.getPredictionTimeUnit(),
+				inRight.getPredictionTimeUnit(), useSmallerTimeUnit);
 		result.setTimeUnit(smallerTimeUnit);
 
 		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
@@ -40,17 +62,17 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 		return result;
 	}
 
-	private TimeUnit getSmallerTimeUnit(TimeUnit left, TimeUnit right) {
+	private TimeUnit getSmallerBiggerTimeUnit(TimeUnit left, TimeUnit right, boolean useSmallerTimeUnit) {
 		if (left == null) {
 			return right;
 		} else if (right == null) {
 			return left;
 		}
-		
+
 		int timeUnitCompare = left.compareTo(right);
 		if (timeUnitCompare == 0) {
 			return left;
-		} else if (timeUnitCompare < 0) {
+		} else if (useSmallerTimeUnit ? timeUnitCompare < 0 : timeUnitCompare > 0) {
 			return left;
 		} else {
 			return right;
@@ -86,13 +108,13 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 
 		long leftTargetStartTime = targetTimeUnit.convert(left.getValidStart().getMainPoint(), leftTimeUnit);
 		PointInTime leftStart = new PointInTime(leftTargetStartTime);
-		
+
 		long leftTargetEndTime = targetTimeUnit.convert(left.getValidEnd().getMainPoint(), leftTimeUnit);
 		PointInTime leftEnd = new PointInTime(leftTargetEndTime);
 
 		long rightTargetTime = targetTimeUnit.convert(right.getValidStart().getMainPoint(), rightTimeUnit);
 		PointInTime rightStart = new PointInTime(rightTargetTime);
-		
+
 		long rightTargetEndTime = targetTimeUnit.convert(right.getValidEnd().getMainPoint(), rightTimeUnit);
 		PointInTime rightEnd = new PointInTime(rightTargetEndTime);
 
