@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryFunction;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -133,7 +134,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 */
 	public void activate() {
 		// Experimental
-		this.addPlanModificationListener(new HandleStatePlanModificationListener());
+		if (Boolean.valueOf(OdysseusConfiguration.instance.get("storeAndReloadQueryState"))) {
+			this.addPlanModificationListener(new HandleStatePlanModificationListener());
+		}
 
 	}
 
