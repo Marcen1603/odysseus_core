@@ -44,8 +44,7 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 					if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
 						break;
 					}
-
-					doTemporalEvaluation(element, next, result, extract, iter);
+					doTemporalEvaluation(element, next, result, extract, iter, order);
 				}
 				break;
 			case RightLeft:
@@ -58,8 +57,7 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 					if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
 						break;
 					}
-
-					doTemporalEvaluation(element, next, result, extract, iter);
+					doTemporalEvaluation(element, next, result, extract, iter, order);
 				}
 				break;
 			}
@@ -67,26 +65,50 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 		return result.iterator();
 	}
 
-	private void doTemporalEvaluation(T element, T next, LinkedList<T> result, boolean extract, Iterator<T> iter) {
-		GenericTemporalType resultObject = null;
-		if (getQueryPredicate() instanceof TemporalRelationalExpression) {
-			TemporalRelationalExpression queryPredicate2 = (TemporalRelationalExpression) getQueryPredicate();
-			Object evaluationResult = queryPredicate2.evaluate(element, next, null, null);
-			if (evaluationResult instanceof GenericTemporalType) {
-				resultObject = (GenericTemporalType) evaluationResult;
-				IValidTimes validTimesMeta = (IValidTimes) element.getMetadata();
-				TimeUnit biggerTimeUnit = getBiggerTimeUnit(
-						((IValidTimes) element.getMetadata()).getPredictionTimeUnit(),
-						((IValidTimes) next.getMetadata()).getPredictionTimeUnit());
-				List<IValidTime> validTimes = constructValidTimeIntervals(resultObject, biggerTimeUnit);
-				T newObject = createOutputTuple(next, validTimes, biggerTimeUnit);
-				if (validTimes.size() > 0) {
-					result.add(newObject);
-					if (extract) {
-						iter.remove();
-					}
+	/**
+	 * Evaluates the temporal predicate and adds the result tuple to the result list.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void doTemporalEvaluation(T element, T next, LinkedList<T> result, boolean extract, Iterator<T> iter,
+			Order order) {
+		GenericTemporalType<Boolean> resultObject = null;
+
+		/*
+		 * It should be a temporal expression because if not, the transformation would
+		 * not have created the temporal sweep area
+		 */
+		if (!(getQueryPredicate() instanceof TemporalRelationalExpression)) {
+			return;
+		}
+
+		TemporalRelationalExpression queryPredicate = (TemporalRelationalExpression) getQueryPredicate();
+
+		// Evaluate, depending on LeftRight, RightLeft, see JoinTISweepArea
+		Object evaluationResult = null;
+		switch (order) {
+		case LeftRight:
+			evaluationResult = queryPredicate.evaluate(element, next, null, null);
+			break;
+		case RightLeft:
+			evaluationResult = queryPredicate.evaluate(next, element, null, null);
+			break;
+		}
+
+		if (evaluationResult instanceof GenericTemporalType) {
+			resultObject = (GenericTemporalType<Boolean>) evaluationResult;
+			TimeUnit biggerTimeUnit = getBiggerTimeUnit(((IValidTimes) element.getMetadata()).getPredictionTimeUnit(),
+					((IValidTimes) next.getMetadata()).getPredictionTimeUnit());
+			List<IValidTime> validTimes = constructValidTimeIntervals(resultObject, biggerTimeUnit);
+			T newObject = createOutputTuple(next, validTimes, biggerTimeUnit);
+
+			// Only use the result if its valid at least at one time instance
+			if (validTimes.size() > 0) {
+				result.add(newObject);
+				if (extract) {
+					iter.remove();
 				}
 			}
+
 		}
 	}
 
