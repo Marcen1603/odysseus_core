@@ -13,7 +13,7 @@ Import-Package: com.vividsolutions.jts.geom,
 Require-Bundle: org.eclipse.osgi,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.aggregation,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine,
@@ -23,8 +23,8 @@ Require-Bundle: org.eclipse.osgi,
  de.uniol.inf.is.odysseus.trust,
  org.apache.commons.math3,
  de.uniol.inf.is.odysseus.server.intervalapproach,
- de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.sweeparea,
+ de.uniol.inf.is.odysseus.intervalapproach
 Service-Component: OSGI-INF/*
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.temporaltypes.types,
