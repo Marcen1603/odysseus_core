@@ -30,6 +30,10 @@ public class TTemporalJoinAORule extends TJoinAORule {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void setSweepArea(JoinTIPO joinPO, JoinAO joinAO) {
+		/*
+		 * The sweep area is the place where the temporal expression is evaluated. So we
+		 * only have to interchange the sweep area, not the join itself.
+		 */
 		TemporalJoinTISweepArea<Tuple<? extends ITimeInterval>> sweepArea1 = new TemporalJoinTISweepArea<>(
 				joinAO.getBaseTimeUnit());
 		TemporalJoinTISweepArea<Tuple<? extends ITimeInterval>> sweepArea2 = new TemporalJoinTISweepArea<>(
