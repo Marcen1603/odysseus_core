@@ -21,10 +21,6 @@ import java.util.List;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +71,7 @@ public class TestRunnerApplication implements IApplication {
     @Override
     public Object start(IApplicationContext context) throws Exception {
         LOG.debug("Starting Odysseus...");
-        startBundles(context.getBrandingBundle().getBundleContext());
+        //startBundles(context.getBrandingBundle().getBundleContext());
    
         LOG.debug("Odysseus is up and running!");
         
@@ -192,29 +188,29 @@ public class TestRunnerApplication implements IApplication {
         components.remove(component);
     }
 
-    private void startBundles(final BundleContext context) {
-    	Thread runner = new Thread() {
-			
-			@Override
-			public void run() {
-		        for (Bundle bundle : context.getBundles()) {
-		            boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
-		            if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
-		                try {
-	                        bundle.start();
-		                }
-		                catch (BundleException e) {
-		                    e.printStackTrace();
-		                }
-		            }
-
-		        }
-				
-			}
-		};
-		runner.start();
-
-    }
+//    private void startBundles(final BundleContext context) {
+//    	Thread runner = new Thread() {
+//			
+//			@Override
+//			public void run() {
+//		        for (Bundle bundle : context.getBundles()) {
+//		            boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
+//		            if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
+//		                try {
+//	                        bundle.start();
+//		                }
+//		                catch (BundleException e) {
+//		                    e.printStackTrace();
+//		                }
+//		            }
+//
+//		        }
+//				
+//			}
+//		};
+//		runner.start();
+//
+//    }
 
     /**
      * @param reports

@@ -16,9 +16,7 @@
 package de.uniol.inf.is.odysseus.startbundles;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -45,7 +43,7 @@ public class Activator extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		startBundles(context);
+//		startBundles(context);
 	}
 
 	/*
@@ -67,29 +65,29 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 	
-	private static void startBundles(final BundleContext context) {
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				for (Bundle bundle : context.getBundles()) {
-					boolean isFragment = bundle.getHeaders().get(
-							Constants.FRAGMENT_HOST) != null;
-					if (bundle != context.getBundle() && !isFragment
-							&& bundle.getState() == Bundle.RESOLVED) {
-						try {
-							bundle.start();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		});
-		t.start();
-	}
+//	private static void startBundles(final BundleContext context) {
+//		Thread t = new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				try {
+//					Thread.sleep(100);
+//				} catch (InterruptedException e1) {
+//					e1.printStackTrace();
+//				}
+//				for (Bundle bundle : context.getBundles()) {
+//					boolean isFragment = bundle.getHeaders().get(
+//							Constants.FRAGMENT_HOST) != null;
+//					if (bundle != context.getBundle() && !isFragment
+//							&& bundle.getState() == Bundle.RESOLVED) {
+//						try {
+//							bundle.start();
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		});
+//		t.start();
+//	}
 }
