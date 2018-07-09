@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;

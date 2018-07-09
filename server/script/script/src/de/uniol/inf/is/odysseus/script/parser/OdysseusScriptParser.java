@@ -63,6 +63,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	public static final String LOOP_START_KEY = "LOOP";
 	public static final String LOOP_END_KEY = "ENDLOOP";
 	public static final String LOOP_UPTO = "UPTO";
+	public static final String LOOP_FOREACH_IN = "FOREACH_IN";
 
 	public static final String STORED_PROCEDURE_PROCEDURE = "PROCEDURE";
 	public static final String STORED_PROCEDURE_BEGIN = "BEGIN";
@@ -102,6 +103,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		strings.add(LOOP_END_KEY);
 		strings.add(LOOP_START_KEY);
 		strings.add(LOOP_UPTO);
+		strings.add(LOOP_FOREACH_IN);
 		strings.add(STORED_PROCEDURE_BEGIN);
 		strings.add(STORED_PROCEDURE_END);
 		strings.add(STORED_PROCEDURE_PROCEDURE);
@@ -481,45 +483,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			if (from != -1 && to != -1) {
 				String loopDef = textToParse[from].replaceFirst(PARAMETER_KEY + LOOP_START_KEY, "").trim();
 				try {
-					String[] parts = loopDef.split(" ");
-					if (parts.length < 4) {
-						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 TO 10\"");
+					if(loopDef.contains(LOOP_UPTO)) {
+						rewriteLoopWithUpto(loopDef, text, replacements, from, to, textToParse);
+					} else if(loopDef.contains(LOOP_FOREACH_IN)) {
+						rewriteLoopWithForeachIn(loopDef, text, replacements, from, to, textToParse);
 					}
-//					Map<String, Serializable> repl = getReplacements(Arrays.copyOf(textToParse, from - 1), context);
-					String variable = parts[0].trim();
-					String fromStr = replacements.use(parts[1].trim());
-					String toStr = replacements.use(parts[3].trim());
-
-					String offsetVariable = "";
-					int offsetValue = 0;
-					if (parts.length > 4) {
-						if (parts.length != 7) {
-							throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 UPTO 10 WITH offset 5\"");
-						}
-						offsetVariable = parts[5];
-						offsetValue = Integer.parseInt(parts[6]);
-
-					}
-
-					int startCount = Integer.parseInt(fromStr);
-					int endCount = Integer.parseInt(toStr);
-
-					for (int counter = startCount; counter <= endCount; counter++) {
-						for (int i = from + 1; i < to; i++) {
-							String toChange = textToParse[i];
-							// replace ${i}
-							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + REPLACEMENT_END_KEY), Integer.toString(counter));
-							// replace ${i-1}
-							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "-1" + REPLACEMENT_END_KEY), Integer.toString(counter - 1));
-							// replace ${i+1}
-							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "+1" + REPLACEMENT_END_KEY), Integer.toString(counter + 1));
-							if (!offsetVariable.isEmpty()) {
-								// replace ${i+1}
-								toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + offsetVariable + REPLACEMENT_END_KEY), Integer.toString(counter + offsetValue));
-							}
-							text.add(toChange);
-						}
-					}
+					
 				} catch (NumberFormatException | ReplacementException e) {
 					throw new OdysseusScriptException("Definition of loop is wrong.", e);
 				} 
@@ -581,6 +550,125 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 //		}
 //
 //	}
+
+	/**
+	 * @param loopDef
+	 * @param text
+	 * @param replacements
+	 * @param from
+	 * @param to
+	 * @param textToParse
+	 * @throws OdysseusScriptException 
+	 * @throws ReplacementException 
+	 * @throws NumberFormatException 
+	 */
+	private void rewriteLoopWithForeachIn(String loopDef, List<String> text, ReplacementContainer replacements,
+			int from, int to, String[] textToParse) throws OdysseusScriptException, NumberFormatException, ReplacementException {
+		String[] parts = loopDef.split(" ", 3);
+		if (parts.length < 3) {
+			throw new OdysseusScriptException(
+					"Missing parameters in loop definition. Definition should be like \"variable " + LOOP_FOREACH_IN
+							+ " 1,2,...,9,10,20,...,60,90,120\"");
+		}
+		String variable = parts[0].trim();
+		String[] valuesStr = replacements.use(parts[2].trim()).split(",");
+		List<String> values = new ArrayList<>();
+		for (int i = 0; i < valuesStr.length; ++i) {
+			if (valuesStr[i].trim().equals("...")) {
+				if (i < 2 || i == valuesStr.length - 1) {
+					throw new OdysseusScriptException("Wrong '...' pattern in LOOP definition. '...' occures at position " + i + " but needs two preceding and one subsequent numbers, e.g.: 2,4,..,8");
+				}
+				int startA = Integer.parseInt(replacements.use(valuesStr[i-2].trim()));
+				int end = Integer.parseInt(replacements.use(valuesStr[i+1].trim()));
+				int startB = Integer.parseInt(replacements.use(valuesStr[i-1].trim()));
+				int step = startB - startA;
+				for(int j = startB + step; j < end; j += step) {
+					values.add(String.valueOf(j));
+				}
+			} else {
+				values.add(replacements.use(valuesStr[i].trim()));
+			}
+		}
+		LOG.debug("Values in foreach loop: {}", values);
+		for (int i = 0; i < values.size(); i++) {
+			for (int j = from + 1; j < to; j++) {
+				String toChange = textToParse[j];
+				String val = values.get(i);
+				// replace ${i}
+				toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + REPLACEMENT_END_KEY), val);
+				// replace ${i-1}
+				if(i > 0) {
+					toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "-1" + REPLACEMENT_END_KEY), values.get(i-1));
+				}
+				// replace ${i+1}
+				if(i < values.size() - 1) {
+					toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "+1" + REPLACEMENT_END_KEY), values.get(i+1));
+				}
+				// replace #IF i
+				if(toChange.trim().startsWith(IfController.PARAMETER_KEY + IfController.IF_KEY)) {
+					toChange = toChange.replaceAll(" " + variable + " ", " " + val + " ");
+				}
+				text.add(toChange);
+			}
+		}
+	}
+
+	/**
+	 * @param text 
+	 * @param replacements 
+	 * @param to 
+	 * @param from 
+	 * @param textToParse 
+	 * @throws OdysseusScriptException 
+	 * @throws ReplacementException 
+	 * 
+	 */
+	private void rewriteLoopWithUpto(String loopDef, List<String> text, ReplacementContainer replacements, int from, int to, String[] textToParse) throws OdysseusScriptException, ReplacementException {
+		String[] parts = loopDef.split(" ");
+		if (parts.length < 4) {
+			throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 " + LOOP_UPTO + " 10\"");
+		}
+//		Map<String, Serializable> repl = getReplacements(Arrays.copyOf(textToParse, from - 1), context);
+		String variable = parts[0].trim();
+		String fromStr = replacements.use(parts[1].trim());
+		String toStr = replacements.use(parts[3].trim());
+
+		String offsetVariable = "";
+		int offsetValue = 0;
+		if (parts.length > 4) {
+			if (parts.length != 7) {
+				throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 " + LOOP_UPTO + " 10 WITH offset 5\"");
+			}
+			offsetVariable = parts[5];
+			offsetValue = Integer.parseInt(parts[6]);
+
+		}
+
+		int startCount = Integer.parseInt(fromStr);
+		int endCount = Integer.parseInt(toStr);
+
+		for (int counter = startCount; counter <= endCount; counter++) {
+			for (int i = from + 1; i < to; i++) {
+				String toChange = textToParse[i];
+				// replace ${i}
+				toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + REPLACEMENT_END_KEY), Integer.toString(counter));
+				// replace ${i-1}
+				toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "-1" + REPLACEMENT_END_KEY), Integer.toString(counter - 1));
+				// replace ${i+1}
+				toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "+1" + REPLACEMENT_END_KEY), Integer.toString(counter + 1));
+				// replace #IF i
+				if(toChange.trim().startsWith(IfController.PARAMETER_KEY + IfController.IF_KEY)) {
+					toChange = toChange.replaceAll(" " + variable + " ", " " + Integer.toString(counter) + " ");
+				}
+				if (!offsetVariable.isEmpty()) {
+					// replace ${i+1}
+					toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + offsetVariable + REPLACEMENT_END_KEY), Integer.toString(counter + offsetValue));
+				}
+				text.add(toChange);
+			}
+		}
+		
+	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
 		// List<String> keys = findReplacements(line);

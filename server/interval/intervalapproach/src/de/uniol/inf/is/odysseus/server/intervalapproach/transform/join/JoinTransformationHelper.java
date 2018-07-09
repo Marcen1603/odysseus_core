@@ -24,12 +24,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.predicate.PredicateHelper;
 import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
+import de.uniol.inf.is.odysseus.persistentqueries.UnaryOuterJoinSweepArea;
+import de.uniol.inf.is.odysseus.persistentqueries.UnaryOuterJoinSweepArea2;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 @SuppressWarnings({ "rawtypes" })
 public class JoinTransformationHelper {
@@ -182,6 +189,107 @@ public class JoinTransformationHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 
+		}
+		return check;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	/**
+	 * Temporary method. Do not use.
+	 * 
+	 * @param predicate
+	 * @param leftSchema
+	 * @param rightSchema
+	 * @param areas
+	 * @return
+	 */
+	public static boolean useUnaryOuterJoinSA(IPredicate predicate, SDFSchema leftSchema, SDFSchema rightSchema, ITimeIntervalSweepArea[] areas, boolean outputArbitraryIfNoMatch, Cardinalities cardinalities) {
+		boolean check = false;
+		try {
+			// check the paths
+			for (int port = 0; port < 2; port++) {
+				SDFSchema ownSchema = port==0?leftSchema:rightSchema;
+				SDFSchema otherSchema = port!=0?leftSchema:rightSchema;
+				// check the predicate and calculate
+				// the restrictList
+				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+				
+				if (check = PredicateHelper.checkEqualsPredicate(predicate, neededAttrs,
+						ownSchema,
+						otherSchema)) {
+					
+					// transform the set into a list to guarantee the
+					// same order of attributes for both restrict lists
+					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+						neededAttrsList.add(pair);
+					}
+					
+					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(ownSchema, otherSchema,
+							neededAttrsList);
+					if(port == 0 && (cardinalities == Cardinalities.ONE_MANY || cardinalities == Cardinalities.ONE_ONE)) {
+						Tuple emptyElement = new Tuple<>(ownSchema.size(), false);
+						emptyElement.setMetadata(new TimeInterval(PointInTime.ZERO));
+						areas[port] = new UnaryOuterJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), outputArbitraryIfNoMatch, emptyElement);
+					} else if(port == 1 && (cardinalities == Cardinalities.MANY_ONE || cardinalities == Cardinalities.ONE_ONE)) {
+						Tuple emptyElement = new Tuple<>(ownSchema.size(), false);
+						emptyElement.setMetadata(new TimeInterval(PointInTime.ZERO));
+						areas[port] = new UnaryOuterJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), outputArbitraryIfNoMatch, emptyElement);
+					} else {
+						areas[port] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea("TIJoinSA");
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}
+		return check;
+	}
+	
+	@SuppressWarnings("unchecked")
+	/**
+	 * Temporary method. Do not use.
+	 * 
+	 * @param predicate
+	 * @param leftSchema
+	 * @param rightSchema
+	 * @param areas
+	 * @return
+	 */
+	public static boolean useUnaryOuterJoinSA2(IPredicate predicate, SDFSchema leftSchema, SDFSchema rightSchema, ITimeIntervalSweepArea[] areas) {
+		boolean check = false;
+		try {
+			// check the paths
+			for (int port = 0; port < 2; port++) {
+				SDFSchema ownSchema = port==0?leftSchema:rightSchema;
+				SDFSchema otherSchema = port!=0?leftSchema:rightSchema;
+				// check the predicate and calculate
+				// the restrictList
+				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+				
+				if (check = PredicateHelper.checkEqualsPredicate(predicate, neededAttrs,
+						ownSchema,
+						otherSchema)) {
+					
+					// transform the set into a list to guarantee the
+					// same order of attributes for both restrict lists
+					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+						neededAttrsList.add(pair);
+					}
+					
+					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(ownSchema, otherSchema,
+							neededAttrsList);
+					Tuple emptyElement = new Tuple<>(ownSchema.size(), false);
+					emptyElement.setMetadata(new TimeInterval(PointInTime.ZERO));
+					areas[port] = new UnaryOuterJoinSweepArea2(restrictLists.getE1(), restrictLists.getE2(), false, emptyElement);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
 		}
 		return check;
 	}
