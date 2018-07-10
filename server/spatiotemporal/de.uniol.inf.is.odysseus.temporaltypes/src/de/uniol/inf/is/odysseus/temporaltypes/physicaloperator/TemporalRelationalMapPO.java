@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
+package de.uniol.inf.is.odysseus.temporaltypes.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;

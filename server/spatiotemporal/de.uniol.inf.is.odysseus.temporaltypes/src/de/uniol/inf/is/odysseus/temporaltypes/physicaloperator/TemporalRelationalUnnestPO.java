@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
+package de.uniol.inf.is.odysseus.temporaltypes.physicaloperator;
 
 import java.util.concurrent.TimeUnit;
 
