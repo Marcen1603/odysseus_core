@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.temporaltypes.expressions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.expression.VarHelper;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesIntersectionMetadataMergeFunction;
@@ -50,6 +53,13 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 		GenericTemporalType<Object> temporalType = new GenericTemporalType<>();
 
 		/*
+		 * The trust function for the resulting object is created by using the min trust
+		 * of all involved temporal attributes
+		 */
+		GenericTemporalType<Double> temporalTrust = new GenericTemporalType<>();
+		List<TemporalType<?>> temporalAttributes = getTemporalAttributes(object);
+
+		/*
 		 * Iterate over the whole valid time intervals and evaluate the expression for
 		 * each point in time. This is done by calculating the values of the temporal
 		 * types at the points in time, fill a Tuple with it and do the normal
@@ -84,10 +94,45 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 				 * the times to the stream time before accessing them.
 				 */
 				temporalType.setValue(inStreamTime, result);
+				temporalTrust.setValue(inStreamTime, getMinTrust(temporalAttributes, inStreamTime));
 			}
 		}
 
+		temporalTrust.setTrustFunction(temporalTrust);
 		return temporalType;
+	}
+
+	/**
+	 * @return The minimal trust value of all given temporal attributes at this
+	 *         point in time
+	 */
+	private double getMinTrust(List<TemporalType<?>> temporalAttributes, PointInTime time) {
+		double minTrust = Double.MAX_VALUE;
+		for (TemporalType<?> temporalAttribute : temporalAttributes) {
+			double trust = temporalAttribute.getTrust(time);
+			if (minTrust > trust) {
+				minTrust = trust;
+			}
+		}
+		return minTrust;
+	}
+
+	/**
+	 * @return All the attributes involved in the expression that are temporal
+	 */
+	private List<TemporalType<?>> getTemporalAttributes(Tuple<T> object) {
+		List<TemporalType<?>> temporalAttributes = new ArrayList<>();
+		for (int i = 0; i < this.variables.length; i++) {
+			VarHelper thisVar = this.variables[i];
+			int pos = thisVar.getPos();
+			Object attribute = object.getAttribute(pos);
+			if (attribute instanceof TemporalType) {
+				TemporalType<?> tempAttribute = (TemporalType<?>) attribute;
+				temporalAttributes.add(tempAttribute);
+			}
+		}
+
+		return temporalAttributes;
 	}
 
 	@Override
