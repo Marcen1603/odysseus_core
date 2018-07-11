@@ -7,12 +7,8 @@ import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -20,13 +16,11 @@ import org.slf4j.Logger;
 import de.uniol.inf.ei.oj104.communication.IAPDUHandler;
 import de.uniol.inf.ei.oj104.communication.IASDUHandler;
 import de.uniol.inf.ei.oj104.communication.ICommunicationHandler;
-import de.uniol.inf.ei.oj104.communication.StandardAPDUHandler;
 import de.uniol.inf.ei.oj104.exception.IEC608705104ProtocolException;
 import de.uniol.inf.ei.oj104.model.APDU;
 import de.uniol.inf.ei.oj104.model.ASDU;
 import de.uniol.inf.ei.oj104.model.DataUnitIdentifier;
 import de.uniol.inf.ei.oj104.model.IInformationObject;
-import de.uniol.inf.ei.oj104.model.controlfield.InformationTransfer;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -87,11 +81,9 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	private static final String sendResponsesKey = "104_sendResponses";
 
-	private IAPDUHandler apduHandler = new StandardAPDUHandler();
+	private IAPDUHandler apduHandler = new OdysseusAPDUHandler();
 
-	private Map<ASDU, Long> timestampMap = new HashMap<>();
-
-	private ExecutorService asduHandlerExecutorService = Executors.newSingleThreadExecutor();
+	private Optional<Long> timestampOfAPDU;
 
 	public IAPDUHandler getApduHandler() {
 		return apduHandler;
@@ -156,9 +148,8 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 			getLogger().trace("Received (bytes): {}", message);
 			ByteBuffer buffer = ByteBuffer.wrap(message);
 
-			Optional<Long> timestamp = Optional.empty();
 			if (startsWithTimestamp) {
-				timestamp = Optional.of(buffer.getLong());
+				timestampOfAPDU = Optional.of(buffer.getLong());
 			}
 			byte[] bytes = new byte[buffer.remaining()];
 
@@ -166,12 +157,6 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 			buffer.get(bytes);
 			apdu.fromBytes(bytes);
 			getLogger().debug("Received (APDU): {}", message);
-
-			if (timestamp.isPresent() && apdu.getApci().getControlField() instanceof InformationTransfer) {
-				synchronized (timestampMap) {
-					timestampMap.put(apdu.getAsdu(), timestamp.get());
-				}
-			}
 
 			apduHandler.handleAPDU(apdu);
 		} catch (IEC608705104ProtocolException | IOException e) {
@@ -279,21 +264,16 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	@Override
 	public Optional<ASDU> handleASDU(ASDU asdu) {
-		asduHandlerExecutorService.submit(() -> {
+		// Creates a tuple with DataUnitIdentifier, List of InformationObjects and
+		// timestamp
+		ITransfer<Tuple<IMetaAttribute>> transfer = getTransfer();
 
-			synchronized (timestampMap) {
-				// Creates a tuple with DataUnitIdentifier, List of InformationObjects and
-				// timestamp
-				ITransfer<Tuple<IMetaAttribute>> transfer = getTransfer();
-
-				Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);
-				tuple.setAttribute(0, asdu.getDataUnitIdentifier());
-				tuple.setAttribute(1, asdu.getInformationObjects());
-				tuple.setAttribute(2, timestampMap.remove(asdu));
-				transfer.transfer(tuple);
-			}
-			
-		});
+		Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);
+		tuple.setAttribute(0, asdu.getDataUnitIdentifier());
+		tuple.setAttribute(1, asdu.getInformationObjects());
+		tuple.setAttribute(2, timestampOfAPDU.orElse(null));
+		transfer.transfer(tuple);
+		timestampOfAPDU = Optional.empty();
 
 		// No response ASDU to server
 		return Optional.empty();
