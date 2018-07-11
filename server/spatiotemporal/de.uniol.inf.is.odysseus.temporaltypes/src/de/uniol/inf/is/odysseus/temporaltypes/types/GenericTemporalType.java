@@ -46,10 +46,8 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	/**
 	 * Set a value for a specific point in time.
 	 * 
-	 * @param time
-	 *            The time at which the value is valid
-	 * @param value
-	 *            The value
+	 * @param time  The time at which the value is valid
+	 * @param value The value
 	 */
 	public void setValue(PointInTime time, T value) {
 		this.values.put(time, value);
@@ -103,6 +101,16 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	}
 
 	/**
+	 * Sets the trust function for this temporal attribute. For example, when the
+	 * trust changes.
+	 * 
+	 * @param trustFunction The new trust function
+	 */
+	public void setTrustFunction(TemporalType<Double> trustFunction) {
+		this.trustFunction = trustFunction;
+	}
+
+	/**
 	 * To get all values from this temporal type. This is not a copy, so don't
 	 * change the values if you don't want the original values to be changed.
 	 * 
@@ -119,12 +127,10 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	/**
 	 * Removes all elements from the map which are not within the valid times
 	 * 
-	 * @param validTimes
-	 *            The valid times which are needed. Others can be removed
+	 * @param validTimes     The valid times which are needed. Others can be removed
 	 * 
-	 * @param streamTimeUnit
-	 *            The base time unit of the stream, which can differ from the base
-	 *            time unit of the prediction
+	 * @param streamTimeUnit The base time unit of the stream, which can differ from
+	 *                       the base time unit of the prediction
 	 */
 	public void trim(IValidTimes validTimes, TimeUnit streamTimeUnit) {
 
