@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 /**
  * The Pcap file transport handler uses jNetPcap to read pcap files. <br />
  * <br />
+ * The output for protocol handlers is a byte array starting with the capture time, followed by the TCP payload. <br />
+ * <br />  
  * In the field of computer network administration, pcap (packet capture)
  * consists of an application programming interface (API) for capturing network
  * traffic. Unix-like systems implement pcap in the libpcap library; Windows
@@ -151,8 +153,13 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 					@Override
 					public void nextPacket(JPacket packet, PcapFileTransportHandler pcapHandler) {
 						if (packet.hasHeader(tcp)) {
+							long timestamp = packet.getCaptureHeader().timestampInMillis();
 							byte[] bytes = tcp.getPayload();
-							pcapHandler.fireProcess(ByteBuffer.wrap(bytes));
+							ByteBuffer buffer = ByteBuffer.allocate(bytes.length + 8);
+							buffer.putLong(timestamp);
+							buffer.put(bytes);
+							buffer.flip();
+							pcapHandler.fireProcess(buffer);
 						}
 					}
 
