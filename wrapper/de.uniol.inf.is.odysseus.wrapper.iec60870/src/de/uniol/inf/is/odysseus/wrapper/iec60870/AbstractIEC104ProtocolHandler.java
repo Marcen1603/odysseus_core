@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -87,7 +89,9 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	private IAPDUHandler apduHandler = new StandardAPDUHandler();
 
-	private volatile Map<ASDU, Long> timestampMap = new HashMap<>();
+	private Map<ASDU, Long> timestampMap = new HashMap<>();
+
+	private ExecutorService asduHandlerExecutorService = Executors.newSingleThreadExecutor();
 
 	public IAPDUHandler getApduHandler() {
 		return apduHandler;
@@ -164,7 +168,9 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 			getLogger().debug("Received (APDU): {}", message);
 
 			if (timestamp.isPresent() && apdu.getApci().getControlField() instanceof InformationTransfer) {
-				timestampMap.put(apdu.getAsdu(), timestamp.get());
+				synchronized (timestampMap) {
+					timestampMap.put(apdu.getAsdu(), timestamp.get());
+				}
 			}
 
 			apduHandler.handleAPDU(apdu);
@@ -273,15 +279,21 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	@Override
 	public Optional<ASDU> handleASDU(ASDU asdu) {
-		// Creates a tuple with DataUnitIdentifier, List of InformationObjects and
-		// timestamp
-		ITransfer<Tuple<IMetaAttribute>> transfer = getTransfer();
+		asduHandlerExecutorService.submit(() -> {
 
-		Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);
-		tuple.setAttribute(0, asdu.getDataUnitIdentifier());
-		tuple.setAttribute(1, asdu.getInformationObjects());
-		tuple.setAttribute(2, timestampMap.remove(asdu));
-		transfer.transfer(tuple);
+			synchronized (timestampMap) {
+				// Creates a tuple with DataUnitIdentifier, List of InformationObjects and
+				// timestamp
+				ITransfer<Tuple<IMetaAttribute>> transfer = getTransfer();
+
+				Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);
+				tuple.setAttribute(0, asdu.getDataUnitIdentifier());
+				tuple.setAttribute(1, asdu.getInformationObjects());
+				tuple.setAttribute(2, timestampMap.remove(asdu));
+				transfer.transfer(tuple);
+			}
+			
+		});
 
 		// No response ASDU to server
 		return Optional.empty();
