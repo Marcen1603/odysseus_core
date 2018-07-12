@@ -29,13 +29,20 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
+	
 
+	public static ProtocolHandlerRegistry instance;
+	
 	static Logger logger = LoggerFactory
 			.getLogger(ProtocolHandlerRegistry.class);
 
 	static private Map<String, IProtocolHandler<?>> handlers = new HashMap<String, IProtocolHandler<?>>();
 
-	static public void register(IProtocolHandler<?> handler) {
+	public ProtocolHandlerRegistry() {
+		instance = this;
+	}
+	
+	public void register(IProtocolHandler<?> handler) {
 		try {
 			logger.trace("Register new Handler " + handler.getName());
 			if (!handlers.containsKey(handler.getName().toLowerCase())) {
@@ -49,13 +56,14 @@ public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 		}
 	}
 
-	static public void remove(IProtocolHandler<?> handler) {
+	public void remove(IProtocolHandler<?> handler) {
 		logger.trace("Remove handler " + handler.getName());
 		handlers.remove(handler.getName().toLowerCase());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	static public IProtocolHandler<?> getInstance(String name,
+	@Override
+	public IProtocolHandler<?> getInstance(String name,
 			ITransportDirection direction, IAccessPattern access,
 			OptionMap options, IStreamObjectDataHandler dataHandler) {
 		IProtocolHandler<?> ret = handlers.get(name.toLowerCase());
@@ -66,11 +74,13 @@ public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 		return null;
 	}
 
-	public static ImmutableList<String> getHandlerNames() {
+	@Override
+	public ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(handlers.keySet());
 	}
 	
-	public static IProtocolHandler<?> getIProtocolHandlerClass(
+	@Override
+	public IProtocolHandler<?> getIProtocolHandlerClass(
 			String protocolHandler) {
 		if (protocolHandler != null) {
 			IProtocolHandler<?> dh = handlers.get(protocolHandler.toLowerCase());

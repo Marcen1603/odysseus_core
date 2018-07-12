@@ -37,3 +37,4 @@ Require-Bundle: rxtx;bundle-version="2.2.0",
  org.eclipse.core.resources;bundle-version="3.7.101"
 Service-Component: OSGI-INF/UrgTransportHandler.xml, OSGI-INF/UrgProtocolHandler.xml, OSGI-INF/UrgScannDataHandler.xml, OSGI-INF/UrgDatatypeProvider.xml, OSGI-INF/TransformationRuleService.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.urg
+Bundle-ActivationPolicy: lazy

@@ -1,13 +1,9 @@
 package de.uniol.inf.is.odysseus.wsenrich.util.implementation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,6 +11,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -111,9 +113,9 @@ public class XPathKeyFinder implements IKeyFinder {
 	 * of the Elementes will be returned as value, value, ...
 	 * @return The Values of the given search
 	 */
-	private StringBuffer getValueOfSingleObject(String search, boolean keyValue, int tupleCount) {
+	private String getValueOfSingleObject(String search, boolean keyValue, int tupleCount) {
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		StringBuffer temp = new StringBuffer();
+		StringBuilder temp = new StringBuilder();
 		try {
 			NodeList nodeList;
 			Node node = (Node) xPath.compile(search).evaluate(xmlDocuments.get(tupleCount), XPathConstants.NODE);
@@ -127,13 +129,13 @@ public class XPathKeyFinder implements IKeyFinder {
 						temp.append(nod.getFirstChild().getNodeValue() + ", ");	
 					}
 				}
-				if(temp.equals("") || temp.length() == 0 || temp == null){
+				if(temp.length() == 0){
 					return null;
 				}
 				if(!keyValue && temp.length() > 2) {
 					temp.delete(temp.length()-2, temp.length());
 				}
-				return temp;
+				return temp.toString();
 			} else {
 				return null;
 			}
@@ -151,9 +153,9 @@ public class XPathKeyFinder implements IKeyFinder {
 	 * of the Elementes will be returned as value, value, ...
 	 * @return The Values of the given search
 	 */
-	private StringBuffer getValueOfMultipleObject(String search, boolean keyValue, int tupleCount) {
+	private String getValueOfMultipleObject(String search, boolean keyValue, int tupleCount) {
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		StringBuffer temp = new StringBuffer();
+		StringBuilder temp = new StringBuilder();
 		try {
 			 NodeList nodeList = (NodeList) xPath.compile(search).evaluate(xmlDocuments.get(tupleCount), XPathConstants.NODESET);
 			 for(int i = 0; i < nodeList.getLength(); i++) {
@@ -163,13 +165,13 @@ public class XPathKeyFinder implements IKeyFinder {
 				 		temp.append(nodeList.item(i).getFirstChild().getNodeValue() + ", ");
 				 	}
 				} 
-			 if(temp.equals("") || temp.length() == 0 || temp == null) {
+			 if(temp.length() == 0) {
 				 return null;
 			 }
 			 if(!keyValue && temp.length() > 2) {
 				 temp.delete(temp.length()-2, temp.length());
 			 }
-			 return temp;
+			 return temp.toString();
 		 } catch (XPathExpressionException e) {
 			 logger.error("The specified XPath-Expression is invalid! Cause: {}", e.getMessage());
 			 return null;

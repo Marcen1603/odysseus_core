@@ -19,7 +19,6 @@ public class Autostart implements BundleActivator {
 	private static IExecutor executor;
 	private static boolean autostartExecuted = false;
 
-	@SuppressWarnings("deprecation")
 	private static String[] PATHES = { "/autostart/autostart.qry",
 			OdysseusConfiguration.instance.getHomeDir() + "autostart" + File.separator + "autostart.qry" };
 
@@ -47,7 +46,6 @@ public class Autostart implements BundleActivator {
 
 			if (!autostartExecuted && context != null && executor != null) {
 
-				@SuppressWarnings("deprecation")
 				ISession user = SessionManagement.instance.loginSuperUser(null);
 				autostartExecuted = ScriptRunner.runScripts(context, executor, PATHES, user);
 			}

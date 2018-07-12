@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Math Expression Parser
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.mep
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mep;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.mep;
@@ -43,3 +43,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
 Bundle-Activator: de.uniol.inf.is.odysseus.mep.Activator
 Import-Package: org.osgi.framework;version="1.6.0"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.mep
+Bundle-ActivationPolicy: lazy

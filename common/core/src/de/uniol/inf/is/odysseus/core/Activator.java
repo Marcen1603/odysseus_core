@@ -20,24 +20,6 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.ListDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.CSVProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.DocumentProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.MarkerByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.NoProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SVMProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.DirectoryWatcherTransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TcpSocketHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TimerTransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-
 public class Activator implements BundleActivator {
 
 	private static BundleContext bundleContext;
@@ -65,22 +47,6 @@ public class Activator implements BundleActivator {
 		
 		LOGGER.info("Running VM with: \t"+System.getProperty("os.arch"));
 		
-		ProtocolHandlerRegistry.register(new LineProtocolHandler());
-		ProtocolHandlerRegistry.register(new DocumentProtocolHandler());
-		ProtocolHandlerRegistry.register(new CSVProtocolHandler());
-		ProtocolHandlerRegistry.register(new SimpleCSVProtocolHandler());
-		ProtocolHandlerRegistry.register(new NoProtocolHandler());
-		ProtocolHandlerRegistry.register(new TextProtocolHandler());
-		ProtocolHandlerRegistry.register(new MarkerByteBufferHandler());
-		ProtocolHandlerRegistry.register(new SVMProtocolHandler());
-		
-		TransportHandlerRegistry.register(new TcpSocketHandler());
-		TransportHandlerRegistry.register(new FileHandler());
-		TransportHandlerRegistry.register(new TimerTransportHandler());
-        TransportHandlerRegistry.register(new DirectoryWatcherTransportHandler());
-		TransportHandlerRegistry.register(new NonBlockingTcpHandler());		
-		
-		DataHandlerRegistry.registerDataHandler(new ListDataHandler());	
 	}
 	
 	

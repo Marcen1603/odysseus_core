@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -29,10 +30,22 @@ public class ScriptRunner {
 
 			for (String path : pathes) {
 				URL url = bundle.getEntry(path);
+
+				if (url == null) {
+					try {
+						if (!path.startsWith("http")) {
+							url = new URL("file:///"+path);
+						}
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+
 				try {
 					runScript(user, url, executor);
 				} catch (IOException e) {
 					// Could be ignored
+					e.printStackTrace();
 				}
 			}
 

@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.temporaltypes.transform;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -13,7 +10,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalSelectPO;
+import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.TemporalSelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,11 +34,11 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 				 * In case that the function can directly work on a temporal type do not use a
 				 * temporal expression
 				 */
-				temporalSelect = new TemporalSelectPO<>(expression);
+				temporalSelect = new TemporalSelectPO<>(expression, operator.getBaseTimeUnit());
 			} else {
 				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
-						expression);
-				temporalSelect = new TemporalSelectPO<>(temporalExpression);
+						expression, operator.getBaseTimeUnit());
+				temporalSelect = new TemporalSelectPO<>(temporalExpression, operator.getBaseTimeUnit());
 			}
 			this.defaultExecute(operator, temporalSelect, config, true, true);
 		}
@@ -88,19 +85,10 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 				return true;
 			}
 
-			/*
-			 * So let us check if our attributes in the input schema are temporal. If the
-			 * URI of our attribute and one attribute from the input schema are equal, we
-			 * have a match.
-			 */
-			List<SDFAttribute> attributes = operator.getInputSchema().getAttributes().stream()
-					.filter(e -> (e.getURI().equals(attribute.getURI()))).collect(Collectors.toList());
-
-			// Check for all matches if they are temporal
-			for (SDFAttribute attr : attributes) {
-				if (TemporalDatatype.isTemporalAttribute(attr)) {
-					return true;
-				}
+			// So let us check if our attributes in the input schema are temporal.
+			SDFAttribute attributeFromSchema = TemporalDatatype.getAttributeFromSchema(operator.getInputSchema(), attribute);
+			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
+				return true;
 			}
 		}
 		return false;

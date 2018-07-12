@@ -6,7 +6,7 @@
       provider-name="Christian Kuka">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+    The probabilistic feature provides functions and operators to process discrete and continuous probabilistic values in a data stream. Continuous probabilistic values are represented using Gaussian Mixtures.
    </description>
 
    <copyright>

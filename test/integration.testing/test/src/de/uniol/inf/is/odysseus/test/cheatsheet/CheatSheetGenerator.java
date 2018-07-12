@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
@@ -364,7 +363,7 @@ public class CheatSheetGenerator {
 
     private static void buildDataHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Data Handlers}\n");
-        final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
+        final List<String> datas = new ArrayList<>(DataHandlerRegistry.instance.getHandlerNames());
         Collections.sort(datas);
         builder.append("\\begin{multicols}{2}\n");
         for (final String data : datas) {
@@ -375,7 +374,7 @@ public class CheatSheetGenerator {
 
     private static void buildProtocolHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Protocol Handlers}\n");
-        final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
+        final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.instance.getHandlerNames());
         Collections.sort(protocols);
         builder.append("\\begin{multicols}{2}\n");
         for (final String protocol : protocols) {
@@ -386,7 +385,9 @@ public class CheatSheetGenerator {
 
     private static void buildTransportHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Transport Handlers}\n");
-        final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
+        // FIXME: use service
+        //final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
+        final List<String> transports = new ArrayList<>();
         Collections.sort(transports);
         builder.append("\\begin{multicols}{2}\n");
         for (final String transport : transports) {

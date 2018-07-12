@@ -34,11 +34,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
@@ -50,6 +53,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
+import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
@@ -1493,6 +1497,26 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			}
 		}
 		return list;
+	}
+	
+	// Registries
+	
+	@Override
+	public IDataHandlerRegistry getDataHandlerRegistry(ISession user) {
+		// TODO: Allow different registries for users
+		return RegistryBinder.getDataHandlerRegistry();
+	}
+	
+	@Override
+	public IProtocolHandlerRegistry getProtocolHandlerRegistry(ISession user) {
+		// TODO: Allow different registries for users
+		return RegistryBinder.getProtocolHandlerRegistry();
+	}
+	
+	@Override
+	public ITransportHandlerRegistry getTransportHandlerRegistry(ISession user) {
+		// TODO: Allow different registries for users
+		return RegistryBinder.getTransportHandlerRegistry();
 	}
 
 }

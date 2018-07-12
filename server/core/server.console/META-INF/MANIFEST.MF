@@ -24,3 +24,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.report.general
 Export-Package: de.uniol.inf.is.odysseus.core.server.console
 Automatic-Module-Name: de.uniol.inf.is.odysseus.core.server.console
+Bundle-ActivationPolicy: lazy

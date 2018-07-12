@@ -32,3 +32,4 @@ Service-Component: OSGI-INF/TPRegistry.xml,OSGI-INF/NGramProcessing.xml,OSGI-INF
  OSGI-INF/StopwordProcessing.xml
 Bundle-ClassPath: .
 Automatic-Module-Name: de.uniol.inf.is.odysseus.textprocessing
+Bundle-ActivationPolicy: lazy

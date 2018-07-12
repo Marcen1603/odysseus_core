@@ -11,3 +11,4 @@ Service-Component: OSGI-INF/Executor.xml
 Import-Package: de.fraunhofer.iis.kom.wsn.messages,
  org.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.server.monitoring
+Bundle-ActivationPolicy: lazy

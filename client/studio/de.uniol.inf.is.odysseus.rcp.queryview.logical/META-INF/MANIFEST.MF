@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  com.google.guava;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.core
 Automatic-Module-Name: de.uniol.inf.is.odysseus.rcp.queryview.logical
+Bundle-ActivationPolicy: lazy

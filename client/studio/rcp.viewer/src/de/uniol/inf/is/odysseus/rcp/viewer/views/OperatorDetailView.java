@@ -32,23 +32,23 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 public class OperatorDetailView extends ViewPart implements ISelectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorDetailView.class);
-	
+
 	private static final String UNKNOWN_PROVIDER_TITLE = "<Not set>";
-	
+
 	private final List<IOperatorDetailProvider<?>> activeProviders = Lists.newArrayList();
-	private final List<IOperatorGeneralDetailProvider> activeGeneralProviders = Lists.newArrayList();	
+	private final List<IOperatorGeneralDetailProvider> activeGeneralProviders = Lists.newArrayList();
 	private final Map<IOperatorDetailProvider<?>, Composite> compositeMap = Maps.newHashMap();
 	private final Map<IOperatorGeneralDetailProvider, Composite> generalCompositeMap = Maps.newHashMap();
-	
+
 	private Composite parent;
 	private IPhysicalOperator selectedOperator;
 	private TabFolder activeTabFolder;
 	private String selectedTab;
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
-		
+
 		this.parent = parent;
 		this.parent.setLayout(new GridLayout());
 	}
@@ -67,12 +67,12 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 		final Optional<IPhysicalOperator> optSelectedOperator = determineSelectedOperatorClass(selection);
 		if (optSelectedOperator.isPresent()) {
 			IPhysicalOperator selectedOperator = optSelectedOperator.get();
-			
-			if( this.selectedOperator != selectedOperator ) {
+
+			if (this.selectedOperator != selectedOperator) {
 				deleteProviders();
 				createProviders(selectedOperator);
 			}
-			
+
 		} else {
 			deleteProviders();
 		}
@@ -83,23 +83,26 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 
 		@SuppressWarnings("unchecked")
 		Class<T> operatorClass = (Class<T>) operator.getClass();
-		List<Class<? extends IOperatorDetailProvider<T>>> providers = OperatorDetailProviderRegistry.getInstance().getProviders(operatorClass);
-		List<Class<? extends IOperatorGeneralDetailProvider>> generalProviders = OperatorDetailProviderRegistry.getInstance().getGeneralProviders();
+		List<Class<? extends IOperatorDetailProvider<T>>> providers = OperatorDetailProviderRegistry.getInstance()
+				.getProviders(operatorClass);
+		List<Class<? extends IOperatorGeneralDetailProvider>> generalProviders = OperatorDetailProviderRegistry
+				.getInstance().getGeneralProviders();
 
 		List<? extends IOperatorDetailProvider<T>> instances = createProviderInstances(providers);
-		List<? extends IOperatorGeneralDetailProvider> generalInstances = createGeneralProviderInstances(generalProviders);
+		List<? extends IOperatorGeneralDetailProvider> generalInstances = createGeneralProviderInstances(
+				generalProviders);
 
 		activeTabFolder = new TabFolder(this.parent, SWT.BORDER);
 		activeTabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		activeTabFolder.setLayout(new GridLayout());
-		
+
 		int tabToSelect = -1;
 
 		for (IOperatorGeneralDetailProvider generalInstance : generalInstances) {
 			TabItem generalTabItem = new TabItem(activeTabFolder, SWT.NULL);
 			generalTabItem.setText(determineTitle(generalInstance));
-			
-			if( selectedTab != null && generalTabItem.getText().equals(selectedTab)) {
+
+			if (selectedTab != null && generalTabItem.getText().equals(selectedTab)) {
 				tabToSelect = activeTabFolder.indexOf(generalTabItem);
 			}
 
@@ -113,7 +116,7 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 			} catch (Throwable t) {
 				LOG.error("Exception during creating part control in operator general detail provider", t);
 			}
-			
+
 			generalCompositeMap.put(generalInstance, generalProviderComposite);
 			generalTabItem.setControl(generalProviderComposite);
 		}
@@ -122,8 +125,8 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 
 			TabItem tabItem = new TabItem(activeTabFolder, SWT.NULL);
 			tabItem.setText(determineTitle(instance));
-			
-			if( selectedTab != null && tabItem.getText().equals(selectedTab)) {
+
+			if (selectedTab != null && tabItem.getText().equals(selectedTab)) {
 				tabToSelect = activeTabFolder.indexOf(tabItem);
 			}
 
@@ -142,63 +145,65 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 		}
 
 		parent.layout();
-		if( tabToSelect != -1 ) {
+		if (tabToSelect != -1) {
 			activeTabFolder.setSelection(tabToSelect);
 		}
 	}
 
 	private void deleteProviders() {
-		if( !activeProviders.isEmpty()) {
-			for( IOperatorDetailProvider<?> activeProvider : activeProviders ) {
+		if (!activeProviders.isEmpty()) {
+			for (IOperatorDetailProvider<?> activeProvider : activeProviders) {
 				activeProvider.dispose();
-				
+
 				Composite comp = compositeMap.get(activeProvider);
 				comp.dispose();
-				
+
 				compositeMap.remove(activeProvider);
 			}
-			
+
 			activeProviders.clear();
 		}
-		
-		if( !activeGeneralProviders.isEmpty()) {
-			for( IOperatorGeneralDetailProvider activeGeneralProvider : activeGeneralProviders ) {
+
+		if (!activeGeneralProviders.isEmpty()) {
+			for (IOperatorGeneralDetailProvider activeGeneralProvider : activeGeneralProviders) {
 				activeGeneralProvider.dispose();
-				
+
 				Composite comp = generalCompositeMap.get(activeGeneralProvider);
 				comp.dispose();
-				
+
 				compositeMap.remove(activeGeneralProvider);
 			}
-			
+
 			activeGeneralProviders.clear();
 		}
-		
-		if( activeTabFolder != null ) {
+
+		if (activeTabFolder != null) {
 			int selectionIndex = activeTabFolder.getSelectionIndex();
-			selectedTab = activeTabFolder.getItem(selectionIndex).getText();
-			
+			if (activeTabFolder.getItem(selectionIndex) != null) {
+				selectedTab = activeTabFolder.getItem(selectionIndex).getText();
+			}
 			activeTabFolder.dispose();
 			activeTabFolder = null;
 		}
 	}
 
 	private static Optional<IPhysicalOperator> determineSelectedOperatorClass(ISelection selection) {
-		if( !selection.isEmpty() && selection instanceof IStructuredSelection ) {
-			IStructuredSelection structSelection = (IStructuredSelection)selection;
-			
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			IStructuredSelection structSelection = (IStructuredSelection) selection;
+
 			Object selectedObject = structSelection.getFirstElement();
-			if( selectedObject instanceof IOdysseusNodeView ) {
-				IOdysseusNodeView nodeView = (IOdysseusNodeView)selectedObject;
-				if( nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null ) {
+			if (selectedObject instanceof IOdysseusNodeView) {
+				IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
+				if (nodeView.getModelNode() != null && nodeView.getModelNode().getContent() != null) {
 					return Optional.of(nodeView.getModelNode().getContent());
 				}
 			}
 		}
 		return Optional.absent();
 	}
-	
-	private static <T extends IPhysicalOperator> List<? extends IOperatorDetailProvider<T>> createProviderInstances(List<Class<? extends IOperatorDetailProvider<T>>> providers) {
+
+	private static <T extends IPhysicalOperator> List<? extends IOperatorDetailProvider<T>> createProviderInstances(
+			List<Class<? extends IOperatorDetailProvider<T>>> providers) {
 		List<IOperatorDetailProvider<T>> instances = Lists.newArrayList();
 		for (Class<? extends IOperatorDetailProvider<T>> provider : providers) {
 			try {
@@ -209,8 +214,9 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 		}
 		return instances;
 	}
-	
-	private static List<? extends IOperatorGeneralDetailProvider> createGeneralProviderInstances(List<Class<? extends IOperatorGeneralDetailProvider>> generalProviders) {
+
+	private static List<? extends IOperatorGeneralDetailProvider> createGeneralProviderInstances(
+			List<Class<? extends IOperatorGeneralDetailProvider>> generalProviders) {
 		List<IOperatorGeneralDetailProvider> instances = Lists.newArrayList();
 		for (Class<? extends IOperatorGeneralDetailProvider> generalProvider : generalProviders) {
 			try {
@@ -221,28 +227,30 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 		}
 		return instances;
 	}
-	
+
 	private static String determineTitle(IOperatorDetailProvider<?> provider) {
 		try {
 			String title = provider.getTitle();
 			return Strings.isNullOrEmpty(title) ? UNKNOWN_PROVIDER_TITLE : title;
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 			LOG.error("Could not get title from OperatorDetailProvider {}", provider, t);
 			return UNKNOWN_PROVIDER_TITLE;
 		}
 	}
-	
+
 	private static String determineTitle(IOperatorGeneralDetailProvider provider) {
 		try {
 			String title = provider.getTitle();
 			return Strings.isNullOrEmpty(title) ? UNKNOWN_PROVIDER_TITLE : title;
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 			LOG.error("Could not get title from OperatorDetailProvider {}", provider, t);
 			return UNKNOWN_PROVIDER_TITLE;
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	@Override

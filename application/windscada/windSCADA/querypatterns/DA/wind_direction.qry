@@ -1,9 +1,0 @@
-#PARSER PQL
-#RUNQUERY
-Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})
-
-PROJECT2 = PROJECT({ATTRIBUTES=['PxXxwindfarmidxXx:xXxwkaidxXx.wind_direction']}, 0:Stream1)
-
-TIMEWINDOW3 = TIMEWINDOW({SIZE=[10, 'MINUTES'], SLIDE=[10, 'MINUTES']}, 0:PROJECT2)
-
-PxXxwindfarmidxXx:xXxwkaidxXx:wind_direction ::= AGGREGATE({AGGREGATIONS=[['AVG','wind_direction','wind_direction','Double']]}, 0:TIMEWINDOW3)

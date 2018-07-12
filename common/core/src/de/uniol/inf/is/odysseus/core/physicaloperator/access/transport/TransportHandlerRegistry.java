@@ -27,13 +27,19 @@ import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
-public class TransportHandlerRegistry {
+public class TransportHandlerRegistry implements ITransportHandlerRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(TransportHandlerRegistry.class);
 
-	static private Map<String, ITransportHandler> handlers = new HashMap<String, ITransportHandler>();
+	static public ITransportHandlerRegistry instance;
+	
+	private Map<String, ITransportHandler> handlers = new HashMap<String, ITransportHandler>();
 
-	static public void register(ITransportHandler handler) {
+	public TransportHandlerRegistry() {
+		instance = this;
+	}
+	
+	public void register(ITransportHandler handler) {
 		logger.trace("Register new Handler " + handler.getName());
 		String name = handler.getName().toLowerCase();
 		register(handler, name);
@@ -43,7 +49,7 @@ public class TransportHandlerRegistry {
 		}
 	}
 
-	public static void register(ITransportHandler handler, String name) {
+	private void register(ITransportHandler handler, String name) {
 		if (!handlers.containsKey(name)) {
 			handlers.put(name, handler);
 		} else {
@@ -52,7 +58,7 @@ public class TransportHandlerRegistry {
 		}
 	}
 	
-	static public void remove(ITransportHandler handler){
+	public void remove(ITransportHandler handler){
 		logger.trace("Remove handler "+handler.getName());
 		handlers.remove(handler.getName().toLowerCase());
 		if (handler instanceof IHasAlias){
@@ -60,7 +66,8 @@ public class TransportHandlerRegistry {
 		}
 	}
 	
-	static public ITransportHandler getInstance(String name, IProtocolHandler<?> protocolHandler, OptionMap options){
+	@Override
+	public ITransportHandler getInstance(String name, IProtocolHandler<?> protocolHandler, OptionMap options){
 		ITransportHandler ret = handlers.get(name.toLowerCase());
 		if (ret != null){
 			return ret.createInstance(protocolHandler, options);
@@ -75,12 +82,14 @@ public class TransportHandlerRegistry {
 		return null;
 	}
 	
-	public static ImmutableList<String> getHandlerNames() {
+	@Override
+	public ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(handlers.keySet());
 	}
+		
 	
-	
-	public static ITransportHandler getITransportHandlerClass(
+	@Override
+	public ITransportHandler getITransportHandlerClass(
 			String transportHandler) {
 		if (transportHandler != null) {
 			ITransportHandler dh = handlers.get(transportHandler.toLowerCase());

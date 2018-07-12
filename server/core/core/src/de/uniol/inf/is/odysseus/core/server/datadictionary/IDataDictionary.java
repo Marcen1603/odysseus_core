@@ -21,10 +21,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -194,5 +197,12 @@ public interface IDataDictionary {
 
 	// Store management
 	List<IStreamObject<?>> getStore(Resource name);
+	
+	// Registry Management
+	ITransportHandlerRegistry getTransportHandlerRegistry(ISession user);
+	IProtocolHandlerRegistry getProtocolHandlerRegistry(ISession user);
+	IDataHandlerRegistry getDataHandlerRegistry(ISession user);
+	
+	
 
 }

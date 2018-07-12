@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Export-Package: de.uniol.inf.is.odysseus.sweeparea
 Service-Component: OSGI-INF/SweepAreaRegistry.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.sweeparea
+Bundle-ActivationPolicy: lazy

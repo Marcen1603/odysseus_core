@@ -20,3 +20,4 @@ Export-Package: de.uniol.inf.is.odysseus.parser.pql.generator
 Service-Component: OSGI-INF/pqlStatementGenerator.xml,OSGI-INF/accessAOPQLGenerator.xml,OSGI-INF/senderAOPQLGenerator.xml,OSGI-INF/pqlGenerator.xml,OSGI-INF/accessAOPQLGenerator2.xml,OSGI-INF/CSVFileSourcePQLGenerator.xml,OSGI-INF/StreamAOPQLGenerator.xml,
  OSGI-INF/pqlGeneratorConsole.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.parser.pql.generator
+Bundle-ActivationPolicy: lazy

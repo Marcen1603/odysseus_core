@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.server.executor.registryBinder">
+   <implementation class="de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder"/>
+   <reference bind="bindTransportHandlerRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerRegistry" name="TransformationRegistry" policy="dynamic" unbind="unbindTransportHandlerRegistry"/>
+   <reference bind="bindProtocolHandlerRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandlerRegistry" name="IProtocolHandlerRegistry" policy="dynamic" unbind="unbindProtocolHandlerRegistry"/>
+   <reference bind="bindDataHandlerRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.datahandler.IDataHandlerRegistry" name="IDataHandlerRegistry" policy="dynamic" unbind="unbindDataHandlerRegistry"/>
+</scr:component>

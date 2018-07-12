@@ -13,3 +13,4 @@ Service-Component: OSGI-INF/testOperatorComponent.xml
 Import-Package: org.osgi.framework;version="1.6.0"
 Eclipse-BundleShape: dir
 Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.operator
+Bundle-ActivationPolicy: lazy

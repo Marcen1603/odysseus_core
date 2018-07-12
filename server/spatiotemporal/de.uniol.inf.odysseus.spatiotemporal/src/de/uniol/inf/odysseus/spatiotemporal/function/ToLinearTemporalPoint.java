@@ -10,6 +10,8 @@ import org.geotools.referencing.GeodeticCalculator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
@@ -24,6 +26,7 @@ import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.real.SplineDoubleFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 
@@ -41,7 +44,7 @@ import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
-	private static final long serialVersionUID = -564559788689771841L; 
+	private static final long serialVersionUID = -564559788689771841L;
 
 	// For OSGi
 	public ToLinearTemporalPoint() {
@@ -71,13 +74,30 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		T oldestElement = popOldestElement(elements);
 		T newestElement = getNewestElement(elements);
 
-		if (oldestElement == null) {
+		if (oldestElement == null && newestElement != null) {
+			// We have only one element in history
 			return handleEmptyHistory(newestElement);
+		} else if (newestElement == null) {
+			/*
+			 * We don't have any element (happens if evaluated at outdating for a certain
+			 * group)
+			 */
+			return handleNoElement(trigger);
 		}
 		return handleFilledHistory(newestElement, oldestElement, elements);
 	}
 
-	protected Object[] handleEmptyHistory(T newestElement) {
+	public Object[] handleNoElement(T trigger) {
+		Geometry triggerPoint = getGeometryFromElement(trigger);
+		Point zeroPoint = GeometryFactory.createPointFromInternalCoord(new Coordinate(0, 0), triggerPoint);
+		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(zeroPoint,
+				trigger.getMetadata().getStart(), 0, 0);
+		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
+		return temporalPoint;
+	}
+
+	public Object[] handleEmptyHistory(T newestElement) {
 		Geometry currentPoint = getGeometryFromElement(newestElement);
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
 				newestElement.getMetadata().getStart(), 0, 0);
@@ -86,16 +106,17 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return temporalPoint;
 	}
 
-	protected Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
+	public Object[] handleFilledHistory(T newestElement, T oldestElement, Collection<T> history) {
 		Geometry currentPoint = getGeometryFromElement(newestElement);
 		Geometry oldestPoint = getGeometryFromElement(oldestElement);
 		PointInTime oldestPointInTime = oldestElement.getMetadata().getStart();
 		PointInTime currentPointInTime = newestElement.getMetadata().getStart();
-		return createTemporalPoint(currentPoint, oldestPoint, currentPointInTime, oldestPointInTime);
+		TemporalFunction<Double> trustFunction = createTrustFunction(history);
+		return createTemporalPoint(currentPoint, oldestPoint, currentPointInTime, oldestPointInTime, trustFunction);
 	}
 
-	protected Object[] createTemporalPoint(Geometry currentPoint, Geometry oldestPoint, PointInTime currentPointInTime,
-			PointInTime oldestPointInTime) {
+	public Object[] createTemporalPoint(Geometry currentPoint, Geometry oldestPoint, PointInTime currentPointInTime,
+			PointInTime oldestPointInTime, TemporalFunction<Double> trustFunction) {
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(oldestPoint, currentPoint);
 		long timeInstancesTravelled = currentPointInTime.minus(oldestPointInTime).getMainPoint();
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
@@ -108,10 +129,73 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
 				currentPointInTime, speedMetersPerTimeInstance, azimuth);
 		TemporalGeometry[] temporalPoint = new TemporalGeometry[1];
-		temporalPoint[0] = new TemporalGeometry(temporalPointFunction);
+		temporalPoint[0] = new TemporalGeometry(temporalPointFunction, trustFunction);
 		return temporalPoint;
 	}
-	
+
+	/**
+	 * Estimate the trust value of the temporal values
+	 * 
+	 * @return
+	 */
+	protected TemporalFunction<Double> createTrustFunction(Collection<T> history) {
+
+		List<Double> tempDim = new ArrayList<>();
+		List<Double> trustDim = new ArrayList<>();
+
+		T prevValue = null;
+		for (T element : history) {
+
+			// Only the first loop
+			if (prevValue == null) {
+				// Before our real history, the trust is low
+				tempDim.add((double) (element.getMetadata().getStart().minus(2).getMainPoint()));
+				trustDim.add(0.0);
+
+				// Now its getting slightly better
+				tempDim.add((double) element.getMetadata().getStart().minus(1).getMainPoint());
+				trustDim.add(0.5);
+			} else if (prevValue != null
+					&& element.getMetadata().getStart().minus(prevValue.getMetadata().getStart()).getMainPoint() > 2) {
+				/*
+				 * There has been some time between the last known value and this one, lower the
+				 * trust in between
+				 */
+
+				long diff = element.getMetadata().getStart().minus(prevValue.getMetadata().getStart()).getMainPoint();
+				long middle = prevValue.getMetadata().getStart().plus(diff / 2).getMainPoint();
+
+				tempDim.add((double) middle);
+				trustDim.add(0.0);
+			}
+
+			// When we have information in the history, the trust is high
+			tempDim.add((double) element.getMetadata().getStart().getMainPoint());
+			trustDim.add(1.0);
+
+			prevValue = element;
+		}
+
+		// At the end, reduce the trust again
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(1).getMainPoint());
+		trustDim.add(0.5);
+
+		// Now its getting slightly better
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(2).getMainPoint());
+		trustDim.add(0.0);
+
+		double[] tempDimension = new double[tempDim.size()];
+		double[] trustDimension = new double[trustDim.size()];
+
+		for (int i = 0; i < tempDim.size(); i++) {
+			tempDimension[i] = tempDim.get(i);
+			trustDimension[i] = trustDim.get(i);
+		}
+
+		TemporalFunction<Double> trustFunction = new SplineDoubleFunction(tempDimension, trustDimension);
+		return trustFunction;
+	}
+
 	protected GeodeticCalculator getGeodeticCalculator(Coordinate from, Coordinate to) {
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 		double startLongitude = from.y;
@@ -143,14 +227,14 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		return geom;
 	}
 
-	protected T popOldestElement(Collection<T> elements) {
+	public T popOldestElement(Collection<T> elements) {
 		if (elements.isEmpty()) {
 			return null;
 		}
 		return elements.iterator().next();
 	}
 
-	protected T getNewestElement(Collection<T> elements) {
+	public T getNewestElement(Collection<T> elements) {
 		Iterator<T> iterator = elements.iterator();
 		T newestElement = null;
 		while (iterator.hasNext()) {

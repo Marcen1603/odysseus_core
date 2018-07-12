@@ -36,7 +36,7 @@ public class OdysseusConfiguration {
 	/**
 	 * use osgi injection instead
 	 */
-	@Deprecated
+	///@Deprecated
 	public static OdysseusConfiguration instance;
 
 	public static final String CLONING_UPDATER = "CloningUpdater";
@@ -131,7 +131,9 @@ public class OdysseusConfiguration {
 		props.setProperty("datatypesFromDatatypesFilename", "datatypes.store");
 
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
+		props.setProperty("storeAndReloadQueryState", Boolean.FALSE.toString());
 
+		
 		props.setProperty("reloadLogStoreFilename", odysseusHome + "reloadlog.store");
 
 		props.setProperty("schedulingConfigFile", odysseusHome + "scheduling.conf");

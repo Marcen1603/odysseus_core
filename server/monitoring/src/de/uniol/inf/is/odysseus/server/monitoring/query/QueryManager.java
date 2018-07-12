@@ -42,7 +42,6 @@ public class QueryManager implements IUpdateEventListener {
 		return instance;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		executor = (IServerExecutor) ex;
 		String name = executor.getName();

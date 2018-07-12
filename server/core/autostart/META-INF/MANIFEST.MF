@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.google.guava;bundle-version="14.0.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.server.autostart.Autostart
 Automatic-Module-Name: de.uniol.inf.is.odysseus.server.autostart
+Bundle-ActivationPolicy: lazy

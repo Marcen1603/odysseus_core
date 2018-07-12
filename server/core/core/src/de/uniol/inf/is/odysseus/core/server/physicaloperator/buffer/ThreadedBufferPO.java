@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -39,13 +39,15 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	private long elementsRead;
 	private long puncRead;
 
-	final private long limit;
+	private final long limit;
 	private boolean done;
 
 	private List<IStreamable> inputBuffer = new ArrayList<>();
 	private List<IStreamable> outputBuffer = new ArrayList<>();
-	final private ReentrantLock lockInput = new ReentrantLock(true);
-	final private ReentrantLock lockOutput = new ReentrantLock(true);
+	private final ReentrantLock lockInput = new ReentrantLock(true);
+	private final ReentrantLock lockOutput = new ReentrantLock(true);
+
+	private final Object runnerLock = new Object();
 
 	Runner runner;
 	private boolean drainAtClose;
@@ -66,15 +68,15 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		}
 
 		public void pause() {
-			synchronized (runner) {
+			synchronized (runnerLock) {
 				paused = true;
 			}
 		}
 
 		public void unpause() {
-			synchronized (runner) {
+			synchronized (runnerLock) {
 				paused = false;
-				runner.notifyAll();
+				runnerLock.notifyAll();
 			}
 		}
 
@@ -86,24 +88,19 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		public void run() {
 			started = true;
 			while (!terminate) {
-				synchronized (runner) {
-					while (isPaused()) {
-						try {
-							runner.wait(100);
-						} catch (InterruptedException e) {
-							LOG.error("Paused ThreadedBuffer was interupted.", e);
-						}
-					}
+				handlePaused();
+				synchronized (runnerLock) {
 					try {
 						if (inputBuffer.isEmpty()) {
-							runner.wait(100);
-							if (terminate) {
-								continue;
-							}
+							runnerLock.wait(100);
 						}
 					} catch (InterruptedException e) {
-						LOG.error("Paused ThreadedBuffer was interupted.", e);
+						logInterruptedException(e);
+						Thread.currentThread().interrupt();
 					}
+				}
+				if (terminate) {
+					continue;
 				}
 				// inputBuffer to outputBuffer
 
@@ -115,31 +112,28 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				lockOutput.lock();
 				Iterator<IStreamable> outIter = outputBuffer.iterator();
 				while (outIter.hasNext() && !terminate) {
-					while (isPaused()) {
-						try {
-							synchronized (runner) {
-								runner.wait(100);
-							}
-						} catch (InterruptedException e) {
-							LOG.error("Paused ThreadedBuffer was interupted.", e);
-						}
-					}
+					handlePaused();
 					transferNext(outIter.next());
-					while (isPaused()) {
-						try {
-							synchronized (runner) {
-								runner.wait(100);
-							}
-						} catch (InterruptedException e) {
-							LOG.error("Paused ThreadedBuffer was interupted.", e);
-						}
-					}
+					handlePaused();
 					outIter.remove();
 				}
 				lockOutput.unlock();
 			}
 			started = false;
-		};
+		}
+
+		private void handlePaused() {
+			synchronized (runnerLock) {
+				while (isPaused()) {
+					try {
+						runnerLock.wait(100);
+					} catch (InterruptedException e) {
+						logInterruptedException(e);
+						Thread.currentThread().interrupt();
+					}
+				}
+			}
+		}
 
 	}
 
@@ -154,7 +148,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	public long getElementsStored1() {
-		return inputBuffer.size() + outputBuffer.size();
+		return inputBuffer.size() + (long) outputBuffer.size();
 	}
 
 	public long getInputBufferSize() {
@@ -182,16 +176,18 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	private void addObjectToBuffer(IStreamable object) {
-		synchronized (runner) {
+		synchronized (runnerLock) {
 			if (limit > 0) {
 				while (getElementsStored1() > limit) {
 					try {
-						runner.wait(100);
+						runnerLock.wait(100);
 					} catch (InterruptedException e) {
+						logInterruptedException(e);
+						Thread.currentThread().interrupt();
 					}
 				}
 			}
-			runner.notifyAll();
+			runnerLock.notifyAll();
 		}
 		lockInput.lock();
 		inputBuffer.add(object);
@@ -199,7 +195,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() {
 		done = false;
 		elementsRead = 0;
 		inputBuffer.clear();
@@ -213,11 +209,13 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_close() {
-		LOG.debug("Closing ...." + this.getName());
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(MessageFormat.format("Closing ....{0}", this.getName()));
+		}
 		this.isClosing.set(true);
 		runner.terminate();
-		synchronized (runner) {
-			runner.notify();
+		synchronized (runnerLock) {
+			runnerLock.notifyAll();
 		}
 		lockOutput.lock();
 		if (drainAtClose) {
@@ -254,8 +252,8 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		} else {
 			transfer((R) element);
 			if (limit > 0) {
-				synchronized (runner) {
-					runner.notifyAll();
+				synchronized (runnerLock) {
+					runnerLock.notifyAll();
 				}
 			}
 		}
@@ -316,11 +314,13 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			return false;
 		}
 
-		if (this.limit != po.limit) {
-			return false;
-		}
+		return this.limit == po.limit;
+	}
 
-		return true;
+	private void logInterruptedException(InterruptedException e) {
+		if (LOG.isErrorEnabled()) {
+			LOG.error("Paused ThreadedBuffer was interupted.", e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -329,22 +329,23 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		PointInTime maxTS = null;
 
 		lockInput.lock();
-		Iterator<IStreamable> iter = inputBuffer.iterator();
-		// FIXME synchronization with runner
-		while (iter.hasNext()) {
-			IStreamable e = iter.next();
-			if (!e.isPunctuation()) {
-				maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>) e).getMetadata().getEnd());
+		synchronized (runnerLock) {
+			Iterator<IStreamable> iter = inputBuffer.iterator();
+			while (iter.hasNext()) {
+				IStreamable e = iter.next();
+				if (!e.isPunctuation()) {
+					maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>) e).getMetadata().getEnd());
+				}
 			}
-		}
-		iter = outputBuffer.iterator();
-		while (iter.hasNext()) {
-			IStreamable e = iter.next();
-			if (!e.isPunctuation()) {
-				maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>) e).getMetadata().getEnd());
+			iter = outputBuffer.iterator();
+			while (iter.hasNext()) {
+				IStreamable e = iter.next();
+				if (!e.isPunctuation()) {
+					maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>) e).getMetadata().getEnd());
+				}
 			}
+			lockInput.unlock();
 		}
-		lockInput.unlock();
 		return maxTS;
 	}
 

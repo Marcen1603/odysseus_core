@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Tobias Brandt
  *
  */
+@SuppressWarnings("deprecation")
 public class SpatioTemporalDataStructureProvider {
 
 	static Logger logger = LoggerFactory.getLogger(SpatioTemporalDataStructureProvider.class);
@@ -47,6 +48,7 @@ public class SpatioTemporalDataStructureProvider {
 	 *            attribute is.
 	 * @return A spatial data structure
 	 */
+	
 	public ISpatioTemporalDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition) {
 		if (!dataStructureExists(name)) {
 			Class<?> dataStructureClass = SpatioTemporalDataStructuresRegistry.getDataStructureClass(type);

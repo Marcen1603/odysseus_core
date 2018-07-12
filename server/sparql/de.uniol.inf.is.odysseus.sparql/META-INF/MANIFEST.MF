@@ -23,3 +23,4 @@ Export-Package: de.uniol.inf.is.odysseus.sparql,
  de.uniol.inf.is.odysseus.sparql.parser.helper,
  de.uniol.inf.is.odysseus.sparql.physicaloperator
 Automatic-Module-Name: de.uniol.inf.is.odysseus.server.sparql
+Bundle-ActivationPolicy: lazy

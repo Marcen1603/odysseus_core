@@ -22,6 +22,7 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 
 	private static final int SECONDS_TO_MS = 1000;
 
+	@SuppressWarnings("rawtypes")
 	private SpatialIndex index;
 	private double radiusExtensionFactor;
 	private int numberOfExtensions;
@@ -41,6 +42,7 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 	 *            The maximum speed of the moving objects. Needed to filter out
 	 *            objects that can't reach the queried region.
 	 */
+	@SuppressWarnings("rawtypes")
 	public ApproximateTimeCircleEstimator(SpatialIndex index, double radiusExtensionFactor, int numberOfExtensions,
 			double maxSpeedMeterPerSecond) {
 		this.index = index;
@@ -49,6 +51,7 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 		this.maxSpeedMeterPerSecond = maxSpeedMeterPerSecond;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Set<String> estimateObjectsToPredict(double centerLatitude, double centerLongitude, double radius,
 			PointInTime targetTime) {

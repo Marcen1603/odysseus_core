@@ -15,17 +15,29 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
 /**
@@ -36,19 +48,24 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegis
  * </code>
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Marco Grawunder
  */
-abstract public class AbstractSenderAO extends AbstractLogicalOperator {
+public abstract class AbstractSenderAO extends AbstractLogicalOperator {
 	/**
-     * 
-     */
+	 * 
+	 */
 	private static final long serialVersionUID = -6830784739913623456L;
 	private Resource sink = null;
 	private String dataHandler;
 	private boolean writeMetaData;
 	private String protocolHandler;
 	private String transportHandler;
-	final private OptionMap optionsMap = new OptionMap();
+	private final transient OptionMap optionsMap = new OptionMap();
 	private String wrapper;
+
+	private Map<Integer, List<SDFAttribute>> outputSchema = new HashMap<>();
+	private IMetaAttribute metaAttribute;
+
 
 	/**
 	 * Default constructor
@@ -67,8 +84,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	 * @param optionsMap
 	 *            The options
 	 */
-	public AbstractSenderAO(Resource sink, String wrapper,
-			OptionMap optionsMap) {
+	public AbstractSenderAO(Resource sink, String wrapper, OptionMap optionsMap) {
 		this.sink = sink;
 		this.wrapper = wrapper;
 		this.optionsMap.addAll(optionsMap);
@@ -87,8 +103,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	 * @param optionsMap
 	 *            The options
 	 */
-	public AbstractSenderAO(Resource sink, String wrapper, String dataHandler,
-			OptionMap optionsMap) {
+	public AbstractSenderAO(Resource sink, String wrapper, String dataHandler, OptionMap optionsMap) {
 		this.sink = sink;
 		this.wrapper = wrapper;
 		this.dataHandler = dataHandler;
@@ -110,6 +125,8 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		this.protocolHandler = senderAO.protocolHandler;
 		this.transportHandler = senderAO.transportHandler;
 		this.writeMetaData = senderAO.writeMetaData;
+		this.metaAttribute = senderAO.metaAttribute;
+		this.outputSchema.putAll(senderAO.outputSchema);
 	}
 
 	/**
@@ -129,30 +146,13 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	public void setSink(Resource sink) {
 		this.sink = sink;
 	}
-	
+
 	public Resource getSink() {
-		return sink;
+		return getSinkname();
 	}
 
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see
-//	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-//	 * #getName()
-//	 */
-//	@Override
-//	public String getName() {
-//		String name = getSinkname().getResourceName();
-//		if (Strings.isNullOrEmpty(name)) {
-//			return super.getName();
-//		}
-//		return name;
-//	}
-
 	/**
-	 * Set the options of the sender operator for transport and prrotocol
-	 * handler
+	 * Set the options of the sender operator for transport and prrotocol handler
 	 * 
 	 * @param value
 	 *            A {@link Map} of options
@@ -163,20 +163,20 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
 		}
 	}
-	
+
 	public void setOptionMap(OptionMap options) {
 		this.optionsMap.clear();
 		this.optionsMap.addAll(options);
 	}
-	
+
 	protected void addOption(String key, String value) {
 		optionsMap.setOption(key.toLowerCase(), value);
 	}
 
-	protected String getOption( String key ) {
+	protected String getOption(String key) {
 		return optionsMap.get(key);
 	}
-	
+
 	/**
 	 * @return The options
 	 */
@@ -218,27 +218,15 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		this.dataHandler = dataHandler;
 	}
 
-	// old version of meta data writing (here only for csv files)
-	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.", deprecated=true)
-	public void setWriteMetaData_old(boolean writeMetaData){
-		this.writeMetaData = writeMetaData;
-	}
-	
-	public boolean isWriteMetaData_old(){
-		return writeMetaData;
-	}
-
 	@Parameter(type = BooleanParameter.class, name = "writeMetadata", optional = true, doc = "Write metadata.")
-	public void setWriteMetaData(boolean writeMetaData){
+	public void setWriteMetaData(boolean writeMetaData) {
 		this.writeMetaData = writeMetaData;
 	}
-	
 
-	public boolean isWriteMetaData(){
+	public boolean isWriteMetaData() {
 		return writeMetaData;
 	}
 
-	
 	/**
 	 * @return The name of the protocol handler
 	 */
@@ -287,25 +275,81 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 
 	@Override
 	public boolean isValid() {
+		boolean valid = true;
+		
 		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
-			this.addError("Wrapper "
-					+ this.wrapper + " unknown");
-			return false;
+			this.addError("Wrapper " + this.wrapper + " unknown");
+			valid = false;
 		}
+		
+		if (this.getInputSchema(0) == null) {
+			if (this.outputSchema.get(0) == null) {
+				this.addError("Output schema must be provided if sender is standalone.");
+				valid = false;
+			}
+			if (this.metaAttribute == null) {
+				this.addError("Metaattribute must be set, if sender is standalone");
+				valid = false;
+			}
+		}
+		
 
-		return super.isValid();
+		return valid;
 	}
 
 	@Override
 	public boolean isSourceOperator() {
 		return false;
 	}
-	
+
 	/**
 	 * There should be no restriction on order for senders
 	 */
 	@Override
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
 		return InputOrderRequirement.NONE;
+	}
+	
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
+	public void setAttributes(List<SDFAttribute> attributes) {
+		this.outputSchema.put(0, attributes);
+	}
+	
+	@Parameter(type = MetaAttributeParameter.class, name = "metaAttribute", isList = false, optional = true, possibleValues = "getMetadataTypes", doc = "If set, this value overwrites the meta data created from this source.")
+	public void setMetaAttribute(IMetaAttribute metaAttribute) {
+		this.metaAttribute = metaAttribute;
+	}
+
+	public List<String> getMetadataTypes() {
+		return new ArrayList<>(MetadataRegistry.getNames());
+	}
+
+	public IMetaAttribute getMetaAttribute() {
+		return metaAttribute;
+	}
+
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+
+		if (this.outputSchema.get(pos) == null) {
+			return super.getOutputSchemaIntern(pos);
+		}
+
+		SDFSchema schema = null;
+
+		@SuppressWarnings("rawtypes")
+		Class<? extends IStreamObject> type = RegistryBinder.getDataHandlerRegistry().getCreatedType(dataHandler);
+		if (type == null) {
+			type = Tuple.class;
+		}
+
+		schema = SDFSchemaFactory.createNewSchema(getName(), type, this.outputSchema.get(pos));
+		if (metaAttribute != null) {
+			List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
+			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+		}
+
+		return schema;
+
 	}
 }

@@ -29,10 +29,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.core.usermanagement.Tenant;
 
 public class UserManagementProvider {
-	/**
-	 * use OSGI injection instead
-	 */
-	@Deprecated
 	public static UserManagementProvider instance;
 
 	static Logger logger = LoggerFactory.getLogger(UserManagementProvider.class);

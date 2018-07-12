@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -31,11 +30,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
@@ -52,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -273,7 +271,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			OptionMap options) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
-			transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler,
+			transportHandler = TransformationExecutor.getTransportHandlerRegistry().getInstance(operator.getTransportHandler(), protocolHandler,
 					options);
 			if (transportHandler == null){
 				throw new TransformationException("Cannot create transport handler "+operator.getTransportHandler());
@@ -290,13 +288,13 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+				protocolHandler = getDataDictionary().getProtocolHandlerRegistry(getCaller()).getInstance(operator.getProtocolHandler(),
 						ITransportDirection.IN, IAccessPattern.PULL, options, dataHandler);
 			} else {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+				protocolHandler = getDataDictionary().getProtocolHandlerRegistry(getCaller()).getInstance(operator.getProtocolHandler(),
 						ITransportDirection.IN, IAccessPattern.PUSH, options, dataHandler);
 			}
-			if (protocolHandler.getSchema() != null){
+			if (protocolHandler != null && protocolHandler.getSchema() != null){
 				operator.setOverWrittenSchema(protocolHandler.getSchema());
 			}
 		}
@@ -311,11 +309,11 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				for (String dt : operator.getInputSchema()) {
 					dtList.add(getDataDictionary().getDatatype(dt));
 				}
-				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), dtList);
+				dataHandler = getDataDictionary().getDataHandlerRegistry(getCaller()).getDataHandler(operator.getDataHandler(), dtList);
 			} else if (operator.getOutputSchema() != null) {
-				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+				dataHandler = getDataDictionary().getDataHandlerRegistry(getCaller()).getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
 			} else {
-				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+				dataHandler = getDataDictionary().getDataHandlerRegistry(getCaller()).getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
 			}
 		}
 		if (dataHandler != null) {

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="cc.kuka.odysseus.image.ImageDatatypeProvider">
-   <implementation class="cc.kuka.odysseus.image.common.ImageDatatypeProvider"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider"/>
-   </service>
-</scr:component>

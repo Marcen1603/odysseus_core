@@ -87,11 +87,8 @@ public class PQLOperatorBuilderTest {
 		String expected = "RENAME({aliases=['alias1','var1','alias2','var2','alias3','var3'],pairs='true'},INPUT)";
 		String actual;
 		try {
-			// TODO remove this after debugging
-//			for (int i = 0; i < 100000; i ++) {
-				actual = builder.build(RenameAO.class, args);
-				Assert.assertEquals(expected, actual);
-//			}
+			actual = builder.build(RenameAO.class, args);
+			Assert.assertEquals(expected, actual);
 		} catch (PQLOperatorBuilderException e) {
 			e.printStackTrace();
 		}
@@ -113,6 +110,7 @@ public class PQLOperatorBuilderTest {
 		}
 	}
 
+	
 	@Test
 	public void test_build_WindowAO_successful() {
 		Map<String, String> args = new HashMap<>();
@@ -125,6 +123,7 @@ public class PQLOperatorBuilderTest {
 		String actual;
 		try {
 			actual = builder.build(TimeWindowAO.class, args);
+			Assert.assertEquals(expected, actual);
 		} catch (PQLOperatorBuilderException e) {
 			e.printStackTrace();
 		}

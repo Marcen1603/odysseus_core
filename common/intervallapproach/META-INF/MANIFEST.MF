@@ -13,3 +13,4 @@ Export-Package: de.uniol.inf.is.odysseus.intervalapproach.predicate,
  de.uniol.inf.is.odysseus.intervalapproach.sweeparea
 Service-Component: OSGI-INF/DefaultTISweepArea.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.intervalapproach
+Bundle-ActivationPolicy: lazy

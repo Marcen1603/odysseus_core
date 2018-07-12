@@ -23,6 +23,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -37,6 +38,8 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	private static final String CHARSET = "charset";
 	final AbstractTransportHandlerDelegate<IStreamObject<IMetaAttribute>> delegate;
 	IExecutor executor;
+	
+	AtomicBoolean isDone = new AtomicBoolean(false);
 
 	private Charset charset;
 	private CharsetEncoder encoder;
@@ -112,7 +115,11 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 
 	@Override
 	public boolean isDone() {
-		return false;
+		return isDone.get();
+	}
+	
+	protected void setDone(boolean state) {
+		this.isDone.set(state);
 	}
 
 	@Override
@@ -149,6 +156,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	@Override
 	final public void open() throws UnknownHostException, IOException {
 		delegate.open();
+		setDone(false);
 	}
 
 	@Override
@@ -196,6 +204,10 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 
 	final public void fireProcess(IStreamObject<IMetaAttribute> message) {
 		delegate.fireProcess(message);
+	}
+	
+	final public void fireDone() {
+		delegate.fireDone();
 	}
 
 	final public void fireOnConnect() {

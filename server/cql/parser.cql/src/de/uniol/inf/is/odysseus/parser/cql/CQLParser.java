@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -89,10 +88,8 @@ import de.uniol.inf.is.odysseus.core.server.sla.factories.ScopeFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.factories.UnitFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistException;
-import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
@@ -997,16 +994,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		List<String> rights = (List<String>) node.jjtGetChild(0).jjtAccept(
 				this, data);
-		// Validate if rights are User Actions
-		List<IPermission> operations = new ArrayList<IPermission>();
-		for (String r : rights) {
-			IPermission action = PermissionFactory.valueOf(r);
-			if (action != null) {
-				operations.add(action);
-			} else {
-				throw new QueryParseException("Right " + r + " not defined.");
-			}
-		}
 
 		List<String> objects = null;
 		String userName = null;
@@ -1017,7 +1004,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		}
 		GrantPermissionCommand cmd = new GrantPermissionCommand(userName,
-				operations, objects, caller);
+				rights, objects, caller);
 		commands.add(cmd);
 		return null;
 	}
@@ -1491,7 +1478,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				.getUnquotedName();
 		List<SDFAttribute> attributes = visit(defs, null);
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> type = DataHandlerRegistry
+		Class<? extends IStreamObject> type = getDataDictionary().getDataHandlerRegistry(getCaller())
 				.getCreatedType(datahandler);
 		if (type == null) {
 			type = Tuple.class;
@@ -1576,7 +1563,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				.getUnquotedName();
 
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> type = DataHandlerRegistry
+		Class<? extends IStreamObject> type = getDataDictionary().getDataHandlerRegistry(getCaller())
 				.getCreatedType(datahandler);
 		if (type == null) {
 			type = Tuple.class;

@@ -17,3 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/testcomponent.xml
 Eclipse-BundleShape: dir
 Automatic-Module-Name: de.uniol.inf.is.odysseus.test.component.nexmark
+Bundle-ActivationPolicy: lazy

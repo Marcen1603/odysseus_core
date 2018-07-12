@@ -16,10 +16,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider;
 
 public class DataDictionaryProvider {
-	/**
-	 * use OSGI injection instead
-	 */
-	@Deprecated
 	public static DataDictionaryProvider instance;
 
 	private List<IDatatypeProvider> datatypeProvider = new ArrayList<>();

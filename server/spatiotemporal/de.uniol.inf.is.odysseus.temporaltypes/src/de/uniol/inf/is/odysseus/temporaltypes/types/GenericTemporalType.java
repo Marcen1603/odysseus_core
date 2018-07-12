@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -26,21 +27,27 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	private static final long serialVersionUID = -903000410292576845L;
 	private SortedMap<PointInTime, T> values;
 
+	private TemporalType<Double> trustFunction;
+
 	public GenericTemporalType() {
 		this.values = new TreeMap<>();
 	}
 
+	public GenericTemporalType(TemporalType<Double> trustFunction) {
+		this.values = new TreeMap<>();
+		this.trustFunction = trustFunction;
+	}
+
 	public GenericTemporalType(GenericTemporalType<T> other) {
 		this.values = other.copyMap();
+		this.trustFunction = other.trustFunction;
 	}
 
 	/**
 	 * Set a value for a specific point in time.
 	 * 
-	 * @param time
-	 *            The time at which the value is valid
-	 * @param value
-	 *            The value
+	 * @param time  The time at which the value is valid
+	 * @param value The value
 	 */
 	public void setValue(PointInTime time, T value) {
 		this.values.put(time, value);
@@ -85,6 +92,24 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 		return (T[]) returnObject;
 	}
 
+	@Override
+	public double getTrust(PointInTime time) {
+		if (trustFunction == null) {
+			return 1;
+		}
+		return trustFunction.getTrust(time);
+	}
+
+	/**
+	 * Sets the trust function for this temporal attribute. For example, when the
+	 * trust changes.
+	 * 
+	 * @param trustFunction The new trust function
+	 */
+	public void setTrustFunction(TemporalType<Double> trustFunction) {
+		this.trustFunction = trustFunction;
+	}
+
 	/**
 	 * To get all values from this temporal type. This is not a copy, so don't
 	 * change the values if you don't want the original values to be changed.
@@ -102,16 +127,30 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	/**
 	 * Removes all elements from the map which are not within the valid times
 	 * 
-	 * @param validTimes
-	 *            The valid times which are needed. Others can be removed
+	 * @param validTimes     The valid times which are needed. Others can be removed
+	 * 
+	 * @param streamTimeUnit The base time unit of the stream, which can differ from
+	 *                       the base time unit of the prediction
 	 */
-	public void trim(IValidTimes validTimes) {
+	public void trim(IValidTimes validTimes, TimeUnit streamTimeUnit) {
 
 		List<PointInTime> toRemove = new ArrayList<>();
+		TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();
+		if (predictionTimeUnit == null) {
+			predictionTimeUnit = streamTimeUnit;
+		}
 
 		for (PointInTime point : this.values.keySet()) {
-			if (!validTimes.includes(point)) {
-				toRemove.add(point);
+
+			/*
+			 * The values in this object are stored as stream points in time, so we have to
+			 * convert from the potentially different prediction time base time first
+			 */
+			long inStreamTime = streamTimeUnit.convert(point.getMainPoint(), predictionTimeUnit);
+			PointInTime asStreamTime = new PointInTime(inStreamTime);
+
+			if (!validTimes.includes(asStreamTime)) {
+				toRemove.add(asStreamTime);
 			}
 		}
 		toRemove.stream().forEach(e -> this.values.remove(e));
@@ -150,5 +189,4 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 			return value.toString();
 		}
 	}
-
 }
