@@ -156,7 +156,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 
 	private double getTrust(Tuple<?> tuple, PointInTime validTime) {
 		// Use lowest trust of all temporal attributes
-		double minTrust = 1;
+		double minTrust = Double.MAX_VALUE;
 		Object[] attributes = tuple.getAttributes();
 		for (int i = 0; i < attributes.length; i++) {
 			if (attributes[i] instanceof TemporalType) {
