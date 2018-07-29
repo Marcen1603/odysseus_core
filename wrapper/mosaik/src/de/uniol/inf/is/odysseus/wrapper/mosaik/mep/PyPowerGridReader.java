@@ -124,21 +124,23 @@ public class PyPowerGridReader extends AbstractFunction<Graph> {
 			// the target bus, (3) the power rating [MVA], (4) the short-circuit
 			// voltage [%], (5) the short-circuit losses [MV], (6) max current
 			// on primary side [A], (7) max current on secondary side [A]
-			input.path("trafo").stream().forEach(trafoObj -> {
-				List<Object> trafo = ((KeyValueObject<?>) trafoObj).path("$");
-				Node fromBus = graph.getNode(getStringWithoutQuotes(trafo.get(1)));
-				Node toBus = graph.getNode(getStringWithoutQuotes(trafo.get(2)));
-				Edge edge = graph.addEdge(getStringWithoutQuotes(trafo.get(0)), fromBus, toBus);
-				edge.addAttribute("Sr", (Double) trafo.get(3) * Math.pow(10, 6)); // MVA
-																					// to
-																					// VA
-				edge.addAttribute("Uk", (Double) trafo.get(4));
-				edge.addAttribute("Pk", (Double) trafo.get(5) * Math.pow(10, 6)); // MV
-																					// to
-																					// V
-				edge.addAttribute("ImaxP", (Double) trafo.get(6));
-				edge.addAttribute("ImaxS", (Double) trafo.get(7));
-			});
+			if(input.containsKey("trafo")) {
+				input.path("trafo").stream().forEach(trafoObj -> {
+					List<Object> trafo = ((KeyValueObject<?>) trafoObj).path("$");
+					Node fromBus = graph.getNode(getStringWithoutQuotes(trafo.get(1)));
+					Node toBus = graph.getNode(getStringWithoutQuotes(trafo.get(2)));
+					Edge edge = graph.addEdge(getStringWithoutQuotes(trafo.get(0)), fromBus, toBus);
+					edge.addAttribute("Sr", (Double) trafo.get(3) * Math.pow(10, 6)); // MVA
+																						// to
+																						// VA
+					edge.addAttribute("Uk", (Double) trafo.get(4));
+					edge.addAttribute("Pk", (Double) trafo.get(5) * Math.pow(10, 6)); // MV
+																						// to
+																						// V
+					edge.addAttribute("ImaxP", (Double) trafo.get(6));
+					edge.addAttribute("ImaxS", (Double) trafo.get(7));
+				});
+			}
 
 			// attributes for branches are (0) the id, (1) the source bus, (2)
 			// the target bus, (3) the length [km], (4) the resistance per unit
