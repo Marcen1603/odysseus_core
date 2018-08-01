@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.temporaltypes.merge;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
@@ -15,21 +18,86 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
  */
 public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
+	/*
+	 * It is possible that we have to merge two prediction times that have different
+	 * base time units. In that case, typically the less granular unit is used,
+	 * because for the more granular times the values would be missing in the
+	 * temporal attribute with the less granular prediction time.
+	 * 
+	 * If, for whatever reason, the more granular unit should be used, is can be set
+	 * with this variable.
+	 * 
+	 * Example: Seconds are more granular (have a higher granularity) than minutes.
+	 */
+	private boolean useSmallerTimeUnit;
+
+	public ValidTimesIntersectionMetadataMergeFunction() {
+		this.useSmallerTimeUnit = false;
+	}
+
+	public ValidTimesIntersectionMetadataMergeFunction(boolean useSmallerTimeUnit) {
+		this.useSmallerTimeUnit = useSmallerTimeUnit;
+	}
+
 	@Override
 	public void mergeInto(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
+		/*
+		 * The previous prediction times need to be cleared, because its just a copy of
+		 * the left previous one. But if we would keep it, we would simply copy the left
+		 * one, because the left always already contains the intersection.
+		 */
+		result.clear();
 		result = intersectionMerge(result, inLeft, inRight);
 	}
 
 	private IValidTimes intersectionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
+
+		TimeUnit targetTimeUnit = getSmallerBiggerTimeUnit(inLeft.getPredictionTimeUnit(),
+				inRight.getPredictionTimeUnit(), useSmallerTimeUnit);
+		result.setTimeUnit(targetTimeUnit);
+
 		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
 			for (IValidTime rightValidTime : inRight.getValidTimes()) {
-				IValidTime mergedData = ValidTime.intersect(leftValidTime, rightValidTime);
+
+				IValidTime convertedLeftValidTime = convertToOtherTimeUnit(leftValidTime,
+						inLeft.getPredictionTimeUnit(), targetTimeUnit);
+				IValidTime convertedRightValidTime = convertToOtherTimeUnit(rightValidTime,
+						inRight.getPredictionTimeUnit(), targetTimeUnit);
+
+				IValidTime mergedData = ValidTime.intersect(convertedLeftValidTime, convertedRightValidTime);
 				if (mergedData != null && !includesInterval(result, mergedData)) {
 					result = addValidTimeToValidTimes(result, mergedData);
 				}
 			}
 		}
 		return result;
+	}
+
+	private IValidTime convertToOtherTimeUnit(IValidTime validTime, TimeUnit prevTimeUnit, TimeUnit targetTimeUnit) {
+		long leftTargetStartTime = targetTimeUnit.convert(validTime.getValidStart().getMainPoint(), prevTimeUnit);
+		PointInTime leftStart = new PointInTime(leftTargetStartTime);
+
+		long leftTargetEndTime = targetTimeUnit.convert(validTime.getValidEnd().getMainPoint(), prevTimeUnit);
+		PointInTime leftEnd = new PointInTime(leftTargetEndTime);
+
+		return new ValidTime(leftStart, leftEnd);
+	}
+
+	private TimeUnit getSmallerBiggerTimeUnit(TimeUnit left, TimeUnit right, boolean useSmallerTimeUnit) {
+		if (left == null) {
+			return right;
+		} else if (right == null) {
+			return left;
+		}
+
+		int timeUnitCompare = left.compareTo(right);
+		if (timeUnitCompare == 0) {
+			return left;
+		} else if (useSmallerTimeUnit ? timeUnitCompare < 0 : timeUnitCompare > 0) {
+			return left;
+		} else {
+			return right;
+		}
 	}
 
 	private boolean includesInterval(IValidTimes includes, IValidTime toInclude) {

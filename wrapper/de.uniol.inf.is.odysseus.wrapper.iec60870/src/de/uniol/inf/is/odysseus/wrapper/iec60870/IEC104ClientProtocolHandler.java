@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.iec60870;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,17 +76,19 @@ public class IEC104ClientProtocolHandler extends AbstractIEC104ProtocolHandler {
 	}
 
 	@Override
-	public void open() throws UnknownHostException, IOException {
+	public void open() throws UnknownHostException, IOException {	
 		super.open();
 
-		try {
-			// send start data transfer message
-			if (!getApduHandler().areHandshakesIgnored()) {
-				getApduHandler().startDataTransfer();
+		Executors.newSingleThreadExecutor().submit(() -> {
+			try {
+				// send start data transfer message
+				if (!getApduHandler().areHandshakesIgnored()) {
+					getApduHandler().startDataTransfer();
+				}
+			} catch (IEC608705104ProtocolException | IOException e) {
+				getLogger().error("Error while sending startDT command!", e);
 			}
-		} catch (IEC608705104ProtocolException e) {
-			getLogger().error("Error while sending startDT command!", e);
-		}
+		});
 	}
 
 	@Override

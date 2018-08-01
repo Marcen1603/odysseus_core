@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Odysseus Target Platform" sequenceNumber="1502128503">
+<?pde version="3.8"?><target name="Odysseus Target Platform" sequenceNumber="1502128505">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="com.google.guava" version="15.0.0.v201403281430"/>
@@ -65,12 +65,15 @@
 <unit id="org.eclipse.emf.ecore.feature.group" version="2.11.2.v20160208-0816"/>
 <unit id="org.eclipse.emf.feature.group" version="2.11.2.v20160208-0841"/>
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.2.v20160208-0841"/>
-<repository location="http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/modeling/emf/emf/updates/2.11.x/"/>
+<repository location="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/modeling/emf/emf/updates/2.11.x/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.9.0.v201605261103"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.13.0.v20171020-0920"/>
-<repository location="http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/modeling/tmf/xtext/updates/composite/releases/"/>
+<unit id="org.eclipse.xtend.sdk.feature.group" version="2.14.0.v20180523-0937"/>
+<unit id="org.eclipse.xtext.redist.feature.group" version="2.14.0.v20180523-0937"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.14.0.v20180523-0937"/>
+<repository location="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/modeling/tmf/xtext/updates/composite/releases/"/>
 </location>
 </locations>
 </target>
+

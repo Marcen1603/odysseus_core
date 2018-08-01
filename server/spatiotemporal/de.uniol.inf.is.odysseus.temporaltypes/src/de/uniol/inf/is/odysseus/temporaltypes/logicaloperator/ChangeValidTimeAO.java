@@ -66,14 +66,20 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	public void setAddEndValue(TimeValueItem valueToAddEnd) {
 		this.valueToAddEnd = valueToAddEnd;
 	}
-	
+
 	@Parameter(name = "predictionBaseTimeUnit", doc = "The basetime unit for the valid time.", type = StringParameter.class, optional = true)
 	public void setTimeUnit(String predictionBaseTimeUnitName) {
 		this.predictionBaseTimeUnit = TimeUnit.valueOf(predictionBaseTimeUnitName);
 	}
-		
+
 	public TimeUnit getPredictionBaseTimeUnit() {
-		return predictionBaseTimeUnit;
+		/*
+		 * In case that the prediction base time unit is not set, it's simply the stream
+		 * time unit. To avoid null-pointers, the stream time unit is used here instead
+		 * of null.
+		 */
+		this.determineBaseTimeUnit();
+		return predictionBaseTimeUnit != null ? predictionBaseTimeUnit : this.getBaseTimeUnit();
 	}
 
 	/**
@@ -102,10 +108,10 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	public void setAlignAtEnd(boolean alignAtEnd) {
 		this.alignAtEnd = alignAtEnd;
 	}
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new ChangeValidTimeAO(this);
 	}
-
 
 }

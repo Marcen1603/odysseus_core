@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CEP Transform
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.transform
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.cep.transform.Activator
 Import-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,

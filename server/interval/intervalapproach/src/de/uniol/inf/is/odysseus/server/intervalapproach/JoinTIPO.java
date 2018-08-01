@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 /**
- * Join operator to process elements with time interval semantivs
+ * Join operator to process elements with time interval semantics
  *
  * @author Jonas Jacobi, abolles, jan steinke
  * @author Marco Grawunder

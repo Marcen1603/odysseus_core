@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangeValidTimeAO;
-import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.ChangeValidTimePO;
+import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.ChangeValidTimePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

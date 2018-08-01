@@ -2,9 +2,7 @@ package de.uniol.inf.is.odysseus.product.studio.starter;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +16,6 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-
-	private static Logger logger = LoggerFactory.getLogger(Activator.class);
 
 	/**
 	 * The constructor
@@ -36,34 +32,34 @@ public class Activator extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (Bundle bundle : context.getBundles()) {
-					boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;				
-					
-					if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
-					 
-						// Just a test
-						if (bundle.getSymbolicName().equals("org.eclipse.core.resources")) {
-							continue;
-						}
-						
-						logger.trace("Try to start bundle " + bundle.getSymbolicName()+" in Version "+bundle.getVersion());
-						try {
-							bundle.start();
-						}catch (IllegalStateException e){
-							if (!e.getMessage().startsWith("Workbench has not been created")){
-								e.printStackTrace();
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		});
-		t.start();
+//		Thread t = new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				for (Bundle bundle : context.getBundles()) {
+//					boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;				
+//					
+//					if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
+//					 
+//						// Just a test
+//						if (bundle.getSymbolicName().equals("org.eclipse.core.resources")) {
+//							continue;
+//						}
+//						
+//						logger.trace("Try to start bundle " + bundle.getSymbolicName()+" in Version "+bundle.getVersion());
+//						try {
+//							bundle.start();
+//						}catch (IllegalStateException e){
+//							if (!e.getMessage().startsWith("Workbench has not been created")){
+//								e.printStackTrace();
+//							}
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		});
+//		t.start();
 	}
 
 	/*

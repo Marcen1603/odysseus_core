@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
+package de.uniol.inf.is.odysseus.temporaltypes.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +50,9 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		@SuppressWarnings("unchecked")
 		GenericTemporalType<Boolean> temporalType = (GenericTemporalType<Boolean>) expressionResult;
 		TimeUnit predictionTimeUnit = object.getMetadata().getPredictionTimeUnit();
+		if (predictionTimeUnit == null) {
+			predictionTimeUnit = this.streamBaseTimeUnit;
+		}
 		List<IValidTime> validTimeIntervals = constructValidTimeIntervals(temporalType, predictionTimeUnit);
 		T newObject = createOutputTuple(object, validTimeIntervals);
 		if (validTimeIntervals.size() > 0) {
