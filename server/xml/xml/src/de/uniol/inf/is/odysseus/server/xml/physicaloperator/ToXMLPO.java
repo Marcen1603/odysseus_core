@@ -45,6 +45,7 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 	private Transformer transformer;
 	private Properties properties;
 	private String rootElement;
+	private String rootElementNamespaceURI;
 	private String xsd;
 	private String rootAttribute;
 	private String xsdAttribute;
@@ -58,11 +59,12 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 	private int xsdSchemaHash;
 	private OptionMap options;
 	
-	public ToXMLPO(String rootElement, String rootAttribute, Path xsdFile, String xsdString, String xsdAttribute, Collection<String> xPathAttributes, OptionMap optionMap) throws IOException {
+	public ToXMLPO(String rootElement, String rootElementNamespaceURI, String rootAttribute,  Path xsdFile, String xsdString, String xsdAttribute, Collection<String> xPathAttributes, OptionMap optionMap) throws IOException {
 		
-		this.rootElement = rootElement; 
+		this.rootElement = rootElement;
+		this.rootElementNamespaceURI = rootElementNamespaceURI; 
 		this.options = optionMap;
-
+		
 		try {
 			this.transformer = TransformerFactory.newInstance().newTransformer();
 		} catch (TransformerConfigurationException | TransformerFactoryConfigurationError e) {
@@ -242,9 +244,10 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 			// Generate new xml document
 			DOMSource source = new DOMSource(
 					dynamicXMLBuilder.createXML(
-							rootElement, 
+							rootElement,
+							rootElementNamespaceURI,
 							object, 
-							xsd, 
+							xsd,
 							getInputSchema(port),
 							mapping, 
 							xPathMapping, 
