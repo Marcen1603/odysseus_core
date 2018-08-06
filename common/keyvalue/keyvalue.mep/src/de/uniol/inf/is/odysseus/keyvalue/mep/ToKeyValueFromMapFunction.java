@@ -57,7 +57,7 @@ public class ToKeyValueFromMapFunction extends AbstractFunction<KeyValueObject<?
 		try {
 			return KeyValueObject.createInstance((Map<String, Object>) getInputValue(0)); 
 		} catch(Exception e) {
-			log.error("Can not cast '{0}' to KeyValueObject! The parameter must be Map<String, Object>!", getInputValue(0), e);
+			log.error("Can not cast '{}' to KeyValueObject! The parameter must be Map<String, Object>!", getInputValue(0), e);
 			return null;
 		}
 	}
