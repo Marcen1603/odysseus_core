@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
  * <li>{@link GetAllEdges}</li>
  * <li>{@link GetAllNodes}</li>
  * <li>{@link GetGraphElementIdMEP}</li>
+ * <li> {@link GetGraphElementProperty}</li>
  * </ul>
  *
  * @author Michael Brand (michael.brand@uol.de)
@@ -34,7 +35,7 @@ public class GraphMEPFunctions implements IFunctionProvider {
 	 */
 	private static final IMepFunction<?>[] functions = new IMepFunction[] { new AddAttributeToEdge(),
 			new AddAttributeToGraph(), new AddAttributeToNode(), new AddEdgeToGraph(), new AddNodeToGraph(),
-			new FindNodesByPatternMEP(), new GetAllEdges(), new GetAllNodes(), new GetGraphElementIdMEP() };
+			new FindNodesByPatternMEP(), new GetAllEdges(), new GetAllNodes(), new GetGraphElementIdMEP(), new GetGraphElementProperty() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
