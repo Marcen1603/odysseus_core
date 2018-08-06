@@ -17,6 +17,7 @@ public class FunctionProvider implements IFunctionProvider {
 		funcs.add(new KVGetElementFunction());
 		funcs.add(new KVGetElementsFunction());
 		funcs.add(new AsKeyValueFunction());
+		funcs.add(new ToKeyValueFromMapFunction());
 		return funcs;
 	}
 
