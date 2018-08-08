@@ -145,5 +145,10 @@ public class TemporalTrust extends AbstractBaseMetaAttribute implements ITempora
 	public ITrust getTrustValue(PointInTime time) {
 		return this.trusts.getValue(time);
 	}
+	
+	@Override
+	public String toString() {
+		return "Temporal trust: " + this.trusts.toString();
+	}
 
 }
