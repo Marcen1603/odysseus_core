@@ -37,7 +37,7 @@ public class ToXMLAO extends UnaryLogicalOp {
 	private String xsdString;
 	private String xsdAttribute;
 	private String rootElement;
-	private String rootElementNamespaceURI;
+	private String rootElementNamespaceURI = "";
 	private String rootAttribute;
 	private Collection<String> xpathAttributes = new ArrayList<>(); 
 
@@ -110,7 +110,7 @@ public class ToXMLAO extends UnaryLogicalOp {
 		this.xsdAttribute = xsdAttribute;
 	}
 	
-	@Parameter(type = StringParameter.class, name = "rootElementNamespaceURI", optional = true)
+	@Parameter(type = StringParameter.class, name = "rootElementNamespaceURI", optional = true, doc = "Namespace of the rootelement")
 	public void setRootElementNamespaceURI(String rootElementNamespaceURI) {
 		this.rootElementNamespaceURI = rootElementNamespaceURI;
 	}
