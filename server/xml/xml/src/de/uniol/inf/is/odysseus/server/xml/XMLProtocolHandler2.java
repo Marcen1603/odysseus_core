@@ -60,6 +60,7 @@ import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribute>>
 		extends AbstractProtocolHandler<T> {
 	public static final String NAME = "XML2";
+    public static final String ROOTELEMENTNAME = "rootElementName";
 
 	private static final Logger LOG = LoggerFactory.getLogger(XMLProtocolHandler2.class);
 	private static TransformerFactory tf = TransformerFactory.newInstance();
@@ -68,6 +69,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 	private BufferedWriter output;
 	private Transformer transformer;
 	private List<T> result = new LinkedList<>();
+	private String rootElementName;
 
 	@Override
 	public String getName() {
@@ -89,6 +91,8 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 		}
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		
+		rootElementName = options.getString(ROOTELEMENTNAME, null);
 	}
 
 	@Override
@@ -239,6 +243,9 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 
 		try {
 			String xml = object.getAsXML();
+			if(rootElementName!=null) {
+				xml = xml.replaceAll("ObjectNode", rootElementName);
+			}
 			if (output != null) {
 				output.write(xml);
 			} else {
