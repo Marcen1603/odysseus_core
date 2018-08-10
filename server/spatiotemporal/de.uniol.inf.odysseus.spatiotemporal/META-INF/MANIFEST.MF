@@ -11,7 +11,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.temporaltypes,
  org.geotools,
  com.vividsolutions.jts,
  de.uniol.inf.is.odysseus.aggregation,
- org.apache.commons.math3;bundle-version="3.6.1"
-Service-Component: OSGI-INF/AggregationFunctionToLinearTemporalPoint.xml,OSGI-INF/AggregationFunctionToAcceleratingTemporalPoint.xml,OSGI-INF/AggregationFunctionToLinearMovingRegion.xml,
- OSGI-INF/AggregationFunctionToSplineTemporalPoint.xml
+ org.apache.commons.math3;bundle-version="3.6.1",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
+Service-Component: OSGI-INF/AggregationFunctionToLinearTemporalPoint.xml,OSGI-INF/AggregationFunctionToAcceleratingTemporalPoint.xml,OSGI-INF/AggregationFunctionToLinearMovingRegion.xml,OSGI-INF/AggregationFunctionToSplineTemporalPoint.xml,
+ OSGI-INF/SpatioTemporalFunctionProvider.xml
 Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.mep
