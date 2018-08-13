@@ -738,7 +738,11 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 			} else {
 				// Normal (not nested) attribute
 				try {
-					template = template.replaceAll("<" + a.getAttributeName() + ">", "" + tuple.getAttribute(position));
+					if(tuple.getAttribute(position) instanceof String) {
+						template = template.replaceAll("<" + a.getAttributeName() + ">", "\"" + tuple.getAttribute(position) + "\"");
+					}else {
+						template = template.replaceAll("<" + a.getAttributeName() + ">", "" + tuple.getAttribute(position));
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
