@@ -1,5 +1,9 @@
 package de.uniol.inf.odysseus.spatiotemporal.function;
 
+import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
@@ -13,12 +17,17 @@ public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 
 	// For OSGi
 	public ToGivenTemporalPoint() {
-		super("FromGeoJson", 1, accTypes, SDFSpatialDatatype.SPATIAL_POINT);
+		super("FromTemporalGeoJson", 1, accTypes, SDFSpatialDatatype.SPATIAL_POINT);
 	}
 
 	@Override
 	public TemporalGeometry getValue() {
 		// TODO Auto-generated method stub
+		
+		Gson gson = new GsonBuilder()
+				   .registerTypeAdapterFactory(new GeometryAdapterFactory())
+				   .create();
+		
 		return null;
 	}
 

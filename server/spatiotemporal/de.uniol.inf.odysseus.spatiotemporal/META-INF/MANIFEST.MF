@@ -16,4 +16,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.temporaltypes,
 Service-Component: OSGI-INF/AggregationFunctionToLinearTemporalPoint.xml,OSGI-INF/AggregationFunctionToAcceleratingTemporalPoint.xml,OSGI-INF/AggregationFunctionToLinearMovingRegion.xml,OSGI-INF/AggregationFunctionToSplineTemporalPoint.xml,
  OSGI-INF/SpatioTemporalFunctionProvider.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.mep
+Import-Package: com.google.gson,
+ de.uniol.inf.is.odysseus.mep
