@@ -37,6 +37,7 @@ public class ToXMLAO extends UnaryLogicalOp {
 	private String xsdString;
 	private String xsdAttribute;
 	private String rootElement;
+	private String rootElementNamespaceURI = "";
 	private String rootAttribute;
 	private Collection<String> xpathAttributes = new ArrayList<>(); 
 
@@ -53,6 +54,7 @@ public class ToXMLAO extends UnaryLogicalOp {
 		this.xsdFile = ao.getXsdFile();
 		this.xsdString = ao.getXsdString();
 		this.rootElement = ao.getRootElement();
+		this.rootElementNamespaceURI = ao.getRootElementNamespaceURI();
 		this.rootAttribute = ao.getRootAttribute();
 		this.xpathAttributes = ao.getXPathAttributes();
 		
@@ -108,6 +110,11 @@ public class ToXMLAO extends UnaryLogicalOp {
 		this.xsdAttribute = xsdAttribute;
 	}
 	
+	@Parameter(type = StringParameter.class, name = "rootElementNamespaceURI", optional = true, doc = "Namespace of the rootelement")
+	public void setRootElementNamespaceURI(String rootElementNamespaceURI) {
+		this.rootElementNamespaceURI = rootElementNamespaceURI;
+	}
+	
 	@Parameter(type = StringParameter.class, name = "rootElement", optional = true)
 	public void setRootElement(String root) {
 		this.rootElement = root;
@@ -152,6 +159,10 @@ public class ToXMLAO extends UnaryLogicalOp {
 	
 	public String getRootElement() {
 		return rootElement;
+	}
+	
+	public String getRootElementNamespaceURI() {
+		return rootElementNamespaceURI;
 	}
 	
 	public String getRootAttribute() {

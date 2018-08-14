@@ -23,7 +23,7 @@ public class TToXMLRule extends AbstractTransformationRule<ToXMLAO>{
 	public void execute(ToXMLAO operator, TransformationConfiguration config) throws RuleException {
 		ToXMLPO<?> toxmlPO;
 		try {
-			toxmlPO = new ToXMLPO<IMetaAttribute>(operator.getRootElement(), operator.getRootAttribute(),operator.getXsdFile(), operator.getXsdString(), operator.getXsdAttribute(), operator.getXPathAttributes(), operator.getOptionsMap());
+			toxmlPO = new ToXMLPO<IMetaAttribute>(operator.getRootElement(), operator.getRootElementNamespaceURI(), operator.getRootAttribute(),operator.getXsdFile(), operator.getXsdString(), operator.getXsdAttribute(), operator.getXPathAttributes(), operator.getOptionsMap());
 			defaultExecute(operator, toxmlPO, config, true, false);
 		} catch (IOException e) {
 			e.printStackTrace();

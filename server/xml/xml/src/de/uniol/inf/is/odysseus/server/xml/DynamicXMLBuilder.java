@@ -56,8 +56,14 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 	
 	public Document createXML(String rootElement, Tuple<T> object, String xsdSchema, SDFSchema sdfSchema,
 			Map<String, Integer> attributeMapping, Map<String, String> xPathMapping, Properties properties) throws XPathExpressionException {
+		return this.createXML(rootElement, "", object, xsdSchema, sdfSchema, attributeMapping, xPathMapping, properties);
+	}
 
-		Document xml = generateDocument(rootElement, xsdSchema, sdfSchema, properties);
+	
+	public Document createXML(String rootElement, String rootElementNamespaceURI, Tuple<T> object, String xsdSchema, SDFSchema sdfSchema,
+			Map<String, Integer> attributeMapping, Map<String, String> xPathMapping, Properties properties) throws XPathExpressionException {
+
+		Document xml = generateDocument(rootElement, rootElementNamespaceURI, xsdSchema, sdfSchema, properties);
 
 		// Set elements that are implied by their name. However, if the same attribute is associated
 		// with an x-path expression, it will be considered by the expression. Thus, this action
@@ -77,7 +83,7 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 		return setValuesWithXPath(xPathMapping, attributeMapping, object, xml);
 	}
 
-	private Document generateDocument(String rootElement, String xsdSchema, SDFSchema sdfSchema, Properties properties) {
+	private Document generateDocument(String rootElement, String rootElementNamespaceURI, String xsdSchema, SDFSchema sdfSchema, Properties properties) {
 
 		XSModel xsModel = new XSParser().parseString(xsdSchema, "");
 		XSInstance xsInstance = new XSInstance();
@@ -92,8 +98,7 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 					Integer.parseInt((String) properties.getProperty(PROP_INTENDAMOUNT)), 
 					properties.getProperty(PROP_ENCODING)
 			);
-			
-			xsInstance.generate(xsModel, new QName("", rootElement), sampleXml);
+			xsInstance.generate(xsModel, new QName(rootElementNamespaceURI, rootElement), sampleXml);
 
 			return DocumentBuilderFactory.newInstance().newDocumentBuilder()
 					.parse(new ByteArrayInputStream(out.toByteArray()));
