@@ -48,7 +48,7 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 		});
 
 		// Exact result?
-		if (timeList.get(resultIndex).equals(time.getMainPoint())) {
+		if (resultIndex > 0) {
 			Point point = points.get(resultIndex);
 			GeometryWrapper wrapper = new GeometryWrapper(point);
 			return wrapper;
@@ -66,13 +66,15 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 		}
 
 		// Between two points
-		Point previousLocation = points.get(resultIndex - 1);
-		Point nextLocation = points.get(resultIndex);
+		int insertIndex = (resultIndex * (-1)) - 1;
+		Point previousLocation = points.get(insertIndex - 1);
+		Point nextLocation = points.get(insertIndex);
 
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(previousLocation, nextLocation);
-		long timeInstancesTravelled = time.getMainPoint() - timeList.get(resultIndex - 1);
+		//long timeInstancesTravelled = time.getMainPoint() - timeList.get(insertIndex - 1);
+		long timeInstancesBetweenKnownPoints = timeList.get(insertIndex) - timeList.get(insertIndex - 1);
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
-		double speedMetersPerTimeInstance = metersTravelled / timeInstancesTravelled;
+		double speedMetersPerTimeInstance = metersTravelled / timeInstancesBetweenKnownPoints;
 		if (Double.isNaN(speedMetersPerTimeInstance) || Double.isInfinite(speedMetersPerTimeInstance)) {
 			speedMetersPerTimeInstance = 0;
 		}
@@ -81,7 +83,7 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 			azimuth = (azimuth + 180) % 360;
 		}
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(previousLocation,
-				new PointInTime(timeList.get(resultIndex - 1)), speedMetersPerTimeInstance, azimuth);
+				new PointInTime(timeList.get(insertIndex - 1)), speedMetersPerTimeInstance, azimuth);
 		return temporalPointFunction.getValue(time);
 	}
 
