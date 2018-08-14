@@ -17,4 +17,12 @@ Service-Component: OSGI-INF/AggregationFunctionToLinearTemporalPoint.xml,OSGI-IN
  OSGI-INF/SpatioTemporalFunctionProvider.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.gson,
+ com.google.gson.annotations,
+ com.google.gson.internal,
+ com.google.gson.internal.bind,
+ com.google.gson.reflect,
+ com.google.gson.stream,
  de.uniol.inf.is.odysseus.mep
+Bundle-ClassPath: geogson-core-1.4.2.jar,
+ geogson-jts-1.4.2.jar,
+ .
