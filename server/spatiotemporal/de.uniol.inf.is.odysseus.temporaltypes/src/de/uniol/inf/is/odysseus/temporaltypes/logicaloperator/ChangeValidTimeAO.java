@@ -3,11 +3,14 @@ package de.uniol.inf.is.odysseus.temporaltypes.logicaloperator;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -35,6 +38,9 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	private boolean copyTimeInterval;
 	private TimeUnit predictionBaseTimeUnit;
 
+	private SDFExpression startExpression;
+	private SDFExpression endExpression;
+
 	public ChangeValidTimeAO() {
 
 	}
@@ -46,6 +52,9 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.copyTimeInterval = other.isCopyTimeInterval();
 		this.alignAtEnd = other.isAlignAtEnd();
 		this.predictionBaseTimeUnit = other.getPredictionBaseTimeUnit();
+
+		this.startExpression = other.startExpression != null ? other.startExpression.clone() : null;
+		this.endExpression = other.endExpression != null ? other.endExpression.clone() : null;
 	}
 
 	@Parameter(name = "copyTimeInterval", doc = "Set to true if the ValidTimes shall equal the TimeInterval.", type = BooleanParameter.class, optional = true)
@@ -107,6 +116,24 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	@Parameter(name = "alignAtEnd", doc = "The values set as the ValidTime are aligned at the end timestamp of the streamtime. Default: false.", type = BooleanParameter.class, optional = true)
 	public void setAlignAtEnd(boolean alignAtEnd) {
 		this.alignAtEnd = alignAtEnd;
+	}
+
+	@Parameter(type = NamedExpressionParameter.class, name = "START", aliasname = "StartExpression", optional = true, doc = "Expression to calculate the start time. Could be an attribute, too.")
+	public void setStartExpression2(NamedExpression expression) {
+		this.startExpression = expression.expression;
+	}
+
+	public SDFExpression getStartExpression() {
+		return startExpression;
+	}
+
+	@Parameter(type = NamedExpressionParameter.class, name = "END", aliasname = "EndExpression", optional = true, doc = "Expression to calculate the start time. Could be an attribute, too.")
+	public void setEndExpression2(NamedExpression expression) {
+		this.endExpression = expression.expression;
+	}
+
+	public SDFExpression getEndExpression() {
+		return endExpression;
 	}
 
 	@Override
