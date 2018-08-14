@@ -54,6 +54,17 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 			return wrapper;
 		}
 
+		// First element?
+		boolean turnAzimuth = false;
+		if (resultIndex == 0) {
+			/*
+			 * Turn azimuth by 180 degree (we calculate the movement backwards, not
+			 * forwards)
+			 */
+			resultIndex = 1;
+			turnAzimuth = true;
+		}
+
 		// Between two points
 		Point previousLocation = points.get(resultIndex - 1);
 		Point nextLocation = points.get(resultIndex);
@@ -66,6 +77,9 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 			speedMetersPerTimeInstance = 0;
 		}
 		double azimuth = geodeticCalculator.getAzimuth();
+		if (turnAzimuth) {
+			azimuth = (azimuth + 180) % 360;
+		}
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(previousLocation,
 				new PointInTime(timeList.get(resultIndex - 1)), speedMetersPerTimeInstance, azimuth);
 		return temporalPointFunction.getValue(time);
@@ -87,7 +101,7 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 	protected GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
 		return getGeodeticCalculator(from.getCoordinate(), to.getCoordinate());
 	}
-	
+
 	@Override
 	public String toString() {
 		return "TrajectoryMovingObject: " + points.size() + " elements";
