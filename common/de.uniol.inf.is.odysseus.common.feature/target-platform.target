@@ -30,9 +30,6 @@
 <unit id="org.apache.derby" version="0.0.0"/>
 <unit id="org.apache.tika.core" version="0.0.0"/>
 <unit id="org.apache.tika.parsers" version="0.0.0"/>
-<unit id="org.restlet" version="0.0.0"/>
-
-
 <repository location="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/tools/orbit/downloads/drops/S20180730183850/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
