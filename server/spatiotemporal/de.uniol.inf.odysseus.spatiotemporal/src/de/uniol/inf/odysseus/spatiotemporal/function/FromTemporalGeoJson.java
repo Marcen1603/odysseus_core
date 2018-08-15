@@ -39,7 +39,7 @@ import de.uniol.inf.odysseus.spatiotemporal.types.point.TrajectoryMovingPointFun
  * @author Tobias Brandt
  *
  */
-public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
+public class FromTemporalGeoJson extends AbstractFunction<TemporalGeometry> {
 
 	private static final long serialVersionUID = 7234937168792519636L;
 
@@ -47,7 +47,7 @@ public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 
 	private Gson gson;
 
-	public ToGivenTemporalPoint() {
+	public FromTemporalGeoJson() {
 		super("FromTemporalGeoJson", 1, accTypes, SDFSpatialDatatype.SPATIAL_POINT);
 	}
 

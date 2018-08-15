@@ -11,7 +11,7 @@ public class SpatioTemporalFunctionProvider implements IFunctionProvider {
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
 		final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
-		functions.add(new ToGivenTemporalPoint());
+		functions.add(new FromTemporalGeoJson());
 		return functions;
 	}
 
