@@ -14,14 +14,23 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 
+/**
+ * 
+ * A temporal function for a moving point which knows the trajectory of a moving
+ * object beforehand, for example, from a navigation system.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryWrapper> {
 
-	private List<Long> timeList;
-	private List<Point> points;
+	// The times and locations of the trajectory, ordered from oldest to newest
+	private List<Long> times;
+	private List<Point> locations;
 
-	public TrajectoryMovingPointFunction(List<Long> timeList, List<Point> points) {
-		this.timeList = timeList;
-		this.points = points;
+	public TrajectoryMovingPointFunction(List<Long> times, List<Point> locations) {
+		this.times = times;
+		this.locations = locations;
 	}
 
 	@Override
@@ -34,12 +43,13 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 		 * is not possible.
 		 */
 		if (time.isInfinite()) {
-			Point point = points.get(points.size() - 1);
+			Point point = locations.get(locations.size() - 1);
 			GeometryWrapper wrapper = new GeometryWrapper(point);
 			return wrapper;
 		}
 
-		int resultIndex = Collections.binarySearch(timeList, time.getMainPoint(), new Comparator<Long>() {
+		// Search for the index at which this time would be inserted
+		int resultIndex = Collections.binarySearch(times, time.getMainPoint(), new Comparator<Long>() {
 
 			@Override
 			public int compare(Long arg0, Long arg1) {
@@ -47,14 +57,17 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 			}
 		});
 
-		// Exact result?
+		// Exact result? We know the location
 		if (resultIndex > 0) {
-			Point point = points.get(resultIndex);
+			Point point = locations.get(resultIndex);
 			GeometryWrapper wrapper = new GeometryWrapper(point);
 			return wrapper;
 		}
 
-		// First element?
+		/*
+		 * First element? We need to use the first and second location for calculate
+		 * backwards.
+		 */
 		boolean turnAzimuth = false;
 		if (resultIndex == 0) {
 			/*
@@ -65,14 +78,14 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 			turnAzimuth = true;
 		}
 
-		// Between two points
+		// Standard case: between two points
 		int insertIndex = (resultIndex * (-1)) - 1;
-		Point previousLocation = points.get(insertIndex - 1);
-		Point nextLocation = points.get(insertIndex);
+		Point previousLocation = locations.get(insertIndex - 1);
+		Point nextLocation = locations.get(insertIndex);
 
+		// Straight line between previous and next location
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(previousLocation, nextLocation);
-		//long timeInstancesTravelled = time.getMainPoint() - timeList.get(insertIndex - 1);
-		long timeInstancesBetweenKnownPoints = timeList.get(insertIndex) - timeList.get(insertIndex - 1);
+		long timeInstancesBetweenKnownPoints = times.get(insertIndex) - times.get(insertIndex - 1);
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
 		double speedMetersPerTimeInstance = metersTravelled / timeInstancesBetweenKnownPoints;
 		if (Double.isNaN(speedMetersPerTimeInstance) || Double.isInfinite(speedMetersPerTimeInstance)) {
@@ -80,10 +93,14 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 		}
 		double azimuth = geodeticCalculator.getAzimuth();
 		if (turnAzimuth) {
+			/*
+			 * Don't calculate from previous to next but from next to previous to calculate
+			 * a location before the first one
+			 */
 			azimuth = (azimuth + 180) % 360;
 		}
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(previousLocation,
-				new PointInTime(timeList.get(insertIndex - 1)), speedMetersPerTimeInstance, azimuth);
+				new PointInTime(times.get(insertIndex - 1)), speedMetersPerTimeInstance, azimuth);
 		return temporalPointFunction.getValue(time);
 	}
 
@@ -106,7 +123,7 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 
 	@Override
 	public String toString() {
-		return "TrajectoryMovingObject: " + points.size() + " elements";
+		return "TrajectoryMovingObject: " + locations.size() + " elements";
 	}
 
 }

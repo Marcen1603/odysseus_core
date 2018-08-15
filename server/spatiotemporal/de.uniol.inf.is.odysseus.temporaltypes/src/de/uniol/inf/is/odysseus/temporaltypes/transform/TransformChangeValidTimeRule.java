@@ -69,6 +69,10 @@ public class TransformChangeValidTimeRule extends AbstractTransformationRule<Cha
 		return startExpression;
 	}
 
+	/**
+	 * @return The index of the one attribute, iff only one attribute is in the
+	 *         expressions, and -1 otherwise
+	 */
 	private int onlyOneAttributeInExpression(SDFExpression expression, SDFSchema schema) {
 		List<SDFAttribute> attributes = expression.getAllAttributes();
 

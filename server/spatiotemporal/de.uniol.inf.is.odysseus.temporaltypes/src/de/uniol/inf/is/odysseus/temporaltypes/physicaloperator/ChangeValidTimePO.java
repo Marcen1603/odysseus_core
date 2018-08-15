@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.temporaltypes.physicaloperator;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -35,6 +38,8 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  */
 public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
+	protected static final Logger LOG = LoggerFactory.getLogger(ChangeValidTimePO.class);
+
 	private boolean copyTimeInterval;
 	private TimeValueItem valueToAddStart;
 	private TimeValueItem valueToAddEnd;
@@ -42,6 +47,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 	private TimeUnit streamBaseTimeUnit;
 	private TimeUnit predictionBaseTimeUnit;
 
+	// Expressions can be used to calculate the start and end timestamp
 	private RelationalExpression<IValidTimes> startExpression;
 	private RelationalExpression<IValidTimes> endExpression;
 
@@ -91,12 +97,22 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		transfer(object);
 	}
 
+	/**
+	 * Sets the start and end timestamp of the ValidTime using the given
+	 * expressions.
+	 * 
+	 * @param object The tuple where the ValidTimes have to be set with the
+	 *               expressions
+	 * @return The given tuple with edited metadata or null, if the expressions
+	 *         cannot be used.
+	 */
 	private Tuple<IValidTimes> setStartEndWithExpression(T object) {
 
 		if (!useExpressions(object)) {
 			return null;
 		}
 
+		@SuppressWarnings("unchecked")
 		Tuple<IValidTimes> tuple = (Tuple<IValidTimes>) object;
 
 		try {
@@ -108,7 +124,8 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 				tuple.getMetadata().addValidTime(new ValidTime(start, end));
 			}
 		} catch (Exception e) {
-			// Warn handling as in map
+			LOG.error("Could not evaluate expressions.");
+			e.printStackTrace();
 		}
 
 		return tuple;

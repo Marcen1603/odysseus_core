@@ -71,7 +71,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.valueToAddStart = valueToAddStart;
 	}
 
-	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create end end timestamp of the ValidTime.", type = TimeParameter.class, optional = true)
+	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create the end timestamp of the ValidTime.", type = TimeParameter.class, optional = true)
 	public void setAddEndValue(TimeValueItem valueToAddEnd) {
 		this.valueToAddEnd = valueToAddEnd;
 	}
@@ -127,7 +127,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		return startExpression;
 	}
 
-	@Parameter(type = NamedExpressionParameter.class, name = "END", aliasname = "EndExpression", optional = true, doc = "Expression to calculate the start time. Could be an attribute, too.")
+	@Parameter(type = NamedExpressionParameter.class, name = "END", aliasname = "EndExpression", optional = true, doc = "Expression to calculate the end time. Could be an attribute, too.")
 	public void setEndExpression2(NamedExpression expression) {
 		this.endExpression = expression.expression;
 	}

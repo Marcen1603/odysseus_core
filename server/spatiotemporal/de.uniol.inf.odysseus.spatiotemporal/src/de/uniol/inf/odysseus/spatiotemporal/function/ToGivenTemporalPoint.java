@@ -30,6 +30,15 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalGeometry;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.TrajectoryMovingPointFunction;
 
+/**
+ * Temporalization function for the scenario that the future trajectory of a
+ * moving object is already known, for example, if its using a navigation
+ * system. This is a prototype demo with a limited GeoJSON data model that can
+ * be used.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 
 	private static final long serialVersionUID = 7234937168792519636L;
@@ -38,7 +47,6 @@ public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 
 	private Gson gson;
 
-	// For OSGi
 	public ToGivenTemporalPoint() {
 		super("FromTemporalGeoJson", 1, accTypes, SDFSpatialDatatype.SPATIAL_POINT);
 	}
@@ -46,7 +54,7 @@ public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 	@Override
 	public TemporalGeometry getValue() {
 
-		// See https://github.com/filosganga/geogson
+		// Use a library to parse the GeoJSON. See https://github.com/filosganga/geogson
 		if (this.gson == null) {
 			this.gson = new GsonBuilder()
 					.registerTypeAdapterFactory(
@@ -66,6 +74,12 @@ public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 		return temporalPoint;
 	}
 
+	/**
+	 * Convert the list from the model of the library to JTS objects
+	 * 
+	 * @param feature The feature from GeoJSON
+	 * @return A list of points of the trajectory (LineString) in JTS objects
+	 */
 	private List<Point> getPoints(Feature feature) {
 		Geometry<?> trajectory = feature.geometry();
 		List<Point> points = new ArrayList<>();
@@ -82,12 +96,12 @@ public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 		return points;
 	}
 
+	/**
+	 * Use the time element similar to the TimeDimension of Leaflet, as it fits best
+	 * to trajectories (LineString):
+	 * https://github.com/socib/Leaflet.TimeDimension/issues/99
+	 */
 	private List<Long> getTimes(Feature feature) {
-		/*
-		 * Use the time element similar to the TimeDimension of Leaflet, as it fits best
-		 * to trajectories (LineString):
-		 * https://github.com/socib/Leaflet.TimeDimension/issues/99
-		 */
 		JsonElement jsonElement = feature.properties().get("times");
 		if (!jsonElement.isJsonArray()) {
 			return null;
@@ -109,3 +123,24 @@ public class ToGivenTemporalPoint extends AbstractFunction<TemporalGeometry> {
 	}
 
 }
+
+/*
+ * Example temporal GeoJSON:
+ * 
+ * 
+ * { "type": "FeatureCollection", "features": [ { "type": "Feature",
+ * "properties": { "times":[ "1534255083000", "1534255093000", "1534255003000",
+ * "1534255103000", "1534255113000", "1534255123000", "1534255133000",
+ * "1534255143000", "1534255153000", "1534255163000", "1534255173000",
+ * "1534255183000", "1534255193000" ] }, "geometry": { "type": "LineString",
+ * "coordinates": [ [ 8.188934326171875, 53.48722843308561 ], [ 8.206787109375,
+ * 53.55581022359457 ], [ 8.177947998046875, 53.63161060657857 ], [
+ * 8.136749267578125, 53.69345406966439 ], [ 8.24249267578125,
+ * 53.747898723904164 ], [ 8.378448486328125, 53.78523783809317 ], [
+ * 8.36334228515625, 53.820922446131306 ], [ 8.260345458984375,
+ * 53.82983885331911 ], [ 8.1573486328125, 53.82902834926158 ], [
+ * 8.029632568359375, 53.82983885331911 ], [ 7.901916503906249,
+ * 53.82335438174398 ], [ 7.794799804687499, 53.81038242731128 ], [
+ * 7.745361328125, 53.782803690625954 ] ] } } ] }
+ * 
+ */
