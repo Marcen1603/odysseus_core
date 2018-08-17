@@ -5,13 +5,13 @@
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-    The MEP functions on this page are to work with graph (creation, modification, graph algorithms, ...).
+      The MEP functions on this page are to work with graph (creation, modification, graph algorithms, ...).
    </description>
 
    <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
-      
+
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  you may not use this file except in compliance with the License.  You may obtain a copy of the License at
@@ -26,18 +26,6 @@ Unless required by applicable law or agreed to in writing, software
    </license>
 
    <plugin
-         id="gs-core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="gs-algo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.graph.common"
          download-size="0"
          install-size="0"
@@ -50,5 +38,17 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.graphstream.gs-algo"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.graphstream.gs-core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
