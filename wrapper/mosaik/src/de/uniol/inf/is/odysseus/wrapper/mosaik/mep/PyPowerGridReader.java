@@ -160,12 +160,16 @@ public class PyPowerGridReader extends AbstractFunction<Graph> {
 			// (10) output connectors for the state estimator (optional and not from mosaik)
 			input.path("branches").forEach(branchObj -> {
 				KeyValueObject<?> branch = (KeyValueObject<?>) branchObj;
-				Node fromBus = graph.getNode((String) branch.getAttribute("source"));
-				Node toBus = graph.getNode((String) branch.getAttribute("target"));
-				Edge edge = graph.addEdge((String) branch.getAttribute("name"), fromBus, toBus);
+				String fromName = (String) branch.getAttribute("source");
+				String toName = (String) branch.getAttribute("target");
+				Node fromBus = graph.getNode(fromName);
+				Node toBus = graph.getNode(toName);
+				Edge edge = graph.addEdge(fromName + "-" + toName, fromBus, toBus);
 				edge.addAttribute("length_km", (Double) branch.getAttribute("length"));
 				edge.addAttribute("RpL_Opkm", (Double) branch.getAttribute("RpL"));
 				edge.addAttribute("XpL_Opkm", (Double) branch.getAttribute("XpL"));
+				edge.addAttribute("R0pL_Opkm", (Double) branch.getAttribute("R0pL"));
+				edge.addAttribute("X0pL_Opkm", (Double) branch.getAttribute("X0pL"));
 				edge.addAttribute("CpL_nFpkm", (Double) branch.getAttribute("CpL"));
 				edge.addAttribute("Imax", (Double) branch.getAttribute("Imax"));
 				edge.addAttribute("type", (String) branch.getAttribute("type"));
@@ -182,6 +186,36 @@ public class PyPowerGridReader extends AbstractFunction<Graph> {
 					edge.addAttribute("outputConnectors", outputConnectors);
 				}
 			});
+			
+			if(!input.path2("/trafos").isEmpty()) {
+				input.path("trafos").forEach(trafoObj -> {
+					KeyValueObject<?> trafo = (KeyValueObject<?>) trafoObj;
+					String fromName = (String) trafo.getAttribute("source");
+					String toName = (String) trafo.getAttribute("target");
+					Node fromBus = graph.getNode(fromName);
+					Node toBus = graph.getNode(toName);
+					Edge edge = graph.addEdge(fromName + "-" + toName, fromBus, toBus);
+					edge.addAttribute("type", (String) trafo.getAttribute("type"));
+					edge.addAttribute("nominalNode", (String) trafo.getAttribute("nominalNode"));
+					edge.addAttribute("tapNode", (String) trafo.getAttribute("tapNode"));
+					edge.addAttribute("shortCircuitR", (Double) trafo.getAttribute("shortCircuitR"));
+					edge.addAttribute("shortCircuitL", (Double) trafo.getAttribute("shortCircuitL"));
+					edge.addAttribute("turnsRatio", (Double) trafo.getAttribute("turnsRatio"));
+					if (!trafo.path2("/inputConnectors").isEmpty()) {
+						List<Map<String, Object>> inputConnectors = new ArrayList<>();
+						trafo.path("inputConnectors").forEach(
+								connectorObj -> inputConnectors.add(((KeyValueObject<?>) connectorObj).getAsKeyValueMap()));
+						edge.addAttribute("inputConnectors", inputConnectors);
+					}
+					if (!trafo.path2("/outputConnectors").isEmpty()) {
+						List<Map<String, Object>> outputConnectors = new ArrayList<>();
+						trafo.path("outputConnectors").forEach(connectorObj -> outputConnectors
+								.add(((KeyValueObject<?>) connectorObj).getAsKeyValueMap()));
+						edge.addAttribute("outputConnectors", outputConnectors);
+					}
+				});
+			}
+			
 			return graph;
 		} catch (Throwable e) {
 			log.error("Could not create graph!", e);
