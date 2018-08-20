@@ -83,7 +83,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	private IAPDUHandler apduHandler = new OdysseusAPDUHandler();
 
-	private Optional<Long> timestampOfAPDU;
+	private Optional<Long> timestampOfAPDU = Optional.empty();
 
 	public IAPDUHandler getApduHandler() {
 		return apduHandler;
