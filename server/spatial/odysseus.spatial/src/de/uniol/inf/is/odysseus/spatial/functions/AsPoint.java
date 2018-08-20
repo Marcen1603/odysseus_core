@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
@@ -45,10 +46,10 @@ public class AsPoint extends AbstractFunction<Geometry> {
 	 */
 	@Override
 	public Point getValue() {
-		Geometry g = (Geometry) this.getInputValue(0);
-		if (g instanceof Point)
-			return (Point) g.clone();
-        return g.getFactory().createPoint(new Coordinate(null));
+		GeometryWrapper g = (GeometryWrapper) this.getInputValue(0);
+		if (g.getGeometry() instanceof Point)
+			return (Point) g.getGeometry().clone();
+        return g.getGeometry().getFactory().createPoint(new Coordinate(null));
 	}
 
 }
