@@ -43,7 +43,7 @@ public class IfController {
 			.getInfoService(IfController.class);
 	
 	
-	private static final String PARAMETER_KEY = "#";
+	public static final String PARAMETER_KEY = "#";
 
 	public static final String DEFINE_KEY = "DEFINE";
 	public static final String IFDEF_KEY = "IFDEF";

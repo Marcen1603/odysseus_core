@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import de.uniol.inf.ei.oj104.communication.IAPDUHandler;
 import de.uniol.inf.ei.oj104.communication.IASDUHandler;
 import de.uniol.inf.ei.oj104.communication.ICommunicationHandler;
-import de.uniol.inf.ei.oj104.communication.StandardAPDUHandler;
 import de.uniol.inf.ei.oj104.exception.IEC608705104ProtocolException;
 import de.uniol.inf.ei.oj104.model.APDU;
 import de.uniol.inf.ei.oj104.model.ASDU;
@@ -51,15 +50,23 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * <li>Together with a tcp client or server transport handler, acting as server
  * or client and connected to a RTU or master station. In this case, handshakes
  * and timeouts should not be ignored and responses should be sent.</li>
- * <li>Together with a pcap file transport handler, acting as server or client and reading
- * 104 messages from a pcap file. In this case, handshakes and timeouts should
- * be ignored and responses should not be send.
+ * <li>Together with a pcap file transport handler, acting as server or client
+ * and reading 104 messages from a pcap file. In this case, handshakes and
+ * timeouts should be ignored and responses should not be send.
  * </ol>
  * Data format:<br />
- * The protocol handler can only handle tuples with one of the following schemes:
+ * The protocol handler can only handle tuples with one of the following
+ * schemes:
  * <ol>
  * <li>One attribute, an {@link ASDU}.</li>
- * <li>Two attributes, a {@link DataUnitIdentifier} and a list of {@link IInformationObject}s</li>
+ * <li>Two attributes, a {@link DataUnitIdentifier} and a list of
+ * {@link IInformationObject}s</li>
+ * </ol>
+ * On the other site, when the protocol handler receives data from a transport
+ * handler, there are two possibilities:
+ * <ol>
+ * <li>The bytes contain only the APDU (first byte is 0x68)</li>
+ * <li>The bytes start with a timestamp before the APDU</li>
  * </ol>
  * 
  * @author Michael Brand (michael.brand@uol.de)
@@ -74,7 +81,9 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	private static final String sendResponsesKey = "104_sendResponses";
 
-	private IAPDUHandler apduHandler = new StandardAPDUHandler();
+	private IAPDUHandler apduHandler = new OdysseusAPDUHandler();
+
+	private Optional<Long> timestampOfAPDU;
 
 	public IAPDUHandler getApduHandler() {
 		return apduHandler;
@@ -117,14 +126,14 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
 		return false;
 	}
-	
+
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		return ITransportExchangePattern.InOut;
 	}
 
 	protected abstract Logger getLogger();
-	
+
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		super.open();
@@ -132,10 +141,21 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	private void process(byte[] message) {
 		try {
+			// check whether message starts with 104 start tag; otherwise, it starts with a
+			// timestamp
+			boolean startsWithTimestamp = message[0] != 0x68;
+
 			getLogger().trace("Received (bytes): {}", message);
-			
+			ByteBuffer buffer = ByteBuffer.wrap(message);
+
+			if (startsWithTimestamp) {
+				timestampOfAPDU = Optional.of(buffer.getLong());
+			}
+			byte[] bytes = new byte[buffer.remaining()];
+
 			APDU apdu = new APDU();
-			apdu.fromBytes(message);
+			buffer.get(bytes);
+			apdu.fromBytes(bytes);
 			getLogger().debug("Received (APDU): {}", message);
 
 			apduHandler.handleAPDU(apdu);
@@ -158,7 +178,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	@Override
 	public void process(long callerId, ByteBuffer message) {
-		if(message.hasArray()) {
+		if (message.hasArray()) {
 			process(message.array());
 		} else {
 			byte[] bytes = new byte[message.remaining()];
@@ -196,7 +216,8 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 					getLogger().error("Error while building and sending ASDU from " + firstAttribute, e);
 				}
 			} else {
-				getLogger().error("Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
+				getLogger().error(
+						"Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
 			}
 			break;
 		case 2:
@@ -204,27 +225,29 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 			firstAttribute = message.getAttribute(0);
 			secondAttribute = message.getAttribute(1);
 			if (!(firstAttribute instanceof DataUnitIdentifier) || !(secondAttribute instanceof List)) {
-				getLogger().error("Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
+				getLogger().error(
+						"Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
 				break;
 			}
-			
+
 			List<IInformationObject> ioList = ((List<?>) secondAttribute).stream().map(object -> {
 				if (object instanceof IInformationObject) {
 					return (IInformationObject) object;
 				} else {
-					getLogger()
-							.error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
+					getLogger().error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
 					return null;
 				}
 			}).collect(Collectors.toList());
 			try {
 				apduHandler.buildAndSendAPDU(new ASDU((DataUnitIdentifier) firstAttribute, ioList));
 			} catch (IEC608705104ProtocolException | IOException e) {
-				getLogger().error("Error while building and sending ASDU from " + firstAttribute + " and " + secondAttribute, e);
+				getLogger().error(
+						"Error while building and sending ASDU from " + firstAttribute + " and " + secondAttribute, e);
 			}
 			break;
 		default:
-			getLogger().error("Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
+			getLogger().error(
+					"Mal formatted tuple: only attribute must be an ASDU, or, with two attributes, first attribute a DataUnitIdentifier and second a list of information objects!");
 			break;
 		}
 	}
@@ -233,7 +256,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 	public void process(Tuple<IMetaAttribute> message, int port) {
 		process(message);
 	}
-	
+
 	@Override
 	public void write(Tuple<IMetaAttribute> object) throws IOException {
 		process(object);
@@ -241,13 +264,16 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	@Override
 	public Optional<ASDU> handleASDU(ASDU asdu) {
-		// Creates a tuple with DataUnitIdentifier and List of InformationObjects
+		// Creates a tuple with DataUnitIdentifier, List of InformationObjects and
+		// timestamp
 		ITransfer<Tuple<IMetaAttribute>> transfer = getTransfer();
 
-		Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
+		Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);
 		tuple.setAttribute(0, asdu.getDataUnitIdentifier());
 		tuple.setAttribute(1, asdu.getInformationObjects());
+		tuple.setAttribute(2, timestampOfAPDU.orElse(null));
 		transfer.transfer(tuple);
+		timestampOfAPDU = Optional.empty();
 
 		// No response ASDU to server
 		return Optional.empty();
@@ -255,7 +281,8 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 
 	@Override
 	public void closeConnection() {
-		//XXX not implemented. Calling close() here causes a shutdown of Odysseus (I don't know why).
+		// XXX not implemented. Calling close() here causes a shutdown of Odysseus (I
+		// don't know why).
 	}
 
 	@Override

@@ -14,11 +14,11 @@ Bundle-ClassPath: .,
  lib/httpcore-4.2.4.jar,
  lib/commons-logging-1.1.1.jar,
  lib/jetty-all-9.4.9.v20180320-uber.jar
-Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.2",
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  com.google.guava,
- org.apache.commons.collections15,
  org.apache.commons.io,
- de.uniol.inf.is.odysseus.keyvalue.datatype
+ de.uniol.inf.is.odysseus.keyvalue.datatype,
+ org.apache.commons.collections;bundle-version="3.2.2"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.web

@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalRelationalMapPO;
+import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.TemporalRelationalMapPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

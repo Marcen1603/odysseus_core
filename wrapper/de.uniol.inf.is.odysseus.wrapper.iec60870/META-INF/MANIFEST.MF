@@ -7,8 +7,10 @@ Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.ei.oj104;bundle-version="0.0.1",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ de.uniol.inf.is.odysseus.mep
 Import-Package: org.apache.commons.lang3.concurrent
-Service-Component: OSGI-INF/IEC104ClientProtocolHandler.xml,OSGI-INF/IEC104ServerProtocolHandler.xml
+Service-Component: OSGI-INF/IEC104ClientProtocolHandler.xml,OSGI-INF/IEC104ServerProtocolHandler.xml,
+ OSGI-INF/IEC60870MEPFunctions.xml
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.iec60870

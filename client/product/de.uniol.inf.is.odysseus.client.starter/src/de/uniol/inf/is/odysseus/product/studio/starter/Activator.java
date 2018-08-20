@@ -17,8 +17,6 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
-	private static Logger logger = LoggerFactory.getLogger(Activator.class);
-
 	/**
 	 * The constructor
 	 */

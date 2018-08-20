@@ -51,14 +51,14 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	private SDFSchema schema;
 
 	protected final OptionMap optionsMap;
-	
-    private boolean done = false;
+
+	private boolean done = false;
 
 	public AbstractProtocolHandler() {
 		direction = null;
 		access = null;
 		dataHandler = null;
-		optionsMap = null;	
+		optionsMap = null;
 	}
 
 	public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access,
@@ -74,13 +74,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		ConversionOptions convOpts = getDataHandler().getConversionOptions();
 		if (convOpts != null) {
 			getDataHandler().setConversionOptions(new ConversionOptions(convOpts, optionsMap));
-		}else {
+		} else {
 			getDataHandler().setConversionOptions(new ConversionOptions(optionsMap));
 		}
 	}
-	
-	
-	
+
 	@Override
 	public final void updateOption(String key, String value) {
 		optionsMap.setOption(key, value);
@@ -91,7 +89,7 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	void optionsMapChanged(String key, String value) {
 		throw new UnsupportedOperationException("Sorry. Update of options not supported by " + this.getName());
 	}
-	
+
 	protected Charset getCharset() {
 		return getDataHandler().getConversionOptions().getCharset();
 	}
@@ -99,7 +97,7 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	protected ConversionOptions getConversionOptions() {
 		return getDataHandler().getConversionOptions();
 	}
-	
+
 	@Override
 	public IExecutor getExecutor() {
 		return executor;
@@ -158,17 +156,23 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 
 	@Override
 	public void open() throws UnknownHostException, IOException {
-		getTransportHandler().open();
+		if (getTransportHandler() != null) {
+			getTransportHandler().open();
+		}
 	}
 
 	@Override
 	public void start() {
-		getTransportHandler().start();
+		if (getTransportHandler() != null) {
+			getTransportHandler().start();
+		}
 	}
 
 	@Override
 	public void close() throws IOException {
-		getTransportHandler().close();
+		if (getTransportHandler() != null) {
+			getTransportHandler().close();
+		}
 	}
 
 	@Override
@@ -218,7 +222,7 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void propagateDone() {
 		getTransfer().propagateDone();
@@ -254,7 +258,7 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	public boolean isDone() {
 		return done || transportHandler.isDone();
 	}
-	
+
 	public void setDone(boolean done) {
 		this.done = done;
 	}

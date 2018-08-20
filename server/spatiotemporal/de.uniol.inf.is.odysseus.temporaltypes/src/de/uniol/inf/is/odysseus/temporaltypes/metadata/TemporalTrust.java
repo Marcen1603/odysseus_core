@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 
 /**
- * An attribute that hold temporal trust values, which are noting else than
+ * An attribute that holds temporal trust values, which are noting else than
  * temporal double values. This meta attribute can be used in data streams which
  * use temporal types to represent how trustworthy the predictions are.
  * 
@@ -144,6 +144,11 @@ public class TemporalTrust extends AbstractBaseMetaAttribute implements ITempora
 	@Override
 	public ITrust getTrustValue(PointInTime time) {
 		return this.trusts.getValue(time);
+	}
+	
+	@Override
+	public String toString() {
+		return "Temporal trust: " + this.trusts.toString();
 	}
 
 }

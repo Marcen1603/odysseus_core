@@ -81,6 +81,14 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			areas[0] = null;
 			areas[1] = null;
 		}
+		
+		if(areaName.equalsIgnoreCase("UnaryOuterJoinSA")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, ownSchema, otherSchema, areas, false, joinPO.getCardinalities());
+		} else if (areaName.equalsIgnoreCase("UnaryOuterJoinSA2")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA2(predicate, ownSchema, otherSchema, areas);
+		} else if(areaName.equals("UnaryOuterJoinRndSA")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, ownSchema, otherSchema, areas, true, joinPO.getCardinalities());
+		}
 
 		if (areas[0] == null || areas[1] == null) {
 			if (areaName == null || areaName.isEmpty()) {

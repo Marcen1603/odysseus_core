@@ -60,7 +60,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 			setJoinPredicate(joinPO, joinAO);
 		}
 		joinPO.setCardinalities(joinAO.getCard());
-		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
+		setSweepArea(joinPO, joinAO);
 
 		if (joinAO.isAssureOrder() == null || joinAO.isAssureOrder()) {
 			joinPO.setTransferFunction(new TITransferArea());
@@ -99,6 +99,10 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		if (isCross && !joinAO.isNameSet()) {
 			joinPO.setName("Crossproduct");
 		}
+	}
+	
+	protected void setSweepArea(JoinTIPO joinPO, JoinAO joinAO) {
+		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
 	}
 
 	protected void setJoinPredicate(JoinTIPO joinPO, JoinAO joinAO) {
