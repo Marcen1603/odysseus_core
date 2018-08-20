@@ -1,0 +1,1 @@
+This should be a plugin. Removed source folder to avoid compile errors.

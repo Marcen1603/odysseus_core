@@ -2,7 +2,11 @@ package de.uniol.inf.is.odysseus.temporaltypes.physicaloperator;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -34,6 +38,8 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  */
 public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
+	protected static final Logger LOG = LoggerFactory.getLogger(ChangeValidTimePO.class);
+
 	private boolean copyTimeInterval;
 	private TimeValueItem valueToAddStart;
 	private TimeValueItem valueToAddEnd;
@@ -41,13 +47,21 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 	private TimeUnit streamBaseTimeUnit;
 	private TimeUnit predictionBaseTimeUnit;
 
-	public ChangeValidTimePO(ChangeValidTimeAO ao) {
+	// Expressions can be used to calculate the start and end timestamp
+	private RelationalExpression<IValidTimes> startExpression;
+	private RelationalExpression<IValidTimes> endExpression;
+
+	public ChangeValidTimePO(ChangeValidTimeAO ao, RelationalExpression<IValidTimes> startExpression,
+			RelationalExpression<IValidTimes> endExpression) {
 		this.valueToAddStart = ao.getValueToAddStart();
 		this.valueToAddEnd = ao.getValueToAddEnd();
 		this.alingAtStreamEnd = ao.isAlignAtEnd();
 		this.streamBaseTimeUnit = ao.getBaseTimeUnit();
 		this.copyTimeInterval = ao.isCopyTimeInterval();
 		this.predictionBaseTimeUnit = ao.getPredictionBaseTimeUnit();
+
+		this.startExpression = startExpression;
+		this.endExpression = endExpression;
 	}
 
 	@Override
@@ -83,6 +97,47 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		transfer(object);
 	}
 
+	/**
+	 * Sets the start and end timestamp of the ValidTime using the given
+	 * expressions.
+	 * 
+	 * @param object The tuple where the ValidTimes have to be set with the
+	 *               expressions
+	 * @return The given tuple with edited metadata or null, if the expressions
+	 *         cannot be used.
+	 */
+	private Tuple<IValidTimes> setStartEndWithExpression(T object) {
+
+		if (!useExpressions(object)) {
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		Tuple<IValidTimes> tuple = (Tuple<IValidTimes>) object;
+
+		try {
+			Object startResult = startExpression.evaluate(tuple, null, null);
+			Object endResult = endExpression.evaluate(tuple, null, null);
+			if (startResult != null && endResult != null) {
+				PointInTime start = new PointInTime(((Number) startResult).longValue());
+				PointInTime end = new PointInTime(((Number) endResult).longValue());
+				tuple.getMetadata().addValidTime(new ValidTime(start, end));
+			}
+		} catch (Exception e) {
+			LOG.error("Could not evaluate expressions.");
+			e.printStackTrace();
+		}
+
+		return tuple;
+	}
+
+	private boolean useExpressions(T object) {
+		if (!(object instanceof Tuple) || startExpression == null || endExpression == null) {
+			return false;
+		}
+		return true;
+	}
+
 	private T copyTimeInterval(T object) {
 		IMetaAttribute metadata = object.getMetadata();
 		if (metadata instanceof ITimeInterval) {
@@ -95,7 +150,10 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 
 	private T setTimeInterval(T object, TimeValueItem addToStart, TimeValueItem addToEnd, boolean alignAtStreamEnd) {
 		IMetaAttribute metadata = object.getMetadata();
-		if (metadata instanceof ITimeInterval) {
+		if (useExpressions(object)) {
+			// If we want to use an expression to set the start and end time
+			setStartEndWithExpression(object);
+		} else if (metadata instanceof ITimeInterval) {
 			// Use the stream time as the starting point for the calculations
 			ITimeInterval streamTime = (ITimeInterval) metadata;
 
@@ -177,10 +235,10 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			IValidTimes validTime = (IValidTimes) metadata;
 			validTime.clear();
 			IValidTime newTime = new ValidTime();
-			
+
 			PointInTime validStart = convertToPredictionTime(newValidStart);
 			PointInTime validEnd = convertToPredictionTime(newValidEnd);
-			
+
 			newTime.setValidStartAndEnd(validStart, validEnd);
 			validTime.addValidTime(newTime);
 		}
@@ -191,8 +249,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 	 * Converts the timestamp to be for a different time unit, e.g., from
 	 * milliseconds to seconds.
 	 * 
-	 * @param streamTime
-	 *            The timestamp in the steam time
+	 * @param streamTime The timestamp in the steam time
 	 * @return The timestamp in the prediction time
 	 */
 	private PointInTime convertToPredictionTime(PointInTime streamTime) {
