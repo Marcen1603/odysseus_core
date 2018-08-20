@@ -48,9 +48,10 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.codec_1_7"
+         id="org.apache.commons.codec"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

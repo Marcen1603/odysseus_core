@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.probabilistic.common,
- de.uniol.inf.is.odysseus.keyvalue.datatype
+ de.uniol.inf.is.odysseus.keyvalue.datatype,
+ org.apache.commons.lang3;bundle-version="3.1.0"
 Import-Package: com.google.common.base,
  com.google.common.primitives,
  de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
@@ -21,7 +22,6 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.sweeparea,
- org.apache.commons.lang3;version="3.1.0",
  org.apache.commons.math.linear,
  org.apache.commons.math3.complex;version="3.2.0",
  org.apache.commons.math3.distribution,
