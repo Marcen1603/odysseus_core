@@ -98,13 +98,17 @@ public class CQLParser implements IQueryParser {
 	private Resource resource;
 	private String[] tokens;
 	private Model model;
+	private String path;
+	private boolean init = false;
 
 	public CQLParser(String path) {
-		setup(path);
+//		setup(path);
+		this.path = path;
 	}
 
 	public CQLParser() {
-		setup("../");
+//		setup("../");
+		this.path = "../";
 	}
 
 	private void setup(String path) {
@@ -179,6 +183,11 @@ public class CQLParser implements IQueryParser {
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException {
+		
+		if (!init) {
+			setup(this.path);
+		}
+		
 		List<EObject> components;
 		// Create model from query string
 		try (InputStream in = new ByteArrayInputStream(query.getBytes())) {
