@@ -8,13 +8,13 @@ Bundle-Vendor: Christian Kuka
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.rits.cloning;bundle-version="1.8.5",
- de.uniol.inf.is.odysseus.slf4j
+ de.uniol.inf.is.odysseus.slf4j,
+ org.apache.commons.lang3;bundle-version="3.1.0"
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.probabilistic.math.genz,
- org.apache.commons.lang3;version="3.1.0",
  org.apache.commons.math3.distribution;version="3.2.0",
  org.apache.commons.math3.exception;version="3.2.0",
  org.apache.commons.math3.exception.util;version="3.2.0",

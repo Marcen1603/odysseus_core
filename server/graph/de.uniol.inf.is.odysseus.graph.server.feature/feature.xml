@@ -25,6 +25,14 @@ Unless required by applicable law or agreed to in writing, software
  limitations under the License.
    </license>
 
+   <includes
+         id="org.graphstream.gs-algo.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.graphstream.gs-core.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.graph.common"
          download-size="0"
@@ -38,17 +46,5 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.graphstream.gs-algo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.graphstream.gs-core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
 </feature>

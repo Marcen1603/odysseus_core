@@ -31,7 +31,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j,
  org.hamcrest.core;resolution:=optional,
- org.apache.commons.codec_1_7;bundle-version="1.7.0"
+ org.apache.commons.codec;bundle-version="1.10.0"
 Bundle-Vendor: Marcus Behrendt
 Bundle-ClassPath: .,
  lib/collections-generic-4.01.jar,

@@ -10,7 +10,7 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- org.apache.commons.math3;bundle-version="3.6.1"
+ org.apache.commons.math3
 Service-Component: OSGI-INF/*
 Automatic-Module-Name: de.uniol.inf.is.odysseus.mep.commons.math
 Bundle-ActivationPolicy: lazy

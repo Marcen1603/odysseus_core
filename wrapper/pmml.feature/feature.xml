@@ -5,13 +5,13 @@
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-    This feature adds functionality to use JPMML in an PQL querie which allows the use of PMML models.
+      This feature adds functionality to use JPMML in an PQL querie which allows the use of PMML models.
    </description>
 
    <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
-   
+
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ limitations under the License.
    </license>
 
    <includes
-         id="de.uniol.inf.is.odysseus.common.resources.jpmml.feature"
+         id="org.jpmml.feature"
          version="0.0.0"/>
 
    <plugin
@@ -45,7 +45,7 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.collections15"
+         id="org.apache.commons.collections"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
