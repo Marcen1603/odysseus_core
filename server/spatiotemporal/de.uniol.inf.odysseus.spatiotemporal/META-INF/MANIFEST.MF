@@ -11,7 +11,18 @@ Require-Bundle: de.uniol.inf.is.odysseus.temporaltypes,
  org.geotools,
  com.vividsolutions.jts,
  de.uniol.inf.is.odysseus.aggregation,
- org.apache.commons.math3;bundle-version="3.6.1"
-Service-Component: OSGI-INF/AggregationFunctionToLinearTemporalPoint.xml,OSGI-INF/AggregationFunctionToAcceleratingTemporalPoint.xml,OSGI-INF/AggregationFunctionToLinearMovingRegion.xml,
- OSGI-INF/AggregationFunctionToSplineTemporalPoint.xml
+ org.apache.commons.math3;bundle-version="3.6.1",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
+Service-Component: OSGI-INF/AggregationFunctionToLinearTemporalPoint.xml,OSGI-INF/AggregationFunctionToAcceleratingTemporalPoint.xml,OSGI-INF/AggregationFunctionToLinearMovingRegion.xml,OSGI-INF/AggregationFunctionToSplineTemporalPoint.xml,
+ OSGI-INF/SpatioTemporalFunctionProvider.xml
 Bundle-ActivationPolicy: lazy
+Import-Package: com.google.gson,
+ com.google.gson.annotations,
+ com.google.gson.internal,
+ com.google.gson.internal.bind,
+ com.google.gson.reflect,
+ com.google.gson.stream,
+ de.uniol.inf.is.odysseus.mep
+Bundle-ClassPath: geogson-core-1.4.2.jar,
+ geogson-jts-1.4.2.jar,
+ .
