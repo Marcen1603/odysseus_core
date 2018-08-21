@@ -19,7 +19,7 @@
 //import java.util.ArrayList;
 //import java.util.List;
 //
-//import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+//
 //
 //import com.hp.hpl.jena.graph.Node;
 //import com.hp.hpl.jena.graph.Node_Variable;
@@ -104,7 +104,7 @@
 //	@Override
 //	public List<AbstractLogicalOperator> parse(Reader reader)
 //			throws ParseException {
-//		throw new NotImplementedException();
+//		throw new UnsupportedOperationException();
 //	}
 //	
 //	public List<AbstractLogicalOperator> parse(String queryString){

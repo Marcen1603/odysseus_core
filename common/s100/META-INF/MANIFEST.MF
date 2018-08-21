@@ -5,7 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.s100.common
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ com.jaxb;bundle-version="2.3.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.s100.common.Activator
 Service-Component: OSGI-INF/*
 Import-Package: org.osgi.framework;version="1.6.0",

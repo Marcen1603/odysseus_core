@@ -43,25 +43,25 @@ public class SensorServiceService
         super(__getWsdlLocation(), SENSORSERVICESERVICE_QNAME);
     }
 
-    public SensorServiceService(WebServiceFeature... features) {
-        super(__getWsdlLocation(), SENSORSERVICESERVICE_QNAME, features);
-    }
+//    public SensorServiceService(WebServiceFeature... features) {
+//        super(__getWsdlLocation(), SENSORSERVICESERVICE_QNAME, features);
+//    }
 
     public SensorServiceService(URL wsdlLocation) {
         super(wsdlLocation, SENSORSERVICESERVICE_QNAME);
     }
 
-    public SensorServiceService(URL wsdlLocation, WebServiceFeature... features) {
-        super(wsdlLocation, SENSORSERVICESERVICE_QNAME, features);
-    }
+//    public SensorServiceService(URL wsdlLocation, WebServiceFeature... features) {
+//        super(wsdlLocation, SENSORSERVICESERVICE_QNAME, features);
+//    }
 
     public SensorServiceService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public SensorServiceService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
-        super(wsdlLocation, serviceName, features);
-    }
+//    public SensorServiceService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
+//        super(wsdlLocation, serviceName, features);
+//    }
 
     /**
      * 
