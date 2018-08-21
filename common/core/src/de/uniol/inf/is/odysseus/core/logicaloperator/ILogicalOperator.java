@@ -21,7 +21,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.sun.xml.internal.bind.AnyTypeAdapter;
+import com.sun.xml.bind.AnyTypeAdapter;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.ISubscribable;

@@ -36,7 +36,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine,
  de.uniol.inf.is.odysseus.mep,
- de.uniol.inf.is.odysseus.script.parser
+ de.uniol.inf.is.odysseus.script.parser,
+ javax.jws;bundle-version="2.0.0"
 Export-Package: de.uniol.inf.is.odysseus.sensormanagement.server.logging
 Automatic-Module-Name: de.uniol.inf.is.odysseus.sensormanagement.server
 Bundle-ActivationPolicy: lazy

@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.collection.ObjectMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * This class is a dummy implementation which allows tuples to contain object
@@ -28,22 +28,22 @@ public class ObjectMapDataHandler extends AbstractDataHandler<ObjectMap<IMetaAtt
 
 	@Override
 	public ObjectMap<IMetaAttribute> readData(ByteBuffer buffer) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ObjectMap<IMetaAttribute> readData(String string) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public int memSize(Object attribute) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

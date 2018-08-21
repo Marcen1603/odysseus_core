@@ -13,3 +13,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
  de.uniol.inf.is.odysseus.core.planmanagement.executor.exception
 Automatic-Module-Name: de.uniol.inf.is.odysseus.sensormanagement.common
+Require-Bundle: com.jaxb;bundle-version="2.3.0"

@@ -50,25 +50,25 @@ public class WebserviceServerService
         super(__getWsdlLocation(), WEBSERVICESERVERSERVICE_QNAME);
     }
 
-    public WebserviceServerService(WebServiceFeature... features) {
-        super(__getWsdlLocation(), WEBSERVICESERVERSERVICE_QNAME, features);
-    }
+//    public WebserviceServerService(WebServiceFeature... features) {
+//        super(__getWsdlLocation(), WEBSERVICESERVERSERVICE_QNAME, features);
+//    }
 
     public WebserviceServerService(URL wsdlLocation) {
         super(wsdlLocation, WEBSERVICESERVERSERVICE_QNAME);
     }
 
-    public WebserviceServerService(URL wsdlLocation, WebServiceFeature... features) {
-        super(wsdlLocation, WEBSERVICESERVERSERVICE_QNAME, features);
-    }
+//    public WebserviceServerService(URL wsdlLocation, WebServiceFeature... features) {
+//        super(wsdlLocation, WEBSERVICESERVERSERVICE_QNAME, features);
+//    }
 
     public WebserviceServerService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public WebserviceServerService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
-        super(wsdlLocation, serviceName, features);
-    }
+//    public WebserviceServerService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
+//        super(wsdlLocation, serviceName, features);
+//    }
 
     /**
      * 

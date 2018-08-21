@@ -16,7 +16,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.sensormanagement.common;resolution:=optional,
  de.uniol.inf.is.odysseus.sensormanagement.server;resolution:=optional,
  de.uniol.inf.is.odysseus.imagejcv,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ com.jaxb;bundle-version="2.3.0"
 Export-Package: de.uniol.inf.is.odysseus.video.physicaloperator
 Automatic-Module-Name: de.uniol.inf.is.odysseus.video
 Bundle-ActivationPolicy: lazy

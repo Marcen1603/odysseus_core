@@ -21,7 +21,7 @@ public class IEC62056TransportHandler extends AbstractPushTransportHandler {
 
 	public IEC62056TransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options)
 			throws UnknownHostException {
-		throw new NotImplementedException("this transport handler has no implementation!");
+		throw new UnsupportedOperationException("this transport handler has no implementation!");
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class IEC62056TransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		throw new NotImplementedException(
+		throw new UnsupportedOperationException(
 				"The method send(byte[]) of the IEC62056 transport handler is not implemented! "
 						+ "Use the IEC62056 transport handler only with the None protocol handler so "
 						+ "that the method send(Object) is called.");

@@ -7,8 +7,6 @@ import java.util.Set;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 
-import com.sun.xml.internal.txw2.IllegalAnnotationException;
-
 public abstract class MimeTypeHandlerRegistry<T> implements IMimeTypeHandlerRegistry<T> {
 
 	private HashMap<String, IMimeTypeHandler<T>> handlers;
@@ -28,7 +26,7 @@ public abstract class MimeTypeHandlerRegistry<T> implements IMimeTypeHandlerRegi
 			throw new IllegalArgumentException("mime type handler is null");
 		}
 		if (handlers.containsKey(handler.getMimeType())) {
-			throw new IllegalAnnotationException(
+			throw new IllegalArgumentException(
 					"handler for mime type '" + handler.getMimeType() + "' already registered");
 		}
 		handlers.put(handler.getMimeType(), handler);
