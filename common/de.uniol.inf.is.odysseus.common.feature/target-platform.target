@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Odysseus Target Platform" sequenceNumber="1502128606">
+<?pde version="3.8"?><target name="Odysseus Target Platform" sequenceNumber="1502128608">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.core.runtime.feature.feature.group" version="1.1.102.v20160128-1558"/>
@@ -109,8 +109,6 @@
 <unit id="de.uniol.inf.is.odysseus.common.resources.jdlms.source.feature.feature.group" version="0.0.0"/>
 <unit id="de.uniol.inf.is.odysseus.sigar.feature.feature.group" version="0.0.0"/>
 <unit id="de.uniol.inf.is.odysseus.sigar.source.feature.feature.group" version="0.0.0"/>
-<unit id="de.uniol.inf.is.odysseus.slf4j.feature.feature.group" version="0.0.0"/>
-<unit id="de.uniol.inf.is.odysseus.slf4j.source.feature.feature.group" version="0.0.0"/>
 <unit id="fastutil.feature.feature.group" version="0.0.0"/>
 <unit id="fastutil.source.feature.feature.group" version="0.0.0"/>
 <unit id="hk2.feature.feature.group" version="0.0.0"/>
@@ -215,6 +213,8 @@
 <unit id="org.sesame.source.feature.feature.group" version="0.0.0"/>
 <unit id="org.simpleframework.xml.feature.feature.group" version="0.0.0"/>
 <unit id="org.simpleframework.xml.source.feature.feature.group" version="0.0.0"/>
+<unit id="org.slf4j.api.feature.feature.group" version="0.0.0"/>
+<unit id="org.slf4j.log4j.feature.feature.group" version="0.0.0"/>
 <unit id="org.xerial.snappy.java.feature.feature.group" version="0.0.0"/>
 <unit id="org.xerial.snappy.java.source.feature.feature.group" version="0.0.0"/>
 <unit id="qdox.feature.feature.group" version="0.0.0"/>
@@ -223,7 +223,7 @@
 <unit id="restlet.osgi.2.3.1.source.feature.feature.group" version="0.0.0"/>
 <unit id="rxtx.feature.feature.group" version="0.0.0"/>
 <unit id="rxtx.source.feature.feature.group" version="0.0.0"/>
-<repository location="https://odysseus.informatik.uni-oldenburg.de/updatesite/resources/latest/"/>
+<repository location="http://odysseus.informatik.uni-oldenburg.de/updatesite/resources/latest/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="com.google.guava" version="15.0.0.v201403281430"/>
