@@ -114,10 +114,11 @@ public class AbstractRelationalNumericWindowChangeDetectPO extends AbstractRelat
 			// Tuples are different or it's the first tuple of the group and the
 			// user wants
 			// to get it
-			transferInternal(tuple);
+			transferInternal(tuple, 0);
 		} else {
 			heartbeatGenerationStrategy.generateHeartbeat(tuple, this);
 			suppressedElements++;
+			transferInternal(tuple, 1);
 		}
 	}
 

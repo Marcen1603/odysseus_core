@@ -102,6 +102,10 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		if (distance <= 0) {
 			wasNormalTuple = true;
 		}
+		
+		// Send all the other things on port 1
+		Tuple newTuple = object.append(anomalyScore);
+		transfer(newTuple, 1);
 	}
 
 	/**
