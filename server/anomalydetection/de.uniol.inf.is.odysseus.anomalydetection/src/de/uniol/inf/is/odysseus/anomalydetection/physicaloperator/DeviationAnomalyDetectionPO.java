@@ -148,7 +148,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		} else if (port == DATA_PORT && deliverUnlearnedTuples) {
 			// We don't have an anomaly as we don't know the deviation. But the
 			// user wants to get such tuples, so there it is.
-			transferTuple(tuple, 0.0, 0.0, getValue(tuple), 0.0);
+			transferTuple(tuple, 0.0, 0.0, getValue(tuple), 0.0, 0);
+		} else if (port == DATA_PORT) {
+			// To not loose the non-anomalies, put them out on port 1 instead of 0
+			transferTuple(tuple, 0.0, 0.0, getValue(tuple), 0.0, 1);
 		} else if (port == LEARN_PORT) {
 			DeviationInformation oldInfo = getNewestInfoForTuple(tuple);
 			// We always need a new object as the metadata (starttimestamp)
@@ -198,14 +201,13 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	}
 
 	/**
-	 * Searches for the correct information for this tuple. The correct
-	 * information is the one with the newest timestamp that is older than the
-	 * one of the tuple.
+	 * Searches for the correct information for this tuple. The correct information
+	 * is the one with the newest timestamp that is older than the one of the tuple.
 	 *
-	 * The new info and the next tuple normally have the same timestamp. We
-	 * don't use the info which is made with the current tuple cause we want an
-	 * info which is uninfluenced by a potential anomaly. Therefore, is searches
-	 * for "startTime.before(tupleStartTime)" and not
+	 * The new info and the next tuple normally have the same timestamp. We don't
+	 * use the info which is made with the current tuple cause we want an info which
+	 * is uninfluenced by a potential anomaly. Therefore, is searches for
+	 * "startTime.before(tupleStartTime)" and not
 	 * "startTime.beforeOrEquals(tupleStartTime)"
 	 *
 	 * Also purges old tuples in the infoMap
@@ -285,10 +287,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * Removes the old values from the operator internal storage due to the
 	 * timestamps set by the window
 	 *
-	 * @param tuples
-	 *            The list of tuples from which the old ones have to be removed
-	 * @param start
-	 *            Start timestamp from the newest tuple
+	 * @param tuples The list of tuples from which the old ones have to be removed
+	 * @param start  Start timestamp from the newest tuple
 	 */
 	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info, boolean exactCalculation,
 			Object gId) {
@@ -326,7 +326,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 						needToSendEndOfAnomalies = false;
 						this.sendEnd.put(gId, true);
 						if (this.reportEndOfAnomalyWindows) {
-							transferTuple(next, 0.0, 0.0, info.mean, info.standardDeviation);
+							transferTuple(next, 0.0, 0.0, info.mean, info.standardDeviation, 0);
 						}
 					}
 					// If we will remove the tuple from the window, we can send
@@ -340,21 +340,16 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	}
 
 	/**
-	 * Processes a tuple with the given values. This includes the calculation of
-	 * the anomaly score. Transfers the tuple if it is an anomaly
+	 * Processes a tuple with the given values. This includes the calculation of the
+	 * anomaly score. Transfers the tuple if it is an anomaly
 	 *
-	 * @param gId
-	 *            The id if the group for this tuple
-	 * @param sensorValue
-	 *            The value of the sensor
-	 * @param mean
-	 *            The mean for that group
-	 * @param standardDeviation
-	 *            The standard deviation for that group
-	 * @param tuple
-	 *            The tuple which has to be transfered if it is an anomaly
-	 * @param info
-	 *            The deviationInformation for the group
+	 * @param gId               The id if the group for this tuple
+	 * @param sensorValue       The value of the sensor
+	 * @param mean              The mean for that group
+	 * @param standardDeviation The standard deviation for that group
+	 * @param tuple             The tuple which has to be transfered if it is an
+	 *                          anomaly
+	 * @param info              The deviationInformation for the group
 	 *
 	 */
 	private void processTuple(Object gId, double sensorValue, T tuple, DeviationInformation info) {
@@ -405,14 +400,14 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		Object gId = this.groupProcessor.getGroupID(tuple);
 		if (!this.onlyOnStart || (this.onlyOnStart && this.sendEnd.get(gId))) {
 			this.sendEnd.put(gId, false);
-			transferTuple(tuple, punctuationDuration, anomalyScore, mean, standardDeviation);
+			transferTuple(tuple, punctuationDuration, anomalyScore, mean, standardDeviation, 0);
 		}
 	}
 
 	/**
 	 * Sends the tuples within a window if the window and the next window has an
-	 * outlier - but does not send the tuples at the margins (which were no
-	 * outliers and the window before / after had no outlier, too)
+	 * outlier - but does not send the tuples at the margins (which were no outliers
+	 * and the window before / after had no outlier, too)
 	 *
 	 * @param tuples
 	 * @param info
@@ -442,20 +437,15 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	/**
 	 * Transfers a tuple to the next operator and appends the given information
 	 *
-	 * @param originalTuple
-	 *            The tuple which needs to be enriched
-	 * @param punctuationDuration
-	 *            Necessary if "isTimeSensitive" is active. If not, you can put
-	 *            anything in here, it won't be used.
-	 * @param anomalyScore
-	 *            Enrich the tuple with this anomaly score
-	 * @param mean
-	 *            Enrich the tuple with this mean
-	 * @param standardDeviation
-	 *            Enrich the tuple with this standard deviation
+	 * @param originalTuple       The tuple which needs to be enriched
+	 * @param punctuationDuration Necessary if "isTimeSensitive" is active. If not,
+	 *                            you can put anything in here, it won't be used.
+	 * @param anomalyScore        Enrich the tuple with this anomaly score
+	 * @param mean                Enrich the tuple with this mean
+	 * @param standardDeviation   Enrich the tuple with this standard deviation
 	 */
 	private void transferTuple(Tuple originalTuple, double punctuationDuration, double anomalyScore, double mean,
-			double standardDeviation) {
+			double standardDeviation, int port) {
 		Tuple newTuple = null;
 		if (this.isTimeSensitive) {
 			newTuple = originalTuple.append(punctuationDuration).append(anomalyScore).append(mean)
@@ -463,18 +453,16 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		} else {
 			newTuple = originalTuple.append(anomalyScore).append(mean).append(standardDeviation);
 		}
-		transfer(newTuple);
+		transfer(newTuple, port);
 	}
 
 	/**
 	 * Checks, if the given value is an anomaly with the interval set by the ao
 	 *
-	 * @param sensorValue
-	 *            The value which we won't to know about if it's an anomaly
-	 * @param standardDeviation
-	 *            The standard deviation if the distribution
-	 * @param mean
-	 *            The mean of the distribution
+	 * @param sensorValue       The value which we won't to know about if it's an
+	 *                          anomaly
+	 * @param standardDeviation The standard deviation if the distribution
+	 * @param mean              The mean of the distribution
 	 * @return True, if it's an anomaly, false, if not
 	 */
 	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {
@@ -488,8 +476,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	/**
 	 * Calculates the anomaly score, a value between 0 and 1.
 	 *
-	 * @param distance
-	 *            Distance to good area
+	 * @param distance Distance to good area
 	 * @return Anomaly score (0, 1]
 	 */
 	private double calcAnomalyScore(double sensorValue, double mean, double standardDeviation, double interval) {
@@ -526,8 +513,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * Helper function to easily get the value in the attribute specified in the
 	 * valueAttributeName variable via the AO
 	 *
-	 * @param tuple
-	 *            The tuple where this attribute is in
+	 * @param tuple The tuple where this attribute is in
 	 * @return The double value in the tuple
 	 */
 	private double getValue(T tuple) {
@@ -574,7 +560,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 							Tuple tuple = new Tuple(lastTuple);
 							double anomalyScore = calcAnomalyScore(time.getMainPoint(), info.mean,
 									info.standardDeviation, interval);
-							transferTuple(tuple, time.getMainPoint(), anomalyScore, info.mean, info.standardDeviation);
+							transferTuple(tuple, time.getMainPoint(), anomalyScore, info.mean, info.standardDeviation,
+									0);
 						}
 					}
 				}
@@ -590,8 +577,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	}
 
 	/**
-	 * A small helper object to store the deviation information for the
-	 * different groups
+	 * A small helper object to store the deviation information for the different
+	 * groups
 	 */
 	class DeviationInformation {
 		public double mean;

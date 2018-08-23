@@ -98,15 +98,15 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		if (lastElem == null) {
 			newLastElement = object;
 			if (deliverFirstElement) {
-				transferInternal(object);
+				transferInternal(object, 0);
 			}
 		} else {
 			if (object != null && areDifferent(object, lastElem)) {
 				newLastElement = object;
 				if (sendLastOfSameObjects) {
-					transferInternal(lastElem);
+					transferInternal(lastElem, 0);
 				} else {
-					transferInternal(object);
+					transferInternal(object, 0);
 				}
 			} else {
 				heartbeatGenerationStrategy.generateHeartbeat(object, this);
@@ -114,6 +114,8 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 				if (sendLastOfSameObjects){
 					newLastElement = object;
 				}
+				// Send all objects which would be lost to port 1
+				transferInternal(object, 1);
 			}
 		}
 		lastElements.put(groupID, newLastElement);
@@ -123,7 +125,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	protected void process_done() {
 		if (sendLastOfSameObjects){
 			for (Entry<Object, R> e: lastElements.entrySet()){
-				transferInternal(e.getValue());
+				transferInternal(e.getValue(), 0);
 			}
 		}
 	}
@@ -133,8 +135,8 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		sendPunctuation(punctuation);
 	}
 
-	protected void transferInternal(R object) {
-		transfer(enrichObject(object, suppressedElements));
+	protected void transferInternal(R object, int port) {
+		transfer(enrichObject(object, suppressedElements), port);
 		this.suppressedElements = 0;
 	}
 
@@ -159,8 +161,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		return heartbeatGenerationStrategy;
 	}
 
-	public void setHeartbeatGenerationStrategy(
-			IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
+	public void setHeartbeatGenerationStrategy(IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
 	}
 
@@ -180,10 +181,9 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		@SuppressWarnings("unchecked")
 		ChangeDetectPO<R> rppo = (ChangeDetectPO<R>) ipo;
 		if (this.deliverFirstElement == rppo.deliverFirstElement
-				&& this.heartbeatGenerationStrategy
-						.equals(rppo.heartbeatGenerationStrategy)
-				&& ((this.groupProcessor != null && this.groupProcessor
-						.equals(rppo.groupProcessor)) || (this.groupProcessor == null && rppo.groupProcessor == null))) {
+				&& this.heartbeatGenerationStrategy.equals(rppo.heartbeatGenerationStrategy)
+				&& ((this.groupProcessor != null && this.groupProcessor.equals(rppo.groupProcessor))
+						|| (this.groupProcessor == null && rppo.groupProcessor == null))) {
 			return true;
 		}
 
