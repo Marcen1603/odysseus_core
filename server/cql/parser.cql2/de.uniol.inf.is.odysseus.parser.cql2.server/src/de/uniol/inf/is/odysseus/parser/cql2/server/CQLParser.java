@@ -113,6 +113,7 @@ public class CQLParser implements IQueryParser {
 
 	private void setup(String path) {
 		if (!init) {
+			logger.info("Initializing CQL Parser ...");
 			new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(path);
 			injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
 			generator = injector.getInstance(CQLGenerator.class);
@@ -168,6 +169,7 @@ public class CQLParser implements IQueryParser {
 				logger.warn("Could not read tokens");
 			}
 		}
+		logger.info("Initializing CQL Parser ... done");
 		init = true;
 	}
 

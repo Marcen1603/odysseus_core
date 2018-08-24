@@ -89,6 +89,7 @@ public class WebServicePublisher {
 	}
 
 	public static void publish(Object implementor, String subUrl) {
+		LOGGER.info("Trying to start web service");
 		try	{
 			if (httpServerInstance == null)
 				httpServerInstance = createHttpServer();			
