@@ -8,10 +8,10 @@
       [Enter Feature Description here.]
    </description>
 
-   <copyright> 
+   <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
-      
+
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -277,6 +277,13 @@ limitations under the License.
 
    <plugin
          id="org.eclipse.emf.ecore.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext.ui.codetemplates.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"

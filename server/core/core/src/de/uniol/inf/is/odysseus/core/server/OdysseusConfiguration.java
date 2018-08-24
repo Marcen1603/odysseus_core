@@ -92,6 +92,7 @@ public class OdysseusConfiguration {
 		// Save always because there could be new properties ... do only if
 		// there are new defaults?
 		savePropertyFile(odysseusHome);
+		getLogger().info("Read config file done");
 	}
 
 	private void setDefaults(String odysseusHome) {
