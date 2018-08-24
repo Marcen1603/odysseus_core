@@ -438,6 +438,9 @@ public class CQLParser implements IQueryParser {
 
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) {
+		if (!init) {
+			setup(this.path);
+		}
 		Map<String, List<String>> tokens = new HashMap<>();
 		tokens.put("TOKEN", Arrays.asList(this.tokens));
 		return tokens;
