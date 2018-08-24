@@ -102,70 +102,73 @@ public class CQLParser implements IQueryParser {
 	private boolean init = false;
 
 	public CQLParser(String path) {
-//		setup(path);
+		// setup(path);
 		this.path = path;
 	}
 
 	public CQLParser() {
-//		setup("../");
+		// setup("../");
 		this.path = "../";
 	}
 
 	private void setup(String path) {
-		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(path);
-		injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
-		generator = injector.getInstance(CQLGenerator.class);
-		resourceSet = injector.getInstance(XtextResourceSet.class);
-		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		resource = resourceSet.createResource(
-				URI.createURI("platform:/resource/de.uniol.inf.is.odysseus.parser.cql2.server/example.cql", true));// "dummy:/example.cql"));
-		executorCommands = new ArrayList<>();
-		// Get all parser tokens
-		List<String> list = new ArrayList<>();
-		URL url = null;
-		if (Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2") != null) {
-			try {
-				url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
-						"/src-gen/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
-			} catch (Exception e) {
-
-			}
-			if (url == null) {
+		if (!init) {
+			new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(path);
+			injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
+			generator = injector.getInstance(CQLGenerator.class);
+			resourceSet = injector.getInstance(XtextResourceSet.class);
+			resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+			resource = resourceSet.createResource(
+					URI.createURI("platform:/resource/de.uniol.inf.is.odysseus.parser.cql2.server/example.cql", true));// "dummy:/example.cql"));
+			executorCommands = new ArrayList<>();
+			// Get all parser tokens
+			List<String> list = new ArrayList<>();
+			URL url = null;
+			if (Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2") != null) {
 				try {
 					url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
-							"/bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+							"/src-gen/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
 				} catch (Exception e) {
 
 				}
-			}
-		}
-		if (url != null) {
-			// String pathToTokens =
-			// "/../bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens";
-			try (InputStream in = url.openStream()) {// getClass().getClassLoader().getResourceAsStream(pathToTokens))
-														// {
-				if (in != null) {
-					String line;
-					BufferedReader br = new BufferedReader(new InputStreamReader(in));
-					while ((line = br.readLine()) != null) {
-						if (line.contains("'")) {
-							line = line.substring(1, line.lastIndexOf("'"));
-							list.add(line);
-						}
+				if (url == null) {
+					try {
+						url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
+								"/bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+					} catch (Exception e) {
+
 					}
-				} else {
-					throw new IOException("InputStream was null: no tokens could be loaded");
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				tokens = list.toArray(new String[list.size()]);
 			}
-		} else {
-			tokens = new String[1];
-			infoService.warning("Could not read tokens!");
-			logger.warn("Could not read tokens");
+			if (url != null) {
+				// String pathToTokens =
+				// "/../bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens";
+				try (InputStream in = url.openStream()) {// getClass().getClassLoader().getResourceAsStream(pathToTokens))
+															// {
+					if (in != null) {
+						String line;
+						BufferedReader br = new BufferedReader(new InputStreamReader(in));
+						while ((line = br.readLine()) != null) {
+							if (line.contains("'")) {
+								line = line.substring(1, line.lastIndexOf("'"));
+								list.add(line);
+							}
+						}
+					} else {
+						throw new IOException("InputStream was null: no tokens could be loaded");
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					tokens = list.toArray(new String[list.size()]);
+				}
+			} else {
+				tokens = new String[1];
+				infoService.warning("Could not read tokens!");
+				logger.warn("Could not read tokens");
+			}
 		}
+		init = true;
 	}
 
 	public synchronized List<EObject> injectModel(InputStream in) throws IOException {
@@ -183,11 +186,9 @@ public class CQLParser implements IQueryParser {
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException {
-		
-		if (!init) {
-			setup(this.path);
-		}
-		
+
+		requireInit();
+
 		List<EObject> components;
 		// Create model from query string
 		try (InputStream in = new ByteArrayInputStream(query.getBytes())) {
@@ -253,17 +254,18 @@ public class CQLParser implements IQueryParser {
 				throw new QueryParseException(builder.toString());
 			}
 		} catch (Exception e) {
-			
+
 			executorCommands.clear();
-			
-			/* TODO WORKAROUND that relates to an issue where the PQLOperatorBuilder 
-			 * cannot resolve all parameters for an Aggregate operator. At the 
-			 * moment it is unknown why or when this bug occurs (only in rare cases).
-			 * However, a MissingParameterException will be raised if this is happening.
+
+			/*
+			 * TODO WORKAROUND that relates to an issue where the PQLOperatorBuilder cannot
+			 * resolve all parameters for an Aggregate operator. At the moment it is unknown
+			 * why or when this bug occurs (only in rare cases). However, a
+			 * MissingParameterException will be raised if this is happening.
 			 * 
-			 * To overcome the issue, the exception will be caught and the
-			 * query will be build a second time. If this attempt fails, the
-			 * query will be marked as failed.
+			 * To overcome the issue, the exception will be caught and the query will be
+			 * build a second time. If this attempt fails, the query will be marked as
+			 * failed.
 			 * 
 			 * author ~ Jens Plümer on 16.05.18
 			 */
@@ -273,13 +275,12 @@ public class CQLParser implements IQueryParser {
 					failedQueries.add(query);
 					generator.clear();
 					resource.unload();
-					List<IExecutorCommand> cmds = parse(query, user,dd,context, metaAttribute,executor);
+					List<IExecutorCommand> cmds = parse(query, user, dd, context, metaAttribute, executor);
 					failedQueries.remove(query);
 					return cmds;
-				} 
+				}
 			}
-			
-			
+
 			throw e;
 		} finally {
 			if (fsa != null) {
@@ -291,6 +292,12 @@ public class CQLParser implements IQueryParser {
 		}
 
 		return executorCommands;
+	}
+
+	private void requireInit() {
+		if (!init) {
+			setup(this.path);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -399,35 +406,32 @@ public class CQLParser implements IQueryParser {
 	}
 
 	public Collection<SystemSource> convertSchemaToSystemSource(Collection<SDFSchema> schema) {
-		return schema.stream().map(e -> convertSchemaToSystemSource(e)).flatMap(Collection::stream).collect(Collectors.toList());
+		return schema.stream().map(e -> convertSchemaToSystemSource(e)).flatMap(Collection::stream)
+				.collect(Collectors.toList());
 	}
-	
+
 	public Collection<SystemSource> convertSchemaToSystemSource(SDFSchema schema) {
-		
+
 		Collection<SystemSource> col = new ArrayList<>();
 		for (String sourcename : schema.getBaseSourceNames()) {
 			SystemSource sourceStruct = new SystemSource();
 			sourceStruct.setName(sourcename);
 			for (SDFAttribute struct : schema.getAttributes()) {
 				if (sourcename.equals(struct.getSourceName())) {
-					sourceStruct.add(new SystemAttribute(
-							sourceStruct, 
-							struct.getAttributeName(),
-							struct.getDatatype().toString()
-							)
-					);
+					sourceStruct.add(new SystemAttribute(sourceStruct, struct.getAttributeName(),
+							struct.getDatatype().toString()));
 				}
 			}
 			col.add(sourceStruct);
 		}
-	
+
 		return col;
 	}
-	
+
 	private Collection<SystemSource> convertSchemaToSystemSource(List<SDFMetaSchema> schema) {
 		return convertSchemaToSystemSource(schema.stream().map(e -> (SDFSchema) e).collect(Collectors.toList()));
 	}
-	
+
 	public static Map<String, String> getDatabaseConnections() {
 		return databaseConnections;
 	}
@@ -438,9 +442,7 @@ public class CQLParser implements IQueryParser {
 
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) {
-		if (!init) {
-			setup(this.path);
-		}
+		requireInit();
 		Map<String, List<String>> tokens = new HashMap<>();
 		tokens.put("TOKEN", Arrays.asList(this.tokens));
 		return tokens;
