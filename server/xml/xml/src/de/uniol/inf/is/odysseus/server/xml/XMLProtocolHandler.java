@@ -107,6 +107,8 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     }
 
     private void init_internal() {
+		result = new LinkedList<>();
+		
         OptionMap options = optionsMap;
         if (options.get(DELAY) != null) {
             setDelay(Long.parseLong(options.get(DELAY)));
@@ -172,11 +174,6 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     @Override
     public boolean hasNext() throws IOException {
         try {
-        	
-        	if (result == null) {
-        		result = new LinkedList<>();
-        	}
-        	
             return result.size() > 0 || this.input.available() > 0;
         }
         catch (Throwable t) {
