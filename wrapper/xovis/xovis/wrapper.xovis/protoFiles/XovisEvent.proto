@@ -1,0 +1,35 @@
+package proto;
+
+option java_package = "de.uniol.inf.is.odysseus.wrapper.xovis.communication.gpbObjects";
+option java_outer_classname = "XovisEventObj";
+
+option optimize_for = LITE_RUNTIME;
+
+message XovisEvent{
+	optional int32 objectId = 1;
+	optional int64 timeStampMilliseconds = 2;
+	optional Type type = 3;
+	optional string countItemName = 4;	// for ZONE and LINE events
+	optional Status status = 5;
+	optional int32 objectHeight = 6;
+	optional int32 countItemId = 7;	// currently only for count lines
+	optional float objectX = 8;
+	optional float objectY = 9;
+	repeated string withinZones = 10;	// for CREATE and DELETE events
+
+	enum Type {
+		CREATE = 0;
+    	DELETE = 1;
+    	ZONEENTRY = 2;
+    	ZONEEXIT = 3;
+    	LINECROSSFW = 4;
+    	LINECROSSBW = 5;
+	}
+	
+	enum Status {
+    	OK = 0;
+    	NOSLOT = 1;		// no slot is currently available to establish a new stream
+    	TIMEDOUT = 2;	// server waited for too long for a client response, going to close the connection
+    	ERROR = 3;	// a generic server side error occurred
+	}
+}
