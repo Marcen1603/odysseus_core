@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.update.p2"
       label="Odysseus P2 Update"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
    <description>

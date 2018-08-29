@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Raspberry Pi GPIO TransportHandler
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.rpi.gpio
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.rpi.gpio.Activator
 Bundle-Vendor: Andrej Albrecht
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

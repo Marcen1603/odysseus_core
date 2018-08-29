@@ -69,9 +69,9 @@ limitations under the License.
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0"/>
       <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
       <feature id="org.eclipse.help"/>
       <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
@@ -103,18 +103,18 @@ limitations under the License.
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="de.uniol.inf.is.odysseus.memstore.feature"/>
       <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"/>
-      <feature id="de.uniol.inf.is.odysseus.timeseries.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.recommendation.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.probabilistic.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.finance.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.rcp.evaluation.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.systemload.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.datarate_systemload.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.datarate.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.timeseries.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.recommendation.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.probabilistic.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.finance.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.evaluation.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.systemload.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.datarate_systemload.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.datarate.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"/>
    </features>
 

@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.s100.feature"
       label="S100 Feature"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="">
 
    <description url="http://www.example.com/description">

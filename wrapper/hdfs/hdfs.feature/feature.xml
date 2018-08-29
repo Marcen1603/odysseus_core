@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.hdfs.feature"
       label="HDFS Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description>
       This feature is a wrapper for the Hadoop Distributed Filesystem.

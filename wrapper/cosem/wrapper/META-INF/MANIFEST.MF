@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IEC 62056 Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.iec62056
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi,
  org.apache.commons.lang,

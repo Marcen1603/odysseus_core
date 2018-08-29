@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.kafka.feature"
       label="Kafka Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description>
       Contains the Apache Kafka Wrapper for communicating with Kafka Brokers

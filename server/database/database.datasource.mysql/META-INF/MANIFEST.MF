@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Mysql DataSource
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.datasource.mysql
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.database
 Bundle-ClassPath: lib/mysql-connector-java-5.1.15-bin.jar,

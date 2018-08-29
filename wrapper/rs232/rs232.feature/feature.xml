@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.rs232.feature"
       label="RS 232 Feature"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
    <copyright>

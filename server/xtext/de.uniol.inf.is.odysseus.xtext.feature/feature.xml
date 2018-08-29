@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.xtext.feature"
       label="Xtext Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
       This feature bundle all dependencies that are needed to use Xtext-related features such as the IQL Feature.

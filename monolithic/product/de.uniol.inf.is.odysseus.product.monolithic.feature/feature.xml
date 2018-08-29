@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.monolithic.feature"
       label="Monolithic"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
    <description>
@@ -41,6 +41,26 @@ limitations under the License.
 
    <includes
          id="de.uniol.inf.is.odysseus.studio.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.latency.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.priority.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.parser.cql2.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.parser.cql2.ui.feature"
          version="0.0.0"/>
 
 </feature>

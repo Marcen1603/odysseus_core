@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.rcp.evaluation.feature"
       label="Evaluation Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     The evaluation feature offers some graphical user interface and instrumentation to measure the latency and throughput of a given query and to create some plots

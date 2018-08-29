@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Twitter
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.twitter
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,

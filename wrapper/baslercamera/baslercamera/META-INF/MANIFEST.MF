@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Basler Camera Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.baslercamera
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.baslercamera.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.imagejcv.common.datatype,

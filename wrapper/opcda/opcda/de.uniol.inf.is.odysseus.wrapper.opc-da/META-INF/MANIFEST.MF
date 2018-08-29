@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OPC-DA Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.opc-da;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.opcda.Activator
 Bundle-Vendor: Kuka
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

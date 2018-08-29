@@ -2,4 +2,4 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Odysseus Parallelization Product
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parallelization.dynamic.product
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0

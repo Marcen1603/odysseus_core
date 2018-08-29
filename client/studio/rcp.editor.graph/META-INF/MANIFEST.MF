@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graph Editor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.graph;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.graph.Activator
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,

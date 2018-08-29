@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.telegram.feature"
       label="Telegram Wrapper Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     This feature allows to communicate with the Telegram messenger via a Telegram bot

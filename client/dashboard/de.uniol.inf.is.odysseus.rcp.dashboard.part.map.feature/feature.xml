@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.rcp.dashboard.part.map.feature"
       label="Dashboard Map Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     The Dashboard-Feature includes Dashboards into Odysseus Studio. A Dashboard is a screen (or view) with multiple query result visualisations. With this, it is possible to customize the appereance of Odysseus for end-users

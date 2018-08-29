@@ -36,8 +36,8 @@
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0"/>
       <feature id="de.uniol.inf.is.odysseus.estream.test.feature" version="1.0.0.0"/>
    </features>
 

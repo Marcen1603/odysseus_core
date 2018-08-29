@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Costmodel
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.core,

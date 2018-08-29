@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.test.component.keyvalue.feature"
       label="KeyValue Test Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     Integration tests for the KeyValue Feature

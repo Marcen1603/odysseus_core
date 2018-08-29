@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Map
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard.part.map;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.Activator
 Require-Bundle: com.google.guava;bundle-version="18.0.0",
  com.vividsolutions.jts,

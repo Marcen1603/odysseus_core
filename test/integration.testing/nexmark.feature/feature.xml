@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.test.component.nexmark.feature"
       label="Nexmark Test Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     Integration test for Nexmark queries

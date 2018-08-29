@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.database.datasource.hive2.feature"
       label="Hive2 DataSource Feature"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="Universtiy of Oldenburg">
 
    <description url="http://www.example.com/description">

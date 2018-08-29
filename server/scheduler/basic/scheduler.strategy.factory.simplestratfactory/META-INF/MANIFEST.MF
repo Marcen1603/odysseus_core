@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Simplestratfactory
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.collection,
  de.uniol.inf.is.odysseus.core.server.monitoring,

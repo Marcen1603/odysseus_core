@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OPC UA Server Component
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.opcua.server;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.server.opcua.Activator
 Bundle-Vendor: Georg Berendt
 Import-Package: de.uniol.inf.is.odysseus.core.server,

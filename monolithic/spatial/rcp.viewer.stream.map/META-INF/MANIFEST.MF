@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Map
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.map;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Vendor: Stephan Jansen
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.OdysseusMapPlugIn
 Import-Package: com.google.common.base,

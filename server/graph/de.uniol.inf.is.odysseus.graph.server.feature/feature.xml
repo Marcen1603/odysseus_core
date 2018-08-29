@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.graph.server.feature"
       label="Graph Server Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
       The MEP functions on this page are to work with graph (creation, modification, graph algorithms, ...).

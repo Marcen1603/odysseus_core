@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IEC 60870 Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.iec60870
-Bundle-Version: 0.0.1.qualifier
+Bundle-Version: 0.0.1
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,

@@ -7,7 +7,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.apache.mahout
 Bundle-Vendor: University of Oldenburg
 Bundle-ActivationPolicy: lazy
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Name: Mahout Recommender Implementation
 Bundle-Activator: de.uniol.inf.is.odysseus.recommendation.mahout.Activ
  ator

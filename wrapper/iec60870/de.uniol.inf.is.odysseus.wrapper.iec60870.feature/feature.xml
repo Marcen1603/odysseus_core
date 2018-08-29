@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.iec60870.feature"
       label="IEC60870 Wrapper Feature"
-      version="0.0.1.qualifier"
+      version="0.0.1"
       provider-name="University of Oldenburg">
 
    <description url="http://www.example.com/description">

@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.scheduler.slascheduler.feature"
       label="SLA Scheduler Feature"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
    <description>

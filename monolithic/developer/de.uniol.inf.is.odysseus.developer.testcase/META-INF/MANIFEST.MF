@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Generator
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.developer.testcase;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.developer.testcase.Activator
 Bundle-Vendor: Christian Kuka
 Require-Bundle: org.eclipse.ui,

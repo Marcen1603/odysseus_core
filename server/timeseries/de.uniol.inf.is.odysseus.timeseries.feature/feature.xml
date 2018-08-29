@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.timeseries.feature"
       label="Time Series Feature"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
    <description url="http://www.example.com/description">
@@ -40,7 +40,7 @@ limitations under the License.
       <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.slf4j.api"/>
-      <import feature="de.uniol.inf.is.odysseus.recommendation.feature" version="1.0.0.qualifier"/>
+      <import feature="de.uniol.inf.is.odysseus.recommendation.feature" version="1.0.0"/>
    </requires>
 
    <plugin

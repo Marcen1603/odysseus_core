@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Interval_latency
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.interval_latency
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.latency,

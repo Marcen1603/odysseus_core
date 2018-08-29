@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Probabilistic RCP Chart
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.probabilistic.rcp.chart;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.probabilistic.common,
  org.eclipse.ui,

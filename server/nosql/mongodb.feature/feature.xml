@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.server.nosql.mongodb.feature"
       label="MongoDB Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     Odysseus allows to read and write from a MongoDB store. As MongoDB stores its content in JSON format, only JSON can be read from MongoDB.

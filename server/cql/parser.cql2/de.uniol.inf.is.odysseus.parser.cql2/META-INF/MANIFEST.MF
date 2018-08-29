@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.uniol.inf.is.odysseus.parser.cql2
 Bundle-Vendor: Universität Oldenburg
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.cql2;singleton:=true
 Require-Bundle: org.eclipse.xtext,
  org.eclipse.equinox.common,

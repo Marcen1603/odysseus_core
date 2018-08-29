@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Logging
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.logging;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.logging.activator.RCPLoggingPlugIn
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,

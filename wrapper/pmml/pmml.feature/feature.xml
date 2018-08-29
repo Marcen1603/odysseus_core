@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.pmml.feature"
       label="PMML Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
       This feature adds functionality to use JPMML in an PQL querie which allows the use of PMML models.

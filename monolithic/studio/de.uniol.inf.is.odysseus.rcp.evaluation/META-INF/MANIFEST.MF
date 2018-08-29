@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Evaluation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.evaluation;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.evaluation.Activator
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: com.google.guava;bundle-version="18.0.0",

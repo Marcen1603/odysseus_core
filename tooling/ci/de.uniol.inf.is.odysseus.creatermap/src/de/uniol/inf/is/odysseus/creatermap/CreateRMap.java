@@ -119,7 +119,7 @@ public class CreateRMap {
 					categories.add(dir);
 				}
 
-				sb.append("<feature url=\"features/" + e.getKey() + "_1.0.0.qualifier.jar\" id=\"" + e.getKey() + "\" version=\"1.0.0.qualifier\">").append(System.lineSeparator());
+				sb.append("<feature url=\"features/" + e.getKey() + "_1.0.0.jar\" id=\"" + e.getKey() + "\" version=\"1.0.0\">").append(System.lineSeparator());
 				sb.append("<category name=\"de.uniol.inf.is.odysseus.update.category." + dir + "\"/>").append(System.lineSeparator());
 				sb.append("</feature>").append(System.lineSeparator());
 			}

@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.parser.cql2.feature"
       label="CQL Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     This feature adds the CQL (Continuous Query Language) which consists of a SQL-like syntax. 

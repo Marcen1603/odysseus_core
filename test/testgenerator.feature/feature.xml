@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.test.generator.feature"
       label="TestGenerator Feature"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
     <copyright>

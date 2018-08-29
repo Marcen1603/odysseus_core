@@ -69,22 +69,22 @@ limitations under the License.
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.monolithic.sdp.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.facebook.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.mail.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.opcda.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.rabbitmq.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.rs232.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.sunspot.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.twitter.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.web.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.zeromq.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.monolithic.sdp.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.facebook.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.mail.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.opcda.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rabbitmq.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rs232.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.sunspot.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.twitter.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.web.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.zeromq.feature" version="1.0.0"/>
    </features>
 
    <configurations>

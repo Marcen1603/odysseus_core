@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.database.rcp.feature"
       label="Database RCP Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
      The database feature allows incoming and outgoing connections to a common relational database system
@@ -27,7 +27,7 @@ limitations under the License.
    </license>
 
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
+      <import feature="de.uniol.inf.is.odysseus.database.feature" version="1.0.0"/>
    </requires>
 
    <plugin

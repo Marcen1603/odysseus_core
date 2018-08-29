@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.usermanagement.store.feature"
       label="User Management Store"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
    <description>
@@ -34,7 +34,7 @@ Unless required by applicable law or agreed to in writing, software
 
    <requires>
       <import plugin="org.eclipse.osgi.services"/>
-      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
+      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0"/>
    </requires>
 
    <plugin

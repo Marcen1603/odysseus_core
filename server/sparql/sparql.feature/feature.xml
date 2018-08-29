@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.server.sparql.feature"
       label="SPARQL and RDF"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="University of Oldenburg">
 
    <description>

@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.baslercamera.feature"
       label="Basler Camera Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <description url="http://www.example.com/description">
     This feature allows receiving videos and images from Basler cameras using the Basler Pylon SDK. 

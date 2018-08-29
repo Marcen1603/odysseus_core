@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Physical Query View
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.queryview.physical
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.physical.PhysicalQueryViewDataProviderPlugIn
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.core.runtime,

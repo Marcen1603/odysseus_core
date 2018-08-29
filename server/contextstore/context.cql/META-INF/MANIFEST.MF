@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cql
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.context.cql
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.context.cql.Activator
 Import-Package: de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.context.store,

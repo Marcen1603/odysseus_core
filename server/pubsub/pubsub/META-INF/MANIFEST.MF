@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Pubsub
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.pubsub
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.pubsub.Activator
 Import-Package: de.uniol.inf.is.odysseus.mep.optimizer,
  de.uniol.inf.is.odysseus.ruleengine.rule,

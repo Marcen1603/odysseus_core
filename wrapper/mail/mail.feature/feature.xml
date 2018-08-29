@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.wrapper.mail.feature"
       label="Mail Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0">
 
    <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)

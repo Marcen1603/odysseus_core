@@ -69,7 +69,7 @@ limitations under the License.
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0"/>
       <feature id="de.uniol.inf.is.odysseus.probabilistic.feature"/>
       <feature id="de.uniol.inf.is.odysseus.common.feature"/>
    </features>

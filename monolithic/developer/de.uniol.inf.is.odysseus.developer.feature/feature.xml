@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.developer.feature"
       label="Odysseus Developer Feature"
-      version="1.0.0.qualifier"
+      version="1.0.0"
       provider-name="Christian Kuka">
 
    <description url="http://www.example.com/description">

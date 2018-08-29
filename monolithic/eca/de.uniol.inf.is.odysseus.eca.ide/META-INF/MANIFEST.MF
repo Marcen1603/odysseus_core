@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECA IDE
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.eca.ide;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Export-Package: de.uniol.inf.is.odysseus.eca.ide.contentassist.antlr,
   de.uniol.inf.is.odysseus.eca.ide.contentassist.antlr.internal
 Require-Bundle: org.antlr.runtime,

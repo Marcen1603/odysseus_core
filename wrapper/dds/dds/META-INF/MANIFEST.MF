@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Wrapper for Data Distribution Service for Real-Time Systems (OMG DDS)
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.dds
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.dds.Activator
 Bundle-Vendor: Universtiy of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

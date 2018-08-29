@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Keyvalue Test
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.component.keyvalue
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.test.component.keyvalue.Activator
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: de.uniol.inf.is.odysseus.core,

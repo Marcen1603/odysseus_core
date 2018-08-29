@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.uniol.inf.is.odysseus.database.spatial.Spatial
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.spatial;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/SpatialDataTypeMappingHandler.xml 
 Require-Bundle: de.uniol.inf.is.odysseus.spatial,

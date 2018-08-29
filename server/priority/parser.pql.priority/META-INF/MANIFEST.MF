@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PQL Priority
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.pql.priority
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.predicate,
  de.uniol.inf.is.odysseus.core.server,

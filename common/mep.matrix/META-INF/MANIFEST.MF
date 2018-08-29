@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Matrix
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.mep.matrix
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.mep.matrix.Activator
 Import-Package: de.uniol.inf.is.odysseus.core.mep,
  de.uniol.inf.is.odysseus.core.sdf.schema,

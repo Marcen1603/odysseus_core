@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Odysseus Studio Starter
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.client.starter;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.product.studio.starter.Activator
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: com.google.guava,
