@@ -15,10 +15,10 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataUnionMergeFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.PredictionTimesMetadataUnionMergeFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.PredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
@@ -42,7 +42,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 	protected Map<T, Map<PointInTime, Tuple<M>>> nonTemporalElements;
 	/* To track the valid time */
 	protected List<T> validElements;
-	protected ValidTimesMetadataUnionMergeFunction mergeFunction;
+	protected PredictionTimesMetadataUnionMergeFunction mergeFunction;
 
 	private TimeUnit streamBaseTimeUnit;
 
@@ -53,7 +53,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		this.nonTemporalFunctions = new HashMap<>();
 		this.nonTemporalElements = new HashMap<>();
 		this.validElements = new ArrayList<>();
-		this.mergeFunction = new ValidTimesMetadataUnionMergeFunction();
+		this.mergeFunction = new PredictionTimesMetadataUnionMergeFunction();
 		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
@@ -66,11 +66,11 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 	@SuppressWarnings("unchecked")
 	private void addToAllValidTimes(T newElement) {
 		Map<PointInTime, Tuple<M>> nonTemporal = new HashMap<>();
-		if (newElement.getMetadata() instanceof IValidTimes) {
-			IValidTimes validTimes = (IValidTimes) newElement.getMetadata();
-			for (IValidTime validTime : validTimes.getValidTimes()) {
-				for (PointInTime asPredictionTime = validTime.getValidStart(); asPredictionTime
-						.before(validTime.getValidEnd()); asPredictionTime = asPredictionTime.plus(1)) {
+		if (newElement.getMetadata() instanceof IPredictionTimes) {
+			IPredictionTimes validTimes = (IPredictionTimes) newElement.getMetadata();
+			for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
+				for (PointInTime asPredictionTime = validTime.getPredictionStart(); asPredictionTime
+						.before(validTime.getPredictionEnd()); asPredictionTime = asPredictionTime.plus(1)) {
 					// Use the correct aggregation function
 
 					// Convert to stream time from prediction time base time
@@ -85,7 +85,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		this.nonTemporalElements.put(newElement, nonTemporal);
 	}
 	
-	private PointInTime convertToStreamTime(PointInTime asPredictionTime, IValidTimes validTimes) {
+	private PointInTime convertToStreamTime(PointInTime asPredictionTime, IPredictionTimes validTimes) {
 		TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();
 		if (predictionTimeUnit == null) {
 			// There is no difference
@@ -131,10 +131,10 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 			Map<PointInTime, Tuple<M>> outdated = this.nonTemporalElements.get(outdatedElement);
 
 			// Only remove from those function which are affected by this element
-			IValidTimes validTimes = (IValidTimes) outdatedElement.getMetadata();
-			for (IValidTime validTime : validTimes.getValidTimes()) {
-				for (PointInTime asPredictionTime = validTime.getValidStart(); asPredictionTime
-						.before(validTime.getValidEnd()); asPredictionTime = asPredictionTime.plus(1)) {
+			IPredictionTimes validTimes = (IPredictionTimes) outdatedElement.getMetadata();
+			for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
+				for (PointInTime asPredictionTime = validTime.getPredictionStart(); asPredictionTime
+						.before(validTime.getPredictionEnd()); asPredictionTime = asPredictionTime.plus(1)) {
 					// Convert to stream time from prediction time base time
 					PointInTime asStreamTime = convertToStreamTime(asPredictionTime, validTimes);
 					Tuple<M> singleOutdatedElement = outdated.get(asStreamTime);
@@ -150,20 +150,20 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 			this.validElements.remove(outdatedElement);
 		}
 
-		IValidTimes validTimes = calculateValidTimes();
+		IPredictionTimes validTimes = calculateValidTimes();
 		removeOldFunctions(validTimes);
 	}
 
 	/**
 	 * Uses the valid stream elements to calculate the valid time
 	 */
-	private IValidTimes calculateValidTimes() {
-		IValidTimes validTimes = new ValidTimes();
+	private IPredictionTimes calculateValidTimes() {
+		IPredictionTimes validTimes = new PredictionTimes();
 
 		for (T element : this.validElements) {
-			if (element.getMetadata() instanceof IValidTimes) {
-				IValidTimes currentValidTimes = (IValidTimes) element.getMetadata();
-				this.mergeFunction.mergeInto(validTimes, currentValidTimes, new ValidTimes());
+			if (element.getMetadata() instanceof IPredictionTimes) {
+				IPredictionTimes currentValidTimes = (IPredictionTimes) element.getMetadata();
+				this.mergeFunction.mergeInto(validTimes, currentValidTimes, new PredictionTimes());
 			}
 		}
 		return validTimes;
@@ -173,7 +173,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 	 * Remove the functions that are no longer needed because they are for a
 	 * ValidTime that is not needed any longer
 	 */
-	private void removeOldFunctions(IValidTimes validTimes) {
+	private void removeOldFunctions(IPredictionTimes validTimes) {
 		List<PointInTime> toRemove = new ArrayList<>();
 		for (PointInTime key : this.nonTemporalFunctions.keySet()) {
 			
