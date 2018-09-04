@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
@@ -41,16 +41,16 @@ public abstract class AtMinMaxFunction extends AbstractFunction<GenericTemporalT
 
 		TemporalType<?> temporalType = this.getInputValue(0);
 		GenericTemporalType<Comparable> result = new GenericTemporalType<>();
-		IValidTimes validTimes = this.getInputValue(1);
+		IPredictionTimes validTimes = this.getInputValue(1);
 
 		// These lists will contain the values and times with the min / max values
 		List<Comparable> minValues = new ArrayList<>();
 		List<PointInTime> pointsInTime = new ArrayList<>();
 
 		// Loop through all available values and pick the min / max ones
-		for (IValidTime validTime : validTimes.getValidTimes()) {
-			for (PointInTime currentTime = validTime.getValidStart(); currentTime
-					.before(validTime.getValidEnd()); currentTime = currentTime.plus(1)) {
+		for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
+			for (PointInTime currentTime = validTime.getPredictionStart(); currentTime
+					.before(validTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
 				Object value = temporalType.getValue(currentTime);
 				if (value instanceof Comparable) {
 					Comparable currentValue = (Comparable) value;

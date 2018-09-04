@@ -13,9 +13,9 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.PredictionTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 
 public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> extends JoinTISweepArea<T> {
@@ -96,9 +96,9 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 
 		if (evaluationResult instanceof GenericTemporalType) {
 			resultObject = (GenericTemporalType<Boolean>) evaluationResult;
-			TimeUnit biggerTimeUnit = getBiggerTimeUnit(((IValidTimes) element.getMetadata()).getPredictionTimeUnit(),
-					((IValidTimes) next.getMetadata()).getPredictionTimeUnit());
-			List<IValidTime> validTimes = constructValidTimeIntervals(resultObject, biggerTimeUnit);
+			TimeUnit biggerTimeUnit = getBiggerTimeUnit(((IPredictionTimes) element.getMetadata()).getPredictionTimeUnit(),
+					((IPredictionTimes) next.getMetadata()).getPredictionTimeUnit());
+			List<IPredictionTime> validTimes = constructValidTimeIntervals(resultObject, biggerTimeUnit);
 			T newObject = createOutputTuple(next, validTimes, biggerTimeUnit);
 
 			// Only use the result if its valid at least at one time instance
@@ -137,23 +137,23 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 	 * @param validTimeIntervals
 	 * @return
 	 */
-	private T createOutputTuple(T originalStreamObject, List<IValidTime> validTimeIntervals,
+	private T createOutputTuple(T originalStreamObject, List<IPredictionTime> validTimeIntervals,
 			TimeUnit predictionTimeUnit) {
 		@SuppressWarnings("unchecked")
 		T newObject = (T) originalStreamObject.clone();
-		IValidTimes validTimes = (IValidTimes) newObject.getMetadata();
+		IPredictionTimes validTimes = (IPredictionTimes) newObject.getMetadata();
 		validTimes.clear();
 		validTimes.setTimeUnit(predictionTimeUnit);
-		for (IValidTime validTime : validTimeIntervals) {
-			validTimes.addValidTime(validTime);
+		for (IPredictionTime validTime : validTimeIntervals) {
+			validTimes.addPredictionTime(validTime);
 		}
 		return newObject;
 	}
 
-	private List<IValidTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType,
+	private List<IPredictionTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType,
 			TimeUnit predictionTimeUnit) {
-		List<IValidTime> validTimeIntervals = new ArrayList<>();
-		IValidTime currentInterval = null;
+		List<IPredictionTime> validTimeIntervals = new ArrayList<>();
+		IPredictionTime currentInterval = null;
 		PointInTime lastTime = null;
 
 		/*
@@ -182,11 +182,11 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 
 			if (useValue) {
 				if (currentInterval == null) {
-					currentInterval = new ValidTime(inPredictionTime);
+					currentInterval = new PredictionTime(inPredictionTime);
 				}
 			} else {
 				if (currentInterval != null) {
-					currentInterval.setValidEnd(inPredictionTime);
+					currentInterval.setPredictionEnd(inPredictionTime);
 					validTimeIntervals.add(currentInterval);
 					currentInterval = null;
 				}
@@ -199,7 +199,7 @@ public class TemporalJoinTISweepArea<T extends Tuple<? extends ITimeInterval>> e
 		 * valid until infinity.
 		 */
 		if (lastTime != null && currentInterval != null) {
-			currentInterval.setValidEnd(lastTime.plus(1));
+			currentInterval.setPredictionEnd(lastTime.plus(1));
 			validTimeIntervals.add(currentInterval);
 			currentInterval = null;
 		}

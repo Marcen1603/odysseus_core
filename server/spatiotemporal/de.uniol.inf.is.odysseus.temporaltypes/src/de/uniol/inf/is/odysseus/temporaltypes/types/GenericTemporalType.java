@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 
 /**
  * A generic class for temporal types. As it is not possible to create a nice
@@ -132,7 +132,7 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	 * @param streamTimeUnit The base time unit of the stream, which can differ from
 	 *                       the base time unit of the prediction
 	 */
-	public void trim(IValidTimes validTimes, TimeUnit streamTimeUnit) {
+	public void trim(IPredictionTimes validTimes, TimeUnit streamTimeUnit) {
 
 		List<PointInTime> toRemove = new ArrayList<>();
 		TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();

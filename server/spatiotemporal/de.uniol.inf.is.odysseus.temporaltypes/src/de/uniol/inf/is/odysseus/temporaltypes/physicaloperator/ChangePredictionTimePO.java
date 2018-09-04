@@ -14,31 +14,31 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangeValidTimeAO;
+import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangePredictionTimeAO;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ITemporalTrust;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.PredictionTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
- * This operator manipulates the ValidTimes metadata. It is doing this based on
+ * This operator manipulates the PredictionTimes metadata. It is doing this based on
  * the stream time interval. It uses the start timestamp of the stream time
  * interval (the "normal" time interval) of a stream element and adds /
  * substracts the given values to / from it to calculate the start and end
- * timestamp of the ValidTime.
+ * timestamp of the PredictionTime.
  * 
- * Removes all previous information in the ValidTimes metadata.
+ * Removes all previous information in the PredictionTimes metadata.
  * 
  * @author Tobias Brandt
  *
  * @param <T>
  */
-public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
+public class ChangePredictionTimePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(ChangeValidTimePO.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(ChangePredictionTimePO.class);
 
 	private boolean copyTimeInterval;
 	private TimeValueItem valueToAddStart;
@@ -48,11 +48,11 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 	private TimeUnit predictionBaseTimeUnit;
 
 	// Expressions can be used to calculate the start and end timestamp
-	private RelationalExpression<IValidTimes> startExpression;
-	private RelationalExpression<IValidTimes> endExpression;
+	private RelationalExpression<IPredictionTimes> startExpression;
+	private RelationalExpression<IPredictionTimes> endExpression;
 
-	public ChangeValidTimePO(ChangeValidTimeAO ao, RelationalExpression<IValidTimes> startExpression,
-			RelationalExpression<IValidTimes> endExpression) {
+	public ChangePredictionTimePO(ChangePredictionTimeAO ao, RelationalExpression<IPredictionTimes> startExpression,
+			RelationalExpression<IPredictionTimes> endExpression) {
 		this.valueToAddStart = ao.getValueToAddStart();
 		this.valueToAddEnd = ao.getValueToAddEnd();
 		this.alingAtStreamEnd = ao.isAlignAtEnd();
@@ -82,38 +82,38 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			object = setTimeInterval(object, valueToAddStart, valueToAddEnd, alingAtStreamEnd);
 		}
 
-		IValidTimes validTimes = (IValidTimes) object.getMetadata();
+		IPredictionTimes predictionTimes = (IPredictionTimes) object.getMetadata();
 
 		// The base time could be changed
 		if (this.predictionBaseTimeUnit != null) {
-			validTimes.setTimeUnit(predictionBaseTimeUnit);
+			predictionTimes.setTimeUnit(predictionBaseTimeUnit);
 		}
 
 		// If the trust value is used, it needs to be set here
-		if (object.getMetadata() instanceof IValidTimes) {
-			changeTrust(object, validTimes);
+		if (object.getMetadata() instanceof IPredictionTimes) {
+			changeTrust(object, predictionTimes);
 		}
 
 		transfer(object);
 	}
 
 	/**
-	 * Sets the start and end timestamp of the ValidTime using the given
+	 * Sets the start and end timestamp of the PredictionTime using the given
 	 * expressions.
 	 * 
-	 * @param object The tuple where the ValidTimes have to be set with the
+	 * @param object The tuple where the PredictionTimes have to be set with the
 	 *               expressions
 	 * @return The given tuple with edited metadata or null, if the expressions
 	 *         cannot be used.
 	 */
-	private Tuple<IValidTimes> setStartEndWithExpression(T object) {
+	private Tuple<IPredictionTimes> setStartEndWithExpression(T object) {
 
 		if (!useExpressions(object)) {
 			return null;
 		}
 
 		@SuppressWarnings("unchecked")
-		Tuple<IValidTimes> tuple = (Tuple<IValidTimes>) object;
+		Tuple<IPredictionTimes> tuple = (Tuple<IPredictionTimes>) object;
 
 		try {
 			Object startResult = startExpression.evaluate(tuple, null, null);
@@ -121,7 +121,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			if (startResult != null && endResult != null) {
 				PointInTime start = new PointInTime(((Number) startResult).longValue());
 				PointInTime end = new PointInTime(((Number) endResult).longValue());
-				tuple.getMetadata().addValidTime(new ValidTime(start, end));
+				tuple.getMetadata().addPredictionTime(new PredictionTime(start, end));
 			}
 		} catch (Exception e) {
 			LOG.error("Could not evaluate expressions.");
@@ -143,7 +143,7 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		if (metadata instanceof ITimeInterval) {
 			// Use the stream time as the starting point for the calculations
 			ITimeInterval streamTime = (ITimeInterval) metadata;
-			changeValidTime(metadata, streamTime.getStart(), streamTime.getEnd());
+			changePredictionTime(metadata, streamTime.getStart(), streamTime.getEnd());
 		}
 		return object;
 	}
@@ -166,30 +166,30 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			} else {
 				baseTime = streamTime.getEnd();
 			}
-			PointInTime newValidStart = baseTime.plus(convertedValueToAddStart);
-			PointInTime newValidEnd = baseTime.plus(convertedValueToAddEnd);
-			changeValidTime(metadata, newValidStart, newValidEnd);
+			PointInTime newPredictionStart = baseTime.plus(convertedValueToAddStart);
+			PointInTime newPredictionEnd = baseTime.plus(convertedValueToAddEnd);
+			changePredictionTime(metadata, newPredictionStart, newPredictionEnd);
 		}
 		return object;
 	}
 
-	private void changeTrust(T streamElement, IValidTimes validTimes) {
+	private void changeTrust(T streamElement, IPredictionTimes predictionTimes) {
 		IMetaAttribute metadata = streamElement.getMetadata();
 
 		if (metadata instanceof ITemporalTrust && streamElement instanceof Tuple) {
 			// Put the trusts in the meta attribute
 			ITemporalTrust oldTempTrust = (ITemporalTrust) metadata;
 
-			for (IValidTime validTime : validTimes.getValidTimes()) {
-				double[] trusts = getTrusts((Tuple<?>) streamElement, validTime);
-				insertTrusts(trusts, validTime, oldTempTrust);
+			for (IPredictionTime predictionTime : predictionTimes.getPredictionTimes()) {
+				double[] trusts = getTrusts((Tuple<?>) streamElement, predictionTime);
+				insertTrusts(trusts, predictionTime, oldTempTrust);
 			}
 		}
 	}
 
-	private void insertTrusts(double[] trusts, IValidTime validTime, ITemporalTrust temporalTrust) {
+	private void insertTrusts(double[] trusts, IPredictionTime predictionTime, ITemporalTrust temporalTrust) {
 		int i = 0;
-		for (PointInTime time = validTime.getValidStart(); time.before(validTime.getValidEnd()); time = time.plus(1)) {
+		for (PointInTime time = predictionTime.getPredictionStart(); time.before(predictionTime.getPredictionEnd()); time = time.plus(1)) {
 			ITrust trust = new Trust();
 			trust.setTrust(trusts[i]);
 			temporalTrust.setTrust(time, trust);
@@ -197,13 +197,13 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		}
 	}
 
-	private double[] getTrusts(Tuple<?> tuple, IValidTime validTime) {
+	private double[] getTrusts(Tuple<?> tuple, IPredictionTime predictionTime) {
 
-		int size = (int) validTime.getValidEnd().minus(validTime.getValidStart()).getMainPoint();
+		int size = (int) predictionTime.getPredictionEnd().minus(predictionTime.getPredictionStart()).getMainPoint();
 		double[] trusts = new double[size];
 
 		int i = 0;
-		for (PointInTime time = validTime.getValidStart(); time.before(validTime.getValidEnd()); time = time.plus(1)) {
+		for (PointInTime time = predictionTime.getPredictionStart(); time.before(predictionTime.getPredictionEnd()); time = time.plus(1)) {
 			double trust = getTrust(tuple, time);
 			trusts[i] = trust;
 			i++;
@@ -212,14 +212,14 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		return trusts;
 	}
 
-	private double getTrust(Tuple<?> tuple, PointInTime validTime) {
+	private double getTrust(Tuple<?> tuple, PointInTime predictionTime) {
 		// Use lowest trust of all temporal attributes
 		double minTrust = Double.MAX_VALUE;
 		Object[] attributes = tuple.getAttributes();
 		for (int i = 0; i < attributes.length; i++) {
 			if (attributes[i] instanceof TemporalType) {
 				TemporalType<?> temporalAttribute = (TemporalType<?>) attributes[i];
-				double thisTrust = temporalAttribute.getTrust(validTime);
+				double thisTrust = temporalAttribute.getTrust(predictionTime);
 				if (thisTrust < minTrust) {
 					minTrust = thisTrust;
 				}
@@ -228,19 +228,19 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		return minTrust;
 	}
 
-	private IMetaAttribute changeValidTime(IMetaAttribute metadata, PointInTime newValidStart,
-			PointInTime newValidEnd) {
-		if (metadata instanceof IValidTimes) {
-			// Use the calculated start and end timestamps for the ValidTime
-			IValidTimes validTime = (IValidTimes) metadata;
-			validTime.clear();
-			IValidTime newTime = new ValidTime();
+	private IMetaAttribute changePredictionTime(IMetaAttribute metadata, PointInTime newPredictionStart,
+			PointInTime newPredictionEnd) {
+		if (metadata instanceof IPredictionTimes) {
+			// Use the calculated start and end timestamps for the PredictionTime
+			IPredictionTimes predictionTime = (IPredictionTimes) metadata;
+			predictionTime.clear();
+			IPredictionTime newTime = new PredictionTime();
 
-			PointInTime validStart = convertToPredictionTime(newValidStart);
-			PointInTime validEnd = convertToPredictionTime(newValidEnd);
+			PointInTime predictionStart = convertToPredictionTime(newPredictionStart);
+			PointInTime predictionEnd = convertToPredictionTime(newPredictionEnd);
 
-			newTime.setValidStartAndEnd(validStart, validEnd);
-			validTime.addValidTime(newTime);
+			newTime.setPredictionStartAndEnd(predictionStart, predictionEnd);
+			predictionTime.addPredictionTime(newTime);
 		}
 		return metadata;
 	}
@@ -257,8 +257,8 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 			return streamTime;
 		}
 
-		long convertedValidTime = predictionBaseTimeUnit.convert(streamTime.getMainPoint(), streamBaseTimeUnit);
-		PointInTime newValidTime = new PointInTime(convertedValidTime);
-		return newValidTime;
+		long convertedPredictionTime = predictionBaseTimeUnit.convert(streamTime.getMainPoint(), streamBaseTimeUnit);
+		PointInTime newPredictionTime = new PointInTime(convertedPredictionTime);
+		return newPredictionTime;
 	}
 }
