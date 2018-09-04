@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetricSpatialUtils;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
@@ -36,14 +36,14 @@ public class SpeedFunction extends AbstractFunction<GenericTemporalType<?>> impl
 		}
 
 		TemporalType<GeometryWrapper> temporalPoint = this.getInputValue(0);
-		IValidTimes validTimes = this.getInputValue(1);
+		IPredictionTimes validTimes = this.getInputValue(1);
 
 		GenericTemporalType<Double> result = new GenericTemporalType<>();
 		PointInTime prevTime = null;
 
-		for (IValidTime validTime : validTimes.getValidTimes()) {
-			for (PointInTime currentTime = validTime.getValidStart(); currentTime
-					.before(validTime.getValidEnd()); currentTime = currentTime.plus(1)) {
+		for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
+			for (PointInTime currentTime = validTime.getPredictionStart(); currentTime
+					.before(validTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
 
 				// For the very first location there is no speed
 				if (prevTime == null) {

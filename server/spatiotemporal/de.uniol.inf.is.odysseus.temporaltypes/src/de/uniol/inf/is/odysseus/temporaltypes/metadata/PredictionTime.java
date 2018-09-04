@@ -21,28 +21,28 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
- * Implementation of the ValidTime metadata. This is used for temporal
+ * Implementation of the PredictionTime metadata. This is used for temporal
  * attributes which are predicted to a certain point in time or a time interval.
  * 
  * @author Tobias Brandt
  *
  */
-final public class ValidTime extends AbstractBaseMetaAttribute
-		implements IValidTime, Cloneable, Serializable, List<PointInTime> {
+final public class PredictionTime extends AbstractBaseMetaAttribute
+		implements IPredictionTime, Cloneable, Serializable, List<PointInTime> {
 
 	private static final long serialVersionUID = -4168542417427389337L;
 
-	private final static String METADATA_NAME = "ValidTime";
+	private final static String METADATA_NAME = "PredictionTime";
 
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IValidTime.class };
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IPredictionTime.class };
 
 	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("ValidTime", "start_valid", SDFDatatype.TIMESTAMP));
-		attributes.add(new SDFAttribute("ValidTime", "end_valid", SDFDatatype.TIMESTAMP));
-		schema.add(SDFSchemaFactory.createNewMetaSchema(METADATA_NAME, Tuple.class, attributes, IValidTime.class));
+		attributes.add(new SDFAttribute("PredictionTime", "start_prediction", SDFDatatype.TIMESTAMP));
+		attributes.add(new SDFAttribute("PredictionTime", "end_prediction", SDFDatatype.TIMESTAMP));
+		schema.add(SDFSchemaFactory.createNewMetaSchema(METADATA_NAME, Tuple.class, attributes, IPredictionTime.class));
 	}
 
 	/*
@@ -51,19 +51,19 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 	 */
 	protected TimeInterval delegateTimeInterval;
 
-	public ValidTime(PointInTime start, PointInTime end) {
+	public PredictionTime(PointInTime start, PointInTime end) {
 		this.delegateTimeInterval = new TimeInterval(start, end);
 	}
 
-	public ValidTime(PointInTime start) {
+	public PredictionTime(PointInTime start) {
 		this.delegateTimeInterval = new TimeInterval(start);
 	}
 
-	public ValidTime() {
+	public PredictionTime() {
 		this.delegateTimeInterval = new TimeInterval();
 	}
 
-	public ValidTime(ValidTime toCopy) {
+	public PredictionTime(PredictionTime toCopy) {
 		this.delegateTimeInterval = new TimeInterval(toCopy.delegateTimeInterval);
 	}
 
@@ -98,27 +98,27 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 	}
 
 	@Override
-	public PointInTime getValidStart() {
+	public PointInTime getPredictionStart() {
 		return this.delegateTimeInterval.getStart();
 	}
 
 	@Override
-	public PointInTime getValidEnd() {
+	public PointInTime getPredictionEnd() {
 		return this.delegateTimeInterval.getEnd();
 	}
 
 	@Override
-	public void setValidStart(PointInTime point) {
+	public void setPredictionStart(PointInTime point) {
 		this.delegateTimeInterval.setStart(point);
 	}
 
 	@Override
-	public void setValidEnd(PointInTime point) {
+	public void setPredictionEnd(PointInTime point) {
 		this.delegateTimeInterval.setEnd(point);
 	}
 
 	@Override
-	public void setValidStartAndEnd(PointInTime start, PointInTime end) {
+	public void setPredictionStartAndEnd(PointInTime start, PointInTime end) {
 		this.delegateTimeInterval.setStartAndEnd(start, end);
 	}
 
@@ -138,16 +138,16 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 		return null;
 	}
 
-	public static IValidTime intersect(IValidTime left, IValidTime right) {
-		TimeInterval workIntervalLeft = new TimeInterval(left.getValidStart(), left.getValidEnd());
-		TimeInterval workIntervalRight = new TimeInterval(right.getValidStart(), right.getValidEnd());
+	public static IPredictionTime intersect(IPredictionTime left, IPredictionTime right) {
+		TimeInterval workIntervalLeft = new TimeInterval(left.getPredictionStart(), left.getPredictionEnd());
+		TimeInterval workIntervalRight = new TimeInterval(right.getPredictionStart(), right.getPredictionEnd());
 
 		if (TimeInterval.overlaps(workIntervalLeft, workIntervalRight)) {
 			// TODO fehler bei infinity (auch in anderen operationen vorhanden)
 			PointInTime newLeft = PointInTime.max(workIntervalLeft.getStart(), workIntervalRight.getStart());
 			PointInTime newRight = PointInTime.min(workIntervalLeft.getEnd(), workIntervalRight.getEnd());
 			if (newLeft.before(newRight)) {
-				return new ValidTime(newLeft, newRight);
+				return new PredictionTime(newLeft, newRight);
 			}
 		}
 		return null;
@@ -155,7 +155,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 
 	@Override
 	public String toString() {
-		return "[" + getValidStart().toString() + ", " + getValidEnd().toString() + ")";
+		return "[" + getPredictionStart().toString() + ", " + getPredictionEnd().toString() + ")";
 	}
 
 	@Override
@@ -164,8 +164,8 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 	}
 
 	@Override
-	public ValidTime clone() {
-		return new ValidTime(this);
+	public PredictionTime clone() {
+		return new PredictionTime(this);
 	}
 
 	@Override
@@ -204,9 +204,9 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 	@Override
 	public PointInTime get(int index) {
 		if (index == 0) {
-			return this.getValidStart();
+			return this.getPredictionStart();
 		} else {
-			return this.getValidEnd();
+			return this.getPredictionEnd();
 		}
 	}
 
@@ -278,8 +278,8 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 	@Override
 	public Object[] toArray() {
 		PointInTime[] times = new PointInTime[2];
-		times[0] = this.getValidStart();
-		times[1] = this.getValidEnd();
+		times[0] = this.getPredictionStart();
+		times[1] = this.getPredictionEnd();
 		return times;
 	}
 

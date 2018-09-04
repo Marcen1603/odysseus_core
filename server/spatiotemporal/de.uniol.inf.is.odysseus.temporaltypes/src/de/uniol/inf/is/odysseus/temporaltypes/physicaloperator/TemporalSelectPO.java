@@ -8,9 +8,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.PredictionTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 
 /**
@@ -21,16 +21,16 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
  *
  * @param <T>
  */
-public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> {
+public class TemporalSelectPO<T extends Tuple<IPredictionTimes>> extends SelectPO<T> {
 	
 	private TimeUnit streamBaseTimeUnit;
 
-	public TemporalSelectPO(RelationalExpression<IValidTimes> expression, TimeUnit streamBaseTimeUnit) {
+	public TemporalSelectPO(RelationalExpression<IPredictionTimes> expression, TimeUnit streamBaseTimeUnit) {
 		super(expression);
 		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
 
-	public TemporalSelectPO(boolean predicateIsUpdateable, RelationalExpression<IValidTimes> expression, TimeUnit streamBaseTimeUnit) {
+	public TemporalSelectPO(boolean predicateIsUpdateable, RelationalExpression<IPredictionTimes> expression, TimeUnit streamBaseTimeUnit) {
 		super(predicateIsUpdateable, expression);
 		this.streamBaseTimeUnit = streamBaseTimeUnit;
 	}
@@ -53,7 +53,7 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		if (predictionTimeUnit == null) {
 			predictionTimeUnit = this.streamBaseTimeUnit;
 		}
-		List<IValidTime> validTimeIntervals = constructValidTimeIntervals(temporalType, predictionTimeUnit);
+		List<IPredictionTime> validTimeIntervals = constructValidTimeIntervals(temporalType, predictionTimeUnit);
 		T newObject = createOutputTuple(object, validTimeIntervals);
 		if (validTimeIntervals.size() > 0) {
 			transfer(newObject);
@@ -68,20 +68,20 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 	 * @param validTimeIntervals
 	 * @return
 	 */
-	private T createOutputTuple(T originalStreamObject, List<IValidTime> validTimeIntervals) {
+	private T createOutputTuple(T originalStreamObject, List<IPredictionTime> validTimeIntervals) {
 		@SuppressWarnings("unchecked")
 		T newObject = (T) originalStreamObject.clone();
-		IValidTimes validTimes = (IValidTimes) newObject.getMetadata();
+		IPredictionTimes validTimes = (IPredictionTimes) newObject.getMetadata();
 		validTimes.clear();
-		for (IValidTime validTime : validTimeIntervals) {
-			validTimes.addValidTime(validTime);
+		for (IPredictionTime validTime : validTimeIntervals) {
+			validTimes.addPredictionTime(validTime);
 		}
 		return newObject;
 	}
 
-	private List<IValidTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType, TimeUnit predictionTimeUnit) {
-		List<IValidTime> validTimeIntervals = new ArrayList<>();
-		IValidTime currentInterval = null;
+	private List<IPredictionTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType, TimeUnit predictionTimeUnit) {
+		List<IPredictionTime> validTimeIntervals = new ArrayList<>();
+		IPredictionTime currentInterval = null;
 		PointInTime lastTime = null;
 
 		/*
@@ -110,11 +110,11 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 
 			if (useValue) {
 				if (currentInterval == null) {
-					currentInterval = new ValidTime(inPredictionTime);
+					currentInterval = new PredictionTime(inPredictionTime);
 				}
 			} else {
 				if (currentInterval != null) {
-					currentInterval.setValidEnd(inPredictionTime);
+					currentInterval.setPredictionEnd(inPredictionTime);
 					validTimeIntervals.add(currentInterval);
 					currentInterval = null;
 				}
@@ -127,7 +127,7 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		 * valid until infinity.
 		 */
 		if (lastTime != null && currentInterval != null) {
-			currentInterval.setValidEnd(lastTime.plus(1));
+			currentInterval.setPredictionEnd(lastTime.plus(1));
 			validTimeIntervals.add(currentInterval);
 			currentInterval = null;
 		}
@@ -142,9 +142,9 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 	 * @return The predicate at a TemporalRelationalExpression
 	 */
 	@SuppressWarnings("unchecked")
-	private RelationalExpression<IValidTimes> getExpression() {
+	private RelationalExpression<IPredictionTimes> getExpression() {
 		if (this.getPredicate() instanceof RelationalExpression<?>) {
-			return (RelationalExpression<IValidTimes>) (this.getPredicate());
+			return (RelationalExpression<IPredictionTimes>) (this.getPredicate());
 		}
 		return null;
 	}

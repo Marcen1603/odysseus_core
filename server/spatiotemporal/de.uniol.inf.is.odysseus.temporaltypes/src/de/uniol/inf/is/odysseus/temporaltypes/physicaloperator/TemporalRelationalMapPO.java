@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
 /**
@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
  *
  * @param <T>
  */
-public class TemporalRelationalMapPO<T extends IValidTimes> extends RelationalMapPO<T> {
+public class TemporalRelationalMapPO<T extends IPredictionTimes> extends RelationalMapPO<T> {
 
 	public TemporalRelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
 			boolean evaluateOnPunctuation, boolean expressionsUpdateable, boolean suppressErrors, boolean keepInput,

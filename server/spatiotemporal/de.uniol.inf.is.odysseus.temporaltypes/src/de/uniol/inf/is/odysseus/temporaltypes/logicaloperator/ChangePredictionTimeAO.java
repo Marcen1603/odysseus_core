@@ -16,14 +16,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
- * This operator is used to manipulate the ValidTime metadata field.
+ * This operator is used to manipulate the PredictionTime metadata field.
  * 
  * @author Tobias Brandt
  *
  */
-@LogicalOperator(name = "ChangeValidTime", doc = "Change the metadata ValidTime", minInputPorts = 1, maxInputPorts = 1, category = {
+@LogicalOperator(name = "PredictionTime", doc = "Change the metadata PredictionTime", minInputPorts = 1, maxInputPorts = 1, category = {
 		LogicalOperatorCategory.ADVANCED }, hidden = false)
-public class ChangeValidTimeAO extends UnaryLogicalOp {
+public class ChangePredictionTimeAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 6126935973966254984L;
 
@@ -41,11 +41,11 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	private SDFExpression startExpression;
 	private SDFExpression endExpression;
 
-	public ChangeValidTimeAO() {
+	public ChangePredictionTimeAO() {
 
 	}
 
-	public ChangeValidTimeAO(ChangeValidTimeAO other) {
+	public ChangePredictionTimeAO(ChangePredictionTimeAO other) {
 		super(other);
 		this.valueToAddStart = other.getValueToAddStart();
 		this.valueToAddEnd = other.getValueToAddEnd();
@@ -57,7 +57,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.endExpression = other.endExpression != null ? other.endExpression.clone() : null;
 	}
 
-	@Parameter(name = "copyTimeInterval", doc = "Set to true if the ValidTimes shall equal the TimeInterval.", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "copyTimeInterval", doc = "Set to true if the PredictionTimes shall equal the TimeInterval.", type = BooleanParameter.class, optional = true)
 	public void setCopyTimeInterval(boolean copyTimeInterval) {
 		this.copyTimeInterval = copyTimeInterval;
 	}
@@ -66,17 +66,17 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		return this.copyTimeInterval;
 	}
 
-	@Parameter(name = "addToStartValue", doc = "The value that is added to the start timestamp of the stream time to create the start timestamp of the ValidTime.", type = TimeParameter.class, optional = true)
+	@Parameter(name = "addToStartValue", doc = "The value that is added to the start timestamp of the stream time to create the start timestamp of the PredictionTime.", type = TimeParameter.class, optional = true)
 	public void setAddStartValue(TimeValueItem valueToAddStart) {
 		this.valueToAddStart = valueToAddStart;
 	}
 
-	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create the end timestamp of the ValidTime.", type = TimeParameter.class, optional = true)
+	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create the end timestamp of the PredictionTime.", type = TimeParameter.class, optional = true)
 	public void setAddEndValue(TimeValueItem valueToAddEnd) {
 		this.valueToAddEnd = valueToAddEnd;
 	}
 
-	@Parameter(name = "predictionBaseTimeUnit", doc = "The basetime unit for the valid time.", type = StringParameter.class, optional = true)
+	@Parameter(name = "predictionBaseTimeUnit", doc = "The basetime unit for the prediction time.", type = StringParameter.class, optional = true)
 	public void setTimeUnit(String predictionBaseTimeUnitName) {
 		this.predictionBaseTimeUnit = TimeUnit.valueOf(predictionBaseTimeUnitName);
 	}
@@ -94,7 +94,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	/**
 	 * 
 	 * @return The value that is added to the start timestamp of the stream time to
-	 *         create the start timestamp of the ValidTime.
+	 *         create the start timestamp of the PredictionTime.
 	 */
 	public TimeValueItem getValueToAddStart() {
 		return this.valueToAddStart;
@@ -103,7 +103,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	/**
 	 * 
 	 * @return The value that is added to the start timestamp of the stream time to
-	 *         create end end timestamp of the ValidTime.
+	 *         create end end timestamp of the PredictionTime.
 	 */
 	public TimeValueItem getValueToAddEnd() {
 		return this.valueToAddEnd;
@@ -113,7 +113,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		return alignAtEnd;
 	}
 
-	@Parameter(name = "alignAtEnd", doc = "The values set as the ValidTime are aligned at the end timestamp of the streamtime. Default: false.", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "alignAtEnd", doc = "The values set as the PredictionTime are aligned at the end timestamp of the streamtime. Default: false.", type = BooleanParameter.class, optional = true)
 	public void setAlignAtEnd(boolean alignAtEnd) {
 		this.alignAtEnd = alignAtEnd;
 	}
@@ -138,7 +138,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new ChangeValidTimeAO(this);
+		return new ChangePredictionTimeAO(this);
 	}
 
 }

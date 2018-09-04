@@ -5,7 +5,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
@@ -34,7 +34,7 @@ public class TrimFunction extends AbstractFunction<TemporalType<?>> implements T
 		}
 		GenericTemporalType<?> temporalType = this.getInputValue(0);
 		GenericTemporalType<?> workingObject = temporalType.clone();
-		IValidTimes validTimes = this.getInputValue(1);
+		IPredictionTimes validTimes = this.getInputValue(1);
 		workingObject.trim(validTimes, this.getBaseTimeUnit());
 		return workingObject;
 	}

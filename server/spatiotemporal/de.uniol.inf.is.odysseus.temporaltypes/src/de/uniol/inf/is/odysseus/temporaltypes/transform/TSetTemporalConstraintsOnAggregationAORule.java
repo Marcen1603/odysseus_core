@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.aggregationfunctions.TemporalIncrementalAggregationFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
@@ -127,7 +127,7 @@ public class TSetTemporalConstraintsOnAggregationAORule extends TTemporalAggrega
 	@Override
 	public boolean isExecutable(AggregationAO operator, TransformationConfiguration config) {
 		// Only use this rule if the map has temporal expressions
-		boolean hasValidTime = operator.getInputSchema().hasMetatype(IValidTimes.class);
+		boolean hasValidTime = operator.getInputSchema().hasMetatype(IPredictionTimes.class);
 		boolean inputContainsTemporal = inputSchemaContainsTemporalAttribute(operator.getInputSchema());
 		return hasValidTime && inputContainsTemporal;
 	}

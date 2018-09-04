@@ -10,9 +10,9 @@ import de.uniol.inf.is.odysseus.core.expression.VarHelper;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesIntersectionMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.PredictionTimesIntersectionMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
  *
  * @param <T>
  */
-public class TemporalRelationalExpression<T extends IValidTimes> extends RelationalExpression<T> {
+public class TemporalRelationalExpression<T extends IPredictionTimes> extends RelationalExpression<T> {
 
 	private static final long serialVersionUID = 7516261668144789244L;
 
@@ -65,16 +65,16 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 		 * evaluation process for this filled tuple.
 		 */
 		T metadata = object.getMetadata();
-		List<IValidTime> validTimes = metadata.getValidTimes();
+		List<IPredictionTime> validTimes = metadata.getPredictionTimes();
 		TimeUnit predictionTimeUnit = metadata.getPredictionTimeUnit();
 		if (predictionTimeUnit == null) {
 			// The prediction time unit does not differ from the stream time unit
 			predictionTimeUnit = streamBaseTimeUnit;
 		}
 
-		for (IValidTime validTime : validTimes) {
-			PointInTime validStart = validTime.getValidStart();
-			PointInTime validEnd = validTime.getValidEnd();
+		for (IPredictionTime validTime : validTimes) {
+			PointInTime validStart = validTime.getPredictionStart();
+			PointInTime validEnd = validTime.getPredictionEnd();
 
 			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
 
@@ -137,10 +137,10 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 	@Override
 	public Object evaluate(Tuple<T> left, Tuple<T> right, List<ISession> sessions, List<Tuple<T>> history) {
 
-		ValidTimesIntersectionMetadataMergeFunction mergeFunction = new ValidTimesIntersectionMetadataMergeFunction(
+		PredictionTimesIntersectionMetadataMergeFunction mergeFunction = new PredictionTimesIntersectionMetadataMergeFunction(
 				false);
-		IValidTimes resultValidTimes = (IValidTimes) left.getMetadata().clone();
-		mergeFunction.mergeInto(resultValidTimes, (IValidTimes) left.getMetadata(), (IValidTimes) right.getMetadata());
+		IPredictionTimes resultValidTimes = (IPredictionTimes) left.getMetadata().clone();
+		mergeFunction.mergeInto(resultValidTimes, (IPredictionTimes) left.getMetadata(), (IPredictionTimes) right.getMetadata());
 
 		/*
 		 * The result is always a temporal type. As it is not possible to always
@@ -148,9 +148,9 @@ public class TemporalRelationalExpression<T extends IValidTimes> extends Relatio
 		 */
 		GenericTemporalType<Object> temporalType = new GenericTemporalType<>();
 
-		for (IValidTime validTime : resultValidTimes.getValidTimes()) {
-			PointInTime validStart = validTime.getValidStart();
-			PointInTime validEnd = validTime.getValidEnd();
+		for (IPredictionTime validTime : resultValidTimes.getPredictionTimes()) {
+			PointInTime validStart = validTime.getPredictionStart();
+			PointInTime validEnd = validTime.getPredictionEnd();
 
 			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
 				/*

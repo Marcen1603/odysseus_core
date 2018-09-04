@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.TemporalSelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -27,8 +27,8 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		 */
 		if (operator.getPredicate() instanceof RelationalExpression) {
 			@SuppressWarnings("unchecked")
-			RelationalExpression<IValidTimes> expression = (RelationalExpression<IValidTimes>) operator.getPredicate();
-			TemporalSelectPO<Tuple<IValidTimes>> temporalSelect = null;
+			RelationalExpression<IPredictionTimes> expression = (RelationalExpression<IPredictionTimes>) operator.getPredicate();
+			TemporalSelectPO<Tuple<IPredictionTimes>> temporalSelect = null;
 			if (expression.getExpression().getMEPExpression() instanceof TemporalFunction) {
 				/*
 				 * In case that the function can directly work on a temporal type do not use a
@@ -36,7 +36,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 				 */
 				temporalSelect = new TemporalSelectPO<>(expression, operator.getBaseTimeUnit());
 			} else {
-				TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
+				TemporalRelationalExpression<IPredictionTimes> temporalExpression = new TemporalRelationalExpression<IPredictionTimes>(
 						expression, operator.getBaseTimeUnit());
 				temporalSelect = new TemporalSelectPO<>(temporalExpression, operator.getBaseTimeUnit());
 			}

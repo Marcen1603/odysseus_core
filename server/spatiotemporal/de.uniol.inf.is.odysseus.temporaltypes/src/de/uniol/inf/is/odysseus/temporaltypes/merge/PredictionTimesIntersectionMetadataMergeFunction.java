@@ -5,18 +5,18 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.PredictionTime;
 
 /**
- * Used to merge two metadata fields with valid times. Merges the lists by doing
+ * Used to merge two metadata fields with prediction times. Merges the lists by doing
  * an intersection. Just like the normal TimeIntervals.
  * 
  * @author Tobias Brandt
  *
  */
-public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
+public class PredictionTimesIntersectionMetadataMergeFunction implements IInlineMetadataMergeFunction<IPredictionTimes> {
 
 	/*
 	 * It is possible that we have to merge two prediction times that have different
@@ -31,16 +31,16 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 	 */
 	private boolean useSmallerTimeUnit;
 
-	public ValidTimesIntersectionMetadataMergeFunction() {
+	public PredictionTimesIntersectionMetadataMergeFunction() {
 		this.useSmallerTimeUnit = false;
 	}
 
-	public ValidTimesIntersectionMetadataMergeFunction(boolean useSmallerTimeUnit) {
+	public PredictionTimesIntersectionMetadataMergeFunction(boolean useSmallerTimeUnit) {
 		this.useSmallerTimeUnit = useSmallerTimeUnit;
 	}
 
 	@Override
-	public void mergeInto(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
+	public void mergeInto(IPredictionTimes result, IPredictionTimes inLeft, IPredictionTimes inRight) {
 		/*
 		 * The previous prediction times need to be cleared, because its just a copy of
 		 * the left previous one. But if we would keep it, we would simply copy the left
@@ -50,37 +50,37 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 		result = intersectionMerge(result, inLeft, inRight);
 	}
 
-	private IValidTimes intersectionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
+	private IPredictionTimes intersectionMerge(IPredictionTimes result, IPredictionTimes inLeft, IPredictionTimes inRight) {
 
 		TimeUnit targetTimeUnit = getSmallerBiggerTimeUnit(inLeft.getPredictionTimeUnit(),
 				inRight.getPredictionTimeUnit(), useSmallerTimeUnit);
 		result.setTimeUnit(targetTimeUnit);
 
-		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
-			for (IValidTime rightValidTime : inRight.getValidTimes()) {
+		for (IPredictionTime leftPredictionTime : inLeft.getPredictionTimes()) {
+			for (IPredictionTime rightPredictionTime : inRight.getPredictionTimes()) {
 
-				IValidTime convertedLeftValidTime = convertToOtherTimeUnit(leftValidTime,
+				IPredictionTime convertedLeftPredictionTime = convertToOtherTimeUnit(leftPredictionTime,
 						inLeft.getPredictionTimeUnit(), targetTimeUnit);
-				IValidTime convertedRightValidTime = convertToOtherTimeUnit(rightValidTime,
+				IPredictionTime convertedRightPredictionTime = convertToOtherTimeUnit(rightPredictionTime,
 						inRight.getPredictionTimeUnit(), targetTimeUnit);
 
-				IValidTime mergedData = ValidTime.intersect(convertedLeftValidTime, convertedRightValidTime);
+				IPredictionTime mergedData = PredictionTime.intersect(convertedLeftPredictionTime, convertedRightPredictionTime);
 				if (mergedData != null && !includesInterval(result, mergedData)) {
-					result = addValidTimeToValidTimes(result, mergedData);
+					result = addPredictionTimeToPredictionTimes(result, mergedData);
 				}
 			}
 		}
 		return result;
 	}
 
-	private IValidTime convertToOtherTimeUnit(IValidTime validTime, TimeUnit prevTimeUnit, TimeUnit targetTimeUnit) {
-		long leftTargetStartTime = targetTimeUnit.convert(validTime.getValidStart().getMainPoint(), prevTimeUnit);
+	private IPredictionTime convertToOtherTimeUnit(IPredictionTime predictionTime, TimeUnit prevTimeUnit, TimeUnit targetTimeUnit) {
+		long leftTargetStartTime = targetTimeUnit.convert(predictionTime.getPredictionStart().getMainPoint(), prevTimeUnit);
 		PointInTime leftStart = new PointInTime(leftTargetStartTime);
 
-		long leftTargetEndTime = targetTimeUnit.convert(validTime.getValidEnd().getMainPoint(), prevTimeUnit);
+		long leftTargetEndTime = targetTimeUnit.convert(predictionTime.getPredictionEnd().getMainPoint(), prevTimeUnit);
 		PointInTime leftEnd = new PointInTime(leftTargetEndTime);
 
-		return new ValidTime(leftStart, leftEnd);
+		return new PredictionTime(leftStart, leftEnd);
 	}
 
 	private TimeUnit getSmallerBiggerTimeUnit(TimeUnit left, TimeUnit right, boolean useSmallerTimeUnit) {
@@ -100,8 +100,8 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 		}
 	}
 
-	private boolean includesInterval(IValidTimes includes, IValidTime toInclude) {
-		for (IValidTime time : includes.getValidTimes()) {
+	private boolean includesInterval(IPredictionTimes includes, IPredictionTime toInclude) {
+		for (IPredictionTime time : includes.getPredictionTimes()) {
 			if (leftIncludesRight(time, toInclude)) {
 				return true;
 			}
@@ -109,27 +109,27 @@ public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetad
 		return false;
 	}
 
-	private boolean leftIncludesRight(IValidTime left, IValidTime right) {
-		return left.getValidStart().beforeOrEquals(right.getValidStart())
-				&& left.getValidEnd().afterOrEquals(right.getValidEnd());
+	private boolean leftIncludesRight(IPredictionTime left, IPredictionTime right) {
+		return left.getPredictionStart().beforeOrEquals(right.getPredictionStart())
+				&& left.getPredictionEnd().afterOrEquals(right.getPredictionEnd());
 	}
 
-	private IValidTimes addValidTimeToValidTimes(IValidTimes addTo, IValidTime validTime) {
-		if (validTime != null && validTime.getValidEnd().after(validTime.getValidStart())) {
+	private IPredictionTimes addPredictionTimeToPredictionTimes(IPredictionTimes addTo, IPredictionTime predictionTime) {
+		if (predictionTime != null && predictionTime.getPredictionEnd().after(predictionTime.getPredictionStart())) {
 			// Only add if the resulting interval is at least valid for one time instance
-			addTo.addValidTime(validTime);
+			addTo.addPredictionTime(predictionTime);
 		}
 		return addTo;
 	}
 
 	@Override
-	public IInlineMetadataMergeFunction<? super IValidTimes> clone() {
-		return new ValidTimesIntersectionMetadataMergeFunction();
+	public IInlineMetadataMergeFunction<? super IPredictionTimes> clone() {
+		return new PredictionTimesIntersectionMetadataMergeFunction();
 	}
 
 	@Override
 	public Class<? extends IMetaAttribute> getMetadataType() {
-		return IValidTimes.class;
+		return IPredictionTimes.class;
 	}
 
 }

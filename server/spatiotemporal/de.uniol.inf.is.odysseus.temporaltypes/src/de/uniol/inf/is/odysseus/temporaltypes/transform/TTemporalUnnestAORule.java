@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalUnNestPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.TemporalRelationalUnnestPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -23,9 +23,9 @@ public class TTemporalUnnestAORule extends AbstractTransformationRule<UnNestAO> 
 
 	@Override
 	public void execute(UnNestAO operator, TransformationConfiguration config) throws RuleException {
-		RelationalUnNestPO<IValidTimes> po = new RelationalUnNestPO<IValidTimes>(operator.getInputSchema(),
+		RelationalUnNestPO<IPredictionTimes> po = new RelationalUnNestPO<IPredictionTimes>(operator.getInputSchema(),
 				operator.getAttributePosition(), operator.isMultiValue() || operator.isListValue());
-		TemporalRelationalUnnestPO<IValidTimes> temporalPo = new TemporalRelationalUnnestPO<>(po, operator.getBaseTimeUnit());
+		TemporalRelationalUnnestPO<IPredictionTimes> temporalPo = new TemporalRelationalUnnestPO<>(po, operator.getBaseTimeUnit());
 		defaultExecute(operator, temporalPo, config, true, true);
 	}
 

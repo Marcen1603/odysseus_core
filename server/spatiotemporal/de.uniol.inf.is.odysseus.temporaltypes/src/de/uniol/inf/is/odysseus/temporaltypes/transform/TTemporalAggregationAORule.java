@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.temporaltypes.aggregationfunctions.TemporalIncrementalAggregationFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataUnionMergeFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.PredictionTimesMetadataUnionMergeFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
 /**
@@ -36,7 +36,7 @@ public class TTemporalAggregationAORule extends TAggregationAORule {
 		// Attention: Time meta data is set in aggregation
 		metadataSet.remove(ITimeInterval.class.getName());
 		// Search for the merge function for ValidTimes manually
-		metadataSet.remove(IValidTimes.class.getName());
+		metadataSet.remove(IPredictionTimes.class.getName());
 
 		// Create the merge function for all the other metadatas (maybe zero)
 		CombinedMergeFunction cmf = (CombinedMergeFunction) MetadataRegistry.getMergeFunction(metadataSet);
@@ -45,7 +45,7 @@ public class TTemporalAggregationAORule extends TAggregationAORule {
 		 * And add the union merge for the ValidTimes (we need this for the aggregation
 		 * instead of the normal merge function which makes an intersection)
 		 */
-		ValidTimesMetadataUnionMergeFunction validTimesMetadataUnionMergeFunction = new ValidTimesMetadataUnionMergeFunction();
+		PredictionTimesMetadataUnionMergeFunction validTimesMetadataUnionMergeFunction = new PredictionTimesMetadataUnionMergeFunction();
 		cmf.add(validTimesMetadataUnionMergeFunction);
 
 		return cmf;

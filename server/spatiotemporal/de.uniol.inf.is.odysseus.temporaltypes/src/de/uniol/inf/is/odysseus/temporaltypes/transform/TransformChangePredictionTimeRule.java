@@ -9,23 +9,23 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangeValidTimeAO;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
-import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.ChangeValidTimePO;
+import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangePredictionTimeAO;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.physicaloperator.ChangePredictionTimePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TransformChangeValidTimeRule extends AbstractTransformationRule<ChangeValidTimeAO> {
+public class TransformChangePredictionTimeRule extends AbstractTransformationRule<ChangePredictionTimeAO> {
 
 	@Override
-	public void execute(ChangeValidTimeAO operator, TransformationConfiguration config) throws RuleException {
-		RelationalExpression<IValidTimes> startExpression = getStartExpression(operator);
-		RelationalExpression<IValidTimes> endExpression = getEndExpression(operator);
-		defaultExecute(operator, new ChangeValidTimePO<>(operator, startExpression, endExpression), config, true, true);
+	public void execute(ChangePredictionTimeAO operator, TransformationConfiguration config) throws RuleException {
+		RelationalExpression<IPredictionTimes> startExpression = getStartExpression(operator);
+		RelationalExpression<IPredictionTimes> endExpression = getEndExpression(operator);
+		defaultExecute(operator, new ChangePredictionTimePO<>(operator, startExpression, endExpression), config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(ChangeValidTimeAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(ChangePredictionTimeAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
@@ -36,11 +36,11 @@ public class TransformChangeValidTimeRule extends AbstractTransformationRule<Cha
 
 	@Override
 	public String getName() {
-		return "ChangeValidTimeAO --> ChangeValidTimePO";
+		return "ChangePredictionTimeAO --> ChangePredictionTimePO";
 	}
 
-	private RelationalExpression<IValidTimes> getEndExpression(ChangeValidTimeAO operator) {
-		RelationalExpression<IValidTimes> endExpression = null;
+	private RelationalExpression<IPredictionTimes> getEndExpression(ChangePredictionTimeAO operator) {
+		RelationalExpression<IPredictionTimes> endExpression = null;
 
 		if (operator.getStartExpression() != null) {
 			int pos = onlyOneAttributeInExpression(operator.getEndExpression(), operator.getInputSchema());
@@ -54,8 +54,8 @@ public class TransformChangeValidTimeRule extends AbstractTransformationRule<Cha
 		return endExpression;
 	}
 
-	private RelationalExpression<IValidTimes> getStartExpression(ChangeValidTimeAO operator) {
-		RelationalExpression<IValidTimes> startExpression = null;
+	private RelationalExpression<IPredictionTimes> getStartExpression(ChangePredictionTimeAO operator) {
+		RelationalExpression<IPredictionTimes> startExpression = null;
 
 		if (operator.getStartExpression() != null) {
 			int pos = onlyOneAttributeInExpression(operator.getStartExpression(), operator.getInputSchema());

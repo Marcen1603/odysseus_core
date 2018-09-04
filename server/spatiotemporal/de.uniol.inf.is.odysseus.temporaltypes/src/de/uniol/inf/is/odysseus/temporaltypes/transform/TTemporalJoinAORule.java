@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.TJoinAORule;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.sweeparea.TemporalJoinTISweepArea;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
@@ -20,8 +20,8 @@ public class TTemporalJoinAORule extends TJoinAORule {
 	@Override
 	protected void setJoinPredicate(JoinTIPO joinPO, JoinAO joinAO) {
 		if (joinAO.getPredicate() instanceof RelationalExpression) {
-			RelationalExpression<IValidTimes> expression = (RelationalExpression<IValidTimes>) joinAO.getPredicate();
-			TemporalRelationalExpression<IValidTimes> temporalExpression = new TemporalRelationalExpression<IValidTimes>(
+			RelationalExpression<IPredictionTimes> expression = (RelationalExpression<IPredictionTimes>) joinAO.getPredicate();
+			TemporalRelationalExpression<IPredictionTimes> temporalExpression = new TemporalRelationalExpression<IPredictionTimes>(
 					expression, joinAO.getBaseTimeUnit());
 			joinPO.setJoinPredicate(temporalExpression);
 		}
