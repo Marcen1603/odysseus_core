@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Basler Camera Wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.baslercamera
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.baslercamera.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: de.uniol.inf.is.odysseus.imagejcv.common.datatype,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Service-Component: OSGI-INF/*
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.imagejcv.common,
+ org.bytedeco.javacv;bundle-version="0.8.0",
+ de.uniol.inf.is.odysseus.transform,
+ com.jogamp.jogl;bundle-version="2.0.0",
+ de.uniol.inf.is.odysseus.mep
+Bundle-NativeCode: lib/win/amd64/BaslerJava.dll ;  osname=win32; osname=Windows 8; osname=Windows8; osname=Win8; osname=Windows 8.1; processor=x86_64,
+  lib/win/x86/BaslerJava.dll ;  osname=win32; osname=Windows 8; osname=Windows8; osname=Win8; osname=Windows 8.1; processor=x86,
+  *
+Export-Package: de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator
+Automatic-Module-Name: de.uniol.inf.is.odysseus.wrapper.baslercamera
+Bundle-ActivationPolicy: lazy

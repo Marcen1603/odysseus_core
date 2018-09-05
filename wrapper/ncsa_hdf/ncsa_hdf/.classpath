@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/fits.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/jhdf.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/jhdf4obj.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/jhdf5.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/jhdf5obj.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/jhdfobj.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/jhdfview.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/netcdf.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/ext/fitsobj.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="lib" path="lib/ext/nc2obj.jar" sourcepath="lib/hdf_src.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
