@@ -64,3 +64,6 @@
 [submodule "wrapper/nmea"]
 	path = wrapper/nmea
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/nmea.git
+[submodule "wrapper/opcda"]
+	path = wrapper/opcda
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/opcda.git
