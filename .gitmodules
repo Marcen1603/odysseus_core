@@ -1,3 +1,6 @@
 [submodule "add-on/netzdatenstrom"]
 	path = add-on/netzdatenstrom
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/oi/netzdatenstrom.git
+[submodule "wrapper/baslercamera"]
+	path = wrapper/baslercamera
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/baslercamera.git
