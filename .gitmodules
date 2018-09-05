@@ -100,3 +100,6 @@
 [submodule "wrapper/scai"]
 	path = wrapper/scai
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/scai.git
+[submodule "wrapper/serialport"]
+	path = wrapper/serialport
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/serialport.git
