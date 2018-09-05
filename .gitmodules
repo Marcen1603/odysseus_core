@@ -61,3 +61,6 @@
 [submodule "wrapper/ncsa_hdf"]
 	path = wrapper/ncsa_hdf
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/ncsa_hdf.git
+[submodule "wrapper/nmea"]
+	path = wrapper/nmea
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/nmea.git
