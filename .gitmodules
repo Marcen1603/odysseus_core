@@ -112,3 +112,6 @@
 [submodule "wrapper/telegram"]
 	path = wrapper/telegram
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/telegram.git
+[submodule "wrapper/tika"]
+	path = wrapper/tika
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/tika.git
