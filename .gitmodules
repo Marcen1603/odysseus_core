@@ -43,3 +43,6 @@
 [submodule "wrapper/modbus"]
 	path = wrapper/modbus
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/modbus.git
+[submodule "wrapper/mosaik"]
+	path = wrapper/mosaik
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/mosaik.git
