@@ -91,3 +91,6 @@
 [submodule "wrapper/rs232"]
 	path = wrapper/rs232
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rs232.git
+[submodule "wrapper/scai"]
+	path = wrapper/scai
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/scai.git
