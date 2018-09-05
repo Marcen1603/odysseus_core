@@ -34,3 +34,6 @@
 [submodule "wrapper/kafka"]
 	path = wrapper/kafka
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/kafka.git
+[submodule "wrapper/lms1xx"]
+	path = wrapper/lms1xx
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/lms1xx.git
