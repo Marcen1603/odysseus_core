@@ -133,3 +133,6 @@
 [submodule "wrapper/xls"]
 	path = wrapper/xls
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/xls.git
+[submodule "wrapper/xovis"]
+	path = wrapper/xovis
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/xovis.git
