@@ -16,3 +16,6 @@
 [submodule "wrapper/facebook"]
 	path = wrapper/facebook
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/facebook.git
+[submodule "wrapper/ferrybox"]
+	path = wrapper/ferrybox
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/ferrybox.git
