@@ -13,3 +13,6 @@
 [submodule "wrapper/DeutscherWetterDienst"]
 	path = wrapper/DeutscherWetterDienst
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/DeutscherWetterDienst.git
+[submodule "wrapper/facebook"]
+	path = wrapper/facebook
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/facebook.git
