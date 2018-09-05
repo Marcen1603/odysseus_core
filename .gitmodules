@@ -136,3 +136,6 @@
 [submodule "wrapper/actisense"]
 	path = wrapper/actisense
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/actisense.git
+[submodule "wrapper/haggis"]
+	path = wrapper/haggis
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/haggis.git
