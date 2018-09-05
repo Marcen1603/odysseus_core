@@ -49,3 +49,6 @@
 [submodule "wrapper/mqtt"]
 	path = wrapper/mqtt
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/mqtt.git
+[submodule "wrapper/navicoradar"]
+	path = wrapper/navicoradar
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/navicoradar.git
