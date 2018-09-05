@@ -22,3 +22,6 @@
 [submodule "wrapper/fnirs"]
 	path = wrapper/fnirs
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/fnirs.git
+[submodule "wrapper/fs20"]
+	path = wrapper/fs20
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/fs20.git
