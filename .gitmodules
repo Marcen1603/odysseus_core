@@ -106,3 +106,6 @@
 [submodule "wrapper/snet"]
 	path = wrapper/snet
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/snet.git
+[submodule "wrapper/speech"]
+	path = wrapper/speech
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/speech.git
