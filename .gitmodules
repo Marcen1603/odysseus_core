@@ -4,3 +4,6 @@
 [submodule "wrapper/baslercamera"]
 	path = wrapper/baslercamera
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/baslercamera.git
+[submodule "wrapper/cosem"]
+	path = wrapper/cosem
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/cosem.git
