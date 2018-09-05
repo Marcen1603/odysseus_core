@@ -79,3 +79,6 @@
 [submodule "wrapper/plugwise"]
 	path = wrapper/plugwise
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/plugwise.git
+[submodule "wrapper/pmml"]
+	path = wrapper/pmml
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/pmml.git
