@@ -67,3 +67,6 @@
 [submodule "wrapper/opcda"]
 	path = wrapper/opcda
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/opcda.git
+[submodule "wrapper/opcua"]
+	path = wrapper/opcua
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/opcua.git
