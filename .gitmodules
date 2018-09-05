@@ -97,3 +97,6 @@
 [submodule "wrapper/serialport"]
 	path = wrapper/serialport
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/serialport.git
+[submodule "wrapper/snet"]
+	path = wrapper/snet
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/snet.git
