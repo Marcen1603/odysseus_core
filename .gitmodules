@@ -76,3 +76,6 @@
 [submodule "wrapper/pmml"]
 	path = wrapper/pmml
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/pmml.git
+[submodule "wrapper/protobuf"]
+	path = wrapper/protobuf
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/protobuf.git
