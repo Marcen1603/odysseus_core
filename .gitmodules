@@ -46,3 +46,6 @@
 [submodule "wrapper/mosaik"]
 	path = wrapper/mosaik
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/mosaik.git
+[submodule "wrapper/mqtt"]
+	path = wrapper/mqtt
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/mqtt.git
