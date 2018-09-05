@@ -79,3 +79,6 @@
 [submodule "wrapper/protobuf"]
 	path = wrapper/protobuf
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/protobuf.git
+[submodule "wrapper/rabbitmq"]
+	path = wrapper/rabbitmq
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rabbitmq.git
