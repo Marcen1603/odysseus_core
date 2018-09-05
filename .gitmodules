@@ -130,3 +130,6 @@
 [submodule "wrapper/xovis"]
 	path = wrapper/xovis
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/xovis.git
+[submodule "wrapper/zeromq"]
+	path = wrapper/zeromq
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/zeromq.git
