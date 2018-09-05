@@ -19,3 +19,6 @@
 [submodule "wrapper/ferrybox"]
 	path = wrapper/ferrybox
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/ferrybox.git
+[submodule "wrapper/fnirs"]
+	path = wrapper/fnirs
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/fnirs.git
