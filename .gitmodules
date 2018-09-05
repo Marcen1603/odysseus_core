@@ -88,3 +88,6 @@
 [submodule "wrapper/rabbitmq"]
 	path = wrapper/rabbitmq
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rabbitmq.git
+[submodule "wrapper/rdf"]
+	path = wrapper/rdf
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rdf.git
