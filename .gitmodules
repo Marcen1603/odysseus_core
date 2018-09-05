@@ -7,3 +7,6 @@
 [submodule "wrapper/cosem"]
 	path = wrapper/cosem
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/cosem.git
+[submodule "wrapper/dds"]
+	path = wrapper/dds
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/dds.git
