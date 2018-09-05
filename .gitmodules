@@ -10,3 +10,6 @@
 [submodule "wrapper/dds"]
 	path = wrapper/dds
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/dds.git
+[submodule "wrapper/DeutscherWetterDienst"]
+	path = wrapper/DeutscherWetterDienst
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/DeutscherWetterDienst.git
