@@ -112,3 +112,6 @@
 [submodule "wrapper/sunspot"]
 	path = wrapper/sunspot
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/sunspot.git
+[submodule "wrapper/system"]
+	path = wrapper/system
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/system.git
