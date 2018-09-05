@@ -31,3 +31,6 @@
 [submodule "wrapper/hdfs"]
 	path = wrapper/hdfs
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/hdfs.git
+[submodule "wrapper/iec60870"]
+	path = wrapper/iec60870
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/iec60870.git
