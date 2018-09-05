@@ -121,3 +121,6 @@
 [submodule "wrapper/web"]
 	path = wrapper/web
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/web.git
+[submodule "wrapper/websocket"]
+	path = wrapper/websocket
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/websocket.git
