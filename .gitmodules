@@ -88,3 +88,6 @@
 [submodule "wrapper/rpi.gpio"]
 	path = wrapper/rpi.gpio
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rpi.gpio.git
+[submodule "wrapper/rs232"]
+	path = wrapper/rs232
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rs232.git
