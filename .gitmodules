@@ -139,3 +139,6 @@
 [submodule "wrapper/haggis"]
 	path = wrapper/haggis
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/haggis.git
+[submodule "wrapper/hdfs"]
+	path = wrapper/hdfs
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/hdfs.git
