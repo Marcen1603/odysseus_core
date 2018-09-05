@@ -115,3 +115,6 @@
 [submodule "wrapper/tika"]
 	path = wrapper/tika
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/tika.git
+[submodule "wrapper/twitter"]
+	path = wrapper/twitter
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/twitter.git
