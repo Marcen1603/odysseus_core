@@ -139,3 +139,6 @@
 [submodule "wrapper/zeromq"]
 	path = wrapper/zeromq
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/zeromq.git
+[submodule "wrapper/actisense"]
+	path = wrapper/actisense
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/actisense.git
