@@ -118,3 +118,6 @@
 [submodule "wrapper/twitter"]
 	path = wrapper/twitter
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/twitter.git
+[submodule "wrapper/web"]
+	path = wrapper/web
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/web.git
