@@ -73,3 +73,6 @@
 [submodule "wrapper/optriscamera"]
 	path = wrapper/optriscamera
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/optriscamera.git
+[submodule "wrapper/pcap"]
+	path = wrapper/pcap
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/pcap.git
