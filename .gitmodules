@@ -52,3 +52,6 @@
 [submodule "wrapper/navicoradar"]
 	path = wrapper/navicoradar
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/navicoradar.git
+[submodule "wrapper/ncsa_hdf"]
+	path = wrapper/ncsa_hdf
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/ncsa_hdf.git
