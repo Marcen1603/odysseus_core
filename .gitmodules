@@ -43,3 +43,6 @@
 [submodule "wrapper/lms1xx"]
 	path = wrapper/lms1xx
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/lms1xx.git
+[submodule "wrapper/mail"]
+	path = wrapper/mail
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/mail.git
