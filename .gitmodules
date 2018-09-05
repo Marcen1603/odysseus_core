@@ -76,3 +76,6 @@
 [submodule "wrapper/pcap"]
 	path = wrapper/pcap
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/pcap.git
+[submodule "wrapper/plugwise"]
+	path = wrapper/plugwise
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/plugwise.git
