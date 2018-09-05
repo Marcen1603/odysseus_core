@@ -91,3 +91,6 @@
 [submodule "wrapper/rdf"]
 	path = wrapper/rdf
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rdf.git
+[submodule "wrapper/rpi.gpio"]
+	path = wrapper/rpi.gpio
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/rpi.gpio.git
