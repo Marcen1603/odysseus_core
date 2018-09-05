@@ -64,3 +64,6 @@
 [submodule "wrapper/opcua"]
 	path = wrapper/opcua
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/opcua.git
+[submodule "wrapper/optriscamera"]
+	path = wrapper/optriscamera
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/optriscamera.git
