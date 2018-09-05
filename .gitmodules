@@ -34,3 +34,6 @@
 [submodule "wrapper/iec60870"]
 	path = wrapper/iec60870
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/iec60870.git
+[submodule "wrapper/json"]
+	path = wrapper/json
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/json.git
