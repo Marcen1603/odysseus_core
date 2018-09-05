@@ -109,3 +109,6 @@
 [submodule "wrapper/system"]
 	path = wrapper/system
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/system.git
+[submodule "wrapper/telegram"]
+	path = wrapper/telegram
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/telegram.git
