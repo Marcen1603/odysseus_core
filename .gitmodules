@@ -31,3 +31,6 @@
 [submodule "wrapper/json"]
 	path = wrapper/json
 	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/json.git
+[submodule "wrapper/kafka"]
+	path = wrapper/kafka
+	url = https://mgrawunder@git.swl.informatik.uni-oldenburg.de/scm/ody_wrap/kafka.git
