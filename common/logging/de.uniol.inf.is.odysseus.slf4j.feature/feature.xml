@@ -16,6 +16,34 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="com.rabbitmq.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.slf4j.api.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.slf4j.api.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.slf4j.log4j.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.slf4j.log4j.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.slf4j.log4j.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.slf4j.log4j.source.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
          download-size="0"
