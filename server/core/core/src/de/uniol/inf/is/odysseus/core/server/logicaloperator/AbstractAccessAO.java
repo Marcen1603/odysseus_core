@@ -408,6 +408,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 
 		@SuppressWarnings("rawtypes")
 		IProtocolHandler ph = RegistryBinder.getProtocolHandlerRegistry().getIProtocolHandlerClass(protocolHandler);
+		
+		if (ph == null) {
+			throw new IllegalArgumentException("Protocol handler "+protocolHandler+" not found!");
+		}
 
 		if (getOverWrittenSchema() == null && ph != null) {
 			setOverWrittenSchema(ph.getSchema());
