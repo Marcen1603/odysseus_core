@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Slf4j Wrapper
+Bundle-Name: Odyssseus Slf4j Over Log4J Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.slf4j;singleton:=true
-Bundle-Version: 1.7.16
+Bundle-Version: 1.7.25
 Bundle-ClassPath: src/,
  ./,
  .,
