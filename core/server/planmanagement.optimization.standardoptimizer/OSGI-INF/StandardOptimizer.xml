@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012 The Odysseus Team
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer">
+   <implementation class="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer.StandardOptimizer"/>
+   <reference bind="setOdysseusConfiguration" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration" name="OdysseusConfiguration" policy="static"/>
+   <reference bind="bindBufferPlacementStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy" name="IBufferPlacementStrategy" policy="dynamic" unbind="unbindBufferPlacementStrategy"/>
+   <reference bind="bindPostOptimizationAction" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction" name="IPostOptimizationAction" policy="dynamic" unbind="unbindPostOptimizationAction"/>
+   <reference bind="bindQueryOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer" name="IQueryOptimizer" policy="dynamic" unbind="unbindQueryOptimizer"/>
+   <reference bind="bindQuerySharingOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer" name="IQuerySharingOptimizer" policy="dynamic" unbind="unbindQuerySharingOptimizer"/>
+    <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer"/>
+   </service>
+    <reference bind="bindElementCloningUpdater" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.IElementCloningUpdater" name="IElementCloningUpdater" policy="dynamic" unbind="unbindElementCloningUpdater"/>
+</scr:component>

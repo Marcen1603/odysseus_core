@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.DashboardPart" name="Dashboard Part Extension Point" schema="schema/de.uniol.inf.is.odysseus.rcp.DashboardPart.exsd"/>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.wizards.NewDashboardPartWizard"
+            icon="icons/gear.png"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardPartWizard"
+            name="Dashboard Part"
+            project="false">
+      </wizard>
+      <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.wizards.NewDashboardWizard"
+            icon="icons/gears.png"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardWizard"
+            name="Dashboard">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartEditor"
+            contributorClass="de.uniol.inf.is.odysseus.rcp.dashboard.commands.DashboardPartEditorActionBarContributor"
+            default="true"
+            extensions="prt"
+            icon="icons/gear.png"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartEditor"
+            name="Odysseus Dashboard Part Editor">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor"
+            contributorClass="de.uniol.inf.is.odysseus.rcp.dashboard.commands.DashboardPartEditorActionBarContributor"
+            default="true"
+            extensions="dsh"
+            icon="icons/gears.png"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.DashboardEditor"
+            name="Odysseus Dashboard Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.dashboard.separator1">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart"
+               icon="icons/gear_ok.png"
+               label="Add Dashboard Part(s)"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ShowDashboardPartAsView"
+               icon="icons/gear_shrink.png"
+               label="Show Dashboard Part as View"
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.dashboard.separator2">
+         </separator>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.dashboard.DashboardEditor">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ConfigureCurrentDashboard"
+               label="Configure..."
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.dashboard.outline">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ConfigureCurrentDashboardPart"
+               label="Configure Part..."
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveDashboardPartCommand"
+               label="Remove"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.AddDashboardPartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart"
+            name="Add Dashboard Part">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ShowAsViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ShowDashboardPartAsView"
+            name="Show DashboardPart as View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ConfigureDashboardCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ConfigureDashboard"
+            name="Configure Dashboard">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ConfigureCurrentDashboardCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ConfigureCurrentDashboard"
+            name="Configure current Dashboard">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ConfigureCurrentDashboardPartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ConfigureCurrentDashboardPart"
+            name="Configure Dashboard Part">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.RemoveDashboardPartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveDashboardPartCommand"
+            name="Remove Dashboard Part">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardPartWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardPartWizard">
+         <enablement></enablement>
+      </commonWizard>
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardWizard">
+         <enablement></enablement>
+      </commonWizard>
+   </extension>
+      <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.perspectives.DashboardPerspective"
+            icon="icons/layout.gif"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.perspectives.DashboardPerspective"
+            name="Dashboard Designer">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view     
+            category="Odysseus"
+            allowMultiple="true"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.views.DashboardPartView"
+            icon="icons/gear_shrink.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.DashboardPartView"
+            name="Dashboard Part View"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            allowMultiple="true"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.views.dashboardpart.DashboardPartView"
+            icon="icons/gear.png"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.views.dashboardpart.DashboardPartView"
+            name="Dashboard Parts"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
