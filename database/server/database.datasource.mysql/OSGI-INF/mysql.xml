@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.database.datasource.mysql">
+   <property name="osgi.jdbc.driver.class" type="String" value="com.mysql.jdbc.Driver"/>
+   <property name="osgi.jdbc.driver.name"    type="String" value="MySQL Connector/J"/>
+   <property name="osgi.jdbc.driver.version" type="String" value="5.1.15"/>
+   <implementation class="de.uniol.inf.is.odysseus.database.mysql.MySQLJDBCSource"/>
+   <service>
+      <provide interface="org.osgi.service.jdbc.DataSourceFactory"/>
+   </service>
+</scr:component>

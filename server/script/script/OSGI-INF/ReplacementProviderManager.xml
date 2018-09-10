@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.script.parser.ReplacementProviderManager">
-   <implementation class="de.uniol.inf.is.odysseus.script.parser.ReplacementProviderManager"/>
-   <reference bind="bindReplacementProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.script.parser.IReplacementProvider" name="IReplacementProvider" policy="dynamic" unbind="unbindReplacementProvider"/>
-</scr:component>

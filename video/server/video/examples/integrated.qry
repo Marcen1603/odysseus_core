@@ -1,0 +1,18 @@
+#PARSER PQL
+#RUNQUERY
+///Grabs and displays the image of a camera attached to the PC (f.ex. webcam)
+///Device can be selected by the "id" parameter
+
+video  = ACCESS({source='Video', 
+				 wrapper='GenericPull', 
+				 transport='IntegratedCamera', 
+				 protocol='none', 
+				 datahandler='Tuple',
+				 options=[
+							['id', '0']
+					     ],
+				 schema= [	
+        					['image', 		'IMAGEJCV']
+        				 ]})
+					     
+output = UDO({class='ShowImageJCV', init='0'}, video)

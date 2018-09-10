@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rcp.editor.script.TransformRuleRegistry">
+   <implementation class="de.uniol.inf.is.odysseus.rcp.editor.script.rules.TransformRuleRegistry"/>
+   <reference bind="bindOdysseusScriptTransformRule" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRule" name="IOdysseusScriptTransformRule" policy="dynamic" unbind="unbindOdysseusScriptTransformRule"/>
+   <reference bind="bindOdysseusScriptTransformRuleProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRuleProvider" name="IOdysseusScriptTransformRuleProvider" policy="dynamic" unbind="unbindOdysseusScriptTransformRuleProvider"/>
+</scr:component>

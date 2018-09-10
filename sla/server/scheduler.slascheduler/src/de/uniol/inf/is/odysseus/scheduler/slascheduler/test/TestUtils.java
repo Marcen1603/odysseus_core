@@ -1,0 +1,105 @@
+/*******************************************************************************
+ * Copyright 2012 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package de.uniol.inf.is.odysseus.scheduler.slascheduler.test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.server.sla.Penalty;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.Scope;
+import de.uniol.inf.is.odysseus.core.server.sla.ServiceLevel;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.core.server.sla.penalty.AbsolutePenalty;
+import de.uniol.inf.is.odysseus.core.server.sla.scope.Average;
+import de.uniol.inf.is.odysseus.core.server.sla.scope.Number;
+import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
+
+public class TestUtils {
+	
+	public static SLA buildSLAAverage() {
+		SLA sla = new SLA();
+		sla.setName("Test SLA Latency Average");
+		
+		Latency latency = new Latency(new Integer(0), TimeUnit.ms);
+		sla.setMetric(latency);
+		
+		sla.setPrice(1000);
+		
+		Scope scope = new Average();
+		sla.setScope(scope);
+		
+		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
+		
+		serviceLevels.add(buildServiceLevel(sla, 100, 200));
+		serviceLevels.add(buildServiceLevel(sla, 200, 400));
+		sla.setServiceLevel(serviceLevels);
+		
+		return sla;
+	}
+	
+	public static SLA buildSLANumber() {
+		SLA sla = new SLA();
+		sla.setName("Test SLA Latency Number");
+		
+		Latency latency = new Latency(new Integer(500), TimeUnit.ms);
+		sla.setMetric(latency);
+		
+		sla.setPrice(1000);
+		
+		Scope scope = new Number();
+		sla.setScope(scope);
+		
+		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
+		
+		serviceLevels.add(buildServiceLevel(sla, 75, 10));
+		serviceLevels.add(buildServiceLevel(sla, 150, 20));
+		sla.setServiceLevel(serviceLevels);
+		
+		return sla;
+	}
+	
+	public static SLA buildSLASingle() {
+		SLA sla = new SLA();
+		sla.setName("Test SLA Latency Single");
+		
+		Latency latency = new Latency(new Integer(0), TimeUnit.ms);
+		sla.setMetric(latency);
+		
+		sla.setPrice(1000);
+		
+		Scope scope = new Average();
+		sla.setScope(scope);
+		
+		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
+		
+		serviceLevels.add(buildServiceLevel(sla, 100, 200));
+		serviceLevels.add(buildServiceLevel(sla, 225, 400));
+		sla.setServiceLevel(serviceLevels);
+		
+		return sla;
+	}
+	
+	private static ServiceLevel buildServiceLevel(SLA sla, int penaltyCost, int threshold) {
+		ServiceLevel sl = new ServiceLevel();
+		Penalty penalty = new AbsolutePenalty(penaltyCost);
+		sl.setPenalty(penalty);
+		sl.setSla(sla);
+		sl.setThreshold(threshold);
+		return sl;
+	}
+	
+}

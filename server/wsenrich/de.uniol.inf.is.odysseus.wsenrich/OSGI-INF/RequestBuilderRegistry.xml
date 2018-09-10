@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.wsenrich.RequestBuilderRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry"/>
-   <reference bind="register" cardinality="0..n" interface="de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IRequestBuilder" name="IRequestBuilder" policy="dynamic" unbind="remove"/>
-</scr:component>
