@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.temporaltypes.function.RemoveTemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -54,8 +55,11 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 					currentOutputAttribute);
 
 			// Names should be unique, so at maximum one result
-			if (expressionForAttribute.size() == 1 && containsTemporalAttribute(
-					expressionForAttribute.get(0).expression.getAllAttributes(), operator.getInputSchema())) {
+			if (expressionForAttribute.size() == 1
+					&& containsTemporalAttribute(expressionForAttribute.get(0).expression.getAllAttributes(),
+							operator.getInputSchema())
+					&& !(expressionForAttribute.get(0).expression
+							.getMEPExpression() instanceof RemoveTemporalFunction)) {
 				SDFAttribute newAttribute = addTemporalConstraintToAttribute(currentOutputAttribute);
 				newAttributes.add(newAttribute);
 			} else {

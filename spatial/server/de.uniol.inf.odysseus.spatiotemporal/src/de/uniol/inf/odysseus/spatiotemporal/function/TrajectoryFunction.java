@@ -1,5 +1,7 @@
 package de.uniol.inf.odysseus.spatiotemporal.function;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -8,15 +10,17 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.temporaltypes.function.RemoveTemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.function.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
-public class TrajectoryFunction extends AbstractFunction<GeometryWrapper> implements TemporalFunction {
+public class TrajectoryFunction extends AbstractFunction<GeometryWrapper> implements TemporalFunction, RemoveTemporalFunction {
 
 	private static final long serialVersionUID = -6403419218488014090L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT },
@@ -77,6 +81,12 @@ public class TrajectoryFunction extends AbstractFunction<GeometryWrapper> implem
 		MultiLineString multiTrajectory = factory.createMultiLineString(allTrajectories);
 		GeometryWrapper result = new GeometryWrapper(multiTrajectory);
 		return result;
+	}
+	
+	@Override
+	public Collection<SDFConstraint> getConstraintsToAdd() {
+		// In the default case, no constraints are added
+		return new ArrayList<SDFConstraint>(0);
 	}
 
 }
