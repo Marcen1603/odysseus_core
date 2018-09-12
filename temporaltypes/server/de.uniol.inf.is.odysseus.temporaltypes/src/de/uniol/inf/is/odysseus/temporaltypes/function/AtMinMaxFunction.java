@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.temporaltypes.function;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
@@ -48,17 +49,34 @@ public abstract class AtMinMaxFunction extends AbstractFunction<GenericTemporalT
 		List<PointInTime> pointsInTime = new ArrayList<>();
 
 		// Loop through all available values and pick the min / max ones
+		TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();
+		TimeUnit streamBaseTimeUnit = super.getBaseTimeUnit();
+		if (predictionTimeUnit == null) {
+			// The prediction time unit does not differ from the stream time unit
+			predictionTimeUnit = streamBaseTimeUnit;
+		}
+		
 		for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
-			for (PointInTime currentTime = validTime.getPredictionStart(); currentTime
-					.before(validTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
-				Object value = temporalType.getValue(currentTime);
+			PointInTime validStart = validTime.getPredictionStart();
+			PointInTime validEnd = validTime.getPredictionEnd();
+
+			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
+
+				/*
+				 * Convert this point in time to the stream time, as all prediction functions
+				 * use the stream time.
+				 */
+				long streamTime = streamBaseTimeUnit.convert(i.getMainPoint(), predictionTimeUnit);
+				PointInTime inStreamTime = new PointInTime(streamTime);
+				Object value = temporalType.getValue(inStreamTime);
+				
 				if (value instanceof Comparable) {
 					Comparable currentValue = (Comparable) value;
 					if (isMinMaxValue(minValues, currentValue)) {
-						startNewLists(minValues, pointsInTime, currentValue, currentTime);
+						startNewLists(minValues, pointsInTime, currentValue, inStreamTime);
 					} else if (isEqualValue(minValues, currentValue)) {
 						// There can be multiple min / max values
-						addToExistingLists(minValues, pointsInTime, currentValue, currentTime);
+						addToExistingLists(minValues, pointsInTime, currentValue, inStreamTime);
 					}
 				}
 			}

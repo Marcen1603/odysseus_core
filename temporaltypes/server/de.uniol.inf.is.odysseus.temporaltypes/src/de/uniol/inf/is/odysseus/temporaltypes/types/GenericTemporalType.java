@@ -140,16 +140,16 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 			predictionTimeUnit = streamTimeUnit;
 		}
 
-		for (PointInTime point : this.values.keySet()) {
+		for (PointInTime asStreamTime : this.values.keySet()) {
 
 			/*
 			 * The values in this object are stored as stream points in time, so we have to
 			 * convert from the potentially different prediction time base time first
 			 */
-			long inStreamTime = streamTimeUnit.convert(point.getMainPoint(), predictionTimeUnit);
-			PointInTime asStreamTime = new PointInTime(inStreamTime);
+			long inPredictionTime = predictionTimeUnit.convert(asStreamTime.getMainPoint(), streamTimeUnit);
+			PointInTime asPredictionTime = new PointInTime(inPredictionTime);
 
-			if (!validTimes.includes(asStreamTime)) {
+			if (!validTimes.includes(asPredictionTime)) {
 				toRemove.add(asStreamTime);
 			}
 		}
