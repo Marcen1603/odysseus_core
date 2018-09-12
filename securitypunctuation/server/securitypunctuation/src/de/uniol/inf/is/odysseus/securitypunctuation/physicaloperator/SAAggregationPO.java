@@ -38,11 +38,12 @@ public class SAAggregationPO<M extends ITimeInterval, T extends Tuple<M>> extend
 			boolean evaluateBeforeRemovingOutdatingElements, boolean evaluateAtNewElement, boolean evaluateAtDone,
 			boolean outputOnlyChanges, SDFSchema outputSchema, int[] groupingAttributesIndices,
 			int[] groupingAttributeIndicesOutputSchema, String tupleRangeAttribute, List<? extends IRole> roles,
+			final boolean createOutputOnPunctuation,
 			final IMetadataMergeFunction<M> mmf, boolean alwaysUseSweepArea) {
 		super(nonIncrementalFunctions, incrementalFunctions, evaluateAtOutdatingElements,
 				evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone, outputOnlyChanges,
-				outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema, outputOnlyChanges, mmf,
-				alwaysUseSweepArea);
+				outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema, outputOnlyChanges, createOutputOnPunctuation,
+				mmf, alwaysUseSweepArea);
 		this.roles = new ArrayList<String>();
 		this.tupleRangeAttribute = tupleRangeAttribute;
 		addRoles(roles);

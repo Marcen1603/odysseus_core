@@ -49,6 +49,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -150,6 +152,12 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * evaluation. E. g., the final AVG of the latency.
 	 */
 	protected final boolean evaluateAtDone;
+	
+	/**
+	 * If this flag is set to true, output will additionally created on an incoming punctuation
+	 */
+	private final boolean createOutputOnPunctuation;
+
 
 	protected final boolean outputOnlyChanges;
 
@@ -176,9 +184,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected final boolean supressFullMetaDataHandling;
 
 	protected final IMetadataMergeFunction<M> metadataMergeFunc;
-	
-	/* Fill the SweepArea independently of the existence of a non-incremental 
-	 * function (e.g., to have metadata handling for multiple metadatas) */
+
+	/*
+	 * Fill the SweepArea independently of the existence of a non-incremental
+	 * function (e.g., to have metadata handling for multiple metadatas)
+	 */
 	protected final boolean alwaysUseSweepArea;
 
 	/**
@@ -205,8 +215,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            The indices that form the grouping attributes.
 	 * @param groupingAttributesIdxOutputSchema
 	 *            The indices that form the grouping attributes on the output schema
-	 * @param alwaysUseSweepArea Fill the SweepArea independently of the existence of a non-incremental 
-	 * function (e.g., to have metadata handling for multiple metadatas)
+	 * @param alwaysUseSweepArea
+	 *            Fill the SweepArea independently of the existence of a
+	 *            non-incremental function (e.g., to have metadata handling for
+	 *            multiple metadatas)
 	 */
 	public AggregationPO(final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions,
@@ -214,6 +226,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
 			final int[] groupingAttributesIdxOutputSchema, final boolean supressFullMetaDataHandling,
+			final boolean createOutputOnPunctuation,
 			final IMetadataMergeFunction<M> mmf, boolean alwaysUseSweepArea) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
@@ -224,6 +237,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.evaluateAtNewElement = evaluateAtNewElement;
 		this.evaluateAtOutdatingElements = evaluateAtOutdatingElements;
 		this.evaluateBeforeRemovingOutdatingElements = evaluateBeforeRemovingOutdatingElements;
+		this.createOutputOnPunctuation = createOutputOnPunctuation;
 		this.outputOnlyChanges = outputOnlyChanges;
 		if (outputOnlyChanges) {
 			lastOutput = new HashMap<>();
@@ -238,7 +252,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				.anyMatch(e -> e.needsOrderedElements());
 		this.supressFullMetaDataHandling = supressFullMetaDataHandling;
 		this.metadataMergeFunc = mmf;
-		
+
 		this.alwaysUseSweepArea = alwaysUseSweepArea;
 	}
 
@@ -263,7 +277,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndicesOutputSchema = other.groupingAttributesIndicesOutputSchema;
 		this.supressFullMetaDataHandling = other.supressFullMetaDataHandling;
 		this.metadataMergeFunc = other.metadataMergeFunc;
-		
+		this.createOutputOnPunctuation = other.createOutputOnPunctuation;
 		this.alwaysUseSweepArea = other.alwaysUseSweepArea;
 	}
 
@@ -297,7 +311,41 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	public void processPunctuation(final IPunctuation punctuation, final int port) {
 		// Process outdated elements that are before the punctuation.
 		processOutdatedElements(punctuation.getTime(), null);
+		if (createOutputOnPunctuation) {
+
+			if (groups.isEmpty()) {
+				evaluateOnPunctuation(punctuation, defaultGroupingKey);
+			} else {
+				for (Object groupKey: groups.keySet()) {
+					evaluateOnPunctuation(punctuation, groupKey);
+				}
+			}
+		}
+
 		sendPunctuation(punctuation);
+	}
+
+	private void evaluateOnPunctuation(final IPunctuation punctuation, Object groupKey) {
+		final T result = evaluateAtNewElement ? (T) new Tuple<>(outputSchema.size(), true) : null;
+
+		if (hasIncrementalFunctions) {
+			final List<IIncrementalAggregationFunction<M, T>> statefulFunctionsForKey = getStatefulFunctions(groupKey);
+			for (final IIncrementalAggregationFunction<M, T> function : statefulFunctionsForKey) {
+				final Object[] result2 = function.evalute(null, punctuation.getTime());
+				for (int i = 0; i < result2.length; ++i) {
+					result.setAttribute(function.getOutputAttributeIndices()[i], result2[i]);
+				}
+			}
+		}
+
+		if (hasNonIncrementalFunctions && evaluateAtNewElement) {
+			final Collection<T> objects = getSweepArea(groupKey).getValidTuples();
+			processNonIncrementalFunctions(result, null, null, punctuation.getTime());
+		}
+
+		if (result != null) {
+			transferResult(result, null, punctuation.getTime());
+		}
 	}
 
 	/*

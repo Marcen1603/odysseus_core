@@ -67,7 +67,7 @@ public class TSAAggregationAORule extends AbstractTransformationRule<SAAggregati
 				nonIncrementalFunctions, incrementalFunctions, evaluateAtOutdatingElements,
 				evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone, outputOnlyChanges,
 				outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema, tupleRangeAttribute,
-				roles, mf, alwaysUseSweepArea);
+				roles, operator.isCreateOutputOnPunctuation(), mf, alwaysUseSweepArea);
 		defaultExecute(operator, po, config, true, true);
 	}
 
