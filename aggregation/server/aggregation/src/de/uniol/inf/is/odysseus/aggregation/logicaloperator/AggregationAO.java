@@ -72,6 +72,12 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	 * evaluation. E. g., the final AVG of the latency.
 	 */
 	private boolean evaluateAtDone = false;
+	
+	/** 
+	 * If this flag is set to true, the operator generate additionally output 
+	 * for each incomming punctuation
+	 */
+	private boolean createOutputOnPunctuation = false;
 
 	private boolean outputOnlyChanges = false;
 	
@@ -100,6 +106,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		evaluateBeforeRemovingOutdatingElements = op.evaluateBeforeRemovingOutdatingElements;
 		outputOnlyChanges = op.outputOnlyChanges;
 		supressFullMetaDataHandling = op.supressFullMetaDataHandling;
+		createOutputOnPunctuation = op.createOutputOnPunctuation;
 	}
 
 	/*
@@ -208,6 +215,15 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	@Parameter(name = "EVAL_AT_DONE", type = BooleanParameter.class, optional = true)
 	public void setEvaluateAtDone(final boolean evaluateAtDone) {
 		this.evaluateAtDone = evaluateAtDone;
+	}
+	
+	@Parameter(type = BooleanParameter.class, optional = true)
+	public void setCreateOutputOnPunctuation(boolean createOutputOnPunctuation) {
+		this.createOutputOnPunctuation = createOutputOnPunctuation;
+	}
+	
+	public boolean isCreateOutputOnPunctuation() {
+		return createOutputOnPunctuation;
 	}
 
 	@GetParameter(name = "OUTPUT_ONLY_CHANGES")
