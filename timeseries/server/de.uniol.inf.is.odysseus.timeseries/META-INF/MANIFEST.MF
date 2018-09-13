@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.timeseries.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.collect,
- de.uniol.inf.is.odysseus.aggregation,
  de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.aggregation.functions.factory,
  de.uniol.inf.is.odysseus.aggregation.logicaloperator,
