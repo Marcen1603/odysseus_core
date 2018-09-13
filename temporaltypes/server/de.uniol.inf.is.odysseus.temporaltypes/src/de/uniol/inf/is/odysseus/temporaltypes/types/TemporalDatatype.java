@@ -64,6 +64,10 @@ public class TemporalDatatype extends SDFDatatype {
 		return false;
 	}
 
+	public static boolean containsTemporalConstraint(Collection<SDFConstraint> constraints) {
+		return constraints.contains(new SDFConstraint(TEMPORAL_CONTRAINT, true));
+	}
+
 	/**
 	 * The search needs to be done on the input schema, because the temporal
 	 * constraints are added to the input schema, not to the attributes in the
