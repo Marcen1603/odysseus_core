@@ -120,7 +120,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		return new AggregationAO(this);
 	}
 
-	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc="The grouping attributes.")
 	public void setGroupingAttributes(final List<SDFAttribute> attributes) {
 		groupingAttributes = attributes;
 	}
@@ -146,7 +146,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		return groupingAttributeIndices;
 	}
 
-	@Parameter(name = "AGGREGATIONS", type = AggregationItemParameter.class, isList = true)
+	@Parameter(name = "AGGREGATIONS", type = AggregationItemParameter.class, isList = true, doc="the aggregate functions and parameters")
 	public void setAggregations(final List<IAggregationFunction> aggregations) {
 		functions = aggregations;
 	}
@@ -168,7 +168,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	 * @param evaluateAtOutdatingElements
 	 *            the evaluateAtOutdatingElements to set
 	 */
-	@Parameter(name = "EVAL_AT_OUTDATING", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "EVAL_AT_OUTDATING", type = BooleanParameter.class, optional = true, doc ="Outputs an updated aggregation value when one ore more elements gets invalid with the value after the removal of the invalid elements. The default value is true.")
 	public void setEvaluateAtOutdatingElements(final boolean evaluateAtOutdatingElements) {
 		this.evaluateAtOutdatingElements = evaluateAtOutdatingElements;
 	}
@@ -178,7 +178,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		return evaluateBeforeRemovingOutdatingElements;
 	}
 
-	@Parameter(name = "EVAL_BEFORE_REMOVE_OUTDATING", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "EVAL_BEFORE_REMOVE_OUTDATING", type = BooleanParameter.class, optional = true, doc="Outputs an updated aggregation value before removing the invalid elements instead of after removal. The default value is false.")
 	public void setEvaluateBeforeRemovingOutdatingElements(final boolean evaluateBeforeRemovingOutdatingElements) {
 		this.evaluateBeforeRemovingOutdatingElements = evaluateBeforeRemovingOutdatingElements;
 	}
@@ -195,7 +195,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	 * @param evaluateAtNewElement
 	 *            the evaluateAtNewElement to set
 	 */
-	@Parameter(name = "EVAL_AT_NEW_ELEMENT", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "EVAL_AT_NEW_ELEMENT", type = BooleanParameter.class, optional = true, doc = "Outputs an updated aggregation value when a new element gets valid. In the case that more than one element gets valid at the same time (same start timestamp), this operator outputs for each element an output value in the order of arrival. The default value is true.")
 	public void setEvaluateAtNewElement(final boolean evaluateAtNewElement) {
 		this.evaluateAtNewElement = evaluateAtNewElement;
 	}
@@ -212,12 +212,12 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	 * @param evaluateAtDone
 	 *            the evaluateAtDone to set
 	 */
-	@Parameter(name = "EVAL_AT_DONE", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "EVAL_AT_DONE", type = BooleanParameter.class, optional = true, doc="Outputs the value at the time the operator gets the done signal. The default value is false.")
 	public void setEvaluateAtDone(final boolean evaluateAtDone) {
 		this.evaluateAtDone = evaluateAtDone;
 	}
 	
-	@Parameter(type = BooleanParameter.class, optional = true)
+	@Parameter(type = BooleanParameter.class, optional = true, doc="Generates additional output of the current state for each incoming punctuation. Default is false.")
 	public void setCreateOutputOnPunctuation(boolean createOutputOnPunctuation) {
 		this.createOutputOnPunctuation = createOutputOnPunctuation;
 	}
@@ -231,7 +231,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		return outputOnlyChanges;
 	}
 
-	@Parameter(name = "OUTPUT_ONLY_CHANGES", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "OUTPUT_ONLY_CHANGES", type = BooleanParameter.class, optional = true, doc="Suppresses elements that are equal to the previous outputted element. The default value is false. If you want to use this, make sure the equals-method for every attribute type is implemented.")
 	public void setOutputOnlyChanges(final boolean outputOnlyChanges) {
 		this.outputOnlyChanges = outputOnlyChanges;
 	}
@@ -241,7 +241,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		return supressFullMetaDataHandling;
 	}
 	
-	@Parameter(name = "SUPPRESS_FULL_META_DATA_HANDLING", type = BooleanParameter.class, optional = true)
+	@Parameter(name = "SUPPRESS_FULL_META_DATA_HANDLING", type = BooleanParameter.class, optional = true, doc="<todo>")
 	public void setSupressFullMetaDataHandling(final boolean processMetaData){
 		this.supressFullMetaDataHandling = processMetaData;
 	}
