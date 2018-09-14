@@ -20,14 +20,24 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
-public class TrajectoryFunction extends AbstractFunction<GeometryWrapper> implements TemporalFunction, RemoveTemporalFunction {
+/**
+ * Converts a temporal point to a non-temporal trajectory.
+ * 
+ * @author Tobias Brandt
+ *
+ */
+public class TrajectoryFunction extends AbstractFunction<GeometryWrapper>
+		implements TemporalFunction, RemoveTemporalFunction {
 
 	private static final long serialVersionUID = -6403419218488014090L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT },
 			{ SDFDatatype.OBJECT } };
 
+	private GeometryFactory factory;
+
 	public TrajectoryFunction() {
 		super("Trajectory", 2, accTypes, SDFDatatype.OBJECT);
+		this.factory = new GeometryFactory();
 	}
 
 	@Override
@@ -37,15 +47,16 @@ public class TrajectoryFunction extends AbstractFunction<GeometryWrapper> implem
 			return null;
 		}
 
-		GeometryFactory factory = new GeometryFactory();
-
 		TemporalType<GeometryWrapper> temporalType = this.getInputValue(0);
-
 		IPredictionTimes predictionTimes = this.getInputValue(1);
 
 		TimeUnit predictionTimeUnit = predictionTimes.getPredictionTimeUnit();
 		TimeUnit streamBaseTimeUnit = super.getBaseTimeUnit();
 
+		/*
+		 * It could be more than one LineString, because we could have multiple
+		 * prediction time intervals
+		 */
 		LineString[] allTrajectories = new LineString[predictionTimes.getPredictionTimes().size()];
 		int trajectoryCounter = 0;
 
@@ -65,6 +76,7 @@ public class TrajectoryFunction extends AbstractFunction<GeometryWrapper> implem
 				PointInTime inStreamTime = new PointInTime(streamTime);
 				Object value = temporalType.getValue(inStreamTime);
 
+				// Collect the coordinates for this LineString
 				if (value instanceof GeometryWrapper) {
 					GeometryWrapper singlePoint = (GeometryWrapper) value;
 					Coordinate pointCoordinate = singlePoint.getGeometry().getCoordinate();
@@ -73,16 +85,18 @@ public class TrajectoryFunction extends AbstractFunction<GeometryWrapper> implem
 				}
 			}
 
+			// Create the LineString for this prediction time interval
 			LineString singleTrajectory = factory.createLineString(coordinates);
 			allTrajectories[trajectoryCounter] = singleTrajectory;
 			trajectoryCounter++;
 		}
 
+		// Collect all LineStrings to a MultiLineString
 		MultiLineString multiTrajectory = factory.createMultiLineString(allTrajectories);
 		GeometryWrapper result = new GeometryWrapper(multiTrajectory);
 		return result;
 	}
-	
+
 	@Override
 	public Collection<SDFConstraint> getConstraintsToAdd() {
 		// In the default case, no constraints are added
