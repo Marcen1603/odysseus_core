@@ -13,7 +13,8 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
 /**
  * The speed function from the Moving Object Algebra. Uses not the Euclidean
- * distance but the orthodromic distance to respect the shape of the Earth.
+ * distance but the orthodromic distance to respect the shape of the Earth. The
+ * speed is given in meters per time instance of the stream time base time unit.
  * 
  * @author Tobias Brandt
  *
@@ -46,16 +47,15 @@ public class SpeedFunction extends AbstractFunction<GenericTemporalType<?>> impl
 					.before(predictionTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
 
 				// Convert into stream time, cause temporal types always work in stream time
-				PointInTime inStreamTime = new PointInTime(
-						this.getBaseTimeUnit().convert(currentTime.getMainPoint(), predictionTimes.getPredictionTimeUnit()));
-				
+				PointInTime inStreamTime = new PointInTime(this.getBaseTimeUnit().convert(currentTime.getMainPoint(),
+						predictionTimes.getPredictionTimeUnit()));
+
 				// For the very first location there is no speed
 				if (prevTime == null) {
 					prevTime = inStreamTime;
 					result.setValue(inStreamTime, 0.0);
 					continue;
 				}
-
 
 				// From the second point on the moving object has a speed
 				double speed = calculateSpeed(temporalPoint, inStreamTime, prevTime);
