@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.core.server.feature"
       label="Core Server"
-      version="1.0.0"
+      version="1.0.1"
       provider-name="University of Oldenburg">
 
    <description>
