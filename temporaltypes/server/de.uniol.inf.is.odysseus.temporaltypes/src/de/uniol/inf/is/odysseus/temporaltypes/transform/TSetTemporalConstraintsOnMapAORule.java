@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.temporaltypes.function.RemoveTemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IPredictionTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -56,7 +55,7 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 					currentOutputAttribute);
 
 			// Names should be unique, so at maximum one result (but could be 0)
-			boolean expressionResultIsTemporal = expressionForAttribute.size() > 0 ? isTemporal(
+			boolean expressionResultIsTemporal = expressionForAttribute.size() > 0 ? TemporalDatatype.isTemporal(
 					(IMepExpression<?>) expressionForAttribute.get(0).expression.getMEPExpression(),
 					operator.getInputSchema()) : false;
 			if (expressionResultIsTemporal) {
@@ -71,63 +70,6 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 		// Create and set the new schema
 		SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(operator.getOutputSchema(), newAttributes);
 		operator.setOutputSchema(newSchema);
-	}
-
-	/**
-	 * In a recursive way: check from inside to outside if the outer expression
-	 * needs a temporal constraint.
-	 * 
-	 * @param expression
-	 *            The expression to check
-	 * @param inputSchema
-	 *            The input schema of the operator, needed to search for temporal
-	 *            attributes
-	 * @return true, if the (last, most outer) result of the expression is temporal
-	 */
-	private boolean isTemporal(IMepExpression<?> expression, SDFSchema inputSchema) {
-
-		boolean isTemporal = false;
-
-		if (expression.isVariable()) {
-			/* For a single variable, we can simply look into the schema if its temporal */
-			SDFAttribute attribute = inputSchema.findAttribute(expression.toString());
-			boolean isTemporalAttribute = isTemporalAttribute(attribute, inputSchema);
-			if (isTemporalAttribute) {
-				isTemporal = true;
-			}
-		} else if (expression.isConstant()) {
-			/*
-			 * Constant is never temporal -> Don't do anything, cause this does not switch
-			 * the layer to temporal
-			 */
-		} else if (expression.isFunction()) {
-
-			if (expression instanceof RemoveTemporalFunction) {
-				/* If its a remove temporal function, the output will not be temporal */
-			} else if (TemporalDatatype.containsTemporalConstraint(expression.getConstraintsToAdd())) {
-				/*
-				 * If its a temporalization function (add temporal constraint), the output will
-				 * be temporal
-				 */
-				isTemporal = true;
-			} else {
-				/*
-				 * If its neither of the two, the output depends on the arguments (inputs). If
-				 * at least one argument was temporal, the output will also be temporal.
-				 */
-				IMepExpression<?>[] arguments = expression.toFunction().getArguments();
-
-				for (int i = 0; i < arguments.length; i++) {
-					boolean inputIsTemporal = isTemporal(arguments[i], inputSchema);
-					if (inputIsTemporal) {
-						isTemporal = true;
-						break;
-					}
-				}
-			}
-		}
-
-		return isTemporal;
 	}
 
 	private List<NamedExpression> findExpressionForOutputAttribute(MapAO operator,
@@ -178,17 +120,9 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 	 */
 	protected boolean containsTemporalAttribute(List<SDFAttribute> attributes, SDFSchema inputSchema) {
 		for (SDFAttribute attribute : attributes) {
-			if (isTemporalAttribute(attribute, inputSchema)) {
+			if (TemporalDatatype.isTemporalAttribute(attribute, inputSchema)) {
 				return true;
 			}
-		}
-		return false;
-	}
-
-	protected boolean isTemporalAttribute(SDFAttribute attribute, SDFSchema inputSchema) {
-		SDFAttribute attributeFromSchema = TemporalDatatype.getAttributeFromSchema(inputSchema, attribute);
-		if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
-			return true;
 		}
 		return false;
 	}

@@ -3,11 +3,13 @@ package de.uniol.inf.is.odysseus.temporaltypes.types;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.temporaltypes.function.RemoveTemporalFunction;
 
 /**
  * This class lists all available temporal datatypes.
@@ -63,9 +65,74 @@ public class TemporalDatatype extends SDFDatatype {
 		}
 		return false;
 	}
+	
+	public static boolean isTemporalAttribute(SDFAttribute attribute, SDFSchema inputSchema) {
+		SDFAttribute attributeFromSchema = getAttributeFromSchema(inputSchema, attribute);
+		if (isTemporalAttribute(attributeFromSchema)) {
+			return true;
+		}
+		return false;
+	}
 
 	public static boolean containsTemporalConstraint(Collection<SDFConstraint> constraints) {
 		return constraints.contains(new SDFConstraint(TEMPORAL_CONTRAINT, true));
+	}
+	
+	/**
+	 * In a recursive way: check from inside to outside if the outer expression
+	 * needs a temporal constraint.
+	 * 
+	 * @param expression
+	 *            The expression to check
+	 * @param inputSchema
+	 *            The input schema of the operator, needed to search for temporal
+	 *            attributes
+	 * @return true, if the (last, most outer) result of the expression is temporal
+	 */
+	public static boolean isTemporal(IMepExpression<?> expression, SDFSchema inputSchema) {
+
+		boolean isTemporal = false;
+
+		if (expression.isVariable()) {
+			/* For a single variable, we can simply look into the schema if its temporal */
+			SDFAttribute attribute = inputSchema.findAttribute(expression.toString());
+			boolean isTemporalAttribute = isTemporalAttribute(attribute, inputSchema);
+			if (isTemporalAttribute) {
+				isTemporal = true;
+			}
+		} else if (expression.isConstant()) {
+			/*
+			 * Constant is never temporal -> Don't do anything, cause this does not switch
+			 * the layer to temporal
+			 */
+		} else if (expression.isFunction()) {
+
+			if (expression instanceof RemoveTemporalFunction) {
+				/* If its a remove temporal function, the output will not be temporal */
+			} else if (TemporalDatatype.containsTemporalConstraint(expression.getConstraintsToAdd())) {
+				/*
+				 * If its a temporalization function (add temporal constraint), the output will
+				 * be temporal
+				 */
+				isTemporal = true;
+			} else {
+				/*
+				 * If its neither of the two, the output depends on the arguments (inputs). If
+				 * at least one argument was temporal, the output will also be temporal.
+				 */
+				IMepExpression<?>[] arguments = expression.toFunction().getArguments();
+
+				for (int i = 0; i < arguments.length; i++) {
+					boolean inputIsTemporal = isTemporal(arguments[i], inputSchema);
+					if (inputIsTemporal) {
+						isTemporal = true;
+						break;
+					}
+				}
+			}
+		}
+
+		return isTemporal;
 	}
 
 	/**

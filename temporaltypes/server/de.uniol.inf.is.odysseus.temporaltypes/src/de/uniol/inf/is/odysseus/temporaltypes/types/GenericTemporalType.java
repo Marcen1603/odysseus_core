@@ -46,8 +46,10 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	/**
 	 * Set a value for a specific point in time.
 	 * 
-	 * @param time  The time at which the value is valid
-	 * @param value The value
+	 * @param time
+	 *            The time at which the value is valid
+	 * @param value
+	 *            The value
 	 */
 	public void setValue(PointInTime time, T value) {
 		this.values.put(time, value);
@@ -104,7 +106,8 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	 * Sets the trust function for this temporal attribute. For example, when the
 	 * trust changes.
 	 * 
-	 * @param trustFunction The new trust function
+	 * @param trustFunction
+	 *            The new trust function
 	 */
 	public void setTrustFunction(TemporalType<Double> trustFunction) {
 		this.trustFunction = trustFunction;
@@ -127,10 +130,12 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	/**
 	 * Removes all elements from the map which are not within the valid times
 	 * 
-	 * @param validTimes     The valid times which are needed. Others can be removed
+	 * @param validTimes
+	 *            The valid times which are needed. Others can be removed
 	 * 
-	 * @param streamTimeUnit The base time unit of the stream, which can differ from
-	 *                       the base time unit of the prediction
+	 * @param streamTimeUnit
+	 *            The base time unit of the stream, which can differ from the base
+	 *            time unit of the prediction
 	 */
 	public void trim(IPredictionTimes validTimes, TimeUnit streamTimeUnit) {
 
@@ -182,7 +187,9 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	}
 
 	private String objectToString(Object value) {
-		if (value instanceof Object[]) {
+		if (value == null) {
+			return "null";
+		} else if (value instanceof Object[]) {
 			Object[] values = (Object[]) value;
 			return Arrays.deepToString(values);
 		} else {
