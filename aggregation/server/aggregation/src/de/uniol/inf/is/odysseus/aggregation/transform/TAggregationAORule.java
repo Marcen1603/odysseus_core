@@ -96,7 +96,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 		final AggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new AggregationPO<>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements,
 				evaluateAtNewElement, evaluateAtDone, outputOnlyChanges, outputSchema, groupingAttributesIndices,
-				groupingAttributeIndicesOutputSchema, supressFullMetaDataHandling, mf, alwaysUseSweepArea);
+				groupingAttributeIndicesOutputSchema, supressFullMetaDataHandling, operator.isCreateOutputOnPunctuation(), mf, alwaysUseSweepArea);
 
 		defaultExecute(operator, po, config, true, true);
 	}
