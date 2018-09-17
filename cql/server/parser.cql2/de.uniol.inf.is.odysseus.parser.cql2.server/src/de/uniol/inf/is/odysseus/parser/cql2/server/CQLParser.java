@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MissingParameterException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.AbstractQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
@@ -82,7 +82,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
-public class CQLParser implements IQueryParser {
+public class CQLParser extends AbstractQueryParser {
 
 	private static final InfoService infoService = InfoServiceFactory.getInfoService(CQLParser.class);
 	private static final Logger logger = LoggerFactory.getLogger(CQLParser.class);
@@ -450,10 +450,6 @@ public class CQLParser implements IQueryParser {
 		return tokens;
 	}
 
-	@Override
-	public List<String> getSuggestions(String hint, ISession user) {
-		return new ArrayList<>();
-	}
 
 	@Override
 	public String getLanguage() {

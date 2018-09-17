@@ -18,10 +18,8 @@ package de.uniol.inf.is.odysseus.sparql;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -30,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.AbstractQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -41,7 +40,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTQuery;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.SPARQLParser;
 import de.uniol.inf.is.odysseus.sparql.parser.visitor.SPARQLCreateLogicalPlanVisitor;
 
-public class SPARQL implements IQueryParser{
+public class SPARQL extends AbstractQueryParser{
 
 	public static SPARQL instance;
 	private static SPARQLParser parser;
@@ -132,14 +131,4 @@ public class SPARQL implements IQueryParser{
 		}
 	}
 	
-	@Override
-	public Map<String, List<String>> getTokens(ISession user) {
-		Map<String, List<String>> tokens = new HashMap<>();		
-		return tokens;
-	}
-	
-	@Override
-	public List<String> getSuggestions(String hint, ISession user) {
-		return new ArrayList<>();
-	}
 }

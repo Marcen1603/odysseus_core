@@ -36,13 +36,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.AbstractQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class SaseBuilder implements IQueryParser, BundleActivator {
+public class SaseBuilder extends AbstractQueryParser implements BundleActivator {
 
 	private ISession user;
 	private IDataDictionary dd;
@@ -143,9 +143,5 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return tokens;
 	}
 	
-	@Override
-	public List<String> getSuggestions(String hint, ISession user) {
-		return new ArrayList<>();
-	}
 
 }

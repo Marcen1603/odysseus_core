@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.parser.pql;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.AbstractQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
@@ -40,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 import de.uniol.inf.is.odysseus.parser.pql.impl.ParseException;
 
-public class PQLParser implements IQueryParser {
+public class PQLParser extends AbstractQueryParser {
 
 	private PQLParserImpl parser;
 
@@ -224,14 +223,4 @@ public class PQLParser implements IQueryParser {
 		}
 	}
 
-	@Override
-	public Map<String, List<String>> getTokens(ISession user) {
-		Map<String, List<String>> tokens = new HashMap<>();
-		return tokens;
-	}
-
-	@Override
-	public List<String> getSuggestions(String hint, ISession user) {
-		return new ArrayList<>();
-	}
 }

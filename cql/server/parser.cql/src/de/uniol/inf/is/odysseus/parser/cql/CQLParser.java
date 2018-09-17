@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.AbstractQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -108,7 +109,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.PickUpAttribute
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.SubstituteAliasesVisitor;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 
-public class CQLParser implements NewSQLParserVisitor, IQueryParser {
+public class CQLParser extends AbstractQueryParser implements NewSQLParserVisitor {
 
 	final private List<IExecutorCommand> commands = new ArrayList<IExecutorCommand>();
 	private ISession caller;
@@ -1632,11 +1633,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				.asList(NewSQLParserConstants.tokenImage);
 		tokens.put("TOKEN", staticTokens);
 		return tokens;
-	}
-
-	@Override
-	public List<String> getSuggestions(String hint, ISession user) {
-		return new ArrayList<>();
 	}
 
 }
