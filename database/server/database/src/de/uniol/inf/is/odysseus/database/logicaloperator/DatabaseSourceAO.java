@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 /**
  * 
  * @author Dennis Geesen Created at: 28.10.2011
- * @author Tobias Brandt (metadata)
+ * @author Tobias Brandt (metadata) 
  */ 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", doc = "This operator can read data from a relational database.", category = {
 		LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE })
