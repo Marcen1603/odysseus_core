@@ -64,7 +64,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	private boolean escapeNames = false;
 	private List<SDFAttribute> givenSchema;
 	private boolean useDatatypeMappings = true;
-
+ 
 	public DatabaseSourceAO() { 
 
 	}
