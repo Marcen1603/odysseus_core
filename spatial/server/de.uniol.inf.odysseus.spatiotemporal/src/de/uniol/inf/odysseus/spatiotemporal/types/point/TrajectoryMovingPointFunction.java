@@ -78,8 +78,18 @@ public class TrajectoryMovingPointFunction implements TemporalFunction<GeometryW
 			turnAzimuth = true;
 		}
 
-		// Standard case: between two points
+		// Calculate where the location would be inserted
 		int insertIndex = (resultIndex * (-1)) - 1;
+
+		/*
+		 * Last element? We need to use the last and last but one location to calculate
+		 * into the future.
+		 */
+		if (insertIndex == locations.size()) {
+			insertIndex--;
+		}
+
+		// Standard case: between two points
 		Point previousLocation = locations.get(insertIndex - 1);
 		Point nextLocation = locations.get(insertIndex);
 
