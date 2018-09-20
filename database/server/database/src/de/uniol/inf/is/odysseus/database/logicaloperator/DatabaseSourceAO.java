@@ -59,7 +59,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 
 	private static final long serialVersionUID = -5800479007184861697L;
 	private String tablename;
-	private long waitMillis = 0; 
+	private long waitMillis = 0;  
 	private boolean fetchAttributes = true;
 	private boolean escapeNames = false;
 	private List<SDFAttribute> givenSchema;
