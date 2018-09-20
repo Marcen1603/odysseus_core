@@ -66,7 +66,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	private boolean useDatatypeMappings = true;
  
 	public DatabaseSourceAO() { 
-
+ 
 	}
 
 	public DatabaseSourceAO(DatabaseSourceAO ds) { 
