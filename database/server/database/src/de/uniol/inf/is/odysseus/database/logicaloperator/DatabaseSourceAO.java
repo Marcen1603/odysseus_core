@@ -69,7 +69,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 
 	}
 
-	public DatabaseSourceAO(DatabaseSourceAO ds) {
+	public DatabaseSourceAO(DatabaseSourceAO ds) { 
 		super(ds);
 		this.tablename = ds.tablename;
 		this.waitMillis = ds.waitMillis;
