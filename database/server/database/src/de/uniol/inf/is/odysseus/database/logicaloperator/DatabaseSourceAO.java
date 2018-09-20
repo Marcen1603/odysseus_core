@@ -176,15 +176,17 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 
 		// The meta-attributes of the schema
 
-		// Use the metadata schema from the query
-		IMetaAttribute metaAttribute = getMetaAttribute();
-		if (metaAttribute != null) {
-			List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
-			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
-		}
+		if (schema != null) {
 
-		// Finally, set the output schema
-		this.setOutputSchema(schema);
+			// Use the metadata schema from the query
+			IMetaAttribute metaAttribute = getMetaAttribute();
+			if (metaAttribute != null) {
+				List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
+				schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+			}
+			// Finally, set the output schema
+			this.setOutputSchema(schema);
+		}
 	}
 
 	@Override
