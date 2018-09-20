@@ -114,7 +114,6 @@ public class CQLParser extends AbstractQueryParser {
 	private void setup(String path) {
 		if (!init) {
 			logger.info("Initializing CQL Parser ...");
-			new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(path);
 			injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
 			generator = injector.getInstance(CQLGenerator.class);
 			resourceSet = injector.getInstance(XtextResourceSet.class);

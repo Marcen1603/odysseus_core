@@ -27,6 +27,8 @@ Require-Bundle: org.eclipse.osgi,
  de.uniol.inf.is.odysseus.intervalapproach
 Service-Component: OSGI-INF/*
 Bundle-ActivationPolicy: lazy
-Export-Package: de.uniol.inf.is.odysseus.temporaltypes.types,
+Export-Package: de.uniol.inf.is.odysseus.temporaltypes.function,
+ de.uniol.inf.is.odysseus.temporaltypes.metadata,
+ de.uniol.inf.is.odysseus.temporaltypes.types,
  de.uniol.inf.is.odysseus.temporaltypes.types.real
 Automatic-Module-Name: de.uniol.inf.is.odysseus.temporaltypes

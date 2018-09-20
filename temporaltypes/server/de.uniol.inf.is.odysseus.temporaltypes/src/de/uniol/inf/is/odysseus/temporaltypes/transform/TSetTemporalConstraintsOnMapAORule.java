@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -53,9 +54,11 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 			List<NamedExpression> expressionForAttribute = findExpressionForOutputAttribute(operator,
 					currentOutputAttribute);
 
-			// Names should be unique, so at maximum one result
-			if (expressionForAttribute.size() == 1 && containsTemporalAttribute(
-					expressionForAttribute.get(0).expression.getAllAttributes(), operator.getInputSchema())) {
+			// Names should be unique, so at maximum one result (but could be 0)
+			boolean expressionResultIsTemporal = expressionForAttribute.size() > 0 ? TemporalDatatype.isTemporal(
+					(IMepExpression<?>) expressionForAttribute.get(0).expression.getMEPExpression(),
+					operator.getInputSchema()) : false;
+			if (expressionResultIsTemporal) {
 				SDFAttribute newAttribute = addTemporalConstraintToAttribute(currentOutputAttribute);
 				newAttributes.add(newAttribute);
 			} else {
@@ -117,9 +120,7 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 	 */
 	protected boolean containsTemporalAttribute(List<SDFAttribute> attributes, SDFSchema inputSchema) {
 		for (SDFAttribute attribute : attributes) {
-
-			SDFAttribute attributeFromSchema = TemporalDatatype.getAttributeFromSchema(inputSchema, attribute);
-			if (TemporalDatatype.isTemporalAttribute(attributeFromSchema)) {
+			if (TemporalDatatype.isTemporalAttribute(attribute, inputSchema)) {
 				return true;
 			}
 		}
