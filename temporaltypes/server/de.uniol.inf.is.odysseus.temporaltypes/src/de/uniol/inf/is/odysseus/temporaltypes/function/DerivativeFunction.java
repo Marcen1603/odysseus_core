@@ -26,29 +26,33 @@ public class DerivativeFunction extends AbstractFunction<GenericTemporalType<?>>
 		}
 
 		TemporalType<Double> temporalReal = this.getInputValue(0);
-		IPredictionTimes validTimes = this.getInputValue(1);
+		IPredictionTimes predictionTimes = this.getInputValue(1);
 
 		GenericTemporalType<Double> result = new GenericTemporalType<>();
 		PointInTime prevTime = null;
 
-		for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
-			for (PointInTime currentTime = validTime.getPredictionStart(); currentTime
-					.before(validTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
+		for (IPredictionTime predictionTime : predictionTimes.getPredictionTimes()) {
+			for (PointInTime currentTime = predictionTime.getPredictionStart(); currentTime
+					.before(predictionTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
+				
+				// Convert into stream time, cause temporal types always work in stream time
+				PointInTime inStreamTime = new PointInTime(
+						this.getBaseTimeUnit().convert(currentTime.getMainPoint(), predictionTimes.getPredictionTimeUnit()));
 
 				/*
 				 * For the very first real number there is no derivative (coming from where? 0?
 				 * It's not known)
 				 */
 				if (prevTime == null) {
-					prevTime = currentTime;
-					result.setValue(currentTime, 0.0);
+					prevTime = inStreamTime;
+					result.setValue(inStreamTime, 0.0);
 					continue;
 				}
 
 				// From the second real on the temporal real has a derivative
-				double derivative = calculateDerivative(temporalReal, currentTime, prevTime);
-				result.setValue(currentTime, derivative);
-				prevTime = currentTime;
+				double derivative = calculateDerivative(temporalReal, inStreamTime, prevTime);
+				result.setValue(inStreamTime, derivative);
+				prevTime = inStreamTime;
 			}
 		}
 

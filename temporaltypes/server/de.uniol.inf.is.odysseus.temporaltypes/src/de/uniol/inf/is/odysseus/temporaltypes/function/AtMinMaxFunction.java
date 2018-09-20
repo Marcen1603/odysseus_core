@@ -42,25 +42,25 @@ public abstract class AtMinMaxFunction extends AbstractFunction<GenericTemporalT
 
 		TemporalType<?> temporalType = this.getInputValue(0);
 		GenericTemporalType<Comparable> result = new GenericTemporalType<>();
-		IPredictionTimes validTimes = this.getInputValue(1);
+		IPredictionTimes predictionTimes = this.getInputValue(1);
 
 		// These lists will contain the values and times with the min / max values
 		List<Comparable> minValues = new ArrayList<>();
 		List<PointInTime> pointsInTime = new ArrayList<>();
 
 		// Loop through all available values and pick the min / max ones
-		TimeUnit predictionTimeUnit = validTimes.getPredictionTimeUnit();
+		TimeUnit predictionTimeUnit = predictionTimes.getPredictionTimeUnit();
 		TimeUnit streamBaseTimeUnit = super.getBaseTimeUnit();
 		if (predictionTimeUnit == null) {
 			// The prediction time unit does not differ from the stream time unit
 			predictionTimeUnit = streamBaseTimeUnit;
 		}
 		
-		for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
-			PointInTime validStart = validTime.getPredictionStart();
-			PointInTime validEnd = validTime.getPredictionEnd();
+		for (IPredictionTime predictionTime : predictionTimes.getPredictionTimes()) {
+			PointInTime predictionStart = predictionTime.getPredictionStart();
+			PointInTime predictionEnd = predictionTime.getPredictionEnd();
 
-			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
+			for (PointInTime i = predictionStart.clone(); i.before(predictionEnd); i = i.plus(1)) {
 
 				/*
 				 * Convert this point in time to the stream time, as all prediction functions

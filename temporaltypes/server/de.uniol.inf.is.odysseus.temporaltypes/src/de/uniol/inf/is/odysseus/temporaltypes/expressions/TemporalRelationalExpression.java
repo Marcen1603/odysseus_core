@@ -140,7 +140,8 @@ public class TemporalRelationalExpression<T extends IPredictionTimes> extends Re
 		PredictionTimesIntersectionMetadataMergeFunction mergeFunction = new PredictionTimesIntersectionMetadataMergeFunction(
 				false);
 		IPredictionTimes resultValidTimes = (IPredictionTimes) left.getMetadata().clone();
-		mergeFunction.mergeInto(resultValidTimes, (IPredictionTimes) left.getMetadata(), (IPredictionTimes) right.getMetadata());
+		mergeFunction.mergeInto(resultValidTimes, (IPredictionTimes) left.getMetadata(),
+				(IPredictionTimes) right.getMetadata());
 
 		/*
 		 * The result is always a temporal type. As it is not possible to always
@@ -181,9 +182,11 @@ public class TemporalRelationalExpression<T extends IPredictionTimes> extends Re
 	 * temporal attributes with the non-temporal counterparts for the given point in
 	 * time.
 	 * 
-	 * @param object The tuple with the temporal attributes to fill
-	 * @param time   The point in time to which the temporal functions shall be
-	 *               evaluated
+	 * @param object
+	 *            The tuple with the temporal attributes to fill
+	 * @param time
+	 *            The point in time to which the temporal functions shall be
+	 *            evaluated
 	 * @return A copy of the given tuple with the temporal attributes filled for the
 	 *         given point in time
 	 */

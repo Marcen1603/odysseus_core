@@ -13,7 +13,8 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
 /**
  * The speed function from the Moving Object Algebra. Uses not the Euclidean
- * distance but the orthodromic distance to respect the shape of the Earth.
+ * distance but the orthodromic distance to respect the shape of the Earth. The
+ * speed is given in meters per time instance of the stream time base time unit.
  * 
  * @author Tobias Brandt
  *
@@ -36,26 +37,31 @@ public class SpeedFunction extends AbstractFunction<GenericTemporalType<?>> impl
 		}
 
 		TemporalType<GeometryWrapper> temporalPoint = this.getInputValue(0);
-		IPredictionTimes validTimes = this.getInputValue(1);
+		IPredictionTimes predictionTimes = this.getInputValue(1);
 
 		GenericTemporalType<Double> result = new GenericTemporalType<>();
 		PointInTime prevTime = null;
 
-		for (IPredictionTime validTime : validTimes.getPredictionTimes()) {
-			for (PointInTime currentTime = validTime.getPredictionStart(); currentTime
-					.before(validTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
+		for (IPredictionTime predictionTime : predictionTimes.getPredictionTimes()) {
+			for (PointInTime currentTime = predictionTime.getPredictionStart(); currentTime
+					.before(predictionTime.getPredictionEnd()); currentTime = currentTime.plus(1)) {
+
+				// Convert into stream time, cause temporal types always work in stream time
+				PointInTime inStreamTime = new PointInTime(this.getBaseTimeUnit().convert(currentTime.getMainPoint(),
+						predictionTimes.getPredictionTimeUnit()));
 
 				// For the very first location there is no speed
 				if (prevTime == null) {
-					prevTime = currentTime;
-					result.setValue(currentTime, 0.0);
+					prevTime = inStreamTime;
+					result.setValue(inStreamTime, 0.0);
 					continue;
 				}
 
 				// From the second point on the moving object has a speed
-				double speed = calculateSpeed(temporalPoint, currentTime, prevTime);
-				result.setValue(currentTime, speed);
-				prevTime = currentTime;
+				double speed = calculateSpeed(temporalPoint, inStreamTime, prevTime);
+
+				result.setValue(inStreamTime, speed);
+				prevTime = inStreamTime;
 			}
 		}
 
