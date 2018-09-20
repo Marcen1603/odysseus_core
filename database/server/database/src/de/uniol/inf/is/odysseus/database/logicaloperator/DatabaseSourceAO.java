@@ -51,25 +51,25 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 /**
  * 
  * @author Dennis Geesen Created at: 28.10.2011
- * @author Tobias Brandt (metadata) 
- */ 
+ * @author Tobias Brandt (metadata)
+ */
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", doc = "This operator can read data from a relational database.", category = {
 		LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE })
 public class DatabaseSourceAO extends AbstractDatabaseOperator {
 
 	private static final long serialVersionUID = -5800479007184861697L;
 	private String tablename;
-	private long waitMillis = 0;  
+	private long waitMillis = 0;
 	private boolean fetchAttributes = true;
 	private boolean escapeNames = false;
 	private List<SDFAttribute> givenSchema;
 	private boolean useDatatypeMappings = true;
- 
-	public DatabaseSourceAO() { 
- 
+
+	public DatabaseSourceAO() {
+
 	}
 
-	public DatabaseSourceAO(DatabaseSourceAO ds) { 
+	public DatabaseSourceAO(DatabaseSourceAO ds) {
 		super(ds);
 		this.tablename = ds.tablename;
 		this.waitMillis = ds.waitMillis;
