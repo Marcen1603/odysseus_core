@@ -78,7 +78,7 @@ public class ChangePredictionTimeAO extends UnaryLogicalOp {
 
 	@Parameter(name = "predictionBaseTimeUnit", doc = "The basetime unit for the prediction time.", type = StringParameter.class, optional = true)
 	public void setTimeUnit(String predictionBaseTimeUnitName) {
-		this.predictionBaseTimeUnit = TimeUnit.valueOf(predictionBaseTimeUnitName);
+		this.predictionBaseTimeUnit = TimeUnit.valueOf(predictionBaseTimeUnitName.toUpperCase());
 	}
 
 	public TimeUnit getPredictionBaseTimeUnit() {

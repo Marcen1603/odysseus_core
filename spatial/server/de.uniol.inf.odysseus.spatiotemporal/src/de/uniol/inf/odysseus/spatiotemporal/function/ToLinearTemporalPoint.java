@@ -139,7 +139,10 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 	 * @return
 	 */
 	protected TemporalFunction<Double> createTrustFunction(Collection<T> history) {
-
+		return createSplineTemporalTrustFunction(history);
+	}
+	
+	private TemporalFunction<Double> createSplineTemporalTrustFunction(Collection<T> history) {
 		List<Double> tempDim = new ArrayList<>();
 		List<Double> trustDim = new ArrayList<>();
 
@@ -149,11 +152,11 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 			// Only the first loop
 			if (prevValue == null) {
 				// Before our real history, the trust is low
-				tempDim.add((double) (element.getMetadata().getStart().minus(2).getMainPoint()));
+				tempDim.add((double) (0));
 				trustDim.add(0.0);
 
 				// Now its getting slightly better
-				tempDim.add((double) element.getMetadata().getStart().minus(1).getMainPoint());
+				tempDim.add((double) element.getMetadata().getStart().minus(100).getMainPoint());
 				trustDim.add(0.5);
 			} else if (prevValue != null
 					&& element.getMetadata().getStart().minus(prevValue.getMetadata().getStart()).getMainPoint() > 2) {
@@ -166,7 +169,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 				long middle = prevValue.getMetadata().getStart().plus(diff / 2).getMainPoint();
 
 				tempDim.add((double) middle);
-				trustDim.add(0.0);
+				trustDim.add(0.2);
 			}
 
 			// When we have information in the history, the trust is high
@@ -177,11 +180,38 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		}
 
 		// At the end, reduce the trust again
-		tempDim.add((double) prevValue.getMetadata().getStart().plus(1).getMainPoint());
-		trustDim.add(0.5);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(10).getMainPoint());
+		trustDim.add(0.8);
 
-		// Now its getting slightly better
-		tempDim.add((double) prevValue.getMetadata().getStart().plus(2).getMainPoint());
+		// Now its getting slightly worse
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(20).getMainPoint());
+		trustDim.add(0.7);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(30).getMainPoint());
+		trustDim.add(0.6);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(40).getMainPoint());
+		trustDim.add(0.5);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(50).getMainPoint());
+		trustDim.add(0.4);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(60).getMainPoint());
+		trustDim.add(0.3);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(70).getMainPoint());
+		trustDim.add(0.2);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(80).getMainPoint());
+		trustDim.add(0.1);
+
+		/*
+		 * At the end, the trust is 0 and should not shrink too much. Hence, add a few 0
+		 * points.
+		 */
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(90).getMainPoint());
+		trustDim.add(0.0);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(100).getMainPoint());
+		trustDim.add(0.0);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(110).getMainPoint());
+		trustDim.add(0.0);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(120).getMainPoint());
+		trustDim.add(0.0);
+		tempDim.add((double) prevValue.getMetadata().getStart().plus(10000).getMainPoint());
 		trustDim.add(0.0);
 
 		double[] tempDimension = new double[tempDim.size()];
@@ -195,6 +225,8 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		TemporalFunction<Double> trustFunction = new SplineDoubleFunction(tempDimension, trustDimension);
 		return trustFunction;
 	}
+	
+	
 
 	protected GeodeticCalculator getGeodeticCalculator(Coordinate from, Coordinate to) {
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
