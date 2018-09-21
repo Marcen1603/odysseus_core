@@ -24,9 +24,9 @@ import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
- * This operator manipulates the PredictionTimes metadata. It is doing this based on
- * the stream time interval. It uses the start timestamp of the stream time
- * interval (the "normal" time interval) of a stream element and adds /
+ * This operator manipulates the PredictionTimes metadata. It is doing this
+ * based on the stream time interval. It uses the start timestamp of the stream
+ * time interval (the "normal" time interval) of a stream element and adds /
  * substracts the given values to / from it to calculate the start and end
  * timestamp of the PredictionTime.
  * 
@@ -101,8 +101,9 @@ public class ChangePredictionTimePO<T extends IStreamObject<?>> extends Abstract
 	 * Sets the start and end timestamp of the PredictionTime using the given
 	 * expressions.
 	 * 
-	 * @param object The tuple where the PredictionTimes have to be set with the
-	 *               expressions
+	 * @param object
+	 *            The tuple where the PredictionTimes have to be set with the
+	 *            expressions
 	 * @return The given tuple with edited metadata or null, if the expressions
 	 *         cannot be used.
 	 */
@@ -189,10 +190,12 @@ public class ChangePredictionTimePO<T extends IStreamObject<?>> extends Abstract
 
 	private void insertTrusts(double[] trusts, IPredictionTime predictionTime, ITemporalTrust temporalTrust) {
 		int i = 0;
-		for (PointInTime time = predictionTime.getPredictionStart(); time.before(predictionTime.getPredictionEnd()); time = time.plus(1)) {
+		for (PointInTime time = predictionTime.getPredictionStart(); time
+				.before(predictionTime.getPredictionEnd()); time = time.plus(1)) {
+			PointInTime inStreamTime = convertToStreamTime(time);
 			ITrust trust = new Trust();
 			trust.setTrust(trusts[i]);
-			temporalTrust.setTrust(time, trust);
+			temporalTrust.setTrust(inStreamTime, trust);
 			i++;
 		}
 	}
@@ -203,8 +206,10 @@ public class ChangePredictionTimePO<T extends IStreamObject<?>> extends Abstract
 		double[] trusts = new double[size];
 
 		int i = 0;
-		for (PointInTime time = predictionTime.getPredictionStart(); time.before(predictionTime.getPredictionEnd()); time = time.plus(1)) {
-			double trust = getTrust(tuple, time);
+		for (PointInTime time = predictionTime.getPredictionStart(); time
+				.before(predictionTime.getPredictionEnd()); time = time.plus(1)) {
+			PointInTime streamTime = convertToStreamTime(time);
+			double trust = getTrust(tuple, streamTime);
 			trusts[i] = trust;
 			i++;
 		}
@@ -249,8 +254,9 @@ public class ChangePredictionTimePO<T extends IStreamObject<?>> extends Abstract
 	 * Converts the timestamp to be for a different time unit, e.g., from
 	 * milliseconds to seconds.
 	 * 
-	 * @param streamTime The timestamp in the steam time
-	 * @return The timestamp in the prediction time
+	 * @param streamTime
+	 *            The timestamp in the steam time unit
+	 * @return The timestamp in the prediction time unit
 	 */
 	private PointInTime convertToPredictionTime(PointInTime streamTime) {
 		if (predictionBaseTimeUnit == null) {
@@ -260,5 +266,23 @@ public class ChangePredictionTimePO<T extends IStreamObject<?>> extends Abstract
 		long convertedPredictionTime = predictionBaseTimeUnit.convert(streamTime.getMainPoint(), streamBaseTimeUnit);
 		PointInTime newPredictionTime = new PointInTime(convertedPredictionTime);
 		return newPredictionTime;
+	}
+
+	/**
+	 * Converts the timestamp to be for a different time unit, e.g., from
+	 * milliseconds to seconds.
+	 * 
+	 * @param predictionTime
+	 *            The timestamp in the prediction time unit
+	 * @return The timestamp in the stream time unit
+	 */
+	private PointInTime convertToStreamTime(PointInTime predictionTime) {
+		if (streamBaseTimeUnit == null) {
+			return predictionTime;
+		}
+
+		long convertedStreamTime = streamBaseTimeUnit.convert(predictionTime.getMainPoint(), predictionBaseTimeUnit);
+		PointInTime inStreamTime = new PointInTime(convertedStreamTime);
+		return inStreamTime;
 	}
 }
