@@ -44,8 +44,7 @@ public class ReOrderAO extends UnaryLogicalOp {
 	
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		setOutputSchema(SDFSchemaFactory.createNewWithOutOfOrder(false, getInputSchema()));
-		return getOutputSchema();
+		return SDFSchemaFactory.createNewWithOutOfOrder(false, getInputSchema());
 	}
 
 	/*
