@@ -16,5 +16,5 @@
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.ObjectHandlerRegistry">
    <implementation class="de.uniol.inf.is.odysseus.core.objecthandler.ObjectHandlerRegistry"/>
-   <reference bind="register" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler" name="IObjectHandler" policy="static"/>
+   <reference bind="register" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler" name="IObjectHandler" policy="dynamic"/>
 </scr:component>
