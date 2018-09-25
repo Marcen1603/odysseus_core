@@ -11,6 +11,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.recommendation,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi,
  com.google.guava,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ fastutil
 Service-Component: OSGI-INF/recommendationlearner.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.recommendation.matrix_factorization

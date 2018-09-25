@@ -6,7 +6,7 @@
       provider-name="University of Oldenburg">
 
    <description url="http://www.example.com/description">
-    This feature adds CQL syntax to access databases
+      This feature adds CQL syntax to access databases
    </description>
 
    <copyright>
@@ -37,6 +37,13 @@ limitations under the License.
          install-size="0"
          version="0.0.0"
          fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.parser.cql"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
