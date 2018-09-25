@@ -11,8 +11,8 @@
 
    <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
-   </copyright> 
-   
+   </copyright>
+
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -30,6 +30,10 @@ limitations under the License.
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.aggregation.feature"
+         version="0.0.0"/>
 
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>

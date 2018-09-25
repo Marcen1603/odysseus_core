@@ -11,7 +11,7 @@
    <copyright>
       Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
-   
+
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -25,6 +25,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
    </license>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.aggregation.feature"
+         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.securitypunctuation"
