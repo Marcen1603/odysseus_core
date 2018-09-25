@@ -28,5 +28,5 @@ Import-Package: de.uniol.inf.is.odysseus.cep,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
+ de.uniol.inf.is.odysseus.slf4j
 Automatic-Module-Name: de.uniol.inf.is.odysseus.cep.transform
