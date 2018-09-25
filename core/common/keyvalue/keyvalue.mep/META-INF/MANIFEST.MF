@@ -7,7 +7,7 @@ Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.mep,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.keyvalue.datatype
 Service-Component: OSGI-INF/MepFunctionProvider.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.keyvalue.mep

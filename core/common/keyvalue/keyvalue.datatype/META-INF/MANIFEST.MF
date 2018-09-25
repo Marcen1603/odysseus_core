@@ -9,7 +9,7 @@ Require-Bundle: org.codehaus.woodstox.stax2-api,
  com.jayway.jsonpath,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
+ de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.keyvalue.datatype;
   uses:="de.uniol.inf.is.odysseus.core,
