@@ -4,11 +4,9 @@ Bundle-Name: Odyssseus Slf4j Over Log4J Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.slf4j;singleton:=true
 Bundle-Version: 1.7.25
 Bundle-ClassPath: src/,
- ./,
- .,
- slf4j-api-1.7.25.jar,
  slf4j-log4j12-1.7.25.jar,
- log4j-1.2.17.jar
+ log4j-1.2.17.jar,
+ slf4j-api-1.7.25.jar
 Export-Package: de.uniol.inf.is.odysseus.slf4j,
  org.apache.log4j,
  org.apache.log4j.spi,
