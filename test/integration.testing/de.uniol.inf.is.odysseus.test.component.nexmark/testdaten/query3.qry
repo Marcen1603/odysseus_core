@@ -1,9 +1,0 @@
-///OdysseusScript
-#PARSER CQL
-#ADDQUERY
-DROP STREAM nexmark:bid2;
-#ADDQUERY
-ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FILE '${BUNDLE-ROOT}/testdaten/daten/nexmark_bid2.csv' AS SimpleCSV;
-
-#ADDQUERY
-SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 [UNBOUNDED] AS b;

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.aggregation.AggregationFunctionRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.aggregation.logicaloperator.builder.AggregationFunctionRegistry"/>
-   <reference bind="addFunction" cardinality="0..n" interface="de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory" name="IAggregationFunctionFactory" policy="dynamic" unbind="removeFunction"/>
-</scr:component>

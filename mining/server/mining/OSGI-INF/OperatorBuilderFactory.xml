@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.mining.operatorBuilderFactory">
-   <implementation class="de.uniol.inf.is.odysseus.mining.Activator"/>
-   <reference bind="bindOperatorBuilderFactory" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory" name="IOperatorBuilderFactory" policy="dynamic" unbind="unbindOperatorBuilderFactory"/>
-   <reference bind="bindClassificationLearner" cardinality="0..n" interface="de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner" name="IClassificationLearner" policy="dynamic" unbind="unbindClassificationLearner"/>
-   <reference bind="bindClusterer" cardinality="0..n" interface="de.uniol.inf.is.odysseus.mining.clustering.IClusterer" name="IClusterer" policy="dynamic" unbind="unbindClusterer"/>
-   <reference bind="bindFrequentPatternMiner" cardinality="0..n" interface="de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner" name="IFrequentPatternMiner" policy="dynamic" unbind="unbindFrequentPatternMiner"/>
-</scr:component>

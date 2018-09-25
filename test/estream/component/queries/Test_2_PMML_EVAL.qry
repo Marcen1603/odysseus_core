@@ -1,7 +1,0 @@
-#PARSER PQL
-#ADDQUERY 
-results := PMML_EVAL({
-    modelName='KMeans_Model',
-    output='input',
-    stackSize=5
-}, models, data)

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.admission.RuleServiceBinder">
-   <implementation class="de.uniol.inf.is.odysseus.admission.rule.AdmissionRuleServiceBinder"/>
-   <reference bind="bindAdmissionRule" cardinality="0..n" interface="de.uniol.inf.is.odysseus.admission.IAdmissionRule" name="IAdmissionRule" policy="dynamic" unbind="unbindAdmissionRule"/>
-   <reference bind="bindAdmissionRuleProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.admission.IAdmissionRuleProvider" name="IAdmissionRuleProvider" policy="dynamic" unbind="unbindAdmissionRuleProvider"/>
-</scr:component>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<roles id="101" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <role>PROGRAMMER</role>
-  <role>USER</role>
-  <role>DEBUGGER</role>
-</roles>

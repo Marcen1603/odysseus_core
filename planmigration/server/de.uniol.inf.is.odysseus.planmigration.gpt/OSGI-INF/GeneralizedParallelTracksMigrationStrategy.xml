@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmigration.gpt.GeneralizedParallelTracksMigrationStrategy">
-   <implementation class="de.uniol.inf.is.odysseus.planmigration.gpt.GeneralizedParallelTracksMigrationStrategy"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.planmigration.IMigrationStrategy"/>
-   </service>
-   <reference bind="setExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static"/>
-</scr:component>
