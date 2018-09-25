@@ -29,7 +29,6 @@ public class Activator implements BundleActivator {
 		return bundleContext;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void start(BundleContext context) throws Exception {	
 				

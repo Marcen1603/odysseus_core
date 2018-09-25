@@ -46,7 +46,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	private CharsetDecoder decoder;
 
 	byte[] newline;
-
+	
 	public AbstractTransportHandler() {
 		delegate = new AbstractTransportHandlerDelegate<>(null, null, this, null);
 		setCharset("UTF-8");

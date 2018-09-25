@@ -70,6 +70,10 @@ limitations under the License.
    <features>
       <feature id="de.uniol.inf.is.odysseus.client.platform.feature"/>
       <feature id="de.uniol.inf.is.odysseus.monolithic.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.database.cql.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.database.datasource.hive2.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.database.rcp.feature" version="1.0.0"/>
    </features>
 
    <configurations>
