@@ -8,10 +8,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.rcp.base,
- de.uniol.inf.is.odysseus.context
+ de.uniol.inf.is.odysseus.context,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.core.server.metadata,
- de.uniol.inf.is.odysseus.relational.base,
- org.slf4j
+ de.uniol.inf.is.odysseus.relational.base
 Automatic-Module-Name: de.uniol.inf.is.odysseus.context.rcp

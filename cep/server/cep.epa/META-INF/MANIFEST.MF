@@ -9,8 +9,7 @@ Import-Package: de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
- de.uniol.inf.is.odysseus.server.intervalapproach,
- org.slf4j
+ de.uniol.inf.is.odysseus.server.intervalapproach
 Export-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.event,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
@@ -18,6 +17,7 @@ Export-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.exceptions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.cep.epa
 Bundle-ActivationPolicy: lazy

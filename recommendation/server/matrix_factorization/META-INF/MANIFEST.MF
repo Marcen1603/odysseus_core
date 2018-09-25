@@ -10,7 +10,6 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.recommendation,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi,
- fastutil;bundle-version="7.0.2",
  com.google.guava,
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/recommendationlearner.xml

@@ -198,13 +198,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.slf4j.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="javax.xml.soap"
          download-size="0"
          install-size="0"

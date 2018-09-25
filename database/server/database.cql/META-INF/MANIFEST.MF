@@ -7,11 +7,11 @@ Fragment-Host: de.uniol.inf.is.odysseus.parser.cql
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.database.connection,
  de.uniol.inf.is.odysseus.database.logicaloperator,
- org.slf4j,
  org.eclipse.emf.common,
  org.eclipse.emf.common.util,
  org.eclipse.emf.ecore
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.parser.cql2,
- de.uniol.inf.is.odysseus.parser.cql2.server
+ de.uniol.inf.is.odysseus.parser.cql2.server,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.database.cql
