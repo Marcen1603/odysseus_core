@@ -113,7 +113,7 @@ public class DatasView extends ViewPart {
             PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
                 @Override
-                public void run() {
+                public void run() { 
                     final List<String> datas = new ArrayList<>(DataHandlerRegistry.instance.getHandlerNames());
                     Collections.sort(datas);
                     DatasView.this.tableViewer.setInput(datas);
