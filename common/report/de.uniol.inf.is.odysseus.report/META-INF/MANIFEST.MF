@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Bugreport
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.report
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.report.activator.ReportPlugIn
 Require-Bundle: org.eclipse.core.runtime,
  com.google.guava;bundle-version="14.0.0",

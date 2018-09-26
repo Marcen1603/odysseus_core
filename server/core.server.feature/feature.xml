@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.core.server.feature"
       label="Core Server"
-      version="1.0.0"
+      version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
@@ -39,7 +39,7 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0"/>
+      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin

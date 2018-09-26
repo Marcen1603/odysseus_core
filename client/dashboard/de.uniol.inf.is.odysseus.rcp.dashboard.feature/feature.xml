@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"
       label="Dashboards"
-      version="1.0.0"
+      version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>

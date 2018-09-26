@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: User Management Store
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.usermanagement.store;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.core.server, de.uniol.inf.is.odysseus.slf4j
 Import-Package: org.osgi.service.component

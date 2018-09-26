@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Chainfactory
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.collection,
  de.uniol.inf.is.odysseus.core.server.monitoring,

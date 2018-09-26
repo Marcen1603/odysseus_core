@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.usermanagement.store.feature"
       label="User Management Store"
-      version="1.0.0"
+      version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
@@ -31,11 +31,6 @@ Unless required by applicable law or agreed to in writing, software
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
-
-   <requires>
-      <import plugin="org.eclipse.osgi.services"/>
-      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0"/>
-   </requires>
 
    <plugin
          id="de.uniol.inf.is.odysseus.usermanagement.store"

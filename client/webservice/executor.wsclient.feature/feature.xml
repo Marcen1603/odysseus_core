@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
       label="Executor over Webservice - Client"
-      version="1.0.0"
+      version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
@@ -31,7 +31,7 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <requires>
-      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0.qualifier" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
    </requires>
 

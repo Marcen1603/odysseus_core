@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Server Console
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.core.server.console;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.core.server.console.Activator
 Import-Package: org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.equinox.app;version="1.1.0",

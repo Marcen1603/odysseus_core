@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Executor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.report.executor
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.report.executor.ExecutorBugReportPlugIn
 Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core,
