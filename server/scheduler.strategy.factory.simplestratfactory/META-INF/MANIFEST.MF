@@ -11,10 +11,9 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
  de.uniol.inf.is.odysseus.core.server.scheduler,
  de.uniol.inf.is.odysseus.core.server.scheduler.strategy,
- org.osgi.service.component,
- org.slf4j
+ org.osgi.service.component
 Service-Component: OSGI-INF/BiggestQueueFactory.xml, OSGI-INF/RoundRobinIterFactory.xml, OSGI-INF/RoundRobinNoIterFactory.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory
 Bundle-ActivationPolicy: lazy

@@ -13,7 +13,6 @@ Require-Bundle: org.codehaus.woodstox.stax2-api,
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.keyvalue.datatype;
   uses:="de.uniol.inf.is.odysseus.core,
-   org.slf4j,
    de.uniol.inf.is.odysseus.core.sdf.schema,
    de.uniol.inf.is.odysseus.core.metadata,
    de.uniol.inf.is.odysseus.core.datatype,

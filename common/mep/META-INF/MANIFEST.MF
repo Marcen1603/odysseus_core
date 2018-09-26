@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.mep;
   uses:="org.osgi.framework,
-   org.slf4j,
    de.uniol.inf.is.odysseus.core.mep,
    de.uniol.inf.is.odysseus.core.sdf.schema,
    com.google.common.collect",

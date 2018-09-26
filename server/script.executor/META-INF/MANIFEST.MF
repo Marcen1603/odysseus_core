@@ -15,14 +15,13 @@ Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.script.parser,
- de.uniol.inf.is.odysseus.script.parser.keyword,
- org.slf4j
+ de.uniol.inf.is.odysseus.script.parser.keyword
 Service-Component: OSGI-INF/PreParserKeywordProvider.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  com.google.guava,
  de.uniol.inf.is.odysseus.updater,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime, de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.script.keyword,
  de.uniol.inf.is.odysseus.script.keyword.configuration
