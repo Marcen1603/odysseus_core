@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Viewer Server
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.server;singleton:=true
-Bundle-Version: 1.0.0.qualifier.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.server.RCPViewerServerPlugIn
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,
