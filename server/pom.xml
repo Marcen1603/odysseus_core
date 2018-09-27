@@ -1,0 +1,83 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.uniol.inf.is.odysseus_core</groupId>
+	<artifactId>de.uniol.inf.is.odysseus_core.server</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>de.uniol.inf.is.odysseus_core</groupId>
+		<artifactId>de.uniol.inf.is.odysseus_core.root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<modules>
+		<module>autostart</module>
+		<module>cache</module>
+		<module>cache.feature</module>
+		<module>core</module>
+		<module> core.server.feature</module>
+		<module> datadictionary</module>
+		<module> de.uniol.inf.is.odysseus.interval_latency_datarate_trust</module>
+		<module> de.uniol.inf.is.odysseus.memstore.feature</module>
+		<module> de.uniol.inf.is.odysseus.memstore.mdastore</module>
+		<module> de.uniol.inf.is.odysseus.platform.feature</module>
+		<module> de.uniol.inf.is.odysseus.report.console</module>
+		<module> de.uniol.inf.is.odysseus.rest</module>
+		<module> de.uniol.inf.is.odysseus.security</module>
+		<module> de.uniol.inf.is.odysseus.security.feature</module>
+		<module> de.uniol.inf.is.odysseus.server.feature</module>
+		<module> de.uniol.inf.is.odysseus.server.starter</module>
+		<module> de.uniol.inf.is.odysseus.updater</module>
+		<module> executor.standardexecutor</module>
+		<module> fragmention.base</module>
+		<module> fragmention.base.feature</module>
+		<module> intervalapproach</module>
+		<module> interval_latency</module>
+		<module> interval_latency_trust</module>
+		<module> interval_trust</module>
+		<module> keyvalue</module>
+		<module> keyvalue.feature</module>
+		<module> latency</module>
+		<module> latency.feature</module>
+		<module> latency_relational</module>
+		<module> mep.commons.math</module>
+		<module> parser.pql</module>
+		<module> parser.pql.relational</module>
+		<module> planmanagement.bufferplacement.querybufferplacement</module>
+		<module> planmanagement.bufferplacement.sourcebufferplacementstrategy</module>
+		<module> planmanagement.bufferplacement.standardbufferplacementstrategy</module>
+		<module> planmanagement.compiler.standardcompiler</module>
+		<module> planmanagement.optimization.installprocesscallsmonitor</module>
+		<module> planmanagement.optimization.installstandardmetadatalistener</module>
+		<module> planmanagement.optimization.query.standardqueryoptimizer</module>
+		<module> planmanagement.optimization.standardoptimizer</module>
+		<module> planmanagement.standard.feature</module>
+		<module> pql.generator</module>
+		<module> querysharing</module>
+		<module> relational.base</module>
+		<module> relational.feature</module>
+		<module> relational_interval</module>
+		<module> replication</module>
+		<module> rest.feature</module>
+		<module> rewrite</module>
+		<module> ruleengine</module>
+		<module> scheduler.singlethreadscheduler2.0</module>
+		<module> scheduler.strategy.factory.aurorafactory</module>
+		<module> scheduler.strategy.factory.chainfactory</module>
+		<module> scheduler.strategy.factory.simplestratfactory</module>
+		<module> schedulermanager.singleschedulermanager</module>
+		<module> scheduling.feature</module>
+		<module> script</module>
+		<module> script.executor</module>
+		<module> script.feature</module>
+		<module> script.generator</module>
+		<module> server.console</module>
+		<module> transform</module>
+		<module> trust</module>
+		<module> usermanagement.store</module>
+		<module> usermanagement.store.feature</module>
+		<module> webservice.executor.server</module>
+	</modules>
+</project>
+

@@ -1,0 +1,61 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.uniol.inf.is.odysseus_core</groupId>
+	<artifactId>de.uniol.inf.is.odysseus_core.client</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>de.uniol.inf.is.odysseus_core</groupId>
+		<artifactId>de.uniol.inf.is.odysseus_core.root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<modules>
+		<module>de.uniol.inf.is.odysseus.client.feature</module>
+		<module>de.uniol.inf.is.odysseus.client.platform.feature</module>
+		<module>de.uniol.inf.is.odysseus.client.starter</module>
+		<module>de.uniol.inf.is.odysseus.client.studio.feature</module>
+		<module>de.uniol.inf.is.odysseus.rcp</module>
+		<module>de.uniol.inf.is.odysseus.rcp.config</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.canvas</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.colors</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.feature</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.part</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.part.example</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.part.greenmatrix</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.soccer</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.soccer.feature</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.textfield</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.windpower</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.windrose</module>
+		<module>de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature</module>
+		<module>de.uniol.inf.is.odysseus.rcp.editor.script</module>
+		<module>de.uniol.inf.is.odysseus.rcp.info</module>
+		<module>de.uniol.inf.is.odysseus.rcp.logging</module>
+		<module>de.uniol.inf.is.odysseus.rcp.login</module>
+		<module>de.uniol.inf.is.odysseus.rcp.queryview.logical</module>
+		<module>de.uniol.inf.is.odysseus.rcp.viewer.stream.interval</module>
+		<module>de.uniol.inf.is.odysseus.rcp.webservice</module>
+		<module>de.uniol.inf.is.odysseus.report.rcp</module>
+		<module>de.uniol.inf.is.odysseus.studio.feature</module>
+		<module>executor.wsclient.feature</module>
+		<module>rcp.console</module>
+		<module>rcp.dashboard.part.graphics</module>
+		<module>rcp.editor.graph</module>
+		<module>rcp.editor.text</module>
+		<module>rcp.editor.text.cql</module>
+		<module>rcp.editor.text.pql</module>
+		<module>rcp.editor.text.sase</module>
+		<module>rcp.viewer</module>
+		<module>rcp.viewer.stream.chart</module>
+		<module>rcp.viewer.stream.table</module>
+		<module>rcp.wizard</module>
+		<module>webservice.client</module>
+		<module>webservice.executor.client</module>
+	</modules>
+</project>
+

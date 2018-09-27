@@ -1,0 +1,22 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.uniol.inf.is.odysseus_core</groupId>
+	<artifactId>de.uniol.inf.is.odysseus_core.monolithic</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>de.uniol.inf.is.odysseus_core</groupId>
+		<artifactId>de.uniol.inf.is.odysseus_core.root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<modules>
+		<module>de.uniol.inf.is.odysseus.product.monolithic.feature</module>
+		<module>de.uniol.inf.is.odysseus.product.monolithic.sdp.feature</module>
+		<module>de.uniol.inf.is.odysseus.rcp.queryview.physical</module>
+		<module>de.uniol.inf.is.odysseus.rcp.viewer.server</module>
+		<module>monolithic.studio.feature</module>
+	</modules>
+</project>
+
