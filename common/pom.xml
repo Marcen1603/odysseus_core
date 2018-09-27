@@ -1,0 +1,37 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.uniol.inf.is.odysseus_core</groupId>
+	<artifactId>de.uniol.inf.is.odysseus_core.common</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>de.uniol.inf.is.odysseus_core</groupId>
+		<artifactId>de.uniol.inf.is.odysseus_core.root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<modules>
+		<module>core</module>
+		<module>bugreport</module>
+		<module>compiler</module>
+		<module>datatype.interval</module>
+		<module>de.uniol.inf.is.odysseus.common.feature</module>
+		<module>de.uniol.inf.is.odysseus.console.executor</module>
+		<module>de.uniol.inf.is.odysseus.report</module>
+		<module>de.uniol.inf.is.odysseus.report.executor</module>
+		<module>de.uniol.inf.is.odysseus.report.general</module>
+		<module>de.uniol.inf.is.odysseus.slf4j</module>
+		<module>de.uniol.inf.is.odysseus.slf4j.feature</module>
+		<module>de.uniol.inf.is.odysseus.sweeparea</module>
+		<module>intervalapproach</module>
+		<module>keyvalue.datahandler</module>
+		<module>keyvalue.datahandler.feature</module>
+		<module>keyvalue.datatype</module>
+		<module>keyvalue.datatype.feature</module>
+		<module>keyvalue.mep</module>
+		<module>mep</module>
+		<module>mep.matrix</module>
+	</modules>
+</project>
+
