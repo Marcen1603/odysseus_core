@@ -8,7 +8,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.mep,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.mep.functions,
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/MatrixFunctionProvider.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core,

@@ -30,7 +30,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.security.provider,
  de.uniol.inf.is.odysseus.security.ssl,
  de.uniol.inf.is.odysseus.slf4j,
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework
 Service-Component: OSGI-INF/ExecutorService.xml,OSGI-INF/operatorBuilderFactory.xml,
  OSGI-INF/SecurityProviderServiceBinding.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,

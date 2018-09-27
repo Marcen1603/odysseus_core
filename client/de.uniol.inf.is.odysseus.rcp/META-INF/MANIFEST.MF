@@ -31,7 +31,7 @@ Import-Package: de.uniol.inf.is.odysseus.client.common,
  org.eclipse.ui.texteditor,
  org.eclipse.ui.wizards.newresource,
  org.json,
- org.osgi.framework;version="1.3.0",
+ org.osgi.framework,
  org.osgi.service.prefs
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp,

@@ -30,10 +30,9 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
-   <requires>
-      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0.qualifier" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
-   </requires>
+   <includes
+         id="de.uniol.inf.is.odysseus.slf4j.feature"
+         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.webservice.client"

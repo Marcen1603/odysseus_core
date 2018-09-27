@@ -27,7 +27,7 @@ Import-Package: com.rits.cloning,
  de.uniol.inf.is.odysseus.ruleengine.system,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate,

@@ -41,6 +41,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  com.jaxb;bundle-version="2.3.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.mep.Activator
-Import-Package: org.osgi.framework;version="1.6.0"
+Import-Package: org.osgi.framework
 Automatic-Module-Name: de.uniol.inf.is.odysseus.mep
 Bundle-ActivationPolicy: lazy

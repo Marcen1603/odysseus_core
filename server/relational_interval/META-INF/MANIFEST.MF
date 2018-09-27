@@ -21,7 +21,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.transform.engine,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
- org.osgi.framework;version="1.6.0"
+ org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.relational_interval.logicaloperator,
  de.uniol.inf.is.odysseus.relational_interval.physicaloperator,

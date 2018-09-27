@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.eclipse.osgi.framework.console,
- org.osgi.framework;version="1.6.0"
+ org.osgi.framework
 Service-Component: OSGI-INF/commandProviderBinder.xml,
  OSGI-INF/consoleCommandExecutor.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.console.executor.impl.ConsoleCommandExecutorPlugIn

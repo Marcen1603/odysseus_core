@@ -72,9 +72,6 @@
    <feature url="features/de.uniol.inf.is.odysseus.client.studio.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.client.studio.feature" version="1.0.0.qualifier">
       <category name="client"/>
    </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
    <feature url="features/de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature" version="1.0.0.qualifier">
       <category name="client"/>
    </feature>

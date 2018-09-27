@@ -7,7 +7,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.server.intervalapproach,
- org.osgi.framework;version="1.5.0"
+ org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.interval_latency
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core

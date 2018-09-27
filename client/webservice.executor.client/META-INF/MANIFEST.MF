@@ -7,14 +7,15 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.google.guava;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.client.common,
- org.eclipse.osgi,
  javax.xml.ws;bundle-version="2.1.0",
- com.jaxb;bundle-version="2.3.0", de.uniol.inf.is.odysseus.slf4j
+ com.jaxb;bundle-version="2.3.0",
+ de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/wsclient.xml
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.usermanagement,
- de.uniol.inf.is.odysseus.webservice.client
+ de.uniol.inf.is.odysseus.webservice.client,
+ org.osgi.framework
 Bundle-Vendor: University of Oldenburg
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client
 Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client

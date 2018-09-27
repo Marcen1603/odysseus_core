@@ -23,7 +23,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.datadictionary,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.core.server.scheduler.manager,
  de.uniol.inf.is.odysseus.core.server.usermanagement,
- org.osgi.framework;version="1.6.0"
+ org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
 Service-Component: OSGI-INF/StandardExecutor.xml,
  OSGI-INF/ReloadLog.xml
