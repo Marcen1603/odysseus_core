@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.AssertionFailedException;
 
 /**
  * Zentrale Registry für die Keywords, die vom PreParser verwendet werden
@@ -53,8 +51,8 @@ public class PreParserKeywordRegistry {
 	 *             Wenn der Parameter <code>null</code> ist
 	 */
 	public final void addKeyword(String name, Class<? extends IPreParserKeyword> keyword) {
-		Assert.isNotNull(keyword);
-		Assert.isNotNull(name);
+//		Assert.isNotNull(keyword);
+//		Assert.isNotNull(name);
 		if (!existsKeyword(name)) {
 			getKeywords().put(name, keyword);
 		}
@@ -82,7 +80,7 @@ public class PreParserKeywordRegistry {
 	 *             geladen werden kann.
 	 */
 	public final IPreParserKeyword createKeywordExecutor(String name) {
-		Assert.isNotNull(name);
+		//Assert.isNotNull(name);
 		if (!getKeywords().containsKey(name))
 			throw new IllegalArgumentException("Keyword " + name + " is not registered");
 		IPreParserKeyword keyword;
@@ -108,7 +106,7 @@ public class PreParserKeywordRegistry {
 	 *             Wenn der Parameter <code>null</code> ist.
 	 */
 	public final boolean existsKeyword(String keyword) {
-		Assert.isNotNull(keyword);
+		//Assert.isNotNull(keyword);
 		return getKeywords().containsKey(keyword);
 	}
 
@@ -127,7 +125,7 @@ public class PreParserKeywordRegistry {
 	 * 
 	 */
 	public final void removeKeyword(String keyword) {
-		Assert.isNotNull(keyword);
+		//Assert.isNotNull(keyword);
 		if (!existsKeyword(keyword))
 			throw new IllegalArgumentException("keyword is null");
 		getKeywords().remove(keyword);
