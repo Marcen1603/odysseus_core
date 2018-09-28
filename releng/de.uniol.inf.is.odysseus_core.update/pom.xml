@@ -4,6 +4,7 @@
 		<groupId>de.uniol.inf.is.odysseus_core</groupId>
 		<artifactId>de.uniol.inf.is.odysseus_core.releng</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>de.uniol.inf.is.odysseus_core.update</artifactId>
