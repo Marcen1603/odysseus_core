@@ -9,49 +9,7 @@
 	<properties>
 		<tycho.version>1.2.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<odysseus-repo.url>http://odysseus.informatik.uni-oldenburg.de/updatesite/origin/development/latest/</odysseus-repo.url>
-		<odysseus-repo2.url>http://odysseus.informatik.uni-oldenburg.de/updatesite/resources/latest/</odysseus-repo2.url>
-		<eclipse-repo.url>http://vesta.informatik.rwth-aachen.de/ftp/pub/mirror/eclipse.org/releases/mars/</eclipse-repo.url>
-		
 	</properties>
-	<repositories>
-		<repository>
-			<id>odysseus</id>
-			<url>${odysseus-repo.url}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>odysseus_resources</id>
-			<url>${odysseus-repo2.url}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>eclipse</id>
-			<url>${eclipse-repo.url}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>gef</id>
-			<url>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/tools/gef/updates/legacy/releases/</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>emf</id>
-			<url>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/modeling/emf/emf/updates/2.11.x/</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>xtext</id>
-			<url>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/modeling/tmf/xtext/updates/composite/releases/</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>orbit</id>
-			<url>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/tools/orbit/downloads/drops/S20180730183850/repository/</url>
-			<layout>p2</layout>
-		</repository>
-		
-	</repositories>
 	<build>
 		<plugins>
 			<plugin>
@@ -78,6 +36,14 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
+					<target> 
+						<artifact>
+							<groupId>de.uniol.inf.is.odysseus_core</groupId>
+							<artifactId>platform</artifactId>
+							<version>1.0.0-SNAPSHOT</version>
+						</artifact>
+					</target>
+
 					<environments>
 						<environment>
 							<os>linux</os>
@@ -107,6 +73,7 @@
 					</environments>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 </project>
