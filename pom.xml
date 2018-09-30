@@ -14,11 +14,11 @@
 	<modules>
 		<module>common</module>
 		<module>targetplatform</module>
-		<module>releng</module>
 		<module>resource</module>
 		<module>client</module>
 		<module>server</module>
 		<module>monolithic</module>
+		<module>releng</module>
 		</modules>	
 </project>
 
