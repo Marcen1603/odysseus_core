@@ -12,6 +12,7 @@
 	</parent>
 
 	<modules>
+	<module>de.uniol.inf.is.odysseus.client.common</module>
 		<module>de.uniol.inf.is.odysseus.client.feature</module>
 		<module>de.uniol.inf.is.odysseus.client.platform.feature</module>
 		<module>de.uniol.inf.is.odysseus.client.starter</module>
