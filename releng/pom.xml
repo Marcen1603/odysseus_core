@@ -12,7 +12,7 @@
 	</parent>
 
 	<modules>
-		<module>de.uniol.inf.is.odysseus_core.update</module>
+		<module>de.uniol.inf.is.odysseus.update</module>
 	</modules>
 </project>
 
