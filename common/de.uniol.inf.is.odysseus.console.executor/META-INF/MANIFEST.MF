@@ -12,6 +12,6 @@ Service-Component: OSGI-INF/commandProviderBinder.xml,
 Bundle-Activator: de.uniol.inf.is.odysseus.console.executor.impl.ConsoleCommandExecutorPlugIn
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
- com.google.guava;bundle-version="20.0.0",;bundle-version="14.0.0"
+ com.google.guava;bundle-version="18.0.0",;bundle-version="14.0.0"
 Export-Package: de.uniol.inf.is.odysseus.console.executor
 Automatic-Module-Name: de.uniol.inf.is.odysseus.console.executor

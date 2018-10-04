@@ -8,7 +8,7 @@ Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.slf4j,
- com.google.guava;bundle-version="20.0.0",
+ com.google.guava;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.rcp.base
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: libs/SWTSplitButton-1.3.jar,

@@ -8,7 +8,7 @@ Bundle-Vendor: University of Oldenburg
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core,
- com.google.guava;bundle-version="20.0.0",;bundle-version="12.0.0",
+ com.google.guava;bundle-version="18.0.0",;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.rcp.base,
  org.eclipse.core.expressions, de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

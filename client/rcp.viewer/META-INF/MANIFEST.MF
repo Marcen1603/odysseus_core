@@ -32,7 +32,7 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer,
  de.uniol.inf.is.odysseus.rcp.viewer.view,
  de.uniol.inf.is.odysseus.rcp.viewer.view.impl
 Service-Component: OSGI-INF/Executor.xml, OSGI-INF/operatorDetailProviderRegistry.xml
-Require-Bundle: com.google.guava;bundle-version="20.0.0",,
+Require-Bundle: com.google.guava;bundle-version="18.0.0",,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.core.expressions;bundle-version="3.4.300",
  org.eclipse.ui;bundle-version="3.7.0", de.uniol.inf.is.odysseus.slf4j
