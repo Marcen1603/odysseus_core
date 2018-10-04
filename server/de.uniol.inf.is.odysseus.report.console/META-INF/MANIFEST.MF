@@ -7,7 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.report.console.ReportConsolePlugIn
 Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.report,
  de.uniol.inf.is.odysseus.core.server,
- com.google.guava;bundle-version="14.0.0",
+ com.google.guava;bundle-version="20.0.0",
  de.uniol.inf.is.odysseus.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

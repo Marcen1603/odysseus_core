@@ -8,7 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.rcp.login,
  org.eclipse.swt;bundle-version="3.7.2",
  de.uniol.inf.is.odysseus.slf4j,
- com.google.guava;bundle-version="14.0.0",
+ com.google.guava;bundle-version="20.0.0",
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.rcp.base,
  de.uniol.inf.is.odysseus.rcp.config,
