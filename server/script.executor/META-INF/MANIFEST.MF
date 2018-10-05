@@ -19,7 +19,7 @@ Import-Package: com.google.common.collect,
 Service-Component: OSGI-INF/PreParserKeywordProvider.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- com.google.guava;bundle-version="18.0.0",,
+ com.google.guava;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.updater,
  org.eclipse.core.runtime, de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
