@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Odysseus Target Platform" sequenceNumber="1502128627">
+<?pde version="3.8"?><target name="Odysseus Target Platform" sequenceNumber="1502128629">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.core.runtime.feature.feature.group" version="1.1.102.v20160128-1558"/>
@@ -70,6 +70,7 @@
 <unit id="argparse4j.feature.feature.group" version="0.0.0"/>
 <unit id="com.fasterxml.jackson.feature.feature.group" version="0.0.0"/>
 <unit id="com.google.code.gson.feature.feature.group" version="0.0.0"/>
+<unit id="com.google.guava.feature.feature.group" version="0.0.0"/>
 <unit id="com.google.guava20.feature.feature.group" version="0.0.0"/>
 <unit id="com.google.protobuf.feature.feature.group" version="0.0.0"/>
 <unit id="com.googlecode.javacv.feature.feature.group" version="0.0.0"/>
@@ -144,7 +145,6 @@
 <repository location="http://odysseus.informatik.uni-oldenburg.de/updatesite/resources/latest/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
-<unit id="com.google.guava" version="15.0.0.v201403281430"/>
 <unit id="com.google.inject" version="3.0.0.v201605172100"/>
 <unit id="javax.jws" version="0.0.0"/>
 <unit id="javax.mail" version="1.4.0.v201005080615"/>
