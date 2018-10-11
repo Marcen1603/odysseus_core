@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+//import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public class InputStatementParser {
@@ -32,10 +32,10 @@ public class InputStatementParser {
 
 	public InputStatementParser(String[] textToParse,
 			ReplacementContainer replacements) {
-		Preconditions.checkNotNull(textToParse,
-				"Text to check for %s must not be null!", INPUT_KEYS);
-		Preconditions.checkNotNull(replacements,
-				"Replacement container must not be null!");
+//		Preconditions.checkNotNull(textToParse,
+//				"Text to check for %s must not be null!", INPUT_KEYS);
+//		Preconditions.checkNotNull(replacements,
+//				"Replacement container must not be null!");
 
 		this.textToParse = textToParse;
 		this.replacements = replacements;
