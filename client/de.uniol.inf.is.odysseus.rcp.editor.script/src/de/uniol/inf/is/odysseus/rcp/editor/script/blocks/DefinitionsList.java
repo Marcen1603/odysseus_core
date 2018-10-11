@@ -67,7 +67,7 @@ public class DefinitionsList extends LinkedList<Definition> {
 	}
 
 	public void addListener(IDefinitionsListListener listener) {
-		Preconditions.checkNotNull(listener, "listener must not be null!");
+		// Preconditions.checkNotNull(listener, "listener must not be null!");
 
 		synchronized (listeners) {
 			listeners.add(listener);

@@ -25,9 +25,9 @@ public final class ControlPoint implements MouseMoveListener, MouseListener, IDa
 	private int y;
 
 	public ControlPoint(Dashboard dashboard, DashboardPartPlacement place, IControlPointBehaviour behaviour) {
-		Preconditions.checkNotNull(place, "DashboardPartPlacement must not be null!");
-		Preconditions.checkNotNull(dashboard, "Dashboard must not be null!");
-		Preconditions.checkNotNull(behaviour, "Control point behaviour must not be null!");
+		// Preconditions.checkNotNull(place, "DashboardPartPlacement must not be null!");
+		// Preconditions.checkNotNull(dashboard, "Dashboard must not be null!");
+		// Preconditions.checkNotNull(behaviour, "Control point behaviour must not be null!");
 
 		this.dashboard = dashboard;
 		this.place = place;

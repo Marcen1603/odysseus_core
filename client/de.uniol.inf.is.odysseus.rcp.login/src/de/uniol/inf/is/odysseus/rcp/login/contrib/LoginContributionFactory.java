@@ -16,7 +16,7 @@ public final class LoginContributionFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(LoginContributionFactory.class);
 	
 	public Optional<ILoginContribution> create( Class<? extends ILoginContribution> classToCreate ) {
-		Preconditions.checkNotNull(classToCreate, "Login contribution class to create instance must not be null!");
+		// Preconditions.checkNotNull(classToCreate, "Login contribution class to create instance must not be null!");
 		
 		try {
 			LOG.debug("Creating instance of {}", classToCreate);

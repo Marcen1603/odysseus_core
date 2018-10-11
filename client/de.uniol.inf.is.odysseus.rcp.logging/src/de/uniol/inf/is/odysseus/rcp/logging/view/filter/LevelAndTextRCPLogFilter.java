@@ -14,7 +14,7 @@ public class LevelAndTextRCPLogFilter extends LevelRCPLogFilter {
 	public LevelAndTextRCPLogFilter(Level levelToFilter, String textToFilter) {
 		super(levelToFilter);
 		
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(textToFilter), "Text to filter must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(textToFilter), "Text to filter must not be null or empty!");
 		
 		this.textToFilter = textToFilter;
 	}

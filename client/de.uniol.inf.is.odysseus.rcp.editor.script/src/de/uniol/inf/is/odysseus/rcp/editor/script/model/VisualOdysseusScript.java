@@ -52,9 +52,9 @@ public class VisualOdysseusScript {
 	private ToolBar toolBar;
 
 	public VisualOdysseusScript(Composite parent, VisualOdysseusScriptModel scriptModel, IVisualOdysseusScriptContainer container) {
-		Preconditions.checkNotNull(scriptModel, "scriptModel must not be null!");
-		Preconditions.checkNotNull(parent, "parent must not be null!");
-		Preconditions.checkNotNull(container, "container must not be null!");
+		// Preconditions.checkNotNull(scriptModel, "scriptModel must not be null!");
+		// Preconditions.checkNotNull(parent, "parent must not be null!");
+		// Preconditions.checkNotNull(container, "container must not be null!");
 
 		this.parent = parent;
 		this.scriptModel = scriptModel;

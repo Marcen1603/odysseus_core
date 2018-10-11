@@ -45,8 +45,8 @@ public class LoginWindow extends TitleAreaDialog implements ILoginWindow {
 
 	@Override
 	public void show(Collection<ILoginContribution> contributions, boolean showWindowSetting) {
-		Preconditions.checkNotNull(contributions, "Contributions collection must not be null!");
-		Preconditions.checkArgument(!contributions.isEmpty(), "Collection of contributions to show must not be empty!");
+		// Preconditions.checkNotNull(contributions, "Contributions collection must not be null!");
+		// Preconditions.checkArgument(!contributions.isEmpty(), "Collection of contributions to show must not be empty!");
 		
 		LOG.debug("Showing login window with {} login contributions. ShowWindowSetting = {}", contributions.size(), showWindowSetting);
 
@@ -105,7 +105,7 @@ public class LoginWindow extends TitleAreaDialog implements ILoginWindow {
 
 	@Override
 	public void show(ILoginContribution contributionToShow) {
-		Preconditions.checkNotNull(contributionToShow, "Login contribution to show in login window must not be null!");
+		// Preconditions.checkNotNull(contributionToShow, "Login contribution to show in login window must not be null!");
 
 		Integer index = tabIndexMap.get(contributionToShow);
 		if (index != null) {

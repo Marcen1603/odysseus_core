@@ -28,7 +28,7 @@ public class CommandPO extends AbstractSink<Tuple<IMetaAttribute>>
 	private ISession caller;
 
 	public CommandPO(CommandAO ao, IServerExecutor executor) {
-		Preconditions.checkNotNull(ao, "ao must not be null!");
+		// Preconditions.checkNotNull(ao, "ao must not be null!");
 
 		this.executor = executor;
 		this.commandExpression = new RelationalExpression<IMetaAttribute>(ao.getCommandExpression());

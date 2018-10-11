@@ -28,7 +28,7 @@ public class ControlPointManager implements MouseMoveListener, ISelectionListene
 	private final List<ControlPoint> points = Lists.newArrayList();
 
 	public ControlPointManager(Dashboard dashboard) {
-		Preconditions.checkNotNull(dashboard, "Dashboard must not be null");
+		// Preconditions.checkNotNull(dashboard, "Dashboard must not be null");
 		this.dashboard = dashboard;
 
 		arrowCursor = new Cursor(Display.getDefault(), SWT.CURSOR_ARROW);

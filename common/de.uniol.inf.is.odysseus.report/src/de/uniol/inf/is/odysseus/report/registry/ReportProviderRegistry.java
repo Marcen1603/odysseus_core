@@ -15,8 +15,8 @@ public final class ReportProviderRegistry {
 	private final List<IReportProvider> providers = Lists.newArrayList();
 
 	public void addReportProvider(IReportProvider provider) {
-		Preconditions.checkNotNull(provider, "Provider to add must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(provider.getTitle()), "Title of report provider %s must not be null or empty!", provider.getClass());
+		// Preconditions.checkNotNull(provider, "Provider to add must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(provider.getTitle()), "Title of report provider %s must not be null or empty!", provider.getClass());
 		
 		synchronized (providers) {
 			if (!providers.contains(provider)) {
@@ -26,7 +26,7 @@ public final class ReportProviderRegistry {
 	}
 
 	public void removeReportProvider(IReportProvider provider) {
-		Preconditions.checkNotNull(provider, "Provider to remove must not be null!");
+		// Preconditions.checkNotNull(provider, "Provider to remove must not be null!");
 
 		synchronized (providers) {
 			providers.remove(provider);

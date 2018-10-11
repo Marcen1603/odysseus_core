@@ -42,7 +42,7 @@ public final class PreParserStatement {
 	private final Context context;
 	
 	public PreParserStatement( String keywordText, IPreParserKeyword keyword, String parameter, int line, Context context) {
-		Preconditions.checkNotNull(context, "Context for preParserKeyword must not be null!");
+		// Preconditions.checkNotNull(context, "Context for preParserKeyword must not be null!");
 		
 		this.keyword = keyword;
 		this.keywordText = keywordText;

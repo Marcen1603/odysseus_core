@@ -53,10 +53,10 @@ public class FilterWindow {
 	private boolean canceled;
 
 	public FilterWindow(Display display, SDFSchema schema, List<Integer> selectedAttributeIndices, String filterExpression) {
-		this.schema = Preconditions.checkNotNull(schema, "Schema must not be null.");
-		this.display = Preconditions.checkNotNull(display, "Display must not be null.");
+		this.schema = schema; // Preconditions.checkNotNull(schema, "Schema must not be null.");
+		this.display = display; // Preconditions.checkNotNull(display, "Display must not be null.");
 		this.filterExpression = Strings.isNullOrEmpty(filterExpression) ? "" : filterExpression;
-		this.selectedAttributeIndices = Preconditions.checkNotNull(selectedAttributeIndices, "List of indices of selected attributes must not be null!");
+		this.selectedAttributeIndices = selectedAttributeIndices; // Preconditions.checkNotNull(selectedAttributeIndices, "List of indices of selected attributes must not be null!");
 	}
 
 	public void show() {
@@ -231,7 +231,7 @@ class CheckBoxIndexPair {
 	
 	public CheckBoxIndexPair( int index, Button checkBox) {
 		this.index = index;
-		this.checkBox = Preconditions.checkNotNull(checkBox, "CheckBox must not be null.");
+		this.checkBox = checkBox; // Preconditions.checkNotNull(checkBox, "CheckBox must not be null.");
 	}
 	
 }

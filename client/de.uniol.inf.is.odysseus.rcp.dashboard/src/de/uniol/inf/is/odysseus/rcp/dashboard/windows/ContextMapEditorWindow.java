@@ -63,8 +63,8 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 	public ContextMapEditorWindow(Shell parentShell, IDashboardPart dashboardPart, String dashboardPartName) {
 		super(parentShell);
 
-		Preconditions.checkNotNull(dashboardPart, "DashboardPart to change context must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of dashboardPart must not be null or empty!");
+		// Preconditions.checkNotNull(dashboardPart, "DashboardPart to change context must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of dashboardPart must not be null or empty!");
 		
 		this.dashboardPart = dashboardPart;
 		this.dashboardPartName = dashboardPartName;

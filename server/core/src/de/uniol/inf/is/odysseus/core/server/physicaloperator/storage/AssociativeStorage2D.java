@@ -28,7 +28,7 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
      */
     public AssociativeStorage2D(List<Integer> sizes) {
         Objects.requireNonNull(sizes);
-        Preconditions.checkElementIndex(1, sizes.size());
+        // Preconditions.checkElementIndex(1, sizes.size());
         this.sizes = sizes;
     }
 

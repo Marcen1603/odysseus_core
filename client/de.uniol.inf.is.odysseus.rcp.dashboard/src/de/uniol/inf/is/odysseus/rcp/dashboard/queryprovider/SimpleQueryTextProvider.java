@@ -36,13 +36,13 @@ public class SimpleQueryTextProvider implements IDashboardPartQueryTextProvider 
 	private final ImmutableList<String> queryTextLines;
 
 	public SimpleQueryTextProvider(IFile copyFrom) {
-		Preconditions.checkNotNull(copyFrom, "File for copying query text must not be null!");
+		// Preconditions.checkNotNull(copyFrom, "File for copying query text must not be null!");
 
 		this.queryTextLines = copyQueryTextFromFile(copyFrom);
 	}
 
 	public SimpleQueryTextProvider(List<String> queryTextLines) {
-		Preconditions.checkNotNull(queryTextLines, "QueryTextLines must not be null!");
+		// Preconditions.checkNotNull(queryTextLines, "QueryTextLines must not be null!");
 
 		this.queryTextLines = ImmutableList.copyOf(queryTextLines);
 	}

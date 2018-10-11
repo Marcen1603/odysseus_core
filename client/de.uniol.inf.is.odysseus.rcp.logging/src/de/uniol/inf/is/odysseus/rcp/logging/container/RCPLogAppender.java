@@ -10,7 +10,7 @@ public class RCPLogAppender extends AppenderSkeleton {
 	private final RCPLogContainer containerToFill;
 	
 	public RCPLogAppender( RCPLogContainer containerToFill ) {
-		Preconditions.checkNotNull(containerToFill, "RCPContainer to fill with rcp logs must not be null!");
+		// Preconditions.checkNotNull(containerToFill, "RCPContainer to fill with rcp logs must not be null!");
 		
 		this.containerToFill = containerToFill;
 	}

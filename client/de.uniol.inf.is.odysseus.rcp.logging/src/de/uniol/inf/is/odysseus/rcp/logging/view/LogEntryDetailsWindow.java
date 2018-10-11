@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.rcp.logging.RCPLogEntry;
 public class LogEntryDetailsWindow {
 	
 	public static void show( RCPLogEntry entry ) {
-		Preconditions.checkNotNull(entry, "Entry must not be null!");
+		// Preconditions.checkNotNull(entry, "Entry must not be null!");
 		
 		createWindowAsync(entry);
 	}

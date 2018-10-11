@@ -28,7 +28,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 	private DefinitionsTableViewer tableViewer;
 
 	public DefinesVisualOdysseusScriptBlock(List<Definition> keyValuePairs) {
-		Preconditions.checkNotNull(keyValuePairs, "keyValuePairs must not be null!");
+		// Preconditions.checkNotNull(keyValuePairs, "keyValuePairs must not be null!");
 
 		definitionsList.addAll(keyValuePairs);
 	}

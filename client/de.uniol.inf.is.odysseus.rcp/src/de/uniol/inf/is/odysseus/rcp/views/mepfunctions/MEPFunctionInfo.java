@@ -39,10 +39,10 @@ public class MEPFunctionInfo {
 	private final boolean deprecated;
 
 	public MEPFunctionInfo(String symbol, int arity, ImmutableList<String> argTypes, String resultType, boolean deprecated) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(symbol), "Symbol of Function must not be null!");
-		Preconditions.checkArgument(arity >= 0, "Arity of function must be zero or positive, instead of %s!", arity);
-		Preconditions.checkNotNull(argTypes, "List of argument types of function must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(resultType), "ResultType of function must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(symbol), "Symbol of Function must not be null!");
+		// Preconditions.checkArgument(arity >= 0, "Arity of function must be zero or positive, instead of %s!", arity);
+		// Preconditions.checkNotNull(argTypes, "List of argument types of function must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(resultType), "ResultType of function must not be null or empty!");
 
 		this.symbol = symbol;
 		this.arity = arity;
@@ -52,7 +52,7 @@ public class MEPFunctionInfo {
 	}
 
 	public static MEPFunctionInfo fromMEPFunction( IMepFunction<?> function ) {
-		Preconditions.checkNotNull(function, "Function must not be null!");
+		// Preconditions.checkNotNull(function, "Function must not be null!");
 		
 		boolean dep = false;
 		try {

@@ -61,10 +61,8 @@ public class ViewSchema<T> {
 	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema,
 			int port, List<String> preChoosenAttributes,
 			List<String> preGroupingAttributes) {
-		Preconditions.checkNotNull(preChoosenAttributes,
-				"List of previous chosen attributes must not be null!");
-		Preconditions.checkNotNull(preGroupingAttributes,
-				"List of grouping attributes must not be null!");
+		// Preconditions.checkNotNull(preChoosenAttributes,"List of previous chosen attributes must not be null!");
+		// Preconditions.checkNotNull(preGroupingAttributes,"List of grouping attributes must not be null!");
 
 		this.outputSchema = outputSchema;
 		this.metadataSchema = metaSchema;

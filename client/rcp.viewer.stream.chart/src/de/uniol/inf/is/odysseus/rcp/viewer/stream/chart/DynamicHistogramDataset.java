@@ -207,7 +207,7 @@ public class DynamicHistogramDataset extends AbstractIntervalXYDataset implement
      *            the binCount to set
      */
     public void setBinCount(int binCount) {
-        Preconditions.checkArgument(binCount > 0);
+        // Preconditions.checkArgument(binCount > 0);
         this.binCount = binCount;
         updateHistogramSettings();
         this.notifyListeners(new DatasetChangeEvent(this, this));

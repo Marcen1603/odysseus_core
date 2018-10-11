@@ -28,7 +28,7 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 	private int selectionIndex;
 
 	public MetadataVisualOdysseusScriptBlock(List<String> metadataNames) {
-		Preconditions.checkNotNull(metadataNames, "metadataNames must not be null!");
+		// Preconditions.checkNotNull(metadataNames, "metadataNames must not be null!");
 
 		selectedMetadataNames = metadataNames.toArray(new String[0]);
 		metadataCombinations = determineMetadataCombinationNames();

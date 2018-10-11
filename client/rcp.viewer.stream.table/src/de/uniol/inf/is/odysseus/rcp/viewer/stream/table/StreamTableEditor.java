@@ -427,7 +427,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	private void setSelectedAttributeIndexes(List<Integer> attributeIndexes) {
-		shownAttributes = Preconditions.checkNotNull(attributeIndexes, "List of indexes must not be null");
+		shownAttributes = attributeIndexes; // Preconditions.checkNotNull(attributeIndexes, "List of indexes must not be null");
 	}
 
 	private void setParent(Composite parent) {

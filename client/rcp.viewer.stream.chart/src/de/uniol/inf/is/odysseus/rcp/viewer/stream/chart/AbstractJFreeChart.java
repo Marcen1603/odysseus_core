@@ -554,8 +554,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
-		this.queryTextProvider = Preconditions.checkNotNull(provider,
-				"QueryTextProvider for DashboardPart must not be null!");
+		this.queryTextProvider = provider; // Preconditions.checkNotNull(provider,	"QueryTextProvider for DashboardPart must not be null!");
 	}
 
 	@Override
@@ -616,15 +615,15 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	
 	@Override
 	public void addContext( String key, String value ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "value for context map must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "value for context map must not be null or empty!");
 		
 		contextMap.put(key,  value);
 	}
 	
 	@Override
 	public Optional<String> getContextValue( String key ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
 		
 		return Optional.fromNullable(contextMap.get(key));
 	}
@@ -636,7 +635,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	
 	@Override
 	public void removeContext( String key ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
 		
 		contextMap.remove(key);
 	}

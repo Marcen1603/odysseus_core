@@ -42,8 +42,8 @@ public class OsgiObjectInputStream extends ObjectInputStream {
 
 	@Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-        Preconditions.checkNotNull(desc, "Desc must not be null!");
-        Preconditions.checkNotNull(Activator.getBundleContext(), "BundleContext not set!");
+        // Preconditions.checkNotNull(desc, "Desc must not be null!");
+        // Preconditions.checkNotNull(Activator.getBundleContext(), "BundleContext not set!");
         
         try {
             Class<?> ret = BundleClassLoading.findClass(desc.getName(), Activator.getBundleContext().getBundle());

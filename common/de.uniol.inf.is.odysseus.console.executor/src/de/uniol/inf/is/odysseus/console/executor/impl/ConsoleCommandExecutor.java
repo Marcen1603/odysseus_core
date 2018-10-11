@@ -25,7 +25,7 @@ public class ConsoleCommandExecutor implements IConsoleCommandExecutor {
 
 	@Override
 	public String executeConsoleCommand(String commandString) throws ConsoleCommandNotFoundException, ConsoleCommandExecutionException {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(commandString), "Commandstring to execute must be non-empty or null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(commandString), "Commandstring to execute must be non-empty or null!");
 
 		LOG.debug("Starting to execute '{}'", commandString);
 

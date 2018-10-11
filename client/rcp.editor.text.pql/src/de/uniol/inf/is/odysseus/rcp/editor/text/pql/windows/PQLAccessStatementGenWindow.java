@@ -61,7 +61,7 @@ public class PQLAccessStatementGenWindow {
 	private OptionsTableViewer optionsTableViewer;
 
 	public PQLAccessStatementGenWindow(Shell parent) {
-		this.parent = Preconditions.checkNotNull(parent, "Parent shell must not be null!");
+		this.parent = parent; // Preconditions.checkNotNull(parent, "Parent shell must not be null!");
 	}
 
 	public void show() {

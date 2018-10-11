@@ -29,7 +29,7 @@ public class PhysicalOperatorFilter {
 			.build();
 
 	public static boolean isFiltered(IPhysicalOperator operator) {
-		Preconditions.checkNotNull(operator, "Operator must not be null!");
+		// Preconditions.checkNotNull(operator, "Operator must not be null!");
 		return FILTERED_OPERATORS.contains(operator.getClass().getSimpleName());
 	}
 }

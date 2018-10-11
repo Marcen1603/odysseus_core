@@ -17,12 +17,9 @@ final class QueryIDChecker extends Thread {
 	private boolean isRunning;
 
 	public QueryIDChecker(GraphViewEditor editor, PhysicalGraphEditorInput input) {
-		this.editor = Preconditions.checkNotNull(editor,
-				"Editor to check query id must not be null!");
-		this.input = Preconditions.checkNotNull(input,
-				"Input to check query id must not be null!");
-		Preconditions.checkArgument(input.hasQueryID(),
-				"QueryID to check not specified");
+		this.editor = editor; // Preconditions.checkNotNull(editor, "Editor to check query id must not be null!");
+		this.input = input ;// Preconditions.checkNotNull(input, "Input to check query id must not be null!");
+		// Preconditions.checkArgument(input.hasQueryID(),	"QueryID to check not specified");
 
 		setDaemon(true);
 		setName("Checker for query " + input.getQueryID());

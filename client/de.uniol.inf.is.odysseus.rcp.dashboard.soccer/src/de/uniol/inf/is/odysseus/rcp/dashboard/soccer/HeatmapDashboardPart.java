@@ -210,7 +210,7 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	}
 
 	public void setSelectedPlayerID( String playerIDString ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(playerIDString));
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(playerIDString));
 
 		if( !playerIDString.equals(selectedPlayerIDString) ) {
 			selectedPlayerIDString = playerIDString;

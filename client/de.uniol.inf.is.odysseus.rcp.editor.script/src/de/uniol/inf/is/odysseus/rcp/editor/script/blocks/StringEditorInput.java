@@ -32,7 +32,7 @@ public final class StringEditorInput implements IStorageEditorInput {
 	private String inputString;
 
 	public StringEditorInput(String inputString, String name, String extension, IFile baseFile) {
-		Preconditions.checkNotNull(baseFile, "baseFile must not be null!");
+		// Preconditions.checkNotNull(baseFile, "baseFile must not be null!");
 
 		if( inputString == null ) {
 			inputString = "";
@@ -102,7 +102,7 @@ public final class StringEditorInput implements IStorageEditorInput {
 	}
 	
 	public void addListener(IStringEditorInputChangeListener listener ) {
-		Preconditions.checkNotNull(listener, "listener must not be null!");
+		// Preconditions.checkNotNull(listener, "listener must not be null!");
 
 		synchronized( listeners ) {
 			listeners.add(listener);

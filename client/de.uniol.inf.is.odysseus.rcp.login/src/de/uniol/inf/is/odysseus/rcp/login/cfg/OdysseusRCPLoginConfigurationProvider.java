@@ -16,7 +16,7 @@ public class OdysseusRCPLoginConfigurationProvider implements ILoginConfiguratio
 
 	@Override
 	public Optional<String> get(String key) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "Key of config setting must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "Key of config setting must not be null or empty!");
 		
 		try {
 			return Optional.of(OdysseusRCPConfiguration.get(LOGIN_SETTING_PREFIX + key));

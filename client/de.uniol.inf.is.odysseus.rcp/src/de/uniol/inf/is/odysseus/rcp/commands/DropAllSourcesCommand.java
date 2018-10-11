@@ -50,7 +50,7 @@ public class DropAllSourcesCommand extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		LOG.debug("Dropping all sources");
 
-		final IExecutor executor = Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
+		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();// Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
 		final ImmutableList<Resource> sources = determineSourceIds(executor.getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession()));
 				
 		if( sources.isEmpty() ) {

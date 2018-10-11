@@ -82,10 +82,8 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	public Dashboard load(IFile fileToLoad, IDashboardPartHandler partHandler,
 			IWorkbenchPart partToShow) throws DashboardHandlerException,
 			FileNotFoundException {
-		Preconditions.checkNotNull(fileToLoad,
-				"Dashboard-File to load must not be null!");
-		Preconditions.checkNotNull(partHandler,
-				"Dashboard part handler must not be null!");
+		// Preconditions.checkNotNull(fileToLoad,	"Dashboard-File to load must not be null!");
+		// Preconditions.checkNotNull(partHandler,	"Dashboard part handler must not be null!");
 
 		try {
 			List<String> lines = FileUtil.read(fileToLoad);
@@ -232,8 +230,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	@Override
 	public void save(Dashboard board, IFile fileToSave)
 			throws DashboardHandlerException {
-		Preconditions.checkNotNull(board,
-				"Dashboard to be saved must not be null!");
+		// Preconditions.checkNotNull(board,	"Dashboard to be saved must not be null!");
 
 		try {
 			final Document doc = createNewDocument();

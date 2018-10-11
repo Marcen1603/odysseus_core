@@ -387,7 +387,7 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
 
     @ChartSetting(name = "Update interval (ms)", type = Type.SET)
     public void setUpdateIntervalMillis(final long millis) {
-        Preconditions.checkArgument(millis >= 0, "Update interval must be zero or positive!");
+        // Preconditions.checkArgument(millis >= 0, "Update interval must be zero or positive!");
 
         if (millis != this.updateIntervalMillis) {
             if ((millis > 0) && (this.updateIntervalMillis == 0)) {

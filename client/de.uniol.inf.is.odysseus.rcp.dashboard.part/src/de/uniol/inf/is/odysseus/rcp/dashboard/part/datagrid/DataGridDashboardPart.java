@@ -180,8 +180,8 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 	}
 
 	public void setRowAndColumnCounts( int rowCount, int columnCount ) {
-		Preconditions.checkArgument( rowCount > 0, "Row count must be positive");
-		Preconditions.checkArgument( columnCount > 0, "Column count must be positive");
+		// Preconditions.checkArgument( rowCount > 0, "Row count must be positive");
+		// Preconditions.checkArgument( columnCount > 0, "Column count must be positive");
 
 		if( tableViewer != null ) {
 			deleteColumns(tableViewer);

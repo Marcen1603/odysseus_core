@@ -457,7 +457,7 @@ public abstract class AbstractHistogramSeriesChart extends AbstractJFreeChart<Do
 
     @ChartSetting(name = "Update interval (ms)", type = Type.SET)
     public void setUpdateIntervalMillis(long millis) {
-        Preconditions.checkArgument(millis >= 0, "Update interval must be zero or positive!");
+        // Preconditions.checkArgument(millis >= 0, "Update interval must be zero or positive!");
 
         if (millis != updateIntervalMillis) {
             if (millis > 0 && updateIntervalMillis == 0) {

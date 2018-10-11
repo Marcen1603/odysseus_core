@@ -128,7 +128,7 @@ public class AssociativeStorageAO extends AbstractLogicalOperator implements ISt
     }
 
     public int getSize(int dimension) {
-        Preconditions.checkElementIndex(dimension, this.sizes.size());
+        // Preconditions.checkElementIndex(dimension, this.sizes.size());
         return this.sizes.get(dimension);
     }
 

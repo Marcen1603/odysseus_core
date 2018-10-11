@@ -31,8 +31,8 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		dataset = Preconditions.checkNotNull(createDataset(), "Created data set must not be null!");
-		chart = Preconditions.checkNotNull(createChart(), "Created chart must not be null!");
+		dataset = createDataset(); // Preconditions.checkNotNull(createDataset(), "Created data set must not be null!");
+		chart = createChart(); // Preconditions.checkNotNull(createChart(), "Created chart must not be null!");
 
 		decorateChart(chart);
 

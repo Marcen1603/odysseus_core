@@ -39,8 +39,8 @@ public class PreTransformationHandlerParameter extends Setting<Object> implement
 	}
 	
 	public final void add( String interfaceName, List<Pair<String, String>> parameters ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(interfaceName), "PreTransformationHandlers's name must not be null or empty!");
-		Preconditions.checkNotNull(parameters, "parameters must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(interfaceName), "PreTransformationHandlers's name must not be null or empty!");
+		// Preconditions.checkNotNull(parameters, "parameters must not be null!");
 		
 		usedTransformationHandlers.add(new HandlerParameterPair(interfaceName, parameters));
 	}

@@ -37,7 +37,7 @@ class KeyValuePair {
 	}
 
 	public void setKey(String key) {
-		this.key = Preconditions.checkNotNull(key, "Key of key-value-pair must not be null!");
+		this.key = key; // Preconditions.checkNotNull(key, "Key of key-value-pair must not be null!");
 	}
 
 	public String getValue() {
@@ -45,7 +45,7 @@ class KeyValuePair {
 	}
 
 	public void setValue(String value) {
-		this.value = Preconditions.checkNotNull(value, "Value of key-value-pair must not be null!");
+		this.value = value; // Preconditions.checkNotNull(value, "Value of key-value-pair must not be null!");
 	}
 
 }

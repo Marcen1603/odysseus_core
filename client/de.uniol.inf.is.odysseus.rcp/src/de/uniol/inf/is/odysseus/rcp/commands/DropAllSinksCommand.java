@@ -54,7 +54,7 @@ public class DropAllSinksCommand extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		LOG.debug("Dropping all sinks");
 
-		final IExecutor executor = Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
+		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();// Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
 		
 		if (executor != null ) {
 			final List<SinkInformation> sinks = executor.getSinks(OdysseusRCPPlugIn.getActiveSession());

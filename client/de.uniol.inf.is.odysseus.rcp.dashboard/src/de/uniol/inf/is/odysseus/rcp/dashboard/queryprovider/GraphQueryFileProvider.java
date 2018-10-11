@@ -30,8 +30,8 @@ public class GraphQueryFileProvider implements IDashboardPartQueryTextProvider {
 	private final IFile graphFile;
 	
 	public GraphQueryFileProvider(IFile graphFile) {
-		Preconditions.checkNotNull(graphFile, "Graph file must not be null!");
-		Preconditions.checkArgument(graphFile.getFileExtension().equals("grp"), "Grapg file must end with 'grp'");
+		// Preconditions.checkNotNull(graphFile, "Graph file must not be null!");
+		// Preconditions.checkArgument(graphFile.getFileExtension().equals("grp"), "Grapg file must end with 'grp'");
 		
 		this.graphFile = graphFile;
 	}

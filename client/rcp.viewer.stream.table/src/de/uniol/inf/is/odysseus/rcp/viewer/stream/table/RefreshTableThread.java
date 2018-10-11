@@ -15,8 +15,8 @@ class RefreshTableThread extends Thread {
 	private boolean isRunning;
 	
 	public RefreshTableThread( TableViewer viewer ) {
-		Preconditions.checkNotNull(viewer, "TableViewer to refresh must not be null!");
-		Preconditions.checkArgument(!viewer.getTable().isDisposed(), "Tableviewer to refresh must not be disposed already");
+		// Preconditions.checkNotNull(viewer, "TableViewer to refresh must not be null!");
+		// Preconditions.checkArgument(!viewer.getTable().isDisposed(), "Tableviewer to refresh must not be disposed already");
 		
 		this.viewer = viewer;
 		setName("TableViewer refresh");

@@ -38,12 +38,12 @@ public class ImageManager {
 	private Map<String, Image> loadedImages = Maps.newHashMap();
 	
 	public ImageManager( Bundle bundle ) {
-		this.bundle = Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
+		this.bundle = bundle; // Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
 	}
 	
 	public void register( String imageID, String fileName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(fileName), "Filename to register must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(fileName), "Filename to register must not be null or empty!");
 
 		if( imageIDs.containsKey(imageID)) {
 			LOG.warn("Registering already registered imageID {}.", imageID);
@@ -72,7 +72,7 @@ public class ImageManager {
 	}
 	
 	public Image get( String imageID ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
 		
 		if( !loadedImages.containsKey(imageID)) {
 			// Load image

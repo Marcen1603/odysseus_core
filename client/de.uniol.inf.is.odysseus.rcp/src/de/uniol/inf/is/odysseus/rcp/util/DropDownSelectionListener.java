@@ -30,19 +30,19 @@ public class DropDownSelectionListener extends SelectionAdapter {
 	}
 
 	public MenuItem add(String item, ICallback callback) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(item), "item must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(item), "item must not be null or empty!");
 
 		return add(item, null, callback);
 	}
 	
 	public MenuItem add(Image image, ICallback callback) {
-		Preconditions.checkNotNull(image, "image must not be null!");
+		// Preconditions.checkNotNull(image, "image must not be null!");
 
 		return add(null, image, callback);
 	}
 	
 	public MenuItem add(String item, Image image, ICallback callback) {
-		Preconditions.checkNotNull(callback, "callback must not be null!");
+		// Preconditions.checkNotNull(callback, "callback must not be null!");
 
 		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
 		menuItem.addSelectionListener(new SelectionAdapter() {

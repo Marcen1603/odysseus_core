@@ -43,8 +43,8 @@ public class DashboardPartRegistry {
 	private static final Map<String, Registration> registeredParts = Maps.newHashMap();
 
 	public static IDashboardPart createDashboardPart(String dashboardPartName) throws InstantiationException {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
-		Preconditions.checkArgument(isRegistered(dashboardPartName), "DashboardPart %s not registered!", dashboardPartName);
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
+		// Preconditions.checkArgument(isRegistered(dashboardPartName), "DashboardPart %s not registered!", dashboardPartName);
 
 		final Registration reg = registeredParts.get(dashboardPartName);
 		final Optional<? extends IDashboardPart> optInstance = createDashboardPartInstance(reg.dashboardPartClass);
@@ -56,8 +56,8 @@ public class DashboardPartRegistry {
 	}
 	
 	public static IDashboardPartConfigurer<?> createDashboardPartConfigurer( String dashboardPartName ) throws InstantiationException {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
-		Preconditions.checkArgument(isRegistered(dashboardPartName), "DashboardPart %s not registered!", dashboardPartName);
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
+		// Preconditions.checkArgument(isRegistered(dashboardPartName), "DashboardPart %s not registered!", dashboardPartName);
 
 		final Registration reg = registeredParts.get(dashboardPartName);
 		Optional<? extends IDashboardPartConfigurer<?>> optConfigurer = createDashboardPartConfigurerInstance(reg.dashboardPartConfigurerClass);
@@ -69,7 +69,7 @@ public class DashboardPartRegistry {
 	}
 
 	public static Optional<Class<? extends IDashboardPart>> getDashboardPartClass(String dashboardPartName) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
 
 		final Registration reg = registeredParts.get(dashboardPartName);
 		if (reg != null) {
@@ -84,29 +84,29 @@ public class DashboardPartRegistry {
 	}
 
 	public static boolean isRegistered(Class<? extends IDashboardPart> dashboardPartClass) {
-		Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
+		// Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
 
 		return getRegistrationName(dashboardPartClass).isPresent();
 	}
 
 	public static boolean isRegistered(String dashboardPartName) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
 		return registeredParts.containsKey(dashboardPartName);
 	}
 
 	public static void register(Class<? extends IDashboardPart> dashboardPartClass, Class<? extends IDashboardPartConfigurer<?>> dashboardPartConfigurer, String dashboardPartName) {
-		Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
-		Preconditions.checkNotNull(dashboardPartConfigurer, "Class of IDashboardPartConfigurer must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "DashboardPartName must not be null or empty!");
-		Preconditions.checkArgument(!isRegistered(dashboardPartClass), "DashboardPartClass %s already registered!", dashboardPartClass);
-		Preconditions.checkArgument(!isRegistered(dashboardPartName), "DashboardPartName %s already registered!", dashboardPartName);
+		// Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
+		// Preconditions.checkNotNull(dashboardPartConfigurer, "Class of IDashboardPartConfigurer must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "DashboardPartName must not be null or empty!");
+		// Preconditions.checkArgument(!isRegistered(dashboardPartClass), "DashboardPartClass %s already registered!", dashboardPartClass);
+		// Preconditions.checkArgument(!isRegistered(dashboardPartName), "DashboardPartName %s already registered!", dashboardPartName);
 
 		registeredParts.put(dashboardPartName, new Registration(dashboardPartClass, dashboardPartConfigurer));
 		LOG.debug("Registered DashboardPart {}.",  dashboardPartName);
 	}
 
 	public static void unregister(Class<? extends IDashboardPart> dashboardPartClass) {
-		Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
+		// Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
 
 		final Optional<String> registrationName = getRegistrationName(dashboardPartClass);
 		if (registrationName.isPresent()) {
@@ -117,7 +117,7 @@ public class DashboardPartRegistry {
 	}
 
 	public static void unregister(String dashboardPartName) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
 
 		if (registeredParts.containsKey(dashboardPartName)) {
 			registeredParts.remove(dashboardPartName);

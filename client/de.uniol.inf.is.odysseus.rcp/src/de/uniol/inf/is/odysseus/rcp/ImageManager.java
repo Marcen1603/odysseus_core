@@ -47,7 +47,7 @@ public class ImageManager {
 	private Map<String, Image> loadedImages = Maps.newHashMap();
 
 	public ImageManager( Bundle bundle ) {
-		this.bundle = Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
+		this.bundle = bundle; // Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class ImageManager {
 	 * @param fileName the relative file path of the image inside the bundle
 	 */
 	public void register( String imageID, String fileName) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(fileName), "Filename to register must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(fileName), "Filename to register must not be null or empty!");
 
 		URL url = bundle.getEntry(fileName);
 		register(imageID, url);	
@@ -68,8 +68,8 @@ public class ImageManager {
 	 * @param url the image URL to register
 	 */
 	public void register(String imageID, URL url ){
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
-		Preconditions.checkArgument(url != null, "URL must not be null");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
+		// Preconditions.checkArgument(url != null, "URL must not be null");
 
 		if( imageIDs.containsKey(imageID)) {
 			LOG.warn("Registering already registered imageID {}.", imageID);
@@ -79,8 +79,8 @@ public class ImageManager {
 	}
 	
 	public void registerImageSet(String imageSetName, String imageSetFileName) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetName), "imageSetName must not be null or empty!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetFileName), "imageSetFileName must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetName), "imageSetName must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetFileName), "imageSetFileName must not be null or empty!");
 		
 		URL url = bundle.getEntry(imageSetFileName);
 		registerImageSet(imageSetName, url, true);
@@ -91,7 +91,7 @@ public class ImageManager {
 	 * @param imageSetFile the file name of the image set
 	 */
 	public void registerExternalImageSet(File imageSetFile) {
-		Preconditions.checkArgument(imageSetFile.isFile(), "image set file " + imageSetFile.getAbsolutePath() + " does not exist");
+		// Preconditions.checkArgument(imageSetFile.isFile(), "image set file " + imageSetFile.getAbsolutePath() + " does not exist");
 		
 		URL imageSetURL = null;
 		try {

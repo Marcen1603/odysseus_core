@@ -16,8 +16,8 @@ public final class LogSaverRegistry {
 	private final Map<String, Class<? extends ILogSaver>> saverMap = Maps.newHashMap();
 	
 	public void register( Class<? extends ILogSaver> logSaverClass, String name ) {
-		Preconditions.checkNotNull(logSaverClass, "Logsaver class must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Logsaver name must not be null or empty!");
+		// Preconditions.checkNotNull(logSaverClass, "Logsaver class must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Logsaver name must not be null or empty!");
 		
 		ILogSaver instance = createInstance(logSaverClass);
 		if( instance == null ) {
@@ -42,7 +42,7 @@ public final class LogSaverRegistry {
 	}
 	
 	public Optional<? extends ILogSaver> createLogSaverInstance( String name ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of log saver must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of log saver must not be null or empty!");
 		
 		synchronized( saverMap ) {
 			Class<? extends ILogSaver> saverClass = saverMap.get(name);

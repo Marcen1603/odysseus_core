@@ -24,7 +24,7 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 	private final OdysseusScriptEditor editor;
 
 	public QueryHyperlinkDetector(OdysseusScriptEditor editor) {
-		Preconditions.checkNotNull(editor, "editor must not be null!");
+		// Preconditions.checkNotNull(editor, "editor must not be null!");
 
 		this.editor = editor;
 	}

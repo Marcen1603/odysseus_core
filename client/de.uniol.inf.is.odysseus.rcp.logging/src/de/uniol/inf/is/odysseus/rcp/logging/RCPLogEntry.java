@@ -29,7 +29,7 @@ public final class RCPLogEntry implements Comparable<RCPLogEntry> {
 	private final String throwableString;
 
 	public RCPLogEntry( LoggingEvent event ) {
-		Preconditions.checkNotNull(event, "Logging event to create rcp log entry must not be null!");
+		// Preconditions.checkNotNull(event, "Logging event to create rcp log entry must not be null!");
 		
 		loggerName = event.getLoggerName();
 		level = event.getLevel();

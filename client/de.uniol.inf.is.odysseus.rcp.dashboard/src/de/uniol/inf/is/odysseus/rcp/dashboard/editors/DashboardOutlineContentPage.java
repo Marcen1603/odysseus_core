@@ -38,7 +38,7 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 	private final Dashboard dashboard;
 
 	public DashboardOutlineContentPage(Dashboard dashboard) {
-		this.dashboard = Preconditions.checkNotNull(dashboard, "Dashboard for Outline-content must not be null!");
+		this.dashboard = dashboard; // Preconditions.checkNotNull(dashboard, "Dashboard for Outline-content must not be null!");
 		this.dashboard.addListener(this);
 	}
 

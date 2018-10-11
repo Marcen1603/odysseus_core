@@ -81,10 +81,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	public DefaultStreamConnection(Collection<IPhysicalOperator> operators) {
-		Preconditions.checkNotNull(operators,
-				"List of operators must not be null!");
-		Preconditions.checkArgument(!operators.isEmpty(),
-				"List of operators must not be empty!");
+		// Preconditions.checkNotNull(operators,
+		//		"List of operators must not be null!");
+		// Preconditions.checkArgument(!operators.isEmpty(),
+		//		"List of operators must not be empty!");
 
 		this.operators = operators;
 		portOperatorMap = generatePortMap(operators);
@@ -226,8 +226,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	@Override
 	public void addStreamElementListener(IStreamElementListener<In> listener) {
-		Preconditions.checkNotNull(listener,
-				"Listener to add to DefaultStreamConnection must not be null!");
+		// Preconditions.checkNotNull(listener,
+				// "Listener to add to DefaultStreamConnection must not be null!");
 
 		synchronized (listeners) {
 			if (!listeners.contains(listener)) {
@@ -239,10 +239,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	@Override
 	public void addStreamElementListener(IStreamElementListener<In> listener,
 			String sinkName) {
-		Preconditions.checkNotNull(listener,
-				"Listener to add to DefaultStreamConnection must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(sinkName),
-				"Sinkname must not be null or empty!");
+		// Preconditions.checkNotNull(listener,
+				//"Listener to add to DefaultStreamConnection must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(sinkName),
+				//"Sinkname must not be null or empty!");
 
 		synchronized (specialListener) {
 			Collection<IStreamElementListener<In>> l = specialListener
@@ -533,8 +533,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	@SuppressWarnings("unchecked")
 	private List<ISubscription<ISource<IStreamObject<?>>,?>> determineSubscriptions(
 			IPhysicalOperator operator) {
-		Preconditions.checkArgument(operator.isSink() || operator.isSource(),
-				"Operator must be sink and/or source!");
+		// Preconditions.checkArgument(operator.isSink() || operator.isSource(),
+				//"Operator must be sink and/or source!");
 
 		List<ISubscription<ISource<IStreamObject<?>>,?>> subs = Lists.newLinkedList();
 

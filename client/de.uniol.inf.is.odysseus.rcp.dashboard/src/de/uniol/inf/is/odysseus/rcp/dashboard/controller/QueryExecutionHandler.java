@@ -46,7 +46,7 @@ public class QueryExecutionHandler {
 	private IDashboardPart dashboardPart;
 
 	public QueryExecutionHandler(IDashboardPart dashboardPart) {
-		Preconditions.checkNotNull(dashboardPart, "Dashboard part for execution must not be null!");
+		// Preconditions.checkNotNull(dashboardPart, "Dashboard part for execution must not be null!");
 
 		// Create lists for queries
 		scriptFiles = new ArrayList<>();

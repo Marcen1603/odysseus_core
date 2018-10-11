@@ -14,8 +14,8 @@ public class DashboardPartConfigurer {
 	private final DashboardPartController dashboardPartController;
 
 	public DashboardPartConfigurer(IDashboardPart dashboardPart, DashboardPartController controller) {
-		Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
-		Preconditions.checkNotNull(controller, "DashboardPartController must not be null!");
+		// Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
+		// Preconditions.checkNotNull(controller, "DashboardPartController must not be null!");
 
 		this.dashboardPart = dashboardPart;
 		this.dashboardPartController = controller;

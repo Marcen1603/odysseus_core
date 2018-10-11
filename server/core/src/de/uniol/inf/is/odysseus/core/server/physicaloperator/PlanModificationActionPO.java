@@ -32,8 +32,8 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>
 	private ISession caller;
 
 	public PlanModificationActionPO(PlanModificationActionAO ao, IServerExecutor executor) {
-		Preconditions.checkNotNull(executor, "ServerExecutor must not be null!");
-		Preconditions.checkNotNull(ao, "PlanModificationActionAO must not be null!");
+		// Preconditions.checkNotNull(executor, "ServerExecutor must not be null!");
+		// Preconditions.checkNotNull(ao, "PlanModificationActionAO must not be null!");
 
 		this.executor = executor;
 		this.actionExpression = new RelationalExpression<IMetaAttribute>(ao.getCommandExpression());

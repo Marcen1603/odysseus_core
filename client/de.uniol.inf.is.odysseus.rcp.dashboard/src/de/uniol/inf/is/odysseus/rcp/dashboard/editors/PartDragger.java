@@ -10,7 +10,7 @@ final class PartDragger {
 	private int currentDragY;
 	
 	public void beginDrag( DashboardPartPlacement place, int mouseStartX, int mouseStartY ) {
-		Preconditions.checkNotNull(place, "Placement for dragging must not be null!");
+		// Preconditions.checkNotNull(place, "Placement for dragging must not be null!");
 		
 		this.place = place;
 		this.currentDragX = mouseStartX;
@@ -22,7 +22,7 @@ final class PartDragger {
 	}
 	
 	public void drag( int mouseX, int mouseY ) {
-		Preconditions.checkState( place != null, "Placement not set for dragging!");
+		// Preconditions.checkState( place != null, "Placement not set for dragging!");
 		
 		final int xDistance = mouseX - currentDragX;
 		final int yDistance = mouseY - currentDragY;

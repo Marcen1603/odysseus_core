@@ -35,8 +35,8 @@ public class LogicalQueryViewData implements IQueryViewData {
 	private final String queryName;
 
 	public LogicalQueryViewData(ILogicalQuery logicalQuery) {
-		Preconditions.checkNotNull(logicalQuery,
-				"LogicalQuery must not be null");
+		// Preconditions.checkNotNull(logicalQuery,
+				//"LogicalQuery must not be null");
 
 		id = logicalQuery.getID();
 		if (logicalQuery.getParameter("STATE")!=null){

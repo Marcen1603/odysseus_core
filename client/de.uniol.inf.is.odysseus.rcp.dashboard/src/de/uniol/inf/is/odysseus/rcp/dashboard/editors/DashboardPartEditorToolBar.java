@@ -39,8 +39,8 @@ public class DashboardPartEditorToolBar {
 	private final DashboardPartEditor editor;
 
 	public DashboardPartEditorToolBar(Composite presentationTab, final DashboardPartEditor editor) {
-		Preconditions.checkNotNull(presentationTab, "PartController must not be null!");
-		this.editor = Preconditions.checkNotNull(editor, "PartController must not be null!");
+		// Preconditions.checkNotNull(presentationTab, "PartController must not be null!");
+		this.editor = editor; //Preconditions.checkNotNull(editor, "PartController must not be null!");
 
 		final DashboardPartController partController = editor.getDashboardPartController();
 

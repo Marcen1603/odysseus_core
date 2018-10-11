@@ -26,8 +26,8 @@ public class TupleFilter {
 	private final List<Object> filterAttributeValues;
 	
 	public TupleFilter(String expressionString, SDFSchema schema) throws ParseException {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(expressionString), "Expression string must not be null or empty!");
-		Preconditions.checkNotNull(schema, "Schema must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(expressionString), "Expression string must not be null or empty!");
+		// Preconditions.checkNotNull(schema, "Schema must not be null!");
 
 		this.expressionString = expressionString;
 

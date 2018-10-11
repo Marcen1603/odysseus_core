@@ -69,7 +69,7 @@ public class IfController {
 	private int currentLine = 0;
 
 	public IfController(String[] text, ISession caller) {
-		Preconditions.checkNotNull(text, "Text-array for IfController must not be null!");
+		// Preconditions.checkNotNull(text, "Text-array for IfController must not be null!");
 
 		this.text = text;
 		this.caller = caller;

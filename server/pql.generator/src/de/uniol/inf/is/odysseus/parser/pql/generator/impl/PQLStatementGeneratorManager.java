@@ -40,7 +40,7 @@ public class PQLStatementGeneratorManager {
 	}
 	
 	public IPQLStatementGenerator<ILogicalOperator> getPQLStatementGenerator( ILogicalOperator operator ) {
-		Preconditions.checkNotNull(operator, "Operator to get pql-generator must not be null!");
+		// Preconditions.checkNotNull(operator, "Operator to get pql-generator must not be null!");
 		
 		IPQLStatementGenerator<ILogicalOperator> gen = generators.get(operator.getClass());
 		if( gen == null ) {

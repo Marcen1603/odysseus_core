@@ -16,8 +16,8 @@ public final class ClickableImage {
 	private IImageClickHandler handler;
 	
 	public ClickableImage( Composite parent, Image image, IImageClickHandler hdl) {
-		Preconditions.checkNotNull(parent, "parent must not be null!");
-		Preconditions.checkNotNull(image, "image must not be null!");
+		// Preconditions.checkNotNull(parent, "parent must not be null!");
+		// Preconditions.checkNotNull(image, "image must not be null!");
 
 		handler = hdl;
 		

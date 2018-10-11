@@ -181,7 +181,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		Preconditions.checkArgument(input instanceof FileEditorInput, "Input must be of type %s!", FileEditorInput.class);
+		// Preconditions.checkArgument(input instanceof FileEditorInput, "Input must be of type %s!", FileEditorInput.class);
 		this.input = (FileEditorInput) input;
 
 		setSite(site);
@@ -202,7 +202,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 	}
 	
 	public final DashboardPartController getDashboardPartController(IDashboardPart dashboardPart) {
-		Preconditions.checkNotNull(dashboardPart, "DashboardPart to get dashboard part controller must not be null!");
+		// Preconditions.checkNotNull(dashboardPart, "DashboardPart to get dashboard part controller must not be null!");
 		
 		return controllers.get(dashboardPart);
 	}

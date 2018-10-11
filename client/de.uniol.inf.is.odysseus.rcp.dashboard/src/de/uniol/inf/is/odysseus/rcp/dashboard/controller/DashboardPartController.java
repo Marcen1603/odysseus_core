@@ -41,7 +41,7 @@ public final class DashboardPartController implements IDashboardPartListener {
 	private QueryExecutionHandler queryHandler;
 
 	public DashboardPartController(IDashboardPart dashboardPart) {
-		this.dashboardPart = Preconditions.checkNotNull(dashboardPart, "DashboardPart for container must not be null!");
+		this.dashboardPart = dashboardPart; // Preconditions.checkNotNull(dashboardPart, "DashboardPart for container must not be null!");
 		
 		queryHandler = new QueryExecutionHandler(dashboardPart);
 	}
@@ -58,8 +58,8 @@ public final class DashboardPartController implements IDashboardPartListener {
 	}
 
 	public void start() throws ControllerException {
-		Preconditions.checkState(status != Status.RUNNING, "Container for DashboardParts already started");
-		Preconditions.checkState(status != Status.PAUSED, "Container for DashboardParts is paused and cannot be started.");
+		// Preconditions.checkState(status != Status.RUNNING, "Container for DashboardParts already started");
+		// Preconditions.checkState(status != Status.PAUSED, "Container for DashboardParts is paused and cannot be started.");
 
 		try {
 			queryHandler.start();
@@ -140,7 +140,7 @@ public final class DashboardPartController implements IDashboardPartListener {
 	}
 
 	public void unpause() {
-		Preconditions.checkState(status == Status.PAUSED, "Container for DashboardParts cannot be unpaused.");
+		// Preconditions.checkState(status == Status.PAUSED, "Container for DashboardParts cannot be unpaused.");
 
 		dashboardPart.onUnpause();
 		streamConnection.enable();

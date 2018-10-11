@@ -130,37 +130,26 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	private void init() {
-		streamDefinitions = Preconditions.checkNotNull(createStreamDefinitionsStore(),
-				"Store for streamDefinitions must not be null.");
-		// viewOrStreamFromUser = Preconditions.checkNotNull(
+		streamDefinitions = createStreamDefinitionsStore();// Preconditions.checkNotNull(createStreamDefinitionsStore(),"Store for streamDefinitions must not be null.");
+		// viewOrStreamFromUser = // Preconditions.checkNotNull(
 		// createViewOrStreamFromUserStore(),
 		// "Store for viewOrStreamFromUser must not be null.");
-		viewDefinitions = Preconditions.checkNotNull(createViewDefinitionsStore(),
-				"Store for viewDefinitions must not be null.");
-		entityFromUser = Preconditions.checkNotNull(createEntityFromUserStore(),
-				"Store for entityFromUser must not be null.");
-		entityUsedBy = Preconditions.checkNotNull(createEntityUsedByStore(),
-				"Store for entityUsedBy must not be null.");
-		datatypes = Preconditions.checkNotNull(createDatatypesStore(), "Store for datatypes must not be null.");
-		savedQueries = Preconditions.checkNotNull(createSavedQueriesStore(),
-				"Store for savedQueries must not be null.");
-		savedQueriesForUser = Preconditions.checkNotNull(createSavedQueriesForUserStore(),
-				"Store for savedQueriesForUser must not be null.");
-		savedQueriesBuildParameterName = Preconditions.checkNotNull(createSavedQueriesBuildParameterNameStore(),
-				"Store for savedQueriesBuildParameterName must not be null.");
-		sinkDefinitions = Preconditions.checkNotNull(createSinkDefinitionsStore(),
-				"Store for sinkDefinitions must not be null.");
-		// sinkFromUser = Preconditions.checkNotNull(createSinkFromUserStore(),
+		viewDefinitions = createViewDefinitionsStore(); // Preconditions.checkNotNull(createViewDefinitionsStore(),"Store for viewDefinitions must not be null.");
+		entityFromUser = createEntityFromUserStore(); // Preconditions.checkNotNull(createEntityFromUserStore(), "Store for entityFromUser must not be null.");
+		entityUsedBy = createEntityUsedByStore(); // Preconditions.checkNotNull(createEntityUsedByStore(),"Store for entityUsedBy must not be null.");
+		datatypes = createDatatypesStore(); // Preconditions.checkNotNull(createDatatypesStore(), "Store for datatypes must not be null.");
+		savedQueries = createSavedQueriesStore(); // Preconditions.checkNotNull(createSavedQueriesStore(), "Store for savedQueries must not be null.");
+		savedQueriesForUser = createSavedQueriesForUserStore(); // Preconditions.checkNotNull(createSavedQueriesForUserStore(), "Store for savedQueriesForUser must not be null.");
+		savedQueriesBuildParameterName =  createSavedQueriesBuildParameterNameStore(); // Preconditions.checkNotNull(createSavedQueriesBuildParameterNameStore(),"Store for savedQueriesBuildParameterName must not be null.");
+		sinkDefinitions = createSinkDefinitionsStore(); // Preconditions.checkNotNull(createSinkDefinitionsStore(), "Store for sinkDefinitions must not be null.");
+		// sinkFromUser = // Preconditions.checkNotNull(createSinkFromUserStore(),
 		// "Store for sinkFromUser must not be null.");
 
-		storedProcedures = Preconditions.checkNotNull(createStoredProceduresStore(),
-				"Store for storedProcedures must not be null.");
-		storedProceduresFromUser = Preconditions.checkNotNull(createStoredProceduresFromUserStore(),
-				"Store for storedProceduresFromUser must not be null.");
+		storedProcedures = createStoredProceduresStore();// Preconditions.checkNotNull(createStoredProceduresStore(), "Store for storedProcedures must not be null.");
+		storedProceduresFromUser = createStoredProceduresFromUserStore(); // Preconditions.checkNotNull(createStoredProceduresFromUserStore(), "Store for storedProceduresFromUser must not be null.");
 
-		stores = Preconditions.checkNotNull(createStoresStore(), "Store for stores must not be null.");
-		storesFromUser = Preconditions.checkNotNull(createStoresFromUserStore(),
-				"Store for storesFromUser must not be null.");
+		stores = createStoresStore(); // Preconditions.checkNotNull(createStoresStore(), "Store for stores must not be null.");
+		storesFromUser = createStoresFromUserStore(); // Preconditions.checkNotNull(createStoresFromUserStore(),"Store for storesFromUser must not be null.");
 	}
 
 	// Methods that must be overwritten to create stores
@@ -980,7 +969,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	@Override
 	public void addListener(IDataDictionaryListener listener) {
-		Preconditions.checkNotNull(listener, "Listener to add to data dictionary must not be null!");
+		// Preconditions.checkNotNull(listener, "Listener to add to data dictionary must not be null!");
 
 		synchronized (listeners) {
 			if (!listeners.contains(listener)) {
@@ -1036,7 +1025,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	@Override
 	public void addSinkListener(IDataDictionarySinkListener listener) {
-		Preconditions.checkNotNull(listener, "Sink listener to add to data dictionary must not be null!");
+		// Preconditions.checkNotNull(listener, "Sink listener to add to data dictionary must not be null!");
 
 		synchronized (sinkListeners) {
 			if (!sinkListeners.contains(listener)) {

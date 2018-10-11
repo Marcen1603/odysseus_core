@@ -22,8 +22,8 @@ public class LoginContributionLifecycle {
 	private final Collection<ILoginContribution> contributions;
 	
 	public LoginContributionLifecycle( Collection<ILoginContribution> contributions ) {
-		Preconditions.checkNotNull(contributions, "Collection of login contributions for lifecycle must not be null!");
-		Preconditions.checkArgument(!contributions.isEmpty(), "Collection of login contributions for lifecycle must not be empty!");
+		// Preconditions.checkNotNull(contributions, "Collection of login contributions for lifecycle must not be null!");
+		// Preconditions.checkArgument(!contributions.isEmpty(), "Collection of login contributions for lifecycle must not be empty!");
 		
 		LOG.debug("Creating lifecyle for {} login contributions", contributions.size());
 		this.contributions = sortByPriorityAsc(contributions);
@@ -57,7 +57,7 @@ public class LoginContributionLifecycle {
 	}
 
 	public void onLoadAll( Map<String, String> savedConfig ) {
-		Preconditions.checkNotNull(savedConfig, "Saved config must not be null");
+		// Preconditions.checkNotNull(savedConfig, "Saved config must not be null");
 		LOG.debug("Load config in all login contributions");
 		
 		for( ILoginContribution contribution : contributions ) {

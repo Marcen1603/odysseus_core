@@ -45,8 +45,8 @@ public class LogPresenter {
 	private Combo levelCombo;
 
 	public LogPresenter(Composite parent, TabItem tab, boolean withFilters) {
-		Preconditions.checkNotNull(parent, "Parent must not be null!");
-		Preconditions.checkNotNull(tab, "TabItem must not be null!");
+		// Preconditions.checkNotNull(parent, "Parent must not be null!");
+		// Preconditions.checkNotNull(tab, "TabItem must not be null!");
 
 		Composite viewComposite = new Composite(parent, SWT.NONE);
 		viewComposite.setLayout(new GridLayout());

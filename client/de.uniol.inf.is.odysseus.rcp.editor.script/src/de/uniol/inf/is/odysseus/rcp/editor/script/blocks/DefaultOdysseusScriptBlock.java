@@ -25,7 +25,7 @@ public class DefaultOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 	private Text editingText;
 	
 	public DefaultOdysseusScriptBlock(String keyword, String text) {
-		Preconditions.checkNotNull(keyword, "keyword must not be null!");
+		// Preconditions.checkNotNull(keyword, "keyword must not be null!");
 		
 		integrate(keyword, text);
 	}

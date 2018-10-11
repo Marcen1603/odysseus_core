@@ -27,8 +27,8 @@ public class DefinitionsTableViewer implements IDefinitionsListListener {
 	private final TableViewer tableViewer;
 
 	public DefinitionsTableViewer(Composite parent, DefinitionsList pairs) {
-		Preconditions.checkNotNull(parent, "parent must not be null!");
-		Preconditions.checkNotNull(pairs, "pairs must not be null!");
+		// Preconditions.checkNotNull(parent, "parent must not be null!");
+		// Preconditions.checkNotNull(pairs, "pairs must not be null!");
 
 		definitionsList = pairs;
 

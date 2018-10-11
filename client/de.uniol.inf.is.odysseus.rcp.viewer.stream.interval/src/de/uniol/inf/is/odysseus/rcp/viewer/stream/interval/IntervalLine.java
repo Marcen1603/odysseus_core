@@ -16,7 +16,7 @@ public final class IntervalLine {
 	private final IStreamObject<? extends ITimeInterval> element;
 
 	public IntervalLine(IStreamObject<? extends ITimeInterval> element) {
-		Preconditions.checkNotNull(element, "element must not be null!");
+		// Preconditions.checkNotNull(element, "element must not be null!");
 
 		this.element = element;
 		ITimeInterval metadata = element.getMetadata();
