@@ -8,7 +8,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.jfreechart,
  de.uniol.inf.is.odysseus.core,
- com.google.guava;bundle-version="18.0.0",
+ com.google.guava;bundle-version="21.0.0",
  de.uniol.inf.is.odysseus.rcp.dashboard,
  org.eclipse.core.resources;bundle-version="3.7.101", de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
