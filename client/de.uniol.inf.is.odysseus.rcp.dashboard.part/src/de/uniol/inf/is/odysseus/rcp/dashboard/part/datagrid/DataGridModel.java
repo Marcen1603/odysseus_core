@@ -39,9 +39,9 @@ public final class DataGridModel {
 	}
 	
 	public DataGridModel(DataGridDashboardPart dashboardPart, int rowCount, int columnCount, DataGridModel model) {
-		Preconditions.checkArgument(rowCount > 0, "Rowcount must be positive");
-		Preconditions.checkArgument(columnCount > 0, "Columncount must be positive");
-		Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
+		// Preconditions.checkArgument(rowCount > 0, "Rowcount must be positive");
+		// Preconditions.checkArgument(columnCount > 0, "Columncount must be positive");
+		// Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
 
 		this.rows = createDataRowsArray(rowCount, columnCount);
 		this.dashboardPart = dashboardPart;
@@ -73,7 +73,7 @@ public final class DataGridModel {
 	}
 
 	public int getRowIndex(DataRow row) {
-		Preconditions.checkNotNull( row, "Row to get index from must not be null!");
+		// Preconditions.checkNotNull( row, "Row to get index from must not be null!");
 		
 		for (int i = 0; i < rows.length; i++) {
 			if (rows[i].equals(row)) {
@@ -214,9 +214,9 @@ public final class DataGridModel {
 	}
 
 	private void checkIndices(int row, int column) {
-		Preconditions.checkArgument(row >= 0, "Row index must be positive, not %s", row);
-		Preconditions.checkArgument(column >= 0, "Column index must be positive, not %s", column);
-		Preconditions.checkArgument(row < rows.length, "Row must be lower than the maximum row index of %s", rows.length);
+		// Preconditions.checkArgument(row >= 0, "Row index must be positive, not %s", row);
+		// Preconditions.checkArgument(column >= 0, "Column index must be positive, not %s", column);
+		// Preconditions.checkArgument(row < rows.length, "Row must be lower than the maximum row index of %s", rows.length);
 	}
 
 	public void setSchemaFromOperators(Collection<IPhysicalOperator> operators) {

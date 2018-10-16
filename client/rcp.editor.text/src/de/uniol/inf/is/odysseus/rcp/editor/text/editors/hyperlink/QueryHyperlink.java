@@ -17,8 +17,8 @@ public class QueryHyperlink implements IHyperlink {
 	private final IRegion region;
 	
 	public QueryHyperlink( IRegion region, IFile file ) {
-		Preconditions.checkNotNull(region, "region must not be null!");
-		Preconditions.checkNotNull(file, "file must not be null!");
+		// Preconditions.checkNotNull(region, "region must not be null!");
+		// Preconditions.checkNotNull(file, "file must not be null!");
 		
 		this.file = file;
 		this.region = region;

@@ -17,7 +17,7 @@ public class Report implements IReport {
 	private final Optional<Throwable> optException;
 	
 	public Report( Map<String, String> reportMap, Throwable exception ) {
-		Preconditions.checkNotNull(reportMap, "ReportMap must not be null!");
+		// Preconditions.checkNotNull(reportMap, "ReportMap must not be null!");
 		
 		this.reportMap.putAll(reportMap);
 		optException = Optional.fromNullable(exception);

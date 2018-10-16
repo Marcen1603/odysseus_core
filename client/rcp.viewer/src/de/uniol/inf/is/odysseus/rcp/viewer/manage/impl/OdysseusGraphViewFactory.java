@@ -58,9 +58,9 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 
 	@Override
 	public IGraphView<IPhysicalOperator> createGraphView(IGraphModel<IPhysicalOperator> graph, ISymbolConfiguration symbolConfig, ISymbolElementFactory<IPhysicalOperator> symbolFactory) {
-		Preconditions.checkNotNull(graph, "Graph must not be null!");
-		Preconditions.checkNotNull(symbolConfig, "SymbolConfig must not be null!");
-		Preconditions.checkNotNull(symbolFactory, "SymbolFactory must not be null!");
+		// Preconditions.checkNotNull(graph, "Graph must not be null!");
+		// Preconditions.checkNotNull(symbolConfig, "SymbolConfig must not be null!");
+		// Preconditions.checkNotNull(symbolFactory, "SymbolFactory must not be null!");
 
 		// Graph
 		final IOdysseusGraphView graphView = new OdysseusGraphView((IOdysseusGraphModel) graph);
@@ -106,10 +106,10 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 	@Override
 	public void updateGraphDisplay(IGraphModel<IPhysicalOperator> graph, ISymbolConfiguration symbolConfig, ISymbolElementFactory<IPhysicalOperator> symbolFactory,
 			IGraphView<IPhysicalOperator> graphDisplay) {
-		Preconditions.checkNotNull(graph, "Graph must not be null!");
-		Preconditions.checkNotNull(symbolConfig, "symbolConfig must not be null!");
-		Preconditions.checkNotNull(symbolFactory, "symbolFactory must not be null!");
-		Preconditions.checkNotNull(graphDisplay, "graphDisplay must not be null!");
+		// Preconditions.checkNotNull(graph, "Graph must not be null!");
+		// Preconditions.checkNotNull(symbolConfig, "symbolConfig must not be null!");
+		// Preconditions.checkNotNull(symbolFactory, "symbolFactory must not be null!");
+		// Preconditions.checkNotNull(graphDisplay, "graphDisplay must not be null!");
 		
 		logger.info("Updating GraphDisplay");
 

@@ -455,7 +455,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 
 	@ChartSetting(name = "Update interval (ms)", type = Type.SET)
 	public void setUpdateIntervalMillis(Long millis) {
-		Preconditions.checkArgument(millis != null && millis >= 0, "Update interval must be zero or positive!");
+		// Preconditions.checkArgument(millis != null && millis >= 0, "Update interval must be zero or positive!");
 
 		if (millis != updateIntervalMillis) {
 			if (millis > 0 && updateIntervalMillis == 0) {

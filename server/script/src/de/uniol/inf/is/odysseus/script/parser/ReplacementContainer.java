@@ -36,14 +36,14 @@ public final class ReplacementContainer {
 	private Context context;
 
 	public ReplacementContainer(Map<String, IReplacementProvider> providerMap) {
-		Preconditions.checkNotNull(providerMap, "Map of replacementProviders must not be null!");
+		// Preconditions.checkNotNull(providerMap, "Map of replacementProviders must not be null!");
 		
 		replacements.putAll(defaultReplacements);
 		replacementProviders.putAll(providerMap);
 	}
 
 	public void connect(Context context) {
-		Preconditions.checkNotNull(context, "Context must not be null");
+		// Preconditions.checkNotNull(context, "Context must not be null");
 		this.context = context;
 		this.currentContext = context;
 
@@ -67,7 +67,7 @@ public final class ReplacementContainer {
 	}
 
 	public String use(String lineToReplace) throws ReplacementException {
-		Preconditions.checkNotNull(lineToReplace, "Line to use replacements must not be null!");
+		// Preconditions.checkNotNull(lineToReplace, "Line to use replacements must not be null!");
 
 		int posStart = lineToReplace.indexOf(REPLACEMENT_START_KEY);
 		while (posStart != -1) {
@@ -109,7 +109,7 @@ public final class ReplacementContainer {
 	}
 
 	public boolean parse(String line) throws OdysseusScriptException {
-		Preconditions.checkNotNull(line, "Line to parse must not be null!");
+		// Preconditions.checkNotNull(line, "Line to parse must not be null!");
 
 		currentContext = context.copy();
 
@@ -183,8 +183,8 @@ public final class ReplacementContainer {
 	}
 
 	public void put(String key, String value) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "Key for replacement not be null or empty");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "Value for replacement must not be null or empty");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "Key for replacement not be null or empty");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "Value for replacement must not be null or empty");
 
 		putImpl(key.toUpperCase(), value);
 	}

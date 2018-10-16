@@ -32,9 +32,9 @@ public class InputStatementParser {
 
 	public InputStatementParser(String[] textToParse,
 			ReplacementContainer replacements) {
-//		Preconditions.checkNotNull(textToParse,
+//		// Preconditions.checkNotNull(textToParse,
 //				"Text to check for %s must not be null!", INPUT_KEYS);
-//		Preconditions.checkNotNull(replacements,
+//		// Preconditions.checkNotNull(replacements,
 //				"Replacement container must not be null!");
 
 		this.textToParse = textToParse;

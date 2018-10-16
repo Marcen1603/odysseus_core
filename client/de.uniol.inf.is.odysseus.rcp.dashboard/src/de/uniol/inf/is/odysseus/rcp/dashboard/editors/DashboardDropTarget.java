@@ -20,7 +20,7 @@ public abstract class DashboardDropTarget {
 	private final DropTarget dropTarget;
 	
 	public DashboardDropTarget(Composite composite) {
-		Preconditions.checkNotNull(composite, "Composite as drop target must not be null!");
+		// Preconditions.checkNotNull(composite, "Composite as drop target must not be null!");
 		
 		dropTarget = new DropTarget(composite, DND.DROP_MOVE | DND.DROP_COPY);
 		dropTarget.setTransfer(new Transfer[] { LocalSelectionTransfer.getTransfer() });

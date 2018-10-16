@@ -52,8 +52,8 @@ public class LogTable implements IRCPLogContainerListener {
 	private final List<ILogTableListener> listeners = new CopyOnWriteArrayList<ILogTableListener>();
 
 	public LogTable(Composite parent, RCPLogContainer logContainer) {
-		Preconditions.checkNotNull(parent, "Parent composite must not be null!");
-		Preconditions.checkNotNull(logContainer, "RCP log container must not be null!");
+		// Preconditions.checkNotNull(parent, "Parent composite must not be null!");
+		// Preconditions.checkNotNull(logContainer, "RCP log container must not be null!");
 
 		this.logContainer = logContainer;
 		this.logContainer.addListener(this);
@@ -256,7 +256,7 @@ public class LogTable implements IRCPLogContainerListener {
 	}
 
 	public void addListener(ILogTableListener listener) {
-		Preconditions.checkNotNull(listener, "Listener must not be null!");
+		// Preconditions.checkNotNull(listener, "Listener must not be null!");
 
 		synchronized (listeners) {
 			listeners.add(listener);

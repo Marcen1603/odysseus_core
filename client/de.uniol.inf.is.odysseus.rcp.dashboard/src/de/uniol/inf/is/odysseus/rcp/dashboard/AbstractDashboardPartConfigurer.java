@@ -17,7 +17,7 @@ public abstract class AbstractDashboardPartConfigurer<T extends IDashboardPart> 
 	
 	@Override
 	public void addListener(IConfigurerListener listener) {
-		Preconditions.checkNotNull(listener, "IConfigurerListener must not be null!");
+		// Preconditions.checkNotNull(listener, "IConfigurerListener must not be null!");
 		
 		synchronized( listeners ) {
 			listeners.add(listener);

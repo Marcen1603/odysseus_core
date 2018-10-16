@@ -22,7 +22,7 @@ public class LoginContributionEPManager implements IRegistryEventListener {
 	private final LoginContributionRegistry registry;
 	
 	public LoginContributionEPManager( LoginContributionRegistry registry ) {
-		Preconditions.checkNotNull(registry, "Login contribution registry must not be null!");
+		// Preconditions.checkNotNull(registry, "Login contribution registry must not be null!");
 		
 		this.registry = registry;
 	}

@@ -30,7 +30,7 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 	private int mouseY;
 
 	public IntervalCanvas(Composite parent) {
-		Preconditions.checkNotNull(parent, "parent must not be null!");
+		// Preconditions.checkNotNull(parent, "parent must not be null!");
 
 		Composite parentComposite = new Composite(parent, SWT.NONE);
 		FormLayout form = new FormLayout();

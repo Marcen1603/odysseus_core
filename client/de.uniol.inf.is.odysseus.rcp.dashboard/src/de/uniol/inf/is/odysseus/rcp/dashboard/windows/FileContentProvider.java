@@ -18,7 +18,7 @@ class FileContentProvider extends BaseWorkbenchContentProvider {
 	private final Collection<String> acceptedFileExtensions;
 	
 	public FileContentProvider( Collection<String> acceptedFileExtensions ) {
-		Preconditions.checkNotNull(acceptedFileExtensions, "List of accepted file extensions must not be null");
+		// Preconditions.checkNotNull(acceptedFileExtensions, "List of accepted file extensions must not be null");
 		
 		this.acceptedFileExtensions = acceptedFileExtensions;
 	}

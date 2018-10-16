@@ -13,8 +13,8 @@ public final class ImageButton {
 	private final Button button;
 	
 	public ImageButton( Composite parent, Image image, String tooltipText ) {
-		Preconditions.checkNotNull(parent, "parent must not be null!");
-		Preconditions.checkNotNull(image, "image must not be null!");
+		// Preconditions.checkNotNull(parent, "parent must not be null!");
+		// Preconditions.checkNotNull(image, "image must not be null!");
 		
 		button = new Button(parent, SWT.PUSH);
 		button.setImage(image);

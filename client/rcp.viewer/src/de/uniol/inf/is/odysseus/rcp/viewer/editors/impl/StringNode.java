@@ -24,7 +24,7 @@ class StringNode {
 	private final String content;
 	
 	public StringNode( String content ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(content), "Content for string representation must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(content), "Content for string representation must not be null or empty!");
 		this.content = content;
 	}
 	

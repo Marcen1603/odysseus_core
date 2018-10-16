@@ -26,7 +26,7 @@ public class DashboardControl {
 	private boolean isLoadedBackgroundImageStretched = false;
 	
 	public DashboardControl( Composite parent ) {
-		Preconditions.checkNotNull(parent, "Parent for dashboard control must not be null!");
+		// Preconditions.checkNotNull(parent, "Parent for dashboard control must not be null!");
 		
 		composite = new Composite(parent, SWT.BORDER);
 		composite.setLayout(new FormLayout());

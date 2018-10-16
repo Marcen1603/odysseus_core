@@ -11,7 +11,7 @@ public class RunningQueryProvider implements IDashboardPartQueryTextProvider {
 	private final String queryName;
 	
 	public RunningQueryProvider( String queryName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(queryName), "QueryName must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(queryName), "QueryName must not be null or empty!");
 		
 		this.queryName = queryName;
 	}

@@ -29,7 +29,7 @@ public class KeyedTuples {
 	}
 	
 	public KeyedTuples( int maxData, int[] keyAttributeIndices ) {
-		Preconditions.checkNotNull(keyAttributeIndices, "array of keyattribute indices must not be null!");
+		// Preconditions.checkNotNull(keyAttributeIndices, "array of keyattribute indices must not be null!");
 		
 		this.keyAttributeIndices = keyAttributeIndices;
 		this.maxData = maxData;
@@ -44,7 +44,7 @@ public class KeyedTuples {
 	}
 	
 	public long getAge(Tuple<?> tuple) {
-		Preconditions.checkNotNull(tuple, "Tuple to get age must not be null!");
+		// Preconditions.checkNotNull(tuple, "Tuple to get age must not be null!");
 		
 		int hash = determineHashOfTuple(tuple);
 		Long timestamp = hashTimestampMap.get(hash);

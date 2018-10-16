@@ -83,7 +83,7 @@ public final class OdysseusRCPConfiguration {
 	}
 
 	public static void set(String key, String value) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "SettingKey must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "SettingKey must not be null or empty!");
 
 		firstLoadIfNeeded();
 		

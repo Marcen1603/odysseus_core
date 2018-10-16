@@ -9,7 +9,7 @@ public abstract class ChartUpdater extends Thread {
 	private boolean isRunning;
 	
 	public ChartUpdater( long updateIntervalMillis ) {
-		Preconditions.checkArgument(updateIntervalMillis > 0 , "Updater interval for chart updater must be positive");
+		// Preconditions.checkArgument(updateIntervalMillis > 0 , "Updater interval for chart updater must be positive");
 		
 		this.updateIntervalMillis = updateIntervalMillis;
 		

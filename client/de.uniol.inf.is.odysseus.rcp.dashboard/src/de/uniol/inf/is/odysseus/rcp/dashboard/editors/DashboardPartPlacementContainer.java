@@ -25,7 +25,7 @@ public class DashboardPartPlacementContainer {
 	}
 
 	public void add( DashboardPartPlacement placementToAdd ) {
-		Preconditions.checkArgument(!contains(placementToAdd), "Placement already added");
+		// Preconditions.checkArgument(!contains(placementToAdd), "Placement already added");
 		
 		dashboardParts.add(placementToAdd);
 	}
@@ -47,7 +47,7 @@ public class DashboardPartPlacementContainer {
 	}
 	
 	public void remove( DashboardPartPlacement placement ) {
-		Preconditions.checkNotNull(placement, "Dashboardpart to remove (as placement) must not be null!");
+		// Preconditions.checkNotNull(placement, "Dashboardpart to remove (as placement) must not be null!");
 
 		removeControls(placement, containers.get(placement).getComposite());
 		
@@ -79,7 +79,7 @@ public class DashboardPartPlacementContainer {
 	}
 	
 	public DashboardPartPlacement getNextPartAfter( DashboardPartPlacement placement ) {
-		Preconditions.checkNotNull(placement, "Placement must not be null!");
+		// Preconditions.checkNotNull(placement, "Placement must not be null!");
 		
 		final int pos = dashboardParts.indexOf(placement);
 		final int newPos = (pos + 1) % dashboardParts.size();

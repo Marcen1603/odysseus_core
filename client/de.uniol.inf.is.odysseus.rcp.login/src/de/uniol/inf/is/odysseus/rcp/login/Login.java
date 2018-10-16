@@ -37,7 +37,7 @@ public final class Login {
 	public static void login(Shell parentShell, boolean forceShow, boolean cancelOK) {
 		LOG.debug("Begin logging in. ForceShow = {}, CancelOK = {}", forceShow, cancelOK);
 		
-		Preconditions.checkNotNull(parentShell, "Parent shell for login must not be null!");
+		// Preconditions.checkNotNull(parentShell, "Parent shell for login must not be null!");
 		
 		LoginContributionRegistry registry = RCPLoginPlugIn.getLoginContributionRegistry();
 		if( registry.isEmpty() ) {

@@ -59,7 +59,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 
 	@Override
 	public void positionize(IGraphView<IPhysicalOperator> graph, int width, int height) {
-		Preconditions.checkNotNull(graph, "Graph to positionize must not be null!");
+		// Preconditions.checkNotNull(graph, "Graph to positionize must not be null!");
 
 		/** PHASE 1 **/
 		// Find sources (nodes having 0 inputs).

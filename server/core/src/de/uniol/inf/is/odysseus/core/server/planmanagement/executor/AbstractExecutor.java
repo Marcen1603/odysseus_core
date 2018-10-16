@@ -372,12 +372,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	// called by OSGi-DS
 	public static void bindPreTransformationHandler(IPreTransformationHandler serv) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()),
-				"preTransformationHandler's name must not be null or empty!");
-		Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()),
-				"There is already a preTransformationHandler called '%s'", serv.getName().toUpperCase());
-		Preconditions.checkArgument(canCreateInstance(serv.getClass()),
-				"Could not create instance of IPreTransformationHandler-class '%s'", serv.getClass());
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()),
+			//	"preTransformationHandler's name must not be null or empty!");
+		// Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()),
+			//	"There is already a preTransformationHandler called '%s'", serv.getName().toUpperCase());
+		// Preconditions.checkArgument(canCreateInstance(serv.getClass()),
+			//	"Could not create instance of IPreTransformationHandler-class '%s'", serv.getClass());
 
 		LOG.trace("Bound preTransformationHandler called '{}': {}", serv.getName().toUpperCase(), serv.getClass());
 		preTransformationHandlerMap.put(serv.getName().toUpperCase(), serv.getClass());
@@ -404,8 +404,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	public IPreTransformationHandler getPreTransformationHandler(String name)
 			throws InstantiationException, IllegalAccessException {
-		Preconditions.checkNotNull(Strings.isNullOrEmpty(name),
-				"Name of PreTransformationHandler must not be null or empty!");
+		// Preconditions.checkNotNull(Strings.isNullOrEmpty(name),
+				//"Name of PreTransformationHandler must not be null or empty!");
 
 		Class<? extends IPreTransformationHandler> clazz = preTransformationHandlerMap.get(name.toUpperCase());
 		if (clazz != null) {

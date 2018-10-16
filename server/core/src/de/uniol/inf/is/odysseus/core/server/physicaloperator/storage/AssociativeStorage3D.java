@@ -28,7 +28,7 @@ public class AssociativeStorage3D implements IAssociativeStorage<Tuple<?>> {
      */
     public AssociativeStorage3D(List<Integer> sizes) {
         Objects.requireNonNull(sizes);
-        Preconditions.checkElementIndex(2, sizes.size());
+        // Preconditions.checkElementIndex(2, sizes.size());
         this.sizes = sizes;
     }
 

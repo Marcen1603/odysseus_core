@@ -125,8 +125,8 @@ public class XMLResourceLoader {
 	}
 
 	private static Optional<String> getAttributeValue(Node node, String attributeName) {
-		Preconditions.checkNotNull(node, "Node to get attribute from must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(attributeName), "Attribute name must not be null or empty!");
+		// Preconditions.checkNotNull(node, "Node to get attribute from must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(attributeName), "Attribute name must not be null or empty!");
 
 		NamedNodeMap attributes = node.getAttributes();
 		if (attributes != null) {

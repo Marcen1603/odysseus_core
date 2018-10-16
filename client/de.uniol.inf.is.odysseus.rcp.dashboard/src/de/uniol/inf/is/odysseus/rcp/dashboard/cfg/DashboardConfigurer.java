@@ -22,7 +22,7 @@ public class DashboardConfigurer {
 	private final Dashboard dashboard;
 	
 	public DashboardConfigurer( Dashboard dashboard ) {
-		Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
+		// Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
 		
 		this.dashboard = dashboard;
 	}

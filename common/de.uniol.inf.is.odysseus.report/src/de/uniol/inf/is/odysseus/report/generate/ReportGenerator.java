@@ -24,7 +24,7 @@ public class ReportGenerator implements IReportGenerator {
 
 	@Override
 	public IReport generateReport(ISession session, Throwable exception) {
-		Preconditions.checkNotNull(session, "Session must not be null!");
+		// Preconditions.checkNotNull(session, "Session must not be null!");
 
 		List<IReportProvider> providers = ReportPlugIn.getReportProviderRegistry().getSortedReportProviders();
 		Map<String, String> reportMap = createReportMap(session, providers);

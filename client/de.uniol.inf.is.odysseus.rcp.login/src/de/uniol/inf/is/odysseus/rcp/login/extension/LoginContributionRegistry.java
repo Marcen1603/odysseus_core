@@ -19,8 +19,8 @@ public class LoginContributionRegistry {
 	private final List<Class<? extends ILoginContribution>> contributions = Lists.newArrayList();
 	
 	public void add( Class<? extends ILoginContribution> loginContribution ) {
-		Preconditions.checkNotNull( loginContribution, "Login contribution to add must not be null!");
-		Preconditions.checkArgument( !contains(loginContribution), "Login contribution '%s' is already added to registry", loginContribution);
+		// Preconditions.checkNotNull( loginContribution, "Login contribution to add must not be null!");
+		// Preconditions.checkArgument( !contains(loginContribution), "Login contribution '%s' is already added to registry", loginContribution);
 		
 		LOG.debug("Adding {} to login contribution registry", loginContribution);
 		contributions.add(loginContribution);
@@ -33,7 +33,7 @@ public class LoginContributionRegistry {
 	}
 	
 	public boolean contains( Class<? extends ILoginContribution> loginContribution ) {
-		Preconditions.checkNotNull(loginContribution, "Login contribution to check must not be null!");
+		// Preconditions.checkNotNull(loginContribution, "Login contribution to check must not be null!");
 		
 		return contributions.contains(loginContribution);
 	}

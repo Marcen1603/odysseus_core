@@ -56,7 +56,7 @@ public class VisualOdysseusScriptModel {
 	}
 	
 	public void parse(List<String> odysseusScriptTextLines) throws VisualOdysseusScriptException {
-		Preconditions.checkNotNull(odysseusScriptTextLines, "odysseusScriptTextLines must not be null!");
+		// Preconditions.checkNotNull(odysseusScriptTextLines, "odysseusScriptTextLines must not be null!");
 
 		List<OdysseusScriptBlock> scriptBlocks = determineOdysseusScriptBlocks(odysseusScriptTextLines);
 		List<OdysseusScriptBlock> scriptBlocksCopy = Lists.newArrayList(scriptBlocks);
@@ -274,7 +274,7 @@ public class VisualOdysseusScriptModel {
 	}
 
 	public void dispose(IVisualOdysseusScriptBlock visualBlock) {
-		Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
 
 		if (visualTextBlocks.contains(visualBlock)) {
 			visualBlock.dispose();
@@ -283,7 +283,7 @@ public class VisualOdysseusScriptModel {
 	}
 
 	public boolean moveUp(IVisualOdysseusScriptBlock visualBlock) throws VisualOdysseusScriptException {
-		Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
 
 		int index = visualTextBlocks.indexOf(visualBlock);
 		if (index == -1 || index == 0) {
@@ -301,7 +301,7 @@ public class VisualOdysseusScriptModel {
 
 	
 	public boolean moveDown(IVisualOdysseusScriptBlock visualBlock) throws VisualOdysseusScriptException {
-		Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
 
 		int index = visualTextBlocks.indexOf(visualBlock);
 		if( index == -1 || index == visualTextBlocks.size() - 1 ) {
@@ -336,7 +336,7 @@ public class VisualOdysseusScriptModel {
 	}
 
 	public void addBlock(IVisualOdysseusScriptBlock newBlock) {
-		Preconditions.checkNotNull(newBlock, "newBlock must not be null!");
+		// Preconditions.checkNotNull(newBlock, "newBlock must not be null!");
 
 		visualTextBlocks.add(newBlock);
 	}

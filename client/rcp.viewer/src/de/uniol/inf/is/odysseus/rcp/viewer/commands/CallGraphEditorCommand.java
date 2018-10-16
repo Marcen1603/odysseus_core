@@ -79,10 +79,10 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 	private static void openGraphEditor(IWorkbenchPage page,
 			List<IPhysicalOperator> sinkOps, int queryId) {
 		try {
-			Preconditions
-					.checkNotNull(sinkOps, "Query provides null as roots!");
-			Preconditions.checkArgument(!sinkOps.isEmpty(),
-					"Query to show graph has no roots!");
+			//Preconditions
+				//	.checkNotNull(sinkOps, "Query provides null as roots!");
+			// Preconditions.checkArgument(!sinkOps.isEmpty(),
+					//"Query to show graph has no roots!");
 
 			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSinkOneWay(
 					sinkOps);

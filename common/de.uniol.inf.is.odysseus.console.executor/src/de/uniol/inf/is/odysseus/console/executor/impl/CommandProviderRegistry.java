@@ -22,7 +22,7 @@ public class CommandProviderRegistry {
 
 	
 	public void register( CommandProvider provider ) {
-		Preconditions.checkNotNull(provider, "Command provider to register must not be null!");
+		// Preconditions.checkNotNull(provider, "Command provider to register must not be null!");
 		
 		LOG.debug("Registering command provider {}", provider);
 		
@@ -34,7 +34,7 @@ public class CommandProviderRegistry {
 	}
 	
 	public void unregister( CommandProvider provider ) {
-		Preconditions.checkNotNull(provider, "Command provider to unregister must not be null!");
+		// Preconditions.checkNotNull(provider, "Command provider to unregister must not be null!");
 
 		LOG.debug("Unregistering command provider {}", provider);
 

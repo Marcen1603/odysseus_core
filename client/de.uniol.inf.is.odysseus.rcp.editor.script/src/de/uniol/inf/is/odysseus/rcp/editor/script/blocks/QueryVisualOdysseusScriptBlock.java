@@ -48,8 +48,8 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 	private IEditorPart editor;
 
 	public QueryVisualOdysseusScriptBlock(String queryText, String parser, String queryName, boolean running) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(queryText), "queryText must not be null or empty!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(parser), "parser must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(queryText), "queryText must not be null or empty!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(parser), "parser must not be null or empty!");
 
 		this.queryText = queryText;
 		this.parser = parser;

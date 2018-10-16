@@ -86,8 +86,8 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	private float zoomFactor = 1.0f;
 
 	public SWTRenderManager(Composite comp, INodePositioner<C> nodePositioner) {
-		Preconditions.checkNotNull(nodePositioner, "Node positioner must not be null!");
-		Preconditions.checkNotNull(comp, "Composite for SWT renderer must not be null!");
+		// Preconditions.checkNotNull(nodePositioner, "Node positioner must not be null!");
+		// Preconditions.checkNotNull(comp, "Composite for SWT renderer must not be null!");
 
 		this.renderer = new SWTSymbolRenderer<C>();
 		this.nodePositioner = nodePositioner;

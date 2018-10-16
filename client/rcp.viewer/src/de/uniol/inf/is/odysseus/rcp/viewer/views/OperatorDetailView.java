@@ -79,7 +79,7 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 	}
 
 	private <T extends IPhysicalOperator> void createProviders(T operator) {
-		Preconditions.checkState(activeProviders.isEmpty(), "Creating providers without disposing old ones first!");
+		// Preconditions.checkState(activeProviders.isEmpty(), "Creating providers without disposing old ones first!");
 
 		@SuppressWarnings("unchecked")
 		Class<T> operatorClass = (Class<T>) operator.getClass();

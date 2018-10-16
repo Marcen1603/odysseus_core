@@ -67,7 +67,7 @@ public class PQLGenerator implements IPQLGenerator {
 	
 	@Override
 	public String generatePQLStatement(ILogicalOperator startOperator) {
-		Preconditions.checkNotNull(startOperator, "Operator for generating pql-statement must not be null!");
+		// Preconditions.checkNotNull(startOperator, "Operator for generating pql-statement must not be null!");
 
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		collectOperators(startOperator, operators);

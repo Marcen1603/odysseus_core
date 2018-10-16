@@ -36,7 +36,7 @@ public class ResourceFileQueryTextProvider implements IDashboardPartQueryTextPro
 	private final IFile queryFile;
 
 	public ResourceFileQueryTextProvider(IFile queryFile) {
-		this.queryFile = Preconditions.checkNotNull(queryFile, "QueryFile must not be null!");
+		this.queryFile = queryFile; // Preconditions.checkNotNull(queryFile, "QueryFile must not be null!");
 	}
 
 	public IFile getFile() {

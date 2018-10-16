@@ -609,7 +609,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		final int[] pos = new int[attributes.size()];
 		int i = 0;
 		for (final SDFAttribute attribute : attributes) {
-			Preconditions.checkArgument(contains(attribute));
+			// Preconditions.checkArgument(contains(attribute));
 			pos[i] = indexOf(attribute);
 			i++;
 		}

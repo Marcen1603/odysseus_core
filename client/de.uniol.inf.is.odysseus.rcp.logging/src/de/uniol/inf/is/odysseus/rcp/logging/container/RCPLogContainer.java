@@ -19,7 +19,7 @@ public class RCPLogContainer {
 	private final List<RCPLogEntry> logEntries = new CopyOnWriteArrayList<>();
 
 	public void add( LoggingEvent event ) {
-		Preconditions.checkNotNull(event, "Event to log in rcp container must not be null!");
+		// Preconditions.checkNotNull(event, "Event to log in rcp container must not be null!");
 
 		RCPLogEntry newEntry = new RCPLogEntry(event);
 		RCPLogEntry oldEntry = null;
@@ -43,7 +43,7 @@ public class RCPLogContainer {
 	}
 
 	public void addListener( IRCPLogContainerListener listener ) {
-		Preconditions.checkNotNull(listener, "RCPContainer listener must not be null!");
+		// Preconditions.checkNotNull(listener, "RCPContainer listener must not be null!");
 
 		synchronized( listeners ) {
 			listeners.add(listener);

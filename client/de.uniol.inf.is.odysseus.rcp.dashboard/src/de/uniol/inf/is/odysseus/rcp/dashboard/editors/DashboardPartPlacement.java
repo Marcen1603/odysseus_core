@@ -31,11 +31,11 @@ public final class DashboardPartPlacement {
 	private int h;
 
 	public DashboardPartPlacement(IDashboardPart part, String filename, int x, int y, int w, int h) {
-		Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "File of Dashboard Part must not be null!");
+		// Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "File of Dashboard Part must not be null!");
 
-		Preconditions.checkArgument(w >= 0, "Width must be positive instead of %s", w);
-		Preconditions.checkArgument(h >= 0, "Height must be positive instead of %s", h);
+		// Preconditions.checkArgument(w >= 0, "Width must be positive instead of %s", w);
+		// Preconditions.checkArgument(h >= 0, "Height must be positive instead of %s", h);
 
 		this.x = x;
 		this.y = y;

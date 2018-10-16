@@ -37,7 +37,7 @@ class AttributeTypePair {
 	}
 
 	public void setAttributeName(String attributeName) {
-		Preconditions.checkNotNull(attributeName, "Name of attribute must not be null!");
+		// Preconditions.checkNotNull(attributeName, "Name of attribute must not be null!");
 		this.attributeName = attributeName;
 	}
 

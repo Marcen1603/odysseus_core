@@ -52,8 +52,8 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	public DashboardConfigWindow(Shell parentShell, Dashboard dashboard, String dashboardName) {
 		super(parentShell);
 
-		Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardName), "Name of dashboard to show must not be null or empty!");
+		// Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardName), "Name of dashboard to show must not be null or empty!");
 		
 		this.dashboardName = dashboardName;
 		

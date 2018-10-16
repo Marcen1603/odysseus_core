@@ -71,7 +71,7 @@ public final class QueryView extends ViewPart {
 	}
 	
 	public void refreshData( int id ) {
-		Preconditions.checkArgument(id >= 0, "Id to update query view data must be non-negative");
+		// Preconditions.checkArgument(id >= 0, "Id to update query view data must be non-negative");
 		
 		final Optional<IQueryViewData> optElement = getData(id);
 
@@ -94,15 +94,15 @@ public final class QueryView extends ViewPart {
 	}
 	
 	public void addData( final IQueryViewData element ) {
-		Preconditions.checkNotNull(element, "QueryViewData to add must not be null!");
-		Preconditions.checkArgument(!data.contains(element), "QueryViewData-instance is already added");
-		Preconditions.checkArgument(!getData(element.getId()).isPresent(), "QueryViewData with id %s  is already added", element.getId());
+		// Preconditions.checkNotNull(element, "QueryViewData to add must not be null!");
+		// Preconditions.checkArgument(!data.contains(element), "QueryViewData-instance is already added");
+		// Preconditions.checkArgument(!getData(element.getId()).isPresent(), "QueryViewData with id %s  is already added", element.getId());
 		
 		data.add(element);
 	}
 	
 	public void removeData( int id ) {
-		Preconditions.checkArgument(id >= 0, "Id to remove query view data must be non-negative");
+		// Preconditions.checkArgument(id >= 0, "Id to remove query view data must be non-negative");
 		
 		Optional<IQueryViewData> optData = getData(id);
 		if( optData.isPresent() ) {
@@ -111,7 +111,7 @@ public final class QueryView extends ViewPart {
 	}
 	
 	public Optional<IQueryViewData> getData( int id ) {
-		Preconditions.checkArgument(id >= 0, "Id to get query view data must be non-negative");
+		// Preconditions.checkArgument(id >= 0, "Id to get query view data must be non-negative");
 		
 		for( IQueryViewData dat : data ) {
 			if( dat.getId() == id ) {
@@ -163,7 +163,7 @@ public final class QueryView extends ViewPart {
 	}
 
 	private static IQueryViewDataProvider determineDataProvider() {
-		Preconditions.checkArgument(QueryViewDataProviderManager.hasQueryViewDataProvider(), "QueryView must have at least one data provider!");
+		// Preconditions.checkArgument(QueryViewDataProviderManager.hasQueryViewDataProvider(), "QueryView must have at least one data provider!");
 		final IQueryViewDataProvider dataProvider = QueryViewDataProviderManager.getQueryViewDataProvider();
 		return dataProvider;
 	}

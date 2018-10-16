@@ -13,7 +13,7 @@ public class DataRow {
 	private String[] value;
 	
 	public DataRow( int columnCount) {
-		Preconditions.checkArgument(columnCount > 0, "Column count must be positive!");
+		// Preconditions.checkArgument(columnCount > 0, "Column count must be positive!");
 		
 		id = idCounter++;
 		this.columnCount = columnCount;

@@ -13,7 +13,7 @@ public class DashboardKeyHandler implements KeyListener {
 	private final Dashboard dashboard;
 	
 	public DashboardKeyHandler( Dashboard dashboard ) {
-		Preconditions.checkNotNull(dashboard, "Dashboard for key handling must not be null!");
+		// Preconditions.checkNotNull(dashboard, "Dashboard for key handling must not be null!");
 		
 		this.dashboard = dashboard;
 		this.dashboard.getControl().addKeyListener(this);

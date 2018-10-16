@@ -46,8 +46,8 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 
 	public DashboardPartConfigWindow(Shell parentShell, IDashboardPart dashboardPart, DashboardPartController controller) {
 		super(parentShell);
-		Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
-		Preconditions.checkNotNull(controller, "DashboardPartController must not be null!");
+		// Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
+		// Preconditions.checkNotNull(controller, "DashboardPartController must not be null!");
 		
 		this.dashboardPart = dashboardPart;
 		this.selectedSinks = dashboardPart.getSinkNames();

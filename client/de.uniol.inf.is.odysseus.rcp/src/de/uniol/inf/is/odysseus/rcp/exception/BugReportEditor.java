@@ -95,7 +95,7 @@ public class BugReportEditor extends TitleAreaDialog {
 
 	protected BugReportEditor(Shell parentShell, IReport report) {
 		super(parentShell);
-		Preconditions.checkNotNull(report, "Report must not be null!");
+		// Preconditions.checkNotNull(report, "Report must not be null!");
 
 		baseReport = report;
 	}

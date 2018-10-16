@@ -35,15 +35,15 @@ public final class OdysseusScriptTemplateRegistry {
 	}
 	
 	public void register( IOdysseusScriptTemplate template ) {
-		Preconditions.checkNotNull(template, "OdysseusScriptTemplate to register must not be null!");
-		Preconditions.checkArgument( !isRegistered(template), "OdysseusScriptTemplate '%s' already registered", template.getName());
+		// Preconditions.checkNotNull(template, "OdysseusScriptTemplate to register must not be null!");
+		// Preconditions.checkArgument( !isRegistered(template), "OdysseusScriptTemplate '%s' already registered", template.getName());
 				
 		templateMap.put(template.getName(), template);
 	}
 	
 	public void unregister(IOdysseusScriptTemplate template) {
-		Preconditions.checkNotNull(template, "OdysseusScriptTemplate to remove must not be null!");
-		Preconditions.checkArgument(!template.getClass().equals(EmptyScriptTemplate.class), "Unregistering empty template not allowed");
+		// Preconditions.checkNotNull(template, "OdysseusScriptTemplate to remove must not be null!");
+		// Preconditions.checkArgument(!template.getClass().equals(EmptyScriptTemplate.class), "Unregistering empty template not allowed");
 
 		templateMap.remove(template.getName());
 	}
@@ -53,7 +53,7 @@ public final class OdysseusScriptTemplateRegistry {
 	}
 	
 	public boolean isRegistered( String templateName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(templateName), "Name of OdysseusScriptTemplate must not be null or empty");
+		// Preconditions.checkArgument(!Strings.isNullOrEmpty(templateName), "Name of OdysseusScriptTemplate must not be null or empty");
 		
 		return templateMap.containsKey(templateName);
 	}
@@ -74,9 +74,9 @@ public final class OdysseusScriptTemplateRegistry {
 	}
 	
 	public IOdysseusScriptTemplate getTemplate(String name) {
-		Preconditions.checkNotNull(name, "Name to get OdysseusScriptTemplate must not be null!");
-		Preconditions.checkArgument(!name.isEmpty(), "Name to get OdysseusScriptTemplate must not be empty!");
-		Preconditions.checkArgument(templateMap.containsKey(name), "OdysseusScriptTemplate '%s' already registered", name);
+		// Preconditions.checkNotNull(name, "Name to get OdysseusScriptTemplate must not be null!");
+		// Preconditions.checkArgument(!name.isEmpty(), "Name to get OdysseusScriptTemplate must not be empty!");
+		// Preconditions.checkArgument(templateMap.containsKey(name), "OdysseusScriptTemplate '%s' already registered", name);
 
 		return templateMap.get(name);
 	}
