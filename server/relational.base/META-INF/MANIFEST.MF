@@ -41,7 +41,7 @@ Bundle-ClassPath: .
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.mep,
- com.google.guava;bundle-version="21.0.0", de.uniol.inf.is.odysseus.slf4j
+ com.google.guava;bundle-version="18.0.0", de.uniol.inf.is.odysseus.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*
 Automatic-Module-Name: de.uniol.inf.is.odysseus.relational.base
