@@ -21,9 +21,9 @@ public class ListContainsFunction2 extends AbstractFunction<Boolean> {
 	
 	@Override
 	public Boolean getValue() {
-		Object o = getInputValue(0);
+		Object o = getInputValue(1);
 		@SuppressWarnings("rawtypes")
-		List l = (List) getInputValue(1);
+		List l = (List) getInputValue(0);
 		return l.contains(o);
 	}
 
