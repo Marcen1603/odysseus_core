@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -36,13 +36,13 @@ public class SimpleQueryTextProvider implements IDashboardPartQueryTextProvider 
 	private final ImmutableList<String> queryTextLines;
 
 	public SimpleQueryTextProvider(IFile copyFrom) {
-		// Preconditions.checkNotNull(copyFrom, "File for copying query text must not be null!");
+		Objects.requireNonNull(copyFrom, "File for copying query text must not be null!");
 
 		this.queryTextLines = copyQueryTextFromFile(copyFrom);
 	}
 
 	public SimpleQueryTextProvider(List<String> queryTextLines) {
-		// Preconditions.checkNotNull(queryTextLines, "QueryTextLines must not be null!");
+		Objects.requireNonNull(queryTextLines, "QueryTextLines must not be null!");
 
 		this.queryTextLines = ImmutableList.copyOf(queryTextLines);
 	}

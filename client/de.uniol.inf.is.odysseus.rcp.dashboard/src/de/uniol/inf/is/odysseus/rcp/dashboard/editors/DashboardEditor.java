@@ -41,7 +41,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
@@ -202,7 +202,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 	}
 	
 	public final DashboardPartController getDashboardPartController(IDashboardPart dashboardPart) {
-		// Preconditions.checkNotNull(dashboardPart, "DashboardPart to get dashboard part controller must not be null!");
+		Objects.requireNonNull(dashboardPart, "DashboardPart to get dashboard part controller must not be null!");
 		
 		return controllers.get(dashboardPart);
 	}

@@ -7,7 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -41,7 +41,7 @@ public final class DataGridModel {
 	public DataGridModel(DataGridDashboardPart dashboardPart, int rowCount, int columnCount, DataGridModel model) {
 		// Preconditions.checkArgument(rowCount > 0, "Rowcount must be positive");
 		// Preconditions.checkArgument(columnCount > 0, "Columncount must be positive");
-		// Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
+		Objects.requireNonNull(dashboardPart, "DashboardPart must not be null!");
 
 		this.rows = createDataRowsArray(rowCount, columnCount);
 		this.dashboardPart = dashboardPart;
@@ -73,7 +73,7 @@ public final class DataGridModel {
 	}
 
 	public int getRowIndex(DataRow row) {
-		// Preconditions.checkNotNull( row, "Row to get index from must not be null!");
+		Objects.requireNonNull( row, "Row to get index from must not be null!");
 		
 		for (int i = 0; i < rows.length; i++) {
 			if (rows[i].equals(row)) {

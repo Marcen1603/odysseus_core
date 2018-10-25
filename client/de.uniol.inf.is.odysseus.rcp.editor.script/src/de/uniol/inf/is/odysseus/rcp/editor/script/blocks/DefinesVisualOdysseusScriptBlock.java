@@ -10,7 +10,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
@@ -28,7 +28,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 	private DefinitionsTableViewer tableViewer;
 
 	public DefinesVisualOdysseusScriptBlock(List<Definition> keyValuePairs) {
-		// Preconditions.checkNotNull(keyValuePairs, "keyValuePairs must not be null!");
+		Objects.requireNonNull(keyValuePairs, "keyValuePairs must not be null!");
 
 		definitionsList.addAll(keyValuePairs);
 	}

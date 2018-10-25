@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -59,7 +59,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 
 	@Override
 	public void positionize(IGraphView<IPhysicalOperator> graph, int width, int height) {
-		// Preconditions.checkNotNull(graph, "Graph to positionize must not be null!");
+		Objects.requireNonNull(graph, "Graph to positionize must not be null!");
 
 		/** PHASE 1 **/
 		// Find sources (nodes having 0 inputs).

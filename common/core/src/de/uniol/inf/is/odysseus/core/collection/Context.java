@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-//import com.google.common.base.Preconditions;
+//import java.util.Objects;
 //import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -39,7 +39,7 @@ public class Context implements Serializable {
 	private Serializable putImpl(String key, Serializable value) {
 		// removed temporarily
 		//// Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "Key for context must not be null or empty!");
-		//// Preconditions.checkNotNull(value, "Serializable value must not be null for key %s!", key);
+		//Objects.requireNonNull(value, "Serializable value must not be null for key %s!", key);
 		
 		return contextMap.put(key, value);
 	}

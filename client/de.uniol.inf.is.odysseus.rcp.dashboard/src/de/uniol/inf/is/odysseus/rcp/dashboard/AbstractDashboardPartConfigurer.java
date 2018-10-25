@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 
@@ -17,7 +17,7 @@ public abstract class AbstractDashboardPartConfigurer<T extends IDashboardPart> 
 	
 	@Override
 	public void addListener(IConfigurerListener listener) {
-		// Preconditions.checkNotNull(listener, "IConfigurerListener must not be null!");
+		Objects.requireNonNull(listener, "IConfigurerListener must not be null!");
 		
 		synchronized( listeners ) {
 			listeners.add(listener);

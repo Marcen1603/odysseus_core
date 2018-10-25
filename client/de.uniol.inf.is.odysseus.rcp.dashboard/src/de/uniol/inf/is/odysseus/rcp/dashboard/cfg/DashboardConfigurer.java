@@ -5,7 +5,7 @@ import org.eclipse.jface.window.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
@@ -22,7 +22,7 @@ public class DashboardConfigurer {
 	private final Dashboard dashboard;
 	
 	public DashboardConfigurer( Dashboard dashboard ) {
-		// Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
+		Objects.requireNonNull(dashboard, "Dashboard to configure must not be null!");
 		
 		this.dashboard = dashboard;
 	}

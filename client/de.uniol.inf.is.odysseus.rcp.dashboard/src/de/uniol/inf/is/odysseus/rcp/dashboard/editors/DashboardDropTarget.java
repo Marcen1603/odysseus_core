@@ -11,7 +11,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 
@@ -20,7 +20,7 @@ public abstract class DashboardDropTarget {
 	private final DropTarget dropTarget;
 	
 	public DashboardDropTarget(Composite composite) {
-		// Preconditions.checkNotNull(composite, "Composite as drop target must not be null!");
+		Objects.requireNonNull(composite, "Composite as drop target must not be null!");
 		
 		dropTarget = new DropTarget(composite, DND.DROP_MOVE | DND.DROP_COPY);
 		dropTarget.setTransfer(new Transfer[] { LocalSelectionTransfer.getTransfer() });

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.interval;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -16,7 +16,7 @@ public final class IntervalLine {
 	private final IStreamObject<? extends ITimeInterval> element;
 
 	public IntervalLine(IStreamObject<? extends ITimeInterval> element) {
-		// Preconditions.checkNotNull(element, "element must not be null!");
+		Objects.requireNonNull(element, "element must not be null!");
 
 		this.element = element;
 		ITimeInterval metadata = element.getMetadata();

@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.logging.view.filter;
 
 import org.apache.log4j.Level;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.rcp.logging.RCPLogEntry;

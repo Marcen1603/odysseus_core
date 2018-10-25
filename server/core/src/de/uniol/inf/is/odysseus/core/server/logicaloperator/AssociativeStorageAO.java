@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;

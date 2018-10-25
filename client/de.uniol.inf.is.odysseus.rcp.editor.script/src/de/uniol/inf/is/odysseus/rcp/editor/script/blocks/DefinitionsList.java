@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 public class DefinitionsList extends LinkedList<Definition> {
@@ -67,7 +67,7 @@ public class DefinitionsList extends LinkedList<Definition> {
 	}
 
 	public void addListener(IDefinitionsListListener listener) {
-		// Preconditions.checkNotNull(listener, "listener must not be null!");
+		Objects.requireNonNull(listener, "listener must not be null!");
 
 		synchronized (listeners) {
 			listeners.add(listener);

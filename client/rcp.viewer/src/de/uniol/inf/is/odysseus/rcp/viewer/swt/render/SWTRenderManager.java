@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.position.INodePositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.render.IRenderManager;
@@ -86,8 +86,8 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	private float zoomFactor = 1.0f;
 
 	public SWTRenderManager(Composite comp, INodePositioner<C> nodePositioner) {
-		// Preconditions.checkNotNull(nodePositioner, "Node positioner must not be null!");
-		// Preconditions.checkNotNull(comp, "Composite for SWT renderer must not be null!");
+		Objects.requireNonNull(nodePositioner, "Node positioner must not be null!");
+		Objects.requireNonNull(comp, "Composite for SWT renderer must not be null!");
 
 		this.renderer = new SWTSymbolRenderer<C>();
 		this.nodePositioner = nodePositioner;

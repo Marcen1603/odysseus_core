@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public final class OdysseusScriptBlock {
 
@@ -8,8 +8,8 @@ public final class OdysseusScriptBlock {
 	private final String text;
 	
 	public OdysseusScriptBlock( String keyword, String text ) {
-		// Preconditions.checkNotNull(keyword, "keyword must not be null!");
-		// Preconditions.checkNotNull(text, "text must not be null!");
+		Objects.requireNonNull(keyword, "keyword must not be null!");
+		Objects.requireNonNull(text, "text must not be null!");
 
 		this.keyword = keyword.toUpperCase();
 		this.text = text;

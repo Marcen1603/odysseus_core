@@ -3,14 +3,14 @@ package de.uniol.inf.is.odysseus.rcp.logging.container;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public class RCPLogAppender extends AppenderSkeleton {
 
 	private final RCPLogContainer containerToFill;
 	
 	public RCPLogAppender( RCPLogContainer containerToFill ) {
-		// Preconditions.checkNotNull(containerToFill, "RCPContainer to fill with rcp logs must not be null!");
+		Objects.requireNonNull(containerToFill, "RCPContainer to fill with rcp logs must not be null!");
 		
 		this.containerToFill = containerToFill;
 	}

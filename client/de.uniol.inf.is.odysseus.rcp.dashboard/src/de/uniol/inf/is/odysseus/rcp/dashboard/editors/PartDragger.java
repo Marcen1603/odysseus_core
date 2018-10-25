@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 
 final class PartDragger {
@@ -10,7 +10,7 @@ final class PartDragger {
 	private int currentDragY;
 	
 	public void beginDrag( DashboardPartPlacement place, int mouseStartX, int mouseStartY ) {
-		// Preconditions.checkNotNull(place, "Placement for dragging must not be null!");
+		Objects.requireNonNull(place, "Placement for dragging must not be null!");
 		
 		this.place = place;
 		this.currentDragX = mouseStartX;

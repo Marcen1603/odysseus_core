@@ -24,7 +24,7 @@ import java.io.ObjectStreamClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.Activator;
 
@@ -42,8 +42,8 @@ public class OsgiObjectInputStream extends ObjectInputStream {
 
 	@Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-        // Preconditions.checkNotNull(desc, "Desc must not be null!");
-        // Preconditions.checkNotNull(Activator.getBundleContext(), "BundleContext not set!");
+        Objects.requireNonNull(desc, "Desc must not be null!");
+        Objects.requireNonNull(Activator.getBundleContext(), "BundleContext not set!");
         
         try {
             Class<?> ret = BundleClassLoading.findClass(desc.getName(), Activator.getBundleContext().getBundle());

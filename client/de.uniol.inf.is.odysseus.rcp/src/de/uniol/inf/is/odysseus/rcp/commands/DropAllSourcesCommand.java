@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -50,7 +50,7 @@ public class DropAllSourcesCommand extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		LOG.debug("Dropping all sources");
 
-		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();// Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
+		final IExecutor executor = Objects.requireNonNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
 		final ImmutableList<Resource> sources = determineSourceIds(executor.getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession()));
 				
 		if( sources.isEmpty() ) {

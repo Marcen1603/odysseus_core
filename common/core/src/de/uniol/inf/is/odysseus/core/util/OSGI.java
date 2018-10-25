@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.core.util;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -11,7 +11,7 @@ public class OSGI {
 
 	public static <T> T get(Class<T> service) {
 		ServiceReference<T> reference = context().getServiceReference(service);
-		return checkNotNull(context().getService(reference));
+		return Objects.requireNonNull(context().getService(reference));
 	}
 
 	private static BundleContext context() {

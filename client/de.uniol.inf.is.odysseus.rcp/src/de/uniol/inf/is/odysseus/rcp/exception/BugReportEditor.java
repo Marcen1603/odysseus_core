@@ -19,6 +19,7 @@ package de.uniol.inf.is.odysseus.rcp.exception;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -40,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -95,7 +95,7 @@ public class BugReportEditor extends TitleAreaDialog {
 
 	protected BugReportEditor(Shell parentShell, IReport report) {
 		super(parentShell);
-		// Preconditions.checkNotNull(report, "Report must not be null!");
+		Objects.requireNonNull(report, "Report must not be null!");
 
 		baseReport = report;
 	}

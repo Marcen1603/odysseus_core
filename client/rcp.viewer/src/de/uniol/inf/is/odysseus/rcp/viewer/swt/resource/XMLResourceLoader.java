@@ -41,9 +41,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
+import java.util.Objects;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 
 public class XMLResourceLoader {
@@ -125,7 +123,7 @@ public class XMLResourceLoader {
 	}
 
 	private static Optional<String> getAttributeValue(Node node, String attributeName) {
-		// Preconditions.checkNotNull(node, "Node to get attribute from must not be null!");
+		Objects.requireNonNull(node, "Node to get attribute from must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(attributeName), "Attribute name must not be null or empty!");
 
 		NamedNodeMap attributes = node.getAttributes();

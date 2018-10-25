@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
@@ -16,7 +16,7 @@ public final class LoginContributionFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(LoginContributionFactory.class);
 	
 	public Optional<ILoginContribution> create( Class<? extends ILoginContribution> classToCreate ) {
-		// Preconditions.checkNotNull(classToCreate, "Login contribution class to create instance must not be null!");
+		Objects.requireNonNull(classToCreate, "Login contribution class to create instance must not be null!");
 		
 		try {
 			LOG.debug("Creating instance of {}", classToCreate);

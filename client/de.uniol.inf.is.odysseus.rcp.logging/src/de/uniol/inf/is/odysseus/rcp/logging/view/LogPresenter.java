@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 import de.ikoffice.widgets.SplitButton;
@@ -45,8 +45,8 @@ public class LogPresenter {
 	private Combo levelCombo;
 
 	public LogPresenter(Composite parent, TabItem tab, boolean withFilters) {
-		// Preconditions.checkNotNull(parent, "Parent must not be null!");
-		// Preconditions.checkNotNull(tab, "TabItem must not be null!");
+		Objects.requireNonNull(parent, "Parent must not be null!");
+		Objects.requireNonNull(tab, "TabItem must not be null!");
 
 		Composite viewComposite = new Composite(parent, SWT.NONE);
 		viewComposite.setLayout(new GridLayout());

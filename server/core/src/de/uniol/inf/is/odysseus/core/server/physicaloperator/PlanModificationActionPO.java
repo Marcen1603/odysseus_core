@@ -5,7 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -32,8 +32,8 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>
 	private ISession caller;
 
 	public PlanModificationActionPO(PlanModificationActionAO ao, IServerExecutor executor) {
-		// Preconditions.checkNotNull(executor, "ServerExecutor must not be null!");
-		// Preconditions.checkNotNull(ao, "PlanModificationActionAO must not be null!");
+		Objects.requireNonNull(executor, "ServerExecutor must not be null!");
+		Objects.requireNonNull(ao, "PlanModificationActionAO must not be null!");
 
 		this.executor = executor;
 		this.actionExpression = new RelationalExpression<IMetaAttribute>(ao.getCommandExpression());

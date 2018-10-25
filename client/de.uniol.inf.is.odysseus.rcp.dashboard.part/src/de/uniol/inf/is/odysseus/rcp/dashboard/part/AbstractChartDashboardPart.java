@@ -13,7 +13,7 @@ import org.jfree.experimental.chart.swt.ChartComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -31,8 +31,9 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		dataset = createDataset(); // Preconditions.checkNotNull(createDataset(), "Created data set must not be null!");
-		chart = createChart(); // Preconditions.checkNotNull(createChart(), "Created chart must not be null!");
+		dataset = Objects.requireNonNull(createDataset(), "Created data set must not be null!");
+
+		chart = Objects.requireNonNull(createChart(), "Created chart must not be null!");
 
 		decorateChart(chart);
 

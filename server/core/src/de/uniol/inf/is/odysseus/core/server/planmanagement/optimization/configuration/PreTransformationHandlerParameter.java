@@ -2,8 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configu
 
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -40,7 +39,7 @@ public class PreTransformationHandlerParameter extends Setting<Object> implement
 	
 	public final void add( String interfaceName, List<Pair<String, String>> parameters ) {
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(interfaceName), "PreTransformationHandlers's name must not be null or empty!");
-		// Preconditions.checkNotNull(parameters, "parameters must not be null!");
+		Objects.requireNonNull(parameters, "parameters must not be null!");
 		
 		usedTransformationHandlers.add(new HandlerParameterPair(interfaceName, parameters));
 	}

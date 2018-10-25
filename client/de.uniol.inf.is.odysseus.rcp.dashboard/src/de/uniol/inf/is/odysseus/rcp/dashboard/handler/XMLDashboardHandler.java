@@ -48,7 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -82,8 +82,8 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	public Dashboard load(IFile fileToLoad, IDashboardPartHandler partHandler,
 			IWorkbenchPart partToShow) throws DashboardHandlerException,
 			FileNotFoundException {
-		// Preconditions.checkNotNull(fileToLoad,	"Dashboard-File to load must not be null!");
-		// Preconditions.checkNotNull(partHandler,	"Dashboard part handler must not be null!");
+		Objects.requireNonNull(fileToLoad,	"Dashboard-File to load must not be null!");
+		Objects.requireNonNull(partHandler,	"Dashboard part handler must not be null!");
 
 		try {
 			List<String> lines = FileUtil.read(fileToLoad);
@@ -230,7 +230,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	@Override
 	public void save(Dashboard board, IFile fileToSave)
 			throws DashboardHandlerException {
-		// Preconditions.checkNotNull(board,	"Dashboard to be saved must not be null!");
+		Objects.requireNonNull(board,	"Dashboard to be saved must not be null!");
 
 		try {
 			final Document doc = createNewDocument();

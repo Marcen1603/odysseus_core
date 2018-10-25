@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 
@@ -38,7 +38,7 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 	private final Dashboard dashboard;
 
 	public DashboardOutlineContentPage(Dashboard dashboard) {
-		this.dashboard = dashboard; // Preconditions.checkNotNull(dashboard, "Dashboard for Outline-content must not be null!");
+		this.dashboard = Objects.requireNonNull(dashboard, "Dashboard for Outline-content must not be null!");
 		this.dashboard.addListener(this);
 	}
 

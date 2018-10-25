@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -45,7 +45,7 @@ public class LoginWindow extends TitleAreaDialog implements ILoginWindow {
 
 	@Override
 	public void show(Collection<ILoginContribution> contributions, boolean showWindowSetting) {
-		// Preconditions.checkNotNull(contributions, "Contributions collection must not be null!");
+		Objects.requireNonNull(contributions, "Contributions collection must not be null!");
 		// Preconditions.checkArgument(!contributions.isEmpty(), "Collection of contributions to show must not be empty!");
 		
 		LOG.debug("Showing login window with {} login contributions. ShowWindowSetting = {}", contributions.size(), showWindowSetting);
@@ -105,7 +105,7 @@ public class LoginWindow extends TitleAreaDialog implements ILoginWindow {
 
 	@Override
 	public void show(ILoginContribution contributionToShow) {
-		// Preconditions.checkNotNull(contributionToShow, "Login contribution to show in login window must not be null!");
+		Objects.requireNonNull(contributionToShow, "Login contribution to show in login window must not be null!");
 
 		Integer index = tabIndexMap.get(contributionToShow);
 		if (index != null) {

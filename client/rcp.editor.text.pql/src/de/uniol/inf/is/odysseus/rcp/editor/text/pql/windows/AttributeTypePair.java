@@ -16,7 +16,7 @@
 
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql.windows;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 class AttributeTypePair {
 
@@ -37,7 +37,7 @@ class AttributeTypePair {
 	}
 
 	public void setAttributeName(String attributeName) {
-		// Preconditions.checkNotNull(attributeName, "Name of attribute must not be null!");
+		Objects.requireNonNull(attributeName, "Name of attribute must not be null!");
 		this.attributeName = attributeName;
 	}
 

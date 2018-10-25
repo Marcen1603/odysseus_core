@@ -30,8 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import java.util.Objects;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -137,7 +136,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
-		this.queryTextProvider = provider; // Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
+		this.queryTextProvider = Objects.requireNonNull(provider, "QueryTextProvider for DashboardPart must not be null!");
 	}
 
 	@Override

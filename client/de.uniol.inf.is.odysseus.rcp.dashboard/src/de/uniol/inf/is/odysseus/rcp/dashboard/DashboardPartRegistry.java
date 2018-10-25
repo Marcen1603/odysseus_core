@@ -21,8 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
@@ -84,7 +83,7 @@ public class DashboardPartRegistry {
 	}
 
 	public static boolean isRegistered(Class<? extends IDashboardPart> dashboardPartClass) {
-		// Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
+		Objects.requireNonNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
 
 		return getRegistrationName(dashboardPartClass).isPresent();
 	}
@@ -95,8 +94,8 @@ public class DashboardPartRegistry {
 	}
 
 	public static void register(Class<? extends IDashboardPart> dashboardPartClass, Class<? extends IDashboardPartConfigurer<?>> dashboardPartConfigurer, String dashboardPartName) {
-		// Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
-		// Preconditions.checkNotNull(dashboardPartConfigurer, "Class of IDashboardPartConfigurer must not be null!");
+		Objects.requireNonNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
+		Objects.requireNonNull(dashboardPartConfigurer, "Class of IDashboardPartConfigurer must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "DashboardPartName must not be null or empty!");
 		// Preconditions.checkArgument(!isRegistered(dashboardPartClass), "DashboardPartClass %s already registered!", dashboardPartClass);
 		// Preconditions.checkArgument(!isRegistered(dashboardPartName), "DashboardPartName %s already registered!", dashboardPartName);
@@ -106,7 +105,7 @@ public class DashboardPartRegistry {
 	}
 
 	public static void unregister(Class<? extends IDashboardPart> dashboardPartClass) {
-		// Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
+		Objects.requireNonNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
 
 		final Optional<String> registrationName = getRegistrationName(dashboardPartClass);
 		if (registrationName.isPresent()) {

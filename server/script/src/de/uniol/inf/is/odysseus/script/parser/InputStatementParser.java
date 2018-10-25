@@ -10,8 +10,9 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-//import com.google.common.base.Preconditions;
+//import java.util.Objects;
 import com.google.common.collect.Lists;
 
 public class InputStatementParser {
@@ -32,13 +33,11 @@ public class InputStatementParser {
 
 	public InputStatementParser(String[] textToParse,
 			ReplacementContainer replacements) {
-//		// Preconditions.checkNotNull(textToParse,
-//				"Text to check for %s must not be null!", INPUT_KEYS);
-//		// Preconditions.checkNotNull(replacements,
-//				"Replacement container must not be null!");
+		this.textToParse = Objects.requireNonNull(textToParse,
+				"Text to check for "+INPUT_KEYS+" must not be null!");
+		this.replacements = Objects.requireNonNull(replacements,
+				"Replacement container must not be null!");
 
-		this.textToParse = textToParse;
-		this.replacements = replacements;
 	}
 
 	public String[] unwrap() throws OdysseusScriptException,

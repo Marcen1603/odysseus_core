@@ -12,14 +12,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.logging.RCPLogEntry;
 
 public class LogEntryDetailsWindow {
 	
 	public static void show( RCPLogEntry entry ) {
-		// Preconditions.checkNotNull(entry, "Entry must not be null!");
+		Objects.requireNonNull(entry, "Entry must not be null!");
 		
 		createWindowAsync(entry);
 	}

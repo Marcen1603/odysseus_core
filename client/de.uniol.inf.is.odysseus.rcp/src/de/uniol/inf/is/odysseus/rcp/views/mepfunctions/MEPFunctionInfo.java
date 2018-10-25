@@ -18,8 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.views.mepfunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
@@ -41,7 +40,7 @@ public class MEPFunctionInfo {
 	public MEPFunctionInfo(String symbol, int arity, ImmutableList<String> argTypes, String resultType, boolean deprecated) {
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(symbol), "Symbol of Function must not be null!");
 		// Preconditions.checkArgument(arity >= 0, "Arity of function must be zero or positive, instead of %s!", arity);
-		// Preconditions.checkNotNull(argTypes, "List of argument types of function must not be null!");
+		Objects.requireNonNull(argTypes, "List of argument types of function must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(resultType), "ResultType of function must not be null or empty!");
 
 		this.symbol = symbol;
@@ -52,7 +51,7 @@ public class MEPFunctionInfo {
 	}
 
 	public static MEPFunctionInfo fromMEPFunction( IMepFunction<?> function ) {
-		// Preconditions.checkNotNull(function, "Function must not be null!");
+		Objects.requireNonNull(function, "Function must not be null!");
 		
 		boolean dep = false;
 		try {

@@ -9,7 +9,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
@@ -25,7 +25,7 @@ public class DefaultOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 	private Text editingText;
 	
 	public DefaultOdysseusScriptBlock(String keyword, String text) {
-		// Preconditions.checkNotNull(keyword, "keyword must not be null!");
+		Objects.requireNonNull(keyword, "keyword must not be null!");
 		
 		integrate(keyword, text);
 	}

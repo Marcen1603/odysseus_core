@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -63,7 +63,7 @@ public class ContextMapEditorWindow extends TitleAreaDialog {
 	public ContextMapEditorWindow(Shell parentShell, IDashboardPart dashboardPart, String dashboardPartName) {
 		super(parentShell);
 
-		// Preconditions.checkNotNull(dashboardPart, "DashboardPart to change context must not be null!");
+		Objects.requireNonNull(dashboardPart, "DashboardPart to change context must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of dashboardPart must not be null or empty!");
 		
 		this.dashboardPart = dashboardPart;

@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -45,7 +45,7 @@ public class ChooseOperatorWindow extends TitleAreaDialog {
 	public ChooseOperatorWindow(Shell parentShell, Collection<IPhysicalOperator> availableOperators) {
 		super(parentShell);
 		
-		// Preconditions.checkNotNull(availableOperators, "List of physical operators must not be null!");
+		Objects.requireNonNull(availableOperators, "List of physical operators must not be null!");
 		// Preconditions.checkArgument(!availableOperators.isEmpty(), "List of physical operators must not be empty!");
 		
 		operators.addAll(availableOperators);

@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -52,9 +52,9 @@ public class VisualOdysseusScript {
 	private ToolBar toolBar;
 
 	public VisualOdysseusScript(Composite parent, VisualOdysseusScriptModel scriptModel, IVisualOdysseusScriptContainer container) {
-		// Preconditions.checkNotNull(scriptModel, "scriptModel must not be null!");
-		// Preconditions.checkNotNull(parent, "parent must not be null!");
-		// Preconditions.checkNotNull(container, "container must not be null!");
+		Objects.requireNonNull(scriptModel, "scriptModel must not be null!");
+		Objects.requireNonNull(parent, "parent must not be null!");
+		Objects.requireNonNull(container, "container must not be null!");
 
 		this.parent = parent;
 		this.scriptModel = scriptModel;

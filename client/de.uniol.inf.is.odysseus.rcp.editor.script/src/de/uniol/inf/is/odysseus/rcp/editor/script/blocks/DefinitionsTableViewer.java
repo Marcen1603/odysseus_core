@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.util.CellLabelProviderAndSorter;
 
@@ -27,8 +27,8 @@ public class DefinitionsTableViewer implements IDefinitionsListListener {
 	private final TableViewer tableViewer;
 
 	public DefinitionsTableViewer(Composite parent, DefinitionsList pairs) {
-		// Preconditions.checkNotNull(parent, "parent must not be null!");
-		// Preconditions.checkNotNull(pairs, "pairs must not be null!");
+		Objects.requireNonNull(parent, "parent must not be null!");
+		Objects.requireNonNull(pairs, "pairs must not be null!");
 
 		definitionsList = pairs;
 

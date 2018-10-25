@@ -5,8 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -27,7 +26,7 @@ public class TupleFilter {
 	
 	public TupleFilter(String expressionString, SDFSchema schema) throws ParseException {
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(expressionString), "Expression string must not be null or empty!");
-		// Preconditions.checkNotNull(schema, "Schema must not be null!");
+		Objects.requireNonNull(schema, "Schema must not be null!");
 
 		this.expressionString = expressionString;
 

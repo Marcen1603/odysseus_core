@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -61,8 +61,8 @@ public class ViewSchema<T> {
 	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema,
 			int port, List<String> preChoosenAttributes,
 			List<String> preGroupingAttributes) {
-		// Preconditions.checkNotNull(preChoosenAttributes,"List of previous chosen attributes must not be null!");
-		// Preconditions.checkNotNull(preGroupingAttributes,"List of grouping attributes must not be null!");
+		Objects.requireNonNull(preChoosenAttributes,"List of previous chosen attributes must not be null!");
+		Objects.requireNonNull(preGroupingAttributes,"List of grouping attributes must not be null!");
 
 		this.outputSchema = outputSchema;
 		this.metadataSchema = metaSchema;

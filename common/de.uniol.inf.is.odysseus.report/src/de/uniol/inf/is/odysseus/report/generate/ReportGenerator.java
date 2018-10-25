@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.report.generate;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -24,7 +24,7 @@ public class ReportGenerator implements IReportGenerator {
 
 	@Override
 	public IReport generateReport(ISession session, Throwable exception) {
-		// Preconditions.checkNotNull(session, "Session must not be null!");
+		Objects.requireNonNull(session, "Session must not be null!");
 
 		List<IReportProvider> providers = ReportPlugIn.getReportProviderRegistry().getSortedReportProviders();
 		Map<String, String> reportMap = createReportMap(session, providers);

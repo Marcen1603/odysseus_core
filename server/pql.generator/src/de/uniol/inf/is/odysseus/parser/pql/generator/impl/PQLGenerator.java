@@ -7,7 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -67,7 +67,7 @@ public class PQLGenerator implements IPQLGenerator {
 	
 	@Override
 	public String generatePQLStatement(ILogicalOperator startOperator) {
-		// Preconditions.checkNotNull(startOperator, "Operator for generating pql-statement must not be null!");
+		Objects.requireNonNull(startOperator, "Operator for generating pql-statement must not be null!");
 
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		collectOperators(startOperator, operators);

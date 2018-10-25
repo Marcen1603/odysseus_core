@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.queryview.logical;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
@@ -35,8 +35,7 @@ public class LogicalQueryViewData implements IQueryViewData {
 	private final String queryName;
 
 	public LogicalQueryViewData(ILogicalQuery logicalQuery) {
-		// Preconditions.checkNotNull(logicalQuery,
-				//"LogicalQuery must not be null");
+		Objects.requireNonNull(logicalQuery, "LogicalQuery must not be null");
 
 		id = logicalQuery.getID();
 		if (logicalQuery.getParameter("STATE")!=null){

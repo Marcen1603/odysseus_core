@@ -5,7 +5,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 
 public class DashboardKeyHandler implements KeyListener {
@@ -13,7 +13,7 @@ public class DashboardKeyHandler implements KeyListener {
 	private final Dashboard dashboard;
 	
 	public DashboardKeyHandler( Dashboard dashboard ) {
-		// Preconditions.checkNotNull(dashboard, "Dashboard for key handling must not be null!");
+		Objects.requireNonNull(dashboard, "Dashboard for key handling must not be null!");
 		
 		this.dashboard = dashboard;
 		this.dashboard.getControl().addKeyListener(this);

@@ -14,7 +14,7 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -32,7 +32,7 @@ public final class StringEditorInput implements IStorageEditorInput {
 	private String inputString;
 
 	public StringEditorInput(String inputString, String name, String extension, IFile baseFile) {
-		// Preconditions.checkNotNull(baseFile, "baseFile must not be null!");
+		Objects.requireNonNull(baseFile, "baseFile must not be null!");
 
 		if( inputString == null ) {
 			inputString = "";
@@ -102,7 +102,7 @@ public final class StringEditorInput implements IStorageEditorInput {
 	}
 	
 	public void addListener(IStringEditorInputChangeListener listener ) {
-		// Preconditions.checkNotNull(listener, "listener must not be null!");
+		Objects.requireNonNull(listener, "listener must not be null!");
 
 		synchronized( listeners ) {
 			listeners.add(listener);

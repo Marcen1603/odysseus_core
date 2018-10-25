@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 public class DropDownSelectionListener extends SelectionAdapter {
@@ -36,13 +36,13 @@ public class DropDownSelectionListener extends SelectionAdapter {
 	}
 	
 	public MenuItem add(Image image, ICallback callback) {
-		// Preconditions.checkNotNull(image, "image must not be null!");
+		Objects.requireNonNull(image, "image must not be null!");
 
 		return add(null, image, callback);
 	}
 	
 	public MenuItem add(String item, Image image, ICallback callback) {
-		// Preconditions.checkNotNull(callback, "callback must not be null!");
+		Objects.requireNonNull(callback, "callback must not be null!");
 
 		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
 		menuItem.addSelectionListener(new SelectionAdapter() {

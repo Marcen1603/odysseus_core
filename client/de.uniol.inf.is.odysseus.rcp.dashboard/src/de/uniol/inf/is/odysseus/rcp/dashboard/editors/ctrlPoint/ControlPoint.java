@@ -6,7 +6,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.GC;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
@@ -25,9 +25,9 @@ public final class ControlPoint implements MouseMoveListener, MouseListener, IDa
 	private int y;
 
 	public ControlPoint(Dashboard dashboard, DashboardPartPlacement place, IControlPointBehaviour behaviour) {
-		// Preconditions.checkNotNull(place, "DashboardPartPlacement must not be null!");
-		// Preconditions.checkNotNull(dashboard, "Dashboard must not be null!");
-		// Preconditions.checkNotNull(behaviour, "Control point behaviour must not be null!");
+		Objects.requireNonNull(place, "DashboardPartPlacement must not be null!");
+		Objects.requireNonNull(dashboard, "Dashboard must not be null!");
+		Objects.requireNonNull(behaviour, "Control point behaviour must not be null!");
 
 		this.dashboard = dashboard;
 		this.place = place;

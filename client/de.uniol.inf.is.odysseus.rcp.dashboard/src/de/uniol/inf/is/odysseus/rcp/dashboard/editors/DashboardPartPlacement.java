@@ -15,9 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
+import java.util.Objects;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 
 public final class DashboardPartPlacement {
@@ -31,7 +29,7 @@ public final class DashboardPartPlacement {
 	private int h;
 
 	public DashboardPartPlacement(IDashboardPart part, String filename, int x, int y, int w, int h) {
-		// Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
+		Objects.requireNonNull(part, "Dashboard Part for positioning must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "File of Dashboard Part must not be null!");
 
 		// Preconditions.checkArgument(w >= 0, "Width must be positive instead of %s", w);

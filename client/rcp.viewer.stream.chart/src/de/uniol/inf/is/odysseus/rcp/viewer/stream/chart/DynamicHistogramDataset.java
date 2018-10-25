@@ -21,8 +21,6 @@ import org.jfree.data.xy.AbstractIntervalXYDataset;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYDataset;
 
-import com.google.common.base.Preconditions;
-
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 

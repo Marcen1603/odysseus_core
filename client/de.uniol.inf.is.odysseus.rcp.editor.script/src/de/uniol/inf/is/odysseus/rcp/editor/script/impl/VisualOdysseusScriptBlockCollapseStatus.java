@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -27,27 +27,27 @@ public final class VisualOdysseusScriptBlockCollapseStatus {
 	}
 
 	public void setIndex(IVisualOdysseusScriptBlock block, int index) {
-		// Preconditions.checkNotNull(block, "block must not be null!");
+		Objects.requireNonNull(block, "block must not be null!");
 		// Preconditions.checkArgument(index >= 0, "Index has to be positive or zero");
 
 		indexMap.put(block, index);
 	}
 
 	public void setStatus(IVisualOdysseusScriptBlock block, boolean b) {
-		// Preconditions.checkNotNull(block, "block must not be null!");
+		Objects.requireNonNull(block, "block must not be null!");
 
 		int index = indexMap.get(block);
 		collapseList.set(index, b);
 	}
 
 	public boolean getStatus(IVisualOdysseusScriptBlock visualBlock) {
-		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		Objects.requireNonNull(visualBlock, "visualBlock must not be null!");
 
 		return collapseList.get(indexMap.get(visualBlock));
 	}
 
 	public void moveUp(IVisualOdysseusScriptBlock visualBlock) {
-		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		Objects.requireNonNull(visualBlock, "visualBlock must not be null!");
 
 		int index = indexMap.get(visualBlock);
 		if (index == 0) {
@@ -72,7 +72,7 @@ public final class VisualOdysseusScriptBlockCollapseStatus {
 	}
 
 	public void moveDown(IVisualOdysseusScriptBlock visualBlock) {
-		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		Objects.requireNonNull(visualBlock, "visualBlock must not be null!");
 
 		int index = indexMap.get(visualBlock);
 		if (index == indexMap.size() - 1) {
@@ -96,7 +96,7 @@ public final class VisualOdysseusScriptBlockCollapseStatus {
 	}
 
 	public void dispose(IVisualOdysseusScriptBlock visualBlock) {
-		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		Objects.requireNonNull(visualBlock, "visualBlock must not be null!");
 
 		int index = indexMap.remove(visualBlock);
 		collapseList.remove(index);

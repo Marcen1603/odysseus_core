@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.console.executor.impl;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -22,7 +22,7 @@ public class CommandProviderRegistry {
 
 	
 	public void register( CommandProvider provider ) {
-		// Preconditions.checkNotNull(provider, "Command provider to register must not be null!");
+		Objects.requireNonNull(provider, "Command provider to register must not be null!");
 		
 		LOG.debug("Registering command provider {}", provider);
 		
@@ -34,7 +34,7 @@ public class CommandProviderRegistry {
 	}
 	
 	public void unregister( CommandProvider provider ) {
-		// Preconditions.checkNotNull(provider, "Command provider to unregister must not be null!");
+		Objects.requireNonNull(provider, "Command provider to unregister must not be null!");
 
 		LOG.debug("Unregistering command provider {}", provider);
 

@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
-import com.google.common.base.Preconditions;
-
 public abstract class ChartUpdater extends Thread {
 
 	private final long updateIntervalMillis;

@@ -12,7 +12,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
@@ -24,7 +24,7 @@ public class QueryHyperlinkDetector extends AbstractHyperlinkDetector {
 	private final OdysseusScriptEditor editor;
 
 	public QueryHyperlinkDetector(OdysseusScriptEditor editor) {
-		// Preconditions.checkNotNull(editor, "editor must not be null!");
+		Objects.requireNonNull(editor, "editor must not be null!");
 
 		this.editor = editor;
 	}

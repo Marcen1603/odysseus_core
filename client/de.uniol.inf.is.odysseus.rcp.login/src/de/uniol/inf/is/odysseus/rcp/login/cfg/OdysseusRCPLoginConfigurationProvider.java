@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.login.cfg;
 import java.util.Collection;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguartionException;

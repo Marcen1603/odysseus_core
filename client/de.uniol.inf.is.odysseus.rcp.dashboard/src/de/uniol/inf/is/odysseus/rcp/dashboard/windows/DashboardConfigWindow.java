@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
@@ -52,7 +51,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	public DashboardConfigWindow(Shell parentShell, Dashboard dashboard, String dashboardName) {
 		super(parentShell);
 
-		// Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
+		Objects.requireNonNull(dashboard, "Dashboard to configure must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardName), "Name of dashboard to show must not be null or empty!");
 		
 		this.dashboardName = dashboardName;
