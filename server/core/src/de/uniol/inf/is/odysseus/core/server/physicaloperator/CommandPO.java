@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.command.Command;
@@ -28,7 +27,7 @@ public class CommandPO extends AbstractSink<Tuple<IMetaAttribute>>
 	private ISession caller;
 
 	public CommandPO(CommandAO ao, IServerExecutor executor) {
-		// Preconditions.checkNotNull(ao, "ao must not be null!");
+		Objects.requireNonNull(ao, "ao must not be null!");
 
 		this.executor = executor;
 		this.commandExpression = new RelationalExpression<IMetaAttribute>(ao.getCommandExpression());

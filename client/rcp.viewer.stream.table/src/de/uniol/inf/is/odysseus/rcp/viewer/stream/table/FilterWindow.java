@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -53,10 +53,10 @@ public class FilterWindow {
 	private boolean canceled;
 
 	public FilterWindow(Display display, SDFSchema schema, List<Integer> selectedAttributeIndices, String filterExpression) {
-		this.schema = schema; // Preconditions.checkNotNull(schema, "Schema must not be null.");
-		this.display = display; // Preconditions.checkNotNull(display, "Display must not be null.");
+		this.schema = Objects.requireNonNull(schema, "Schema must not be null.");
+		this.display = Objects.requireNonNull(display, "Display must not be null.");
 		this.filterExpression = Strings.isNullOrEmpty(filterExpression) ? "" : filterExpression;
-		this.selectedAttributeIndices = selectedAttributeIndices; // Preconditions.checkNotNull(selectedAttributeIndices, "List of indices of selected attributes must not be null!");
+		this.selectedAttributeIndices =Objects.requireNonNull(selectedAttributeIndices, "List of indices of selected attributes must not be null!");
 	}
 
 	public void show() {
@@ -231,7 +231,7 @@ class CheckBoxIndexPair {
 	
 	public CheckBoxIndexPair( int index, Button checkBox) {
 		this.index = index;
-		this.checkBox = checkBox; // Preconditions.checkNotNull(checkBox, "CheckBox must not be null.");
+		this.checkBox = Objects.requireNonNull(checkBox, "CheckBox must not be null.");
 	}
 	
 }

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.parser.pql.generator.impl;
 
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -40,7 +40,7 @@ public class PQLStatementGeneratorManager {
 	}
 	
 	public IPQLStatementGenerator<ILogicalOperator> getPQLStatementGenerator( ILogicalOperator operator ) {
-		// Preconditions.checkNotNull(operator, "Operator to get pql-generator must not be null!");
+		Objects.requireNonNull(operator, "Operator to get pql-generator must not be null!");
 		
 		IPQLStatementGenerator<ILogicalOperator> gen = generators.get(operator.getClass());
 		if( gen == null ) {

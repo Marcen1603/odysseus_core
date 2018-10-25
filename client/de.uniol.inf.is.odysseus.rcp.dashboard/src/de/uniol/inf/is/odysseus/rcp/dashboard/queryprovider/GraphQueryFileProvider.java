@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -30,7 +30,7 @@ public class GraphQueryFileProvider implements IDashboardPartQueryTextProvider {
 	private final IFile graphFile;
 	
 	public GraphQueryFileProvider(IFile graphFile) {
-		// Preconditions.checkNotNull(graphFile, "Graph file must not be null!");
+		Objects.requireNonNull(graphFile, "Graph file must not be null!");
 		// Preconditions.checkArgument(graphFile.getFileExtension().equals("grp"), "Grapg file must end with 'grp'");
 		
 		this.graphFile = graphFile;

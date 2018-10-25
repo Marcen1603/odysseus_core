@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.util;
 
+import java.util.Objects;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import com.google.common.base.Preconditions;
 
 public final class ClickableImage {
 
@@ -16,8 +16,8 @@ public final class ClickableImage {
 	private IImageClickHandler handler;
 	
 	public ClickableImage( Composite parent, Image image, IImageClickHandler hdl) {
-		// Preconditions.checkNotNull(parent, "parent must not be null!");
-		// Preconditions.checkNotNull(image, "image must not be null!");
+		Objects.requireNonNull(parent, "parent must not be null!");
+		Objects.requireNonNull(image, "image must not be null!");
 
 		handler = hdl;
 		

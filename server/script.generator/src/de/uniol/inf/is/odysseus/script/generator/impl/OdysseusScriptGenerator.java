@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.script.generator.impl;
 
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -28,8 +28,8 @@ public class OdysseusScriptGenerator implements IOdysseusScriptGenerator {
 
 	@Override
 	public String generate(ILogicalOperator rootOfQuery, QueryBuildConfiguration config) {
-		// Preconditions.checkNotNull(rootOfQuery, "RootOfQuery must not be null!");
-		// Preconditions.checkNotNull(config, "config must not be null!");
+		Objects.requireNonNull(rootOfQuery, "RootOfQuery must not be null!");
+		Objects.requireNonNull(config, "config must not be null!");
 		
 		StringBuilder sb = new StringBuilder();
 	
@@ -42,9 +42,9 @@ public class OdysseusScriptGenerator implements IOdysseusScriptGenerator {
 	
 	@Override
 	public String generate(List<ILogicalQuery> queries, QueryBuildConfiguration config) {
-		// Preconditions.checkNotNull(queries, "List of queries to generate odysseus script must not be null!");
+		Objects.requireNonNull(queries, "List of queries to generate odysseus script must not be null!");
 		// Preconditions.checkArgument(!queries.isEmpty(), "List of queries to generate odysseus script must not be empty!");
-		// Preconditions.checkNotNull(config, "QueryBuildConfiguration must not be null!");
+		Objects.requireNonNull(config, "QueryBuildConfiguration must not be null!");
 
 		StringBuilder sb = new StringBuilder();
 
@@ -61,9 +61,9 @@ public class OdysseusScriptGenerator implements IOdysseusScriptGenerator {
 	
 	@Override
 	public String wrap(List<String> pqlStatements, QueryBuildConfiguration config) {
-		// Preconditions.checkNotNull(pqlStatements, "List of pqlStatements must not be null!");
+		Objects.requireNonNull(pqlStatements, "List of pqlStatements must not be null!");
 		// Preconditions.checkArgument(!pqlStatements.isEmpty(), "List of pqlStatements must not be empty!");
-		// Preconditions.checkNotNull(config, "Config must not be null!");
+		Objects.requireNonNull(config, "Config must not be null!");
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("#PARSER PQL\n");

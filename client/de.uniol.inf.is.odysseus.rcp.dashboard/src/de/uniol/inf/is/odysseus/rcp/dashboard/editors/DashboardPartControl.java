@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 
 public class DashboardPartControl {
@@ -19,9 +19,9 @@ public class DashboardPartControl {
 	private final DashboardPartPlacement dashboardPartPlacement;
 
 	public DashboardPartControl(Composite parent, ToolBar toolBar, DashboardPartPlacement dashboardPartPlace) {
-		// Preconditions.checkNotNull(parent, "Parent for dashboard part control must not be null!");
-		// Preconditions.checkNotNull(toolBar, "ToolBar for dashboard part control must not be null!");
-		// Preconditions.checkNotNull(dashboardPartPlace, "Placement for dashboard part control must not be null!");
+		Objects.requireNonNull(parent, "Parent for dashboard part control must not be null!");
+		Objects.requireNonNull(toolBar, "ToolBar for dashboard part control must not be null!");
+		Objects.requireNonNull(dashboardPartPlace, "Placement for dashboard part control must not be null!");
 
 		this.parent = parent;
 		dashboardPartPlacement = dashboardPartPlace;

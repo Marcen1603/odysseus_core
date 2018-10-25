@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;

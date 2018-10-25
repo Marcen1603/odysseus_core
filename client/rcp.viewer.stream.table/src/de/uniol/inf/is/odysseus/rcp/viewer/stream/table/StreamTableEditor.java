@@ -51,7 +51,6 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -427,7 +426,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	private void setSelectedAttributeIndexes(List<Integer> attributeIndexes) {
-		shownAttributes = attributeIndexes; // Preconditions.checkNotNull(attributeIndexes, "List of indexes must not be null");
+		shownAttributes = Objects.requireNonNull(attributeIndexes, "List of indexes must not be null");
 	}
 
 	private void setParent(Composite parent) {

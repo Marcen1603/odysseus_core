@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.ImageUtil;
 
@@ -26,7 +26,7 @@ public class DashboardControl {
 	private boolean isLoadedBackgroundImageStretched = false;
 	
 	public DashboardControl( Composite parent ) {
-		// Preconditions.checkNotNull(parent, "Parent for dashboard control must not be null!");
+		Objects.requireNonNull(parent, "Parent for dashboard control must not be null!");
 		
 		composite = new Composite(parent, SWT.BORDER);
 		composite.setLayout(new FormLayout());

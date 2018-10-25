@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -36,7 +36,7 @@ public class ResourceFileQueryTextProvider implements IDashboardPartQueryTextPro
 	private final IFile queryFile;
 
 	public ResourceFileQueryTextProvider(IFile queryFile) {
-		this.queryFile = queryFile; // Preconditions.checkNotNull(queryFile, "QueryFile must not be null!");
+		this.queryFile = queryFile; Objects.requireNonNull(queryFile, "QueryFile must not be null!");
 	}
 
 	public IFile getFile() {

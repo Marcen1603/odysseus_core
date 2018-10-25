@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -30,7 +30,7 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 	private int mouseY;
 
 	public IntervalCanvas(Composite parent) {
-		// Preconditions.checkNotNull(parent, "parent must not be null!");
+		Objects.requireNonNull(parent, "parent must not be null!");
 
 		Composite parentComposite = new Composite(parent, SWT.NONE);
 		FormLayout form = new FormLayout();

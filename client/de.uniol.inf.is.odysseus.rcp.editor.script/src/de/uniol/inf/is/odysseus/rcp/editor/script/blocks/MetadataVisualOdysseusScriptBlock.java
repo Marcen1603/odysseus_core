@@ -11,7 +11,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -28,7 +28,7 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 	private int selectionIndex;
 
 	public MetadataVisualOdysseusScriptBlock(List<String> metadataNames) {
-		// Preconditions.checkNotNull(metadataNames, "metadataNames must not be null!");
+		Objects.requireNonNull(metadataNames, "metadataNames must not be null!");
 
 		selectedMetadataNames = metadataNames.toArray(new String[0]);
 		metadataCombinations = determineMetadataCombinationNames();

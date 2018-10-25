@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
@@ -39,8 +39,8 @@ public class DashboardPartEditorToolBar {
 	private final DashboardPartEditor editor;
 
 	public DashboardPartEditorToolBar(Composite presentationTab, final DashboardPartEditor editor) {
-		// Preconditions.checkNotNull(presentationTab, "PartController must not be null!");
-		this.editor = editor; //Preconditions.checkNotNull(editor, "PartController must not be null!");
+		Objects.requireNonNull(presentationTab, "PartController must not be null!");
+		this.editor = Objects.requireNonNull(editor, "PartController must not be null!");
 
 		final DashboardPartController partController = editor.getDashboardPartController();
 

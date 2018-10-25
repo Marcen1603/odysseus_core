@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 public abstract class SaveMenuItem {
@@ -20,7 +20,7 @@ public abstract class SaveMenuItem {
 	private MenuItem menuItem;
 
 	public SaveMenuItem(Menu menu, String title, final String fileExtension) {
-		// Preconditions.checkNotNull(menu, "Menu must not be null!");
+		Objects.requireNonNull(menu, "Menu must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(title), "Title must not be null or empty!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(fileExtension), "fileExtension must not be null or empty!");
 

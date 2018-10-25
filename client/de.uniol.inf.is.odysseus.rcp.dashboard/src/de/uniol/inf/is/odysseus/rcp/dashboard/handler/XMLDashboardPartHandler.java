@@ -50,7 +50,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -93,7 +93,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 	@Override
 	public IDashboardPart load(IFile fileToLoad, IWorkbenchPart partToShow) throws DashboardHandlerException {
-		// Preconditions.checkNotNull(fileToLoad, "File to load must not be null!");
+		Objects.requireNonNull(fileToLoad, "File to load must not be null!");
 
 		try {
 			List<String> lines = FileUtil.read(fileToLoad);
@@ -165,8 +165,8 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 	@Override
 	public void save(IDashboardPart part, IFile fileToSave) throws DashboardHandlerException {
-		// Preconditions.checkNotNull(part, "Part to save must not be null!");
-		// Preconditions.checkNotNull(fileToSave, "File to save dashboard part must not be null!");
+		Objects.requireNonNull(part, "Part to save must not be null!");
+		Objects.requireNonNull(fileToSave, "File to save dashboard part must not be null!");
 
 		try {
 			final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();

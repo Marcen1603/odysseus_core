@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 public final class ImageButton {
@@ -13,8 +13,8 @@ public final class ImageButton {
 	private final Button button;
 	
 	public ImageButton( Composite parent, Image image, String tooltipText ) {
-		// Preconditions.checkNotNull(parent, "parent must not be null!");
-		// Preconditions.checkNotNull(image, "image must not be null!");
+		Objects.requireNonNull(parent, "parent must not be null!");
+		Objects.requireNonNull(image, "image must not be null!");
 		
 		button = new Button(parent, SWT.PUSH);
 		button.setImage(image);

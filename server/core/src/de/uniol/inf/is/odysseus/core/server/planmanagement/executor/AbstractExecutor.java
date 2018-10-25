@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,7 +34,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -404,8 +404,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	public IPreTransformationHandler getPreTransformationHandler(String name)
 			throws InstantiationException, IllegalAccessException {
-		// Preconditions.checkNotNull(Strings.isNullOrEmpty(name),
-				//"Name of PreTransformationHandler must not be null or empty!");
+		Objects.requireNonNull(Strings.isNullOrEmpty(name), "Name of PreTransformationHandler must not be null or empty!");
 
 		Class<? extends IPreTransformationHandler> clazz = preTransformationHandlerMap.get(name.toUpperCase());
 		if (clazz != null) {

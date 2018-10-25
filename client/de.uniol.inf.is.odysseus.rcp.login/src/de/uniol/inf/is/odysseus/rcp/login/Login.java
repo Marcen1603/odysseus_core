@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.login.cfg.ILoginConfigurationProvider;
@@ -37,7 +37,7 @@ public final class Login {
 	public static void login(Shell parentShell, boolean forceShow, boolean cancelOK) {
 		LOG.debug("Begin logging in. ForceShow = {}, CancelOK = {}", forceShow, cancelOK);
 		
-		// Preconditions.checkNotNull(parentShell, "Parent shell for login must not be null!");
+		Objects.requireNonNull(parentShell, "Parent shell for login must not be null!");
 		
 		LoginContributionRegistry registry = RCPLoginPlugIn.getLoginContributionRegistry();
 		if( registry.isEmpty() ) {

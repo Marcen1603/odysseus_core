@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 /**
  * Some DashboardParts, such as a Map, can handle more than one source. To
@@ -28,7 +28,7 @@ public abstract class AbstractMultiSourceDashboardPart extends AbstractDashboard
 	 */
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
-		this.queryTextProvider = provider; // Preconditions.checkNotNull(provider,"QueryTextProvider for DashboardPart must not be null!");
+		this.queryTextProvider = Objects.requireNonNull(provider,"QueryTextProvider for DashboardPart must not be null!");
 		addQueryTextProvider(provider);
 	}
 
@@ -39,7 +39,7 @@ public abstract class AbstractMultiSourceDashboardPart extends AbstractDashboard
 	 *            The provider to add to the list
 	 */
 	public void addQueryTextProvider(IDashboardPartQueryTextProvider provider) {
-		// Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
+		Objects.requireNonNull(provider, "QueryTextProvider for DashboardPart must not be null!");
 		this.queryTextProviders.add(provider);
 	}
 

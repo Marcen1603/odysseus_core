@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
 import de.uniol.inf.is.odysseus.rcp.login.RCPLoginPlugIn;
@@ -22,7 +22,7 @@ public class LoginContributionEPManager implements IRegistryEventListener {
 	private final LoginContributionRegistry registry;
 	
 	public LoginContributionEPManager( LoginContributionRegistry registry ) {
-		// Preconditions.checkNotNull(registry, "Login contribution registry must not be null!");
+		Objects.requireNonNull(registry, "Login contribution registry must not be null!");
 		
 		this.registry = registry;
 	}

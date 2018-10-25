@@ -30,7 +30,7 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -47,7 +47,7 @@ public class ImageManager {
 	private Map<String, Image> loadedImages = Maps.newHashMap();
 
 	public ImageManager( Bundle bundle ) {
-		this.bundle = bundle; // Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
+		this.bundle = Objects.requireNonNull(bundle, "Bundle for ImageRegistry must not be null!");
 	}
 
 	/**

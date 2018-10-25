@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -99,10 +99,10 @@ public class PreTransformationHandlerPreParserKeyword extends
 	@SuppressWarnings("unchecked")
 	public static <T extends IQueryBuildSetting<?>> Optional<T> getQueryBuildSettingOfType(
 			List<IQueryBuildSetting<?>> settings, Class<T> parameterClass) {
-		// Preconditions.checkNotNull(settings,
-			//	"List of settings must not be null!");
-		// Preconditions.checkNotNull(parameterClass,
-//				"Class of parameter to find must not be null!");
+		Objects.requireNonNull(settings,
+				"List of settings must not be null!");
+		Objects.requireNonNull(parameterClass,
+				"Class of parameter to find must not be null!");
 
 		for (IQueryBuildSetting<?> setting : settings) {
 			if (setting.getClass().equals(parameterClass)) {

@@ -16,7 +16,7 @@
 
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql.windows;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 class KeyValuePair {
 
@@ -37,7 +37,7 @@ class KeyValuePair {
 	}
 
 	public void setKey(String key) {
-		this.key = key; // Preconditions.checkNotNull(key, "Key of key-value-pair must not be null!");
+		this.key = Objects.requireNonNull(key, "Key of key-value-pair must not be null!");
 	}
 
 	public String getValue() {
@@ -45,7 +45,7 @@ class KeyValuePair {
 	}
 
 	public void setValue(String value) {
-		this.value = value; // Preconditions.checkNotNull(value, "Value of key-value-pair must not be null!");
+		this.value = Objects.requireNonNull(value, "Value of key-value-pair must not be null!");
 	}
 
 }

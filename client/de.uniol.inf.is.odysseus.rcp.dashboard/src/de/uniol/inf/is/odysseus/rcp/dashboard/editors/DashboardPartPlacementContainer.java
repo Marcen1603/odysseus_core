@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -47,7 +47,7 @@ public class DashboardPartPlacementContainer {
 	}
 	
 	public void remove( DashboardPartPlacement placement ) {
-		// Preconditions.checkNotNull(placement, "Dashboardpart to remove (as placement) must not be null!");
+		Objects.requireNonNull(placement, "Dashboardpart to remove (as placement) must not be null!");
 
 		removeControls(placement, containers.get(placement).getComposite());
 		
@@ -79,7 +79,7 @@ public class DashboardPartPlacementContainer {
 	}
 	
 	public DashboardPartPlacement getNextPartAfter( DashboardPartPlacement placement ) {
-		// Preconditions.checkNotNull(placement, "Placement must not be null!");
+		Objects.requireNonNull(placement, "Placement must not be null!");
 		
 		final int pos = dashboardParts.indexOf(placement);
 		final int newPos = (pos + 1) % dashboardParts.size();

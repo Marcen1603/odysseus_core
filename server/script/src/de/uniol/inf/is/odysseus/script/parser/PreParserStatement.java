@@ -21,7 +21,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -42,7 +42,7 @@ public final class PreParserStatement {
 	private final Context context;
 	
 	public PreParserStatement( String keywordText, IPreParserKeyword keyword, String parameter, int line, Context context) {
-		// Preconditions.checkNotNull(context, "Context for preParserKeyword must not be null!");
+		Objects.requireNonNull(context, "Context for preParserKeyword must not be null!");
 		
 		this.keyword = keyword;
 		this.keywordText = keywordText;

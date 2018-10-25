@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.logging.RCPLogEntry;
@@ -52,8 +52,8 @@ public class LogTable implements IRCPLogContainerListener {
 	private final List<ILogTableListener> listeners = new CopyOnWriteArrayList<ILogTableListener>();
 
 	public LogTable(Composite parent, RCPLogContainer logContainer) {
-		// Preconditions.checkNotNull(parent, "Parent composite must not be null!");
-		// Preconditions.checkNotNull(logContainer, "RCP log container must not be null!");
+		Objects.requireNonNull(parent, "Parent composite must not be null!");
+		Objects.requireNonNull(logContainer, "RCP log container must not be null!");
 
 		this.logContainer = logContainer;
 		this.logContainer.addListener(this);
@@ -256,7 +256,7 @@ public class LogTable implements IRCPLogContainerListener {
 	}
 
 	public void addListener(ILogTableListener listener) {
-		// Preconditions.checkNotNull(listener, "Listener must not be null!");
+		Objects.requireNonNull(listener, "Listener must not be null!");
 
 		synchronized (listeners) {
 			listeners.add(listener);

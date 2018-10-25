@@ -16,9 +16,6 @@
 
 package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
 class StringNode {
 
 	private final String content;

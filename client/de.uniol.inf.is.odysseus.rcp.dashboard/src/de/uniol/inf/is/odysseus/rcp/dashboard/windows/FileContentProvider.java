@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 class FileContentProvider extends BaseWorkbenchContentProvider {
@@ -18,7 +18,7 @@ class FileContentProvider extends BaseWorkbenchContentProvider {
 	private final Collection<String> acceptedFileExtensions;
 	
 	public FileContentProvider( Collection<String> acceptedFileExtensions ) {
-		// Preconditions.checkNotNull(acceptedFileExtensions, "List of accepted file extensions must not be null");
+		Objects.requireNonNull(acceptedFileExtensions, "List of accepted file extensions must not be null");
 		
 		this.acceptedFileExtensions = acceptedFileExtensions;
 	}

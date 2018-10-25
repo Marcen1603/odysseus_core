@@ -16,7 +16,7 @@
 
 package de.uniol.inf.is.odysseus.rcp.viewer.manage.impl;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -29,7 +29,7 @@ public class PhysicalOperatorFilter {
 			.build();
 
 	public static boolean isFiltered(IPhysicalOperator operator) {
-		// Preconditions.checkNotNull(operator, "Operator must not be null!");
+		Objects.requireNonNull(operator, "Operator must not be null!");
 		return FILTERED_OPERATORS.contains(operator.getClass().getSimpleName());
 	}
 }

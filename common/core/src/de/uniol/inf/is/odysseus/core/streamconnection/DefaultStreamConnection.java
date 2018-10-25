@@ -23,7 +23,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -81,12 +81,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	public DefaultStreamConnection(Collection<IPhysicalOperator> operators) {
-		// Preconditions.checkNotNull(operators,
-		//		"List of operators must not be null!");
+		this.operators = Objects.requireNonNull(operators, "List of operators must not be null!");
 		// Preconditions.checkArgument(!operators.isEmpty(),
 		//		"List of operators must not be empty!");
 
-		this.operators = operators;
 		portOperatorMap = generatePortMap(operators);
 		operatorPortMap = generateOperatorMap(portOperatorMap);
 		subscriptions = determineSubscriptions(operators);
@@ -226,8 +224,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	@Override
 	public void addStreamElementListener(IStreamElementListener<In> listener) {
-		// Preconditions.checkNotNull(listener,
-				// "Listener to add to DefaultStreamConnection must not be null!");
+		Objects.requireNonNull(listener,  "Listener to add to DefaultStreamConnection must not be null!");
 
 		synchronized (listeners) {
 			if (!listeners.contains(listener)) {
@@ -239,8 +236,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	@Override
 	public void addStreamElementListener(IStreamElementListener<In> listener,
 			String sinkName) {
-		// Preconditions.checkNotNull(listener,
-				//"Listener to add to DefaultStreamConnection must not be null!");
+		Objects.requireNonNull(listener, "Listener to add to DefaultStreamConnection must not be null!");
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(sinkName),
 				//"Sinkname must not be null or empty!");
 

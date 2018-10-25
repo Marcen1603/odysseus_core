@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.controller;
 
 import java.util.Collection;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -41,7 +41,7 @@ public final class DashboardPartController implements IDashboardPartListener {
 	private QueryExecutionHandler queryHandler;
 
 	public DashboardPartController(IDashboardPart dashboardPart) {
-		this.dashboardPart = dashboardPart; // Preconditions.checkNotNull(dashboardPart, "DashboardPart for container must not be null!");
+		this.dashboardPart = Objects.requireNonNull(dashboardPart, "DashboardPart for container must not be null!");
 		
 		queryHandler = new QueryExecutionHandler(dashboardPart);
 	}

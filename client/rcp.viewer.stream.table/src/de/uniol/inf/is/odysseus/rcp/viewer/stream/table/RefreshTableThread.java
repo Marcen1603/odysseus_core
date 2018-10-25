@@ -4,7 +4,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 class RefreshTableThread extends Thread {
 
@@ -15,7 +15,7 @@ class RefreshTableThread extends Thread {
 	private boolean isRunning;
 	
 	public RefreshTableThread( TableViewer viewer ) {
-		// Preconditions.checkNotNull(viewer, "TableViewer to refresh must not be null!");
+		Objects.requireNonNull(viewer, "TableViewer to refresh must not be null!");
 		// Preconditions.checkArgument(!viewer.getTable().isDisposed(), "Tableviewer to refresh must not be disposed already");
 		
 		this.viewer = viewer;

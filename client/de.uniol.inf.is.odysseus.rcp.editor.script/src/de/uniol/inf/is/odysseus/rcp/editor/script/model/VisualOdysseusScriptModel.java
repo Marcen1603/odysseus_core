@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -56,7 +56,7 @@ public class VisualOdysseusScriptModel {
 	}
 	
 	public void parse(List<String> odysseusScriptTextLines) throws VisualOdysseusScriptException {
-		// Preconditions.checkNotNull(odysseusScriptTextLines, "odysseusScriptTextLines must not be null!");
+		Objects.requireNonNull(odysseusScriptTextLines, "odysseusScriptTextLines must not be null!");
 
 		List<OdysseusScriptBlock> scriptBlocks = determineOdysseusScriptBlocks(odysseusScriptTextLines);
 		List<OdysseusScriptBlock> scriptBlocksCopy = Lists.newArrayList(scriptBlocks);
@@ -274,7 +274,7 @@ public class VisualOdysseusScriptModel {
 	}
 
 	public void dispose(IVisualOdysseusScriptBlock visualBlock) {
-		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		Objects.requireNonNull(visualBlock, "visualBlock must not be null!");
 
 		if (visualTextBlocks.contains(visualBlock)) {
 			visualBlock.dispose();
@@ -283,7 +283,7 @@ public class VisualOdysseusScriptModel {
 	}
 
 	public boolean moveUp(IVisualOdysseusScriptBlock visualBlock) throws VisualOdysseusScriptException {
-		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		Objects.requireNonNull(visualBlock, "visualBlock must not be null!");
 
 		int index = visualTextBlocks.indexOf(visualBlock);
 		if (index == -1 || index == 0) {
@@ -301,7 +301,7 @@ public class VisualOdysseusScriptModel {
 
 	
 	public boolean moveDown(IVisualOdysseusScriptBlock visualBlock) throws VisualOdysseusScriptException {
-		// Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+		Objects.requireNonNull(visualBlock, "visualBlock must not be null!");
 
 		int index = visualTextBlocks.indexOf(visualBlock);
 		if( index == -1 || index == visualTextBlocks.size() - 1 ) {
@@ -336,7 +336,7 @@ public class VisualOdysseusScriptModel {
 	}
 
 	public void addBlock(IVisualOdysseusScriptBlock newBlock) {
-		// Preconditions.checkNotNull(newBlock, "newBlock must not be null!");
+		Objects.requireNonNull(newBlock, "newBlock must not be null!");
 
 		visualTextBlocks.add(newBlock);
 	}

@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.datagrid;
 
-import com.google.common.base.Preconditions;
-
 public class DataRow {
 
 	private static int idCounter = 0;

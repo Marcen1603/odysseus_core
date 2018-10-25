@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -69,7 +69,7 @@ public class IfController {
 	private int currentLine = 0;
 
 	public IfController(String[] text, ISession caller) {
-		// Preconditions.checkNotNull(text, "Text-array for IfController must not be null!");
+		Objects.requireNonNull(text, "Text-array for IfController must not be null!");
 
 		this.text = text;
 		this.caller = caller;

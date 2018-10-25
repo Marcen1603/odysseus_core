@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -46,7 +46,7 @@ public class QueryExecutionHandler {
 	private IDashboardPart dashboardPart;
 
 	public QueryExecutionHandler(IDashboardPart dashboardPart) {
-		// Preconditions.checkNotNull(dashboardPart, "Dashboard part for execution must not be null!");
+		Objects.requireNonNull(dashboardPart, "Dashboard part for execution must not be null!");
 
 		// Create lists for queries
 		scriptFiles = new ArrayList<>();

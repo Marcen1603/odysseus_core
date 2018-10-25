@@ -7,7 +7,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
@@ -17,8 +17,8 @@ public class QueryHyperlink implements IHyperlink {
 	private final IRegion region;
 	
 	public QueryHyperlink( IRegion region, IFile file ) {
-		// Preconditions.checkNotNull(region, "region must not be null!");
-		// Preconditions.checkNotNull(file, "file must not be null!");
+		Objects.requireNonNull(region, "region must not be null!");
+		Objects.requireNonNull(file, "file must not be null!");
 		
 		this.file = file;
 		this.region = region;

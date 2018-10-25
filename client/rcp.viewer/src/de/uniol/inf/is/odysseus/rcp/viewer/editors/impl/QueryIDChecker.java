@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
@@ -17,8 +17,8 @@ final class QueryIDChecker extends Thread {
 	private boolean isRunning;
 
 	public QueryIDChecker(GraphViewEditor editor, PhysicalGraphEditorInput input) {
-		this.editor = editor; // Preconditions.checkNotNull(editor, "Editor to check query id must not be null!");
-		this.input = input ;// Preconditions.checkNotNull(input, "Input to check query id must not be null!");
+		this.editor = Objects.requireNonNull(editor, "Editor to check query id must not be null!");
+		this.input = Objects.requireNonNull(input, "Input to check query id must not be null!");
 		// Preconditions.checkArgument(input.hasQueryID(),	"QueryID to check not specified");
 
 		setDaemon(true);

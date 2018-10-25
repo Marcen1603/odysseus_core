@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.cfg;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
@@ -14,8 +14,8 @@ public class DashboardPartConfigurer {
 	private final DashboardPartController dashboardPartController;
 
 	public DashboardPartConfigurer(IDashboardPart dashboardPart, DashboardPartController controller) {
-		// Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
-		// Preconditions.checkNotNull(controller, "DashboardPartController must not be null!");
+		Objects.requireNonNull(dashboardPart, "DashboardPart must not be null!");
+		Objects.requireNonNull(controller, "DashboardPartController must not be null!");
 
 		this.dashboardPart = dashboardPart;
 		this.dashboardPartController = controller;

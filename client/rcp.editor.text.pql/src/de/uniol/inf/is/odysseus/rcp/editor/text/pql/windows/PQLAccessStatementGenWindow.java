@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -61,7 +61,7 @@ public class PQLAccessStatementGenWindow {
 	private OptionsTableViewer optionsTableViewer;
 
 	public PQLAccessStatementGenWindow(Shell parent) {
-		this.parent = parent; // Preconditions.checkNotNull(parent, "Parent shell must not be null!");
+		this.parent = Objects.requireNonNull(parent, "Parent shell must not be null!");
 	}
 
 	public void show() {

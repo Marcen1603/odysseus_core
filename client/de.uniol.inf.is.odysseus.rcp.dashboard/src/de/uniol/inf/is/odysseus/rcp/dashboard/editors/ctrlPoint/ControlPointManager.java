@@ -15,7 +15,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
@@ -28,7 +28,7 @@ public class ControlPointManager implements MouseMoveListener, ISelectionListene
 	private final List<ControlPoint> points = Lists.newArrayList();
 
 	public ControlPointManager(Dashboard dashboard) {
-		// Preconditions.checkNotNull(dashboard, "Dashboard must not be null");
+		Objects.requireNonNull(dashboard, "Dashboard must not be null");
 		this.dashboard = dashboard;
 
 		arrowCursor = new Cursor(Display.getDefault(), SWT.CURSOR_ARROW);

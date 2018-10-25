@@ -5,7 +5,7 @@ import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.base.Strings;
 
 public final class RCPLogEntry implements Comparable<RCPLogEntry> {
@@ -29,7 +29,7 @@ public final class RCPLogEntry implements Comparable<RCPLogEntry> {
 	private final String throwableString;
 
 	public RCPLogEntry( LoggingEvent event ) {
-		// Preconditions.checkNotNull(event, "Logging event to create rcp log entry must not be null!");
+		Objects.requireNonNull(event, "Logging event to create rcp log entry must not be null!");
 		
 		loggerName = event.getLoggerName();
 		level = event.getLevel();

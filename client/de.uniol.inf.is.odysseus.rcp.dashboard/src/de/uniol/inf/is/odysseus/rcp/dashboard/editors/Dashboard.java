@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -173,7 +173,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	public void add(DashboardPartPlacement partPlace) {
-		// Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
+		Objects.requireNonNull(partPlace, "Placement for Dashboard Part must not be null!");
 		// Preconditions.checkArgument(!partContainer.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
 
 		partContainer.add(partPlace);
@@ -187,7 +187,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	public void remove(DashboardPartPlacement partPlace) {
-		// Preconditions.checkNotNull(partPlace, "Placement for dashboard part must not be null!");
+		Objects.requireNonNull(partPlace, "Placement for dashboard part must not be null!");
 
 		Optional<DashboardPartControl> optDashboardPartControl = partContainer.getComposite(partPlace);
 
@@ -214,7 +214,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	public void setSettings(DashboardSettings settings) {
-		// Preconditions.checkNotNull(settings, "Settings to set must not be null!");
+		Objects.requireNonNull(settings, "Settings to set must not be null!");
 
 		boolean oldLock = this.settings.isLocked();
 		
@@ -353,7 +353,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	public void addListener(IDashboardListener listener) {
-		// Preconditions.checkNotNull(listener, "Dashboardlistener to add must not be null!");
+		Objects.requireNonNull(listener, "Dashboardlistener to add must not be null!");
 
 		synchronized (dashboardListeners) {
 			dashboardListeners.add(listener);
