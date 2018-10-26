@@ -127,9 +127,12 @@ public class FeatureUpdateUtility {
 		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL,
 				UpdatePermission.objectURI)) {
 			
+			LOG.info("Trying to install "+ids);
+			
 			String[] idArray = ids.split(",");
 			List<IInstallableUnit> units = new ArrayList<>();
 			for (String id: idArray) {
+				LOG.info("Trying to find "+id);
 				units.addAll(getInstallableUnits(id, caller));
 			}
 			
@@ -150,11 +153,11 @@ public class FeatureUpdateUtility {
 				return runOperation(caller, operation);
 
 			}
-			LOG.error("There is no update with this feature id");
+			LOG.error("There is no download with this feature id "+ids);
 			return Status.CANCEL_STATUS;
 
 		}
-		throw new PermissionException("This user is not allowed to install new features!");
+		throw new PermissionException("Sorry, this user is not allowed to install new features!");
 	}
 
 	private static IStatus runOperation(final ISession caller, final ProfileChangeOperation operation) {
