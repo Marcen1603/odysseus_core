@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.sun.xml.bind.AnyTypeAdapter;
 
 @XmlJavaTypeAdapter(AnyTypeAdapter.class)
 public class Context implements Serializable {

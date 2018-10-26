@@ -21,12 +21,11 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.sun.xml.bind.AnyTypeAdapter;
-
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.Subscription;
+import de.uniol.inf.is.odysseus.core.collection.AnyTypeAdapter;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
