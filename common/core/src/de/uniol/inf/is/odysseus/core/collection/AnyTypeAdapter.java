@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * Own class that is required to avoid sun.com classes
  * 
  * is used by webservice                                                                       
- * 
+ *  
  * @author marco grawunder
  *
  */
