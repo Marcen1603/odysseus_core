@@ -228,7 +228,7 @@ public class FeatureUpdateUtility {
 			return null;
 		}
 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	public static boolean isFeatureInstalled(String id, ISession caller) {
@@ -243,7 +243,7 @@ public class FeatureUpdateUtility {
 			return false;
 		}
 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	public static List<IInstallableUnit> getInstalledFeatures(ISession caller) {
