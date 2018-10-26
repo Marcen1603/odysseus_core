@@ -453,7 +453,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 						sub.getSource().close(instance, outport, inPort, callPath, forOwners);
 					}
 				} catch (Throwable e) {
-					e.printStackTrace();
+					LOGGER.error("Error calling close",e);
 				}
 			}
 		}

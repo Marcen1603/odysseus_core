@@ -119,14 +119,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// Logging
 	// --------------------------------------------------------------------
 
-	static private Logger _logger = null;
-
-	private static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(AbstractSource.class);
-		}
-		return _logger;
-	}
+	static private Logger LOGGER = LoggerFactory.getLogger(AbstractSource.class);
 
 	protected boolean debug = false;
 
@@ -245,7 +238,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// The element then may not be modified since this source needs it in its
 	// original state
 	public boolean deliversStoredElement(int outputPort) {
-		getLogger().warn("Operator " + getName()
+		LOGGER.warn("Operator " + getName()
 				+ " doesn't implement method deliversStoredElement. Cloning performance may suffer!");
 		return true;
 	}
@@ -574,7 +567,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 			} catch (Throwable e) {
 				// Send object that could not be processed to the error port
-				e.printStackTrace();
+				LOGGER.error("Error Processing Object", e);
 				transfer(object, ERRORPORT);
 			}
 		}
@@ -620,13 +613,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		try {
 			openCloseLock.lock();
 
-			getLogger().trace("CLOSE " + getName());
+			LOGGER.trace("CLOSE " + getName());
 			AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller, sourcePort,
 					sinkPort);
 			if (sub == null) {
 				throw new RuntimeException("Close called from an unsubscribed sink ");
 			}
-			getLogger().trace("Closing from " + sub);
+			LOGGER.trace("Closing from " + sub);
 			// Hint: Multiple Open calls can occur per subscription because of
 			// query
 			// sharing
@@ -662,14 +655,14 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// operator
 		if (activeSinkSubscriptions.size() == connectedSinks.size()
 				|| (activeSinkSubscriptions.size() - 1 == connectedSinks.size())) {
-			getLogger().trace("Closing " + toString());
+			LOGGER.trace("Closing " + toString());
 			fire(this.closeInitEvent);
 			this.process_close();
 			open.set(false);
 			started.set(false);
 			stopMonitoring();
 			fire(this.closeDoneEvent);
-			getLogger().trace("Closing " + toString() + " done");
+			LOGGER.trace("Closing " + toString() + " done");
 		}
 	}
 
@@ -688,7 +681,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	public final void propagateDone() {
-		getLogger().trace("Propagate done " + getName());
+		LOGGER.trace("Propagate done " + getName());
 		// Could be that the query is already closed. In this cases the done
 		// event
 		// does not of any interest any more
@@ -708,7 +701,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 				}
 			} catch (NoSuchElementException e) {
 				// TODO Timing Problem? MBr
-				getLogger().error("Error while calling done of owner!", e);
+				LOGGER.error("Error while calling done of owner!", e);
 			}
 		}
 	}
@@ -731,7 +724,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	public void block() {
 		// synchronized (blocked) {
 		this.blocked.set(true);
-		getLogger().trace("Operator " + this.toString() + " blocked");
+		LOGGER.trace("Operator " + this.toString() + " blocked");
 		fire(blockedEvent);
 		// }
 		locker.lock();
@@ -741,7 +734,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	public void unblock() {
 		// synchronized (blocked) {
 		this.blocked.set(false);
-		getLogger().trace("Operator " + this.toString() + " unblocked");
+		LOGGER.trace("Operator " + this.toString() + " unblocked");
 		fire(unblockedEvent);
 		// }
 		locker.unlock();
@@ -820,7 +813,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	private void subscribeSink(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub,
 			boolean asActive) {
 		if (!this.sinkSubscriptions.contains(sub)) {
-			// getLogger().trace(
+			// LOGGER.trace(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
 			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
@@ -894,7 +887,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	public void unsubscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
-		getLogger().trace("Unsubscribe from Sink " + subscription.getSource());
+		LOGGER.trace("Unsubscribe from Sink " + subscription.getSource());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		removeActiveSubscription(subscription);
 		if (subContained) {
