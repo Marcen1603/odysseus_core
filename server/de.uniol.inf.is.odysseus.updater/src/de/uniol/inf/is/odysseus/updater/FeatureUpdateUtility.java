@@ -123,11 +123,16 @@ public class FeatureUpdateUtility {
 		throw new PermissionException("This user is not allowed to remove features!");
 	}
 
-	public static IStatus installFeature(String id, final ISession caller) {
+	public static IStatus installFeature(String ids, final ISession caller) {
 		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL,
 				UpdatePermission.objectURI)) {
-			List<IInstallableUnit> units = getInstallableUnits(id, caller);
-
+			
+			String[] idArray = ids.split(",");
+			List<IInstallableUnit> units = new ArrayList<>();
+			for (String id: idArray) {
+				units.addAll(getInstallableUnits(id, caller));
+			}
+			
 			if (units != null && !units.isEmpty()) {
 				LOG.info("Found following features that will be installed now: ");
 				for (IInstallableUnit unit : units) {
