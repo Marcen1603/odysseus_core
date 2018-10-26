@@ -275,7 +275,7 @@ public class FeatureUpdateUtility {
 			return features;
 		}
 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 
 	}
 
@@ -313,7 +313,7 @@ public class FeatureUpdateUtility {
 			return null;
 		}
 
-		throw new PermissionException("This user may not list installable features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	private static boolean containsWithSameID(Collection<IInstallableUnit> list, IInstallableUnit unit) {
@@ -446,7 +446,7 @@ public class FeatureUpdateUtility {
 				}
 			}
 		} else {
-			throw new PermissionException("This user may not list the installed features!");
+			throw new PermissionException("User is not allowed to list the installed features!");
 		}
 		return "-1";
 	}
@@ -456,7 +456,7 @@ public class FeatureUpdateUtility {
 				UpdatePermission.objectURI)) {
 			return Activator.getContext().getBundle().getVersion().toString();
 		} 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	private static IProvisioningAgent getAgent(BundleContext context) {
