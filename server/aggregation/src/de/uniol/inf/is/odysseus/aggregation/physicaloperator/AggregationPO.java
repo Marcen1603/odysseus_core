@@ -49,8 +49,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -152,12 +150,12 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * evaluation. E. g., the final AVG of the latency.
 	 */
 	protected final boolean evaluateAtDone;
-	
+
 	/**
-	 * If this flag is set to true, output will additionally created on an incoming punctuation
+	 * If this flag is set to true, output will additionally created on an incoming
+	 * punctuation
 	 */
 	private final boolean createOutputOnPunctuation;
-
 
 	protected final boolean outputOnlyChanges;
 
@@ -226,8 +224,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
 			final int[] groupingAttributesIdxOutputSchema, final boolean supressFullMetaDataHandling,
-			final boolean createOutputOnPunctuation,
-			final IMetadataMergeFunction<M> mmf, boolean alwaysUseSweepArea) {
+			final boolean createOutputOnPunctuation, final IMetadataMergeFunction<M> mmf, boolean alwaysUseSweepArea) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
 		this.incrementalFunctions = Collections.unmodifiableList(incrementalFunctions);
@@ -316,7 +313,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			if (groups.isEmpty()) {
 				evaluateOnPunctuation(punctuation, defaultGroupingKey);
 			} else {
-				for (Object groupKey: groups.keySet()) {
+				for (Object groupKey : groups.keySet()) {
 					evaluateOnPunctuation(punctuation, groupKey);
 				}
 			}
@@ -325,6 +322,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		sendPunctuation(punctuation);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void evaluateOnPunctuation(final IPunctuation punctuation, Object groupKey) {
 		final T result = evaluateAtNewElement ? (T) new Tuple<>(outputSchema.size(), true) : null;
 
@@ -339,7 +337,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (hasNonIncrementalFunctions && evaluateAtNewElement) {
-			final Collection<T> objects = getSweepArea(groupKey).getValidTuples();
+			getSweepArea(groupKey).getValidTuples();
 			processNonIncrementalFunctions(result, null, null, punctuation.getTime());
 		}
 
@@ -553,7 +551,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				}
 
 				if (result != null) {
-					transferResult(result, pointInTime, sampleOfGroup);
+					transferResult(result, pointInTime, sampleOfGroup, outdatedTuples);
 				}
 
 			}
@@ -775,7 +773,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @param result
 	 */
 	@SuppressWarnings("unchecked")
-	private void transferResult(final T result, final PointInTime startTs, final T sampleOfGroup) {
+	private void transferResult(final T result, final PointInTime startTs, final T sampleOfGroup,
+			final Collection<T> outdatedTuples) {
 
 		if (onlyNullAttributes(result)) {
 			return;
@@ -800,22 +799,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (output) {
-			M meta = null;
 			M mergedMeta = null;
 
 			if (!supressFullMetaDataHandling) {
-				final IAggregationSweepArea<M, T> sa = getSweepArea(groupKey);
-				final Iterator<T> iter = sa.getValidTuples().iterator();
-
-				if (iter.hasNext()) {
-					T next = iter.next();
-					meta = (M) next.getMetadata().clone();
-					mergedMeta = meta;
-					while (iter.hasNext()) {
-						mergedMeta = this.metadataMergeFunc.mergeMetadata(mergedMeta, iter.next().getMetadata());
-					}
-				}
-
+				mergedMeta = mergeMetadata(groupKey, outdatedTuples);
 			}
 
 			if (mergedMeta == null) {
@@ -832,6 +819,37 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			result.setMetadata(mergedMeta);
 			transfer(result);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private M mergeMetadata(Object groupKey, final Collection<T> outdatedTuples) {
+		M mergedMeta = null;
+		final IAggregationSweepArea<M, T> sa = getSweepArea(groupKey);
+		final Iterator<T> iter = sa.getValidTuples().iterator();
+
+		if (iter.hasNext()) {
+			T next = iter.next();
+			mergedMeta = (M) next.getMetadata().clone();
+			while (iter.hasNext()) {
+				mergedMeta = this.metadataMergeFunc.mergeMetadata(mergedMeta, iter.next().getMetadata());
+			}
+		}
+
+		// The same for the outdated tuples
+		if (outdatedTuples != null) {
+			Iterator<T> outdatedIterator = outdatedTuples.iterator();
+			if (outdatedIterator.hasNext()) {
+				T next = outdatedIterator.next();
+				if (mergedMeta == null) {
+					mergedMeta = (M) next.getMetadata().clone();
+				}
+				while (outdatedIterator.hasNext()) {
+					mergedMeta = this.metadataMergeFunc.mergeMetadata(mergedMeta,
+							outdatedIterator.next().getMetadata());
+				}
+			}
+		}
+		return mergedMeta;
 	}
 
 	/**
@@ -851,7 +869,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @param result
 	 */
 	private void transferResult(final T result, final T trigger, final PointInTime startTs) {
-		transferResult(result, startTs, trigger);
+		transferResult(result, startTs, trigger, null);
 	}
 
 	/**
