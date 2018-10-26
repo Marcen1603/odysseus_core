@@ -529,7 +529,7 @@ public class FeatureUpdateUtility {
 				this.name = name;
 			}
 
-			@Override
+			@Override 
 			public void setCanceled(boolean value) {
 				this.canceled = value;
 			}
