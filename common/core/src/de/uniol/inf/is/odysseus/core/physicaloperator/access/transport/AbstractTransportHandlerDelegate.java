@@ -62,6 +62,7 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 			}
 		} catch (Exception e) {
 			INFO.warning("Error processing message",e);
+			LOG.warn("Error processing message",e);
 			throw e;
 		}
 	}
