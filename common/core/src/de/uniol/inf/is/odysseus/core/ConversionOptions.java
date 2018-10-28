@@ -26,7 +26,7 @@ public class ConversionOptions {
 	public static final String NULL_VALUE_TEXT = "nullvaluetext";
 	public static final String CHARSET = "charset";
 
-	public static final ConversionOptions defaultOptions = new ConversionOptions(',', (Character) null,
+	public static final ConversionOptions defaultOptions = new ConversionOptions(',', (Character)null,
 			(NumberFormat) null, (NumberFormat) null);
 
 	final private char delimiter;
@@ -138,7 +138,14 @@ public class ConversionOptions {
 			numberFormatter = convOpts.numberFormatter;
 		}
 
-		this.textSeperator = optionsMap.getCharacter(TEXT_DELIMITER, convOpts.textSeperator);
+		Character tmp = optionsMap.getCharacter(TEXT_DELIMITER, convOpts.textSeperator);
+		
+		if (tmp == null) {
+			this.textSeperator = '\"';
+		}else {
+			this.textSeperator = tmp;
+		}
+		
 		this.nullValueString = optionsMap.get(NULL_VALUE_TEXT, convOpts.nullValueString);
 	}
 
