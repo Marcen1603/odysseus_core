@@ -123,11 +123,19 @@ public class FeatureUpdateUtility {
 		throw new PermissionException("This user is not allowed to remove features!");
 	}
 
-	public static IStatus installFeature(String id, final ISession caller) {
+	public static IStatus installFeature(String ids, final ISession caller) {
 		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL,
 				UpdatePermission.objectURI)) {
-			List<IInstallableUnit> units = getInstallableUnits(id, caller);
-
+			
+			LOG.info("Trying to install "+ids);
+			
+			String[] idArray = ids.split(",");
+			List<IInstallableUnit> units = new ArrayList<>();
+			for (String id: idArray) {
+				LOG.info("Trying to find "+id);
+				units.addAll(getInstallableUnits(id, caller));
+			}
+			
 			if (units != null && !units.isEmpty()) {
 				LOG.info("Found following features that will be installed now: ");
 				for (IInstallableUnit unit : units) {
@@ -145,11 +153,11 @@ public class FeatureUpdateUtility {
 				return runOperation(caller, operation);
 
 			}
-			LOG.error("There is no update with this feature id");
+			LOG.error("There is no download with this feature id "+ids);
 			return Status.CANCEL_STATUS;
 
 		}
-		throw new PermissionException("This user is not allowed to install new features!");
+		throw new PermissionException("Sorry, this user is not allowed to install new features!");
 	}
 
 	private static IStatus runOperation(final ISession caller, final ProfileChangeOperation operation) {
@@ -220,7 +228,7 @@ public class FeatureUpdateUtility {
 			return null;
 		}
 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	public static boolean isFeatureInstalled(String id, ISession caller) {
@@ -235,7 +243,7 @@ public class FeatureUpdateUtility {
 			return false;
 		}
 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	public static List<IInstallableUnit> getInstalledFeatures(ISession caller) {
@@ -267,7 +275,7 @@ public class FeatureUpdateUtility {
 			return features;
 		}
 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 
 	}
 
@@ -305,7 +313,7 @@ public class FeatureUpdateUtility {
 			return null;
 		}
 
-		throw new PermissionException("This user may not list installable features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	private static boolean containsWithSameID(Collection<IInstallableUnit> list, IInstallableUnit unit) {
@@ -438,7 +446,7 @@ public class FeatureUpdateUtility {
 				}
 			}
 		} else {
-			throw new PermissionException("This user may not list the installed features!");
+			throw new PermissionException("User is not allowed to list the installed features!");
 		}
 		return "-1";
 	}
@@ -448,7 +456,7 @@ public class FeatureUpdateUtility {
 				UpdatePermission.objectURI)) {
 			return Activator.getContext().getBundle().getVersion().toString();
 		} 
-		throw new PermissionException("This user may not list the installed features!");
+		throw new PermissionException("User is not allowed to list the installed features!");
 	}
 
 	private static IProvisioningAgent getAgent(BundleContext context) {
@@ -521,7 +529,7 @@ public class FeatureUpdateUtility {
 				this.name = name;
 			}
 
-			@Override
+			@Override 
 			public void setCanceled(boolean value) {
 				this.canceled = value;
 			}
