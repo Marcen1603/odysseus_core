@@ -27,7 +27,7 @@ public class CombineListsFunction extends AbstractBinaryOperator<List<?>> {
 	@Override
 	public List<?> getValue() {
 		List newLeft = new ArrayList((List) getInputValue(0));
-		List right = new ArrayList((List) getInputValue(1));
+		List right = (List) getInputValue(1);
 		newLeft.addAll(right);
 		return newLeft;
 	}
