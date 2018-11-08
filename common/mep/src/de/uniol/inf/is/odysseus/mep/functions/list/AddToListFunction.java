@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.mep.functions.list;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -23,7 +24,7 @@ public class AddToListFunction extends AbstractFunction<List<?>> {
 	@Override
 	public List<?> getValue() {
 		Object value = getInputValue(0);
-		List list = (List) getInputValue(1);
+		List list = new ArrayList((List) getInputValue(1));
 		list.add(value);
 		return list;
 	}
