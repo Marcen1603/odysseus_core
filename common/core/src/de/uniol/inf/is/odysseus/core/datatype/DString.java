@@ -126,22 +126,6 @@ public class DString {
 	}
 
 
-	public static void main(java.lang.String[] args) {
-		java.lang.String[] values = new java.lang.String[] { "Carl", "Fritz", "Kenn", "Carl", "Georg", "Fritz", "A",
-				"B", "A", "Carl", "" };
-		DString[] dvalues = new DString[values.length];
-		int i = 0;
-		for (java.lang.String string : values) {
-			dvalues[i] = new DString(string);
-			System.out.println(string + " --> " + dvalues[i].getLongValue() + " " + dvalues[i]);
-			System.out.println(dvalues[i].equals(string));
-			i++;
-		}
-		
-		System.out.println(dvalues[0].equals(values[1]));
-
-	}
-
 
 
 
