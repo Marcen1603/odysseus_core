@@ -12,13 +12,25 @@
 	</parent>
 
 	<modules>
-		<module>targetplatform</module>
 		<module>common</module>
 		<module>resource</module>
 		<module>client</module>
 		<module>server</module>
 		<module>monolithic</module>
-		<module>releng</module>
-		</modules>	
+	</modules>	
+
+	<profiles>
+		<profile>
+			<id>solobuild</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>targetplatform</module>
+				<module>releng/de.uniol.inf.is.odysseus.update</module>
+			</modules>
+
+		</profile>
+	</profiles>
 </project>
 
