@@ -1,10 +1,10 @@
 <project>
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>de.uniol.inf.is.odysseus_core</groupId>
-		<artifactId>de.uniol.inf.is.odysseus_core.releng</artifactId>
+		<groupId>de.uniol.inf.is.odysseus</groupId>
+		<artifactId>de.uniol.inf.is.odysseus_core.root</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>de.uniol.inf.is.odysseus_core.update</artifactId>
