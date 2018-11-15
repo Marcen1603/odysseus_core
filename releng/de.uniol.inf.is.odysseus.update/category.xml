@@ -1,109 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/de.uniol.inf.is.odysseus.common.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier">
-      <category name="common"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.keyvalue.datahandler.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature" version="1.0.0.qualifier">
-      <category name="common"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.keyvalue.datatype.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature" version="1.0.0.qualifier">
-      <category name="common"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.slf4j.feature_1.7.25.qualifier.jar" id="de.uniol.inf.is.odysseus.slf4j.feature" version="1.7.25.qualifier">
-      <category name="common"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.cache.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.cache.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.core.server.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.memstore.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.memstore.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.server.platform.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.security.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.security.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.server.fragmentation.base.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.keyvalue.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.latency.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.planmgmt.standard.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.relational.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.rest.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.rest.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.scheduling.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.script.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.script.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.usermanagement.store.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.usermanagement.store.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.monolithic.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier">
-      <category name="monolithic"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.monolithic.sdp.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.monolithic.sdp.feature" version="1.0.0.qualifier">
-      <category name="monolithic"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.monolithic.studio.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.monolithic.studio.feature" version="1.0.0.qualifier">
-      <category name="monolithic"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.client.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.client.platform.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.client.studio.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.client.studio.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.rcp.dashboard.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.rcp.dashboard.soccer.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.server.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier">
-      <category name="server"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.studio.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier">
-      <category name="client"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.datarate.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.datarate.feature" version="1.0.0.qualifier">
-      <category name="common"/>
-   </feature>
-   <category-def name="odysseus_core" label="odysseus_core"/>
-   <category-def name="client" label="client">
-      <category name="odysseus_core"/>
-   </category-def>
-   <category-def name="common" label="common">
-      <category name="odysseus_core"/>
-   </category-def>
-   <category-def name="server" label="server">
-      <category name="odysseus_core"/>
-   </category-def>
-   <category-def name="monolithic" label="monolithic">
-      <category name="odysseus_core"/>
-   </category-def>
+	<feature id="de.uniol.inf.is.odysseus.common.feature">
+		<category name="common"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature">
+		<category name="common"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature">
+		<category name="common"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.slf4j.feature">
+		<category name="common"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.cache.feature">
+		<category name="server"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.core.server.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.memstore.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.server.platform.feature">
+		<category name="server"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.security.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature">
+		<category name="server"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.keyvalue.feature">
+		<category name="server"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.latency.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.relational.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.rest.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.scheduling.feature">
+		<category name="server"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.script.feature">
+		<category name="server"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.usermanagement.store.feature">
+		<category name="server"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.monolithic.feature">
+		<category name="monolithic"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.monolithic.sdp.feature">
+		<category name="monolithic"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.monolithic.studio.feature">
+		<category name="monolithic"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.client.feature">
+		<category name="client"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.client.platform.feature">
+		<category name="client"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.client.studio.feature">
+		<category name="client"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature">
+		<category name="client"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature">
+		<category name="client"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.feature">
+		<category name="client"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature">
+		<category name="client"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.server.feature">
+		<category name="server"/>
+	</feature>
+	<feature  id="de.uniol.inf.is.odysseus.studio.feature">
+		<category name="client"/>
+	</feature>
+	<feature id="de.uniol.inf.is.odysseus.datarate.feature">
+		<category name="common"/>
+	</feature>
+	<category-def name="odysseus_core" label="odysseus_core"/>
+	<category-def name="client" label="client">
+		<category name="odysseus_core"/>
+	</category-def>
+	<category-def name="common" label="common">
+		<category name="odysseus_core"/>
+	</category-def>
+	<category-def name="server" label="server">
+		<category name="odysseus_core"/>
+	</category-def>
+	<category-def name="monolithic" label="monolithic">
+		<category name="odysseus_core"/>
+	</category-def>
 </site>
