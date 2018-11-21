@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/de.uniol.inf.is.odysseus.aggregation.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.aggregation.feature" version="1.0.0.qualifier">
+   <feature id="de.uniol.inf.is.odysseus.aggregation.feature">
       <category name="aggregation"/>
    </feature>
    <category-def name="aggregation" label="aggregation"/>
