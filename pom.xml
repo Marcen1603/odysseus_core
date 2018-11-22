@@ -12,9 +12,21 @@
 	</parent>
 
 	<modules>
-		<module>odysseus_dev</module>
-		<module>releng/de.uniol.inf.is.odysseus.update</module>
 		<module>server</module>
 	</modules>	
+	
+	<profiles>
+		<profile>
+			<id>solobuild</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>odysseus_dev</module>
+				<module>releng/de.uniol.inf.is.odysseus.update</module>
+			</modules>
+
+		</profile>
+	</profiles>
 </project>
 
