@@ -36,7 +36,7 @@
 		<module>de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature</module>
 		<module>de.uniol.inf.is.odysseus.rcp.editor.script</module>
 		<module>de.uniol.inf.is.odysseus.rcp.info</module>
-		<module>de.uniol.inf.is.odysseus.rcp.logging</module>
+		<!--<module>de.uniol.inf.is.odysseus.rcp.logging</module>-->
 		<module>de.uniol.inf.is.odysseus.rcp.login</module>
 		<module>de.uniol.inf.is.odysseus.rcp.queryview.logical</module>
 		<module>de.uniol.inf.is.odysseus.rcp.viewer.stream.interval</module>
@@ -44,7 +44,7 @@
 		<module>de.uniol.inf.is.odysseus.report.rcp</module>
 		<module>de.uniol.inf.is.odysseus.studio.feature</module>
 		<module>executor.wsclient.feature</module>
-		<module>rcp.console</module>
+		<!--<module>rcp.console</module>-->
 		<module>rcp.dashboard.part.graphics</module>
 		<module>rcp.editor.graph</module>
 		<module>rcp.editor.text</module>
