@@ -19,9 +19,9 @@
    <service>
        <provide interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor"/>
    </service>
-   <reference bind="setSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement" name="SessionManagement" policy="static"/>
-   <reference bind="setUserManagementProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider" name="UserManagementProvider" policy="static"/>
-   <reference bind="setDataDictionaryProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider" name="DataDictionaryProvider" policy="static"/>
+   <reference bind="setSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement" name="SessionManagement" policy="dynamic"/>
+   <reference bind="setUserManagementProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider" name="UserManagementProvider" policy="dynamic"/>
+   <reference bind="setDataDictionaryProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider" name="DataDictionaryProvider" policy="dynamic"/>
    <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
    <reference bind="bindSchedulerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager" name="ISchedulerManager" policy="dynamic" unbind="unbindSchedulerManager"/>
    <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>
