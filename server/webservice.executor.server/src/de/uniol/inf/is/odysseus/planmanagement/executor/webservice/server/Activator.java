@@ -17,12 +17,16 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebserviceStarter;
 import de.uniol.inf.is.odysseus.slf4j.LoggingConfiguration;
 
 public class Activator implements BundleActivator {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
+	
 	private static BundleContext context;
 
 	static BundleContext getContext() {
@@ -37,6 +41,7 @@ public class Activator implements BundleActivator {
     public void start(BundleContext bundleContext) throws Exception {
 		LoggingConfiguration.load();
 		Activator.context = bundleContext;
+		LOG.info("Trying to start WebService");
 		WebserviceStarter.start();
 	}
 
