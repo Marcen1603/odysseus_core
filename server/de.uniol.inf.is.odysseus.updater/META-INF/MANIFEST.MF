@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Updater
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.updater
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.updater;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.updater.Activator
 Bundle-Vendor: University of Oldenburg
@@ -22,3 +22,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi.services, de.uniol.inf.is.odysseus.slf4j
 Export-Package: de.uniol.inf.is.odysseus.updater
 Automatic-Module-Name: de.uniol.inf.is.odysseus.updater
+Bundle-ActivationPolicy: lazy
