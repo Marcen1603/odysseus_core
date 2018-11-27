@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rcp.logging.LogSaverBinder">
-   <implementation class="de.uniol.inf.is.odysseus.rcp.logging.save.LogSaverBinder"/>
-   <reference bind="bindLogSaver" cardinality="0..n" interface="de.uniol.inf.is.odysseus.rcp.logging.ILogSaver" name="ILogSaver" policy="dynamic" unbind="unbindLogSaver"/>
-</scr:component>
