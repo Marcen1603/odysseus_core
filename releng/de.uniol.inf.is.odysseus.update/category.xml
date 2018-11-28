@@ -96,7 +96,11 @@
 	<feature id="de.uniol.inf.is.odysseus.datarate.feature">
 		<category name="common"/>
 	</feature>
+	<feature id="de.uniol.inf.is.odysseus.wrapper.json.feature">
+		<category name="wrapper"/>
+	</feature>
 	<category-def name="test" label="test"/>
+	<category-def name="wrapper" label="wrapper"/>
 	<category-def name="odysseus_core" label="odysseus_core"/>
 	<category-def name="client" label="client">
 		<category name="odysseus_core"/>

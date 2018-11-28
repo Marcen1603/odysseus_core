@@ -18,6 +18,7 @@
 		<module>server</module>
 		<module>monolithic</module>
 		<module>testing</module>
+		<module>wrapper</module>
 	</modules>	
 
 	<profiles>
