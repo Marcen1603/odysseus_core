@@ -17,7 +17,7 @@
 		<module>client</module>
 		<module>server</module>
 		<module>monolithic</module>
-		<module>testing</module>
+		<module>test</module>
 		<module>wrapper</module>
 	</modules>	
 
