@@ -44,7 +44,6 @@
 		<module>de.uniol.inf.is.odysseus.report.rcp</module>
 		<module>de.uniol.inf.is.odysseus.studio.feature</module>
 		<module>executor.wsclient.feature</module>
-		<!--<module>rcp.console</module>-->
 		<module>rcp.dashboard.part.graphics</module>
 		<module>rcp.editor.graph</module>
 		<module>rcp.editor.text</module>
