@@ -115,9 +115,16 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 				if (entries == null) {
 					continue;
 				}
-
+				
 				while (entries.hasMoreElements()) {
 					URL curURL = entries.nextElement();
+					
+					// avoid reading mvn folders			
+					if (curURL.toString().contains("target/")) {
+						continue;
+					}
+					
+					
 					if (curURL.toString().contains("/rule")
 							|| curURL.toString().contains("/transform")) {
 						Class<? extends ITransformationRule> classObject = loadRuleClass(
@@ -172,7 +179,7 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 				//logger.trace(className+" loaded");
 				return (Class<? extends ITransformationRule>) classObject;
 			}
-		} catch (Exception e) {
+		} catch (Exception | Error e ) {
 			// can be ignored here
 		}
 		return null;
