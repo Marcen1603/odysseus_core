@@ -221,11 +221,11 @@ public class FeatureUpdateUtility {
 				}
 				return toinstall;
 			} catch (ProvisionException e) {
-				e.printStackTrace();
+				LOG.error("Problems determing units",e);
 			} catch (OperationCanceledException e) {
-				e.printStackTrace();
+				LOG.error("Cancled",e);
 			}
-			return null;
+			return Collections.emptyList();
 		}
 
 		throw new PermissionException("User is not allowed to list the installed features!");
@@ -306,9 +306,9 @@ public class FeatureUpdateUtility {
 				Collections.sort(installable);
 				return installable;
 			} catch (ProvisionException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(),e);
 			} catch (OperationCanceledException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(),e);
 			}
 			return null;
 		}
@@ -363,7 +363,7 @@ public class FeatureUpdateUtility {
 					return false;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(),e);
 			}
 		} else {
 			throw new PermissionException("User is not allowed to update the system!");
@@ -429,7 +429,7 @@ public class FeatureUpdateUtility {
 					provisioningJob.schedule();
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(),e);
 			}
 			return Status.OK_STATUS;
 		}
