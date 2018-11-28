@@ -1,0 +1,28 @@
+///OdysseusScript
+#PARSER PQL
+#DROPALLSOURCES
+#DROPALLQUERIES
+#ADDQUERY
+json2 = ACCESS({
+	source='json', 
+	wrapper='GenericPull',
+	transport='File',
+	protocol='JSON',
+	dataHandler='KeyValueObject',
+	options=[['filename','${BUNDLE-ROOT}\testdata\map\input.json']],
+	schema=[['timestamp','STARTTIMESTAMP']]
+})
+mapped2 = MAP({expressions = [['customer.id', 'kaeufer.id'],
+								['sum/2', 'sum']
+							]}, json2)
+
+///SENDERjson = SENDER({
+///	transport='File',
+///	wrapper='GenericPush',
+///	protocol='JSON',
+///	dataHandler='KeyValueObject',
+///	SINK="SENDERjson",
+///	options=[
+///		['filename','${WORKSPACEPROJECT}\testdata\map\output.json'],
+///		['json.write.metadata','true']
+///	]}, mapped2)

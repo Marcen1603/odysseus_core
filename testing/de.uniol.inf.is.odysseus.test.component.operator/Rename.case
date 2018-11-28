@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TESTCASE DIRECTORY="testdaten/rename/" NAME="Rename" OPERATOR="RENAME" TIMESTAMP="true">
+<PARAMETERS>
+<PARAMETER IMemento.internal.id="NOOP" VALUE="true"/>
+<PARAMETER IMemento.internal.id="ALIASES" VALUE="[&apos;timestamp&apos;,&apos;a&apos;,&apos;b&apos;,&apos;c&apos;]"/>
+</PARAMETERS>
+<SCHEMA PORT="0" WINDOW="0">
+<ATTRIBUTE ACTIVE="false" IMemento.internal.id="x" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
+<ATTRIBUTE ACTIVE="false" IMemento.internal.id="y" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
+<ATTRIBUTE ACTIVE="true" IMemento.internal.id="z" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
+</SCHEMA>
+<METADATAS>
+<METADATA IMemento.internal.id="TimeInterval" VALUE="true"/>
+</METADATAS>
+</TESTCASE>

@@ -1,0 +1,66 @@
+#PARSER PQL
+
+#DEFINE MIN_DATA '${BUNDLE-ROOT}/testdaten/join_elements/element_join_example.csv'
+
+#ADDQUERY
+
+input = ACCESS({
+            source='vesselRoute',
+            wrapper='GenericPull',
+            schema=[
+              ['id','Integer'],
+              ['BaseDateTime','StartTimeStamp']
+            ],
+            inputschema=['Integer','StartTimeStamp'],
+            transport='File',
+            protocol='csv',
+            datahandler='Tuple',
+            metaattribute = ['TimeInterval'],
+            options=[
+              ['filename', ${MIN_DATA}],
+              ['Delimiter',','],
+              ['TextDelimiter','"'],
+              ['delay','0'],
+              ['readfirstline','false'],
+              ['BaseTimeUnit','SECONDS']
+            ]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+          }                                                                                                                                                                                                                                                                                                                                                                                                                        
+        )
+        
+only_id = PROJECT({
+              attributes = ['id']
+            },
+            input
+          )
+        
+/// We only want to use the elements from the last time
+time = TIMEWINDOW({
+            size = [5, 'seconds']                                                                                                                                                                                              
+          },
+          only_id
+        )
+              
+separateCenter = ROUTE({
+                      predicates = ['id = 1'],
+                      sendingheartbeats = true                                                                                                                                            
+                    },
+                    time
+                  )
+                  
+renameCenter = MAP({
+                    expressions = [
+                      ['id','id_center']
+                    ]                                                                        
+                  },
+                  0:separateCenter
+                )
+                  
+recombine = JOIN({
+                elementsizeport0 = 1,
+                elementsizeport1 = 1,
+                group_by_port_0 = ['id'],
+                group_by_port_1 = ['id']              
+              },
+              renameCenter,
+              1:separateCenter
+            )
