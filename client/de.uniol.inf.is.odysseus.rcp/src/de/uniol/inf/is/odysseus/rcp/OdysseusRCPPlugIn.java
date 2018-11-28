@@ -17,8 +17,23 @@ package de.uniol.inf.is.odysseus.rcp;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.OutputStreamAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -27,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventListener {
@@ -115,15 +131,15 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 		imageManager.registerImageSet("white", "operator-images/icons_white.xml");
 		imageManager.registerImageSet("black", "operator-images/icons_black.xml");
 		imageManager.registerImageSet("default", "operator-images/icons_default.xml");
-		
+
 		// load external icon sets from Odysseus home
 		File iconSetDir = new File(OdysseusBaseConfiguration.getHomeDir() + "/icons");
-		if (iconSetDir.isDirectory()){
+		if (iconSetDir.isDirectory()) {
 			FilenameFilter filter = new FilenameFilter() {
-				
+
 				@Override
 				public boolean accept(File dir, String name) {
-					return new File(dir,name).isFile() && name.endsWith(".xml");
+					return new File(dir, name).isFile() && name.endsWith(".xml");
 				}
 			};
 			File[] files = iconSetDir.listFiles(filter);
@@ -133,8 +149,10 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 		}
 
 		instance = this;
+
+		addLoggerToConsole();
 	}
-	
+
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
@@ -147,18 +165,19 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 	public static ImageManager getImageManager() {
 		return imageManager;
 	}
-	
+
 	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
+	 * Returns an image descriptor for the image file at the given plug-in relative
+	 * path
 	 *
-	 * @param path the path
+	 * @param path
+	 *            the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		ImageDescriptor i = imageDescriptorFromPlugin(PLUGIN_ID, path);
-		if (i == null){
-			throw new IllegalArgumentException("Image "+path+" not found");
+		if (i == null) {
+			throw new IllegalArgumentException("Image " + path + " not found");
 		}
 		return i;
 	}
@@ -215,5 +234,57 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 	private String determineStatusManagerExecutorInfo() {
 		return executor.getCurrentSchedulerID(OdysseusRCPPlugIn.getActiveSession()) + " ("
 				+ executor.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn.getActiveSession()) + ") ";
+	}
+
+	private void addLoggerToConsole() {
+
+		final String CONSOLE_NAME = "OdysseusConsole";
+
+		MessageConsole myConsole = findConsole(CONSOLE_NAME);
+		OutputStream outStream = myConsole.newMessageStream();
+		String sysReDir = System.getProperty("sysredirect", "false");
+		if (Boolean.parseBoolean(sysReDir)) {
+			if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysOut", "true"))) {
+				System.setOut(new PrintStream(outStream));
+			}
+			if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysErr", "true"))) {
+				System.setErr(new PrintStream(outStream));
+			}
+		}
+
+		addAppender(outStream, CONSOLE_NAME);
+	}
+
+	void addAppender(final OutputStream outputStream, final String outputStreamName) {
+		final LoggerContext context = LoggerContext.getContext(false);
+		final Configuration config = context.getConfiguration();
+		final PatternLayout layout = PatternLayout.createDefaultLayout(config);
+		final Appender appender = OutputStreamAppender.createAppender(layout, null, outputStream, outputStreamName,
+				false, true);
+		appender.start();
+		config.addAppender(appender);
+		updateLoggers(appender, config);
+	}
+
+	private void updateLoggers(final Appender appender, final Configuration config) {
+		final Level level = null;
+		final Filter filter = null;
+		for (final LoggerConfig loggerConfig : config.getLoggers().values()) {
+			loggerConfig.addAppender(appender, level, filter);
+		}
+		config.getRootLogger().addAppender(appender, level, filter);
+	}
+
+	private MessageConsole findConsole(String name) {
+		ConsolePlugin plugin = ConsolePlugin.getDefault();
+		IConsoleManager conMan = plugin.getConsoleManager();
+		IConsole[] existing = conMan.getConsoles();
+		for (int i = 0; i < existing.length; i++)
+			if (name.equals(existing[i].getName()))
+				return (MessageConsole) existing[i];
+		// no console found, so create a new one
+		MessageConsole myConsole = new MessageConsole(name, null);
+		conMan.addConsoles(new IConsole[] { myConsole });
+		return myConsole;
 	}
 }
