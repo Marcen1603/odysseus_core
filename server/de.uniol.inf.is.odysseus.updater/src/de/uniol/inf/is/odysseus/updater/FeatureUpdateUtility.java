@@ -184,17 +184,19 @@ public class FeatureUpdateUtility {
 									"Features were un/installed. You have to restart Odysseus for the changed to take effekt!");
 							restart(caller);
 						}
-
+					}else {
+						LOG.error(event.getResult().getMessage(), event.getResult().getException());
 					}
 					super.done(event);
 				}
+				
 			});
 
 			provisioningJob.schedule();
 
 			return Status.OK_STATUS;
 		}
-		LOG.error(status.getMessage());
+		LOG.error(status.getMessage(), status.getException());
 		return Status.CANCEL_STATUS;
 	}
 
