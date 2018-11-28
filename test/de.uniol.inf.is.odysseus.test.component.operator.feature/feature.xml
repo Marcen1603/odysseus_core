@@ -26,10 +26,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.cep.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.test.component.operator"
          download-size="0"
