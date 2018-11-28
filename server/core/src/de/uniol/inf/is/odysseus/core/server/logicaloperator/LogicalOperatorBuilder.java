@@ -120,6 +120,10 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
+			// do not read targets from maven
+			if (curURL.toString().contains("target/")) {
+				continue;
+			}
 			if (curURL.toString().contains(".logicaloperator")) {
 				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(bundle, curURL);
 				if (classObject == null) {
