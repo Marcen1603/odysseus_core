@@ -1,0 +1,19 @@
+///OdysseusScript
+#PARSER PQL
+#ADDQUERY
+percentage = ACCESS({
+	source='percentage', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '${BUNDLE-ROOT}\testdaten\select.old\input0.csv'], 
+		['csv.delimiter', ';'],
+		['csv.trim', 'true']
+		], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['percentage', 'INTEGER']
+]})
+select0 = select({predicate = RelationalPredicate('percentage >= 50')}, percentage)

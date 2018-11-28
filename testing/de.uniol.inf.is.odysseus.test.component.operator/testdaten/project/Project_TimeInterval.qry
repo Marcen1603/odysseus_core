@@ -1,0 +1,36 @@
+/// Odysseus Testcase: Project
+/// Operator: PROJECT
+/// Date: Thu Apr 30 00:59:42 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  SUPPRESSPUNCTUATIONS: 
+///  NAME: 
+///  ATTRIBUTES: ['x','z']
+///  DESTINATION: 
+///  ID: 
+///  PATHS: 
+///  DEBUG: 
+
+
+#PARSER PQL
+
+#DROPALLSOURCES
+#DROPALLQUERIES
+
+#METADATA TimeInterval
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/project/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+
+output = PROJECT({ATTRIBUTES=['x','z']}, input0)

@@ -1,0 +1,28 @@
+///OdysseusScript
+#PARSER PQL
+#DROPALLSOURCES
+#DROPALLQUERIES
+#ADDQUERY
+percentage = ACCESS({
+	source='percentage', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='json',
+	dataHandler='KeyValueObject', 
+	options=[['filename', '${BUNDLE-ROOT}\testdata\select\input0.json']],
+	schema=[['id','STARTTIMESTAMP']]
+})
+select0 = select({predicate = 'percentage >= 50'}, percentage)
+
+///SENDERjson = SENDER({
+///	transport='File',
+///	wrapper='GenericPush',
+///	protocol='JSON',
+///	dataHandler='KeyValueObject',
+///	SINK="SENDERjson",
+///	options=[
+///		['filename','${WORKSPACEPROJECT}\testdata\select\output0.json'],
+///		['json.write.metadata','true'],
+///		['json.write.starttimestamp','metadata.starttimestamp'],
+///		['json.write.endtimestamp','metadata.endtimestamp']
+///	]}, select0)

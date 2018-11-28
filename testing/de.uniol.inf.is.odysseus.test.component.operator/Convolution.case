@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TESTCASE DIRECTORY="testdaten/convolution/" NAME="Convolution" OPERATOR="CONVOLUTION" TIMESTAMP="true">
+<PARAMETERS>
+<PARAMETER IMemento.internal.id="FUNCTION" VALUE="&apos;gaussian&apos;"/>
+<PARAMETER IMemento.internal.id="ATTRIBUTES" VALUE="[&apos;x&apos;]"/>
+<PARAMETER IMemento.internal.id="SIZE" VALUE="3"/>
+</PARAMETERS>
+<SCHEMA PORT="0" WINDOW="0">
+<ATTRIBUTE ACTIVE="false" IMemento.internal.id="x" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
+<ATTRIBUTE ACTIVE="false" IMemento.internal.id="y" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
+<ATTRIBUTE ACTIVE="false" IMemento.internal.id="z" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
+</SCHEMA>
+<METADATAS>
+<METADATA IMemento.internal.id="TimeInterval" VALUE="true"/>
+</METADATAS>
+</TESTCASE>

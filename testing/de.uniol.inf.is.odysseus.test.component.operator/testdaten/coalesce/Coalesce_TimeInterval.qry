@@ -1,0 +1,48 @@
+/// Odysseus Testcase: Coalesce
+/// Operator: COALESCE
+/// Date: Thu Apr 30 17:01:47 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  FASTGROUPING: 
+///  NAME: 
+///  DRAINATDONE: 
+///  DRAINATCLOSE: 
+///  DESTINATION: 
+///  CREATEONHEARTBEAT: 
+///  DRAIN: 
+///  AGGREGATIONS: [['AVG', 'x', 'avg']]
+///  SUPPRESSPUNCTUATIONS: 
+///  MAXELEMENTSPERGROUP: 
+///  ENDPREDICATE: 'y>0'
+///  OUTPUTPA: 
+///  STARTPREDICATE: 'x>0'
+///  ID: 
+///  PREDICATE: 
+///  ATTR: 
+///  HEARTBEATRATE: 
+///  DEBUG: 
+///  DUMPATVALUECOUNT: 
+
+
+#PARSER PQL
+
+#DROPALLSOURCES
+#DROPALLQUERIES
+
+#METADATA TimeInterval
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/coalesce/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+
+output = COALESCE({AGGREGATIONS=[['AVG', 'x', 'avg']], ENDPREDICATE='y>0', STARTPREDICATE='x>0'}, input0)

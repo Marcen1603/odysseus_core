@@ -1,0 +1,23 @@
+///OdysseusScript
+#PARSER PQL
+#ADDQUERY
+wind = ACCESS({
+	source='wind', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '${BUNDLE-ROOT}\testdaten\distinct\input0.csv'],
+		['csv.delimiter', ';'],
+		['csv.trim', 'true']
+	], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['speed', 'INTEGER'], 
+		['direction', 'STRING'], 
+		['name', 'STRING'],
+		['location', 'INTEGER']
+]})
+window_wind = window({size = [5, 'SECONDS'], slide = [5, 'SECONDS'], type = 'time'}, wind)
+result = DISTINCT(window_wind)
