@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
@@ -29,6 +30,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -150,7 +152,6 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 
 		instance = this;
 
-		addLoggerToConsole();
 	}
 
 	@Override
@@ -230,61 +231,12 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 			}
 		}
 	}
+	
+	
 
 	private String determineStatusManagerExecutorInfo() {
 		return executor.getCurrentSchedulerID(OdysseusRCPPlugIn.getActiveSession()) + " ("
 				+ executor.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn.getActiveSession()) + ") ";
 	}
 
-	private void addLoggerToConsole() {
-
-		final String CONSOLE_NAME = "OdysseusConsole";
-
-		MessageConsole myConsole = findConsole(CONSOLE_NAME);
-		OutputStream outStream = myConsole.newMessageStream();
-		String sysReDir = System.getProperty("sysredirect", "false");
-		if (Boolean.parseBoolean(sysReDir)) {
-			if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysOut", "true"))) {
-				System.setOut(new PrintStream(outStream));
-			}
-			if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysErr", "true"))) {
-				System.setErr(new PrintStream(outStream));
-			}
-		}
-
-		addAppender(outStream, CONSOLE_NAME);
-	}
-
-	void addAppender(final OutputStream outputStream, final String outputStreamName) {
-		final LoggerContext context = LoggerContext.getContext(false);
-		final Configuration config = context.getConfiguration();
-		final PatternLayout layout = PatternLayout.createDefaultLayout(config);
-		final Appender appender = OutputStreamAppender.createAppender(layout, null, outputStream, outputStreamName,
-				false, true);
-		appender.start();
-		config.addAppender(appender);
-		updateLoggers(appender, config);
-	}
-
-	private void updateLoggers(final Appender appender, final Configuration config) {
-		final Level level = null;
-		final Filter filter = null;
-		for (final LoggerConfig loggerConfig : config.getLoggers().values()) {
-			loggerConfig.addAppender(appender, level, filter);
-		}
-		config.getRootLogger().addAppender(appender, level, filter);
-	}
-
-	private MessageConsole findConsole(String name) {
-		ConsolePlugin plugin = ConsolePlugin.getDefault();
-		IConsoleManager conMan = plugin.getConsoleManager();
-		IConsole[] existing = conMan.getConsoles();
-		for (int i = 0; i < existing.length; i++)
-			if (name.equals(existing[i].getName()))
-				return (MessageConsole) existing[i];
-		// no console found, so create a new one
-		MessageConsole myConsole = new MessageConsole(name, null);
-		conMan.addConsoles(new IConsole[] { myConsole });
-		return myConsole;
-	}
 }
