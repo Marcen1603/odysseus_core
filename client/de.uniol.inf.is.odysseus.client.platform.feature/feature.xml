@@ -31,10 +31,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
-   <url>
-      
-   </url>
-
    <includes
          id="org.eclipse.platform"
          version="0.0.0"/>
@@ -62,13 +58,6 @@ limitations under the License.
    <includes
          id="org.eclipse.emf.common"
          version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.client.starter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.config"
