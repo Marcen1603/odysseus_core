@@ -29,9 +29,13 @@
 			<modules>
 				<module>odysseus_dev</module>
 				<module>releng/de.uniol.inf.is.odysseus.update</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>test</id>
+			<modules>
 				<module>test</module>
 			</modules>
-
 		</profile>
 	</profiles>
 </project>
