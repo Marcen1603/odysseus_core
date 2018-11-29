@@ -27,7 +27,6 @@
 		<module> de.uniol.inf.is.odysseus.security</module>
 		<module> de.uniol.inf.is.odysseus.security.feature</module>
 		<module> de.uniol.inf.is.odysseus.server.feature</module>
-		<module> de.uniol.inf.is.odysseus.server.starter</module>
 		<module> de.uniol.inf.is.odysseus.updater</module>
 		<module> executor.standardexecutor</module>
 		<module> fragmention.base</module>
