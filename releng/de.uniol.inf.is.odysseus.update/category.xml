@@ -84,9 +84,6 @@
 	<feature id="de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature">
 		<category name="client"/>
 	</feature>
-	<feature id="de.uniol.inf.is.odysseus.test.core.feature">
-		<category name="test"/>
-	</feature>
 	<feature id="de.uniol.inf.is.odysseus.server.feature">
 		<category name="server"/>
 	</feature>
@@ -99,7 +96,6 @@
 	<feature id="de.uniol.inf.is.odysseus.wrapper.json.feature">
 		<category name="wrapper"/>
 	</feature>
-	<category-def name="test" label="test"/>
 	<category-def name="wrapper" label="wrapper"/>
 	<category-def name="odysseus_core" label="odysseus_core"/>
 	<category-def name="client" label="client">
