@@ -12,8 +12,6 @@
 	</parent>
 
 	<modules>
-		<module>test.core</module>
-		<module>test.core.feature</module>
 		<module>de.uniol.inf.is.odysseus.test.component.keyvalue</module>
 		<module>de.uniol.inf.is.odysseus.test.component.keyvalue.feature</module>
 		<module>de.uniol.inf.is.odysseus.test.component.operator</module>
