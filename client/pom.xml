@@ -45,9 +45,7 @@
 		<module>rcp.dashboard.part.graphics</module>
 		<module>rcp.editor.graph</module>
 		<module>rcp.editor.text</module>
-		<module>rcp.editor.text.cql</module>
 		<module>rcp.editor.text.pql</module>
-		<module>rcp.editor.text.sase</module>
 		<module>rcp.viewer</module>
 		<module>rcp.viewer.stream.chart</module>
 		<module>rcp.viewer.stream.table</module>
