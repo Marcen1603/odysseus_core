@@ -39,10 +39,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="org.json.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.mihalis.opal.feature"
          version="0.0.0"/>
 
