@@ -5,7 +5,7 @@
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-    This feature allows to communicate via REST
+      This feature allows to communicate via REST
    </description>
 
    <copyright>
@@ -30,15 +30,12 @@ limitations under the License.
          id="de.uniol.inf.is.odysseus.keyvalue.feature"
          version="0.0.0"/>
 
-   <plugin
-         id="de.uniol.inf.is.odysseus.rest"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <includes
+         id="org.restlet.osgi.2.3.12.feature"
+         version="0.0.0"/>
 
    <plugin
-         id="restlet-osgi-2.3.1"
+         id="de.uniol.inf.is.odysseus.rest"
          download-size="0"
          install-size="0"
          version="0.0.0"

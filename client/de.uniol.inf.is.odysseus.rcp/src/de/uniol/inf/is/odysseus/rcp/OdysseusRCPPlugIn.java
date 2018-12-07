@@ -20,7 +20,6 @@ import java.io.FilenameFilter;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
