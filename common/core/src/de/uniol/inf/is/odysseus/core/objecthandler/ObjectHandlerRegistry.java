@@ -41,7 +41,7 @@ public class ObjectHandlerRegistry{
 		objectHandlers.remove(handler.getName().toLowerCase());
 	}
 	
-	public static IObjectHandler<?> get(String name){
+	private static IObjectHandler<?> get(String name){
 		return objectHandlers.get(name.toLowerCase());
 	}
 }

@@ -16,5 +16,5 @@
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rcp">
    <implementation class="de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn"/>
-   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindExecutor"/>
 </scr:component>
