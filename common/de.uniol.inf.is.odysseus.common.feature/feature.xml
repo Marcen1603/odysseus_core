@@ -44,6 +44,10 @@ limitations under the License.
          id="org.apache.commons.lang3.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.json.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.core"
          download-size="0"
@@ -164,13 +168,6 @@ limitations under the License.
 
    <plugin
          id="org.apache.commons.codec"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.json"
          download-size="0"
          install-size="0"
          version="0.0.0"
