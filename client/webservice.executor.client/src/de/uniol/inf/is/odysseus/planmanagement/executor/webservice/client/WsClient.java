@@ -113,7 +113,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	InfoService INFO = InfoServiceFactory.getInfoService(WsClient.class);
 
-	final static SDFSchema EMPTY_SCHEMA = SDFSchemaFactory.createNewTupleSchema("NOT AVAILABLE", new SDFAttribute("","",SDFDatatype.OBJECT),new SDFAttribute("","",SDFDatatype.OBJECT));
+	final static SDFSchema EMPTY_SCHEMA = SDFSchemaFactory.createNewTupleSchema("NOT AVAILABLE",
+			new SDFAttribute("", "", SDFDatatype.OBJECT), new SDFAttribute("", "", SDFDatatype.OBJECT));
 
 	// TODO: When connecting to multiple servers ... query id is not unique
 	// anymore --> need server in gui
@@ -177,11 +178,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
-		List<IUpdateEventListener> l = updateEventListener.get(type);
-		if (l != null) {
-			l.remove(listener);
-			if (l.isEmpty()) {
-				updateEventListener.get(session.getConnectionName()).remove(l);
+		if (session != null) {
+			List<IUpdateEventListener> l = updateEventListener.get(type);
+			if (l != null) {
+				l.remove(listener);
+				if (l.isEmpty()) {
+					updateEventListener.get(session.getConnectionName()).remove(l);
+				}
 			}
 		}
 	}
@@ -199,8 +202,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 * connect
 	 *
 	 * @param connectString
-	 *            String: expected format is
-	 *            wsdlLocation;serviceNamespace;service
+	 *            String: expected format is wsdlLocation;serviceNamespace;service
 	 */
 	@Override
 	public boolean connect(String connectString) {
@@ -275,7 +277,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		throw new RuntimeException("Login with username and password cannot be used in web service. Must use login(String username, byte[] password, String tenant, String connectString) ");
+		throw new RuntimeException(
+				"Login with username and password cannot be used in web service. Must use login(String username, byte[] password, String tenant, String connectString) ");
 	}
 
 	@Override
@@ -598,20 +601,20 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			return response;
 		} catch (InvalidUserDataException_Exception | CreateQueryException_Exception e) {
 			throw new PlanManagementException(e);
-		}finally {
+		} finally {
 			fireUpdateEvent(IUpdateEventListener.QUERY);
 			// Query could create schema information ... fire events
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);			
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 		}
 	}
 
 	@Override
 	public void runCommand(String commandExpression, ISession caller) {
 		assureLogin(caller);
-		try{
+		try {
 			getWebserviceServer(caller.getConnectionName()).runCommand(caller.getToken(), commandExpression);
 			fireAllUpdateEvents();
-		}catch (InvalidUserDataException_Exception e) {
+		} catch (InvalidUserDataException_Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -657,8 +660,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
 		query.setUser(caller);
-		if (info.getName() != null){
-			query.setName(Resource.specialCreateResource(info.getName().toString(),caller.getUser()));
+		if (info.getName() != null) {
+			query.setName(Resource.specialCreateResource(info.getName().toString(), caller.getUser()));
 		}
 		return query;
 	}
@@ -701,16 +704,18 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	private Optional<ClientReceiver> createClientReceiver(IExecutor exec, int queryId, ISession caller) {
 		assureLogin(caller);
 
-		if (receivers.get(caller.getConnectionName()).containsKey(queryId)) {
+		if (receivers.get(caller.getConnectionName()) != null
+				&& receivers.get(caller.getConnectionName()).containsKey(queryId)) {
 			return Optional.of(receivers.get(caller.getConnectionName()).get(queryId));
 		}
 
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
 		String type = outputSchema.getType().getSimpleName();
-		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.instance.getStreamObjectDataHandler(type, outputSchema);
+		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.instance.getStreamObjectDataHandler(type,
+				outputSchema);
 
-		if (dataHandler == null){
-			throw new RuntimeException("Cannot find data handler for type "+type);
+		if (dataHandler == null) {
+			throw new RuntimeException("Cannot find data handler for type " + type);
 		}
 
 		// TODO: Handle generic metadata ...
@@ -734,7 +739,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 				IAccessPattern.PUSH, options, dataHandler);
 		// Must be done to add the transport to the protocoll ... seems not
 		// really intuitive ...
-		ITransportHandler th = TransportHandlerRegistry.instance.getInstance(NonBlockingTcpClientHandler.NAME, h, options);
+		ITransportHandler th = TransportHandlerRegistry.instance.getInstance(NonBlockingTcpClientHandler.NAME, h,
+				options);
 		h.setTransportHandler(th);
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.setOutputSchema(outputSchema);
@@ -821,12 +827,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			attributes.add(createAttributeFromInformation(attrInfo));
 		}
 
-		try{
+		try {
 			// TODO: This will not work in OSGi if type class is in different bundle!
-			//Class<?> typeClass = Class.forName(info.getTypeClass());
-			Class<?> typeClass = BundleClassLoading.findClass(info.getTypeClass(), Activator.getBundleContext().getBundle());
+			// Class<?> typeClass = Class.forName(info.getTypeClass());
+			Class<?> typeClass = BundleClassLoading.findClass(info.getTypeClass(),
+					Activator.getBundleContext().getBundle());
 			return SDFSchemaFactory.createNewSchema(uri, typeClass, attributes);
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return SDFSchemaFactory.createNewTupleSchema(uri, attributes);
@@ -836,8 +843,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		// TODO Extend SdfAttributeInformation
 		SDFDatatype dt = createDatatypeFromInformation(info.getDatatype());
 
-		return new SDFAttribute(info.getSourcename(), info.getAttributename(), SDFDatatype.createTypeWithSubSchema(
-				dt, dt.getSubType(), createSchemaFromInformation(info.getSubschema())));
+		return new SDFAttribute(info.getSourcename(), info.getAttributename(), SDFDatatype.createTypeWithSubSchema(dt,
+				dt.getSubType(), createSchemaFromInformation(info.getSubschema())));
 	}
 
 	private SDFDatatype createDatatypeFromInformation(SdfDatatypeInformation info) {
@@ -924,9 +931,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 				for (ViewInformationWS viws : l) {
 					ViewInformation vi = new ViewInformation();
 					vi.setName(toResource(viws.getName()));
-					try{
+					try {
 						vi.setOutputSchema(toSDFSchema(viws.getSchema()));
-					}catch(ClassNotFoundException e){
+					} catch (ClassNotFoundException e) {
 						// TODO: Should there be an output??
 						vi.setOutputSchema(EMPTY_SCHEMA);
 					}
@@ -1191,12 +1198,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}
 
 		// Will not work in OSGi environments!
-		//Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());
+		// Class<? extends IStreamObject> type = (Class<? extends IStreamObject>)
+		// Class.forName(si.getTypeClass());
 		@SuppressWarnings({ "rawtypes" })
-		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) BundleClassLoading.findClass(si.getTypeClass(), Activator.getBundleContext().getBundle());
+		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) BundleClassLoading
+				.findClass(si.getTypeClass(), Activator.getBundleContext().getBundle());
 
-		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), type,
-				attributes);
+		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), type, attributes);
 		return schema;
 	}
 
@@ -1258,10 +1266,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
+	public Set<String> getRegisteredAggregateFunctions(
+			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
 		return getRegisteredAggregateFunctions(datamodel.getName(), caller);
 	}
-	
+
 	@Override
 	public Set<String> getRegisteredWrapperNames(ISession caller) {
 		assureLogin(caller);
@@ -1358,13 +1367,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public Set<String> getMetadataNames(ISession session) {
-		if( session == null ) {
+		if (session == null) {
 			return null;
 		}
 
 		assureLogin(session);
 		WebserviceServer webserviceServer = getWebserviceServer(session.getConnectionName());
-		if( webserviceServer != null ) {
+		if (webserviceServer != null) {
 			try {
 				StringListResponse names = webserviceServer.getMetadataNames(session.getToken());
 				return new HashSet<String>(names.getResponseValue());

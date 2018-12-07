@@ -16,6 +16,10 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="com.fasterxml.jackson.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
          download-size="0"

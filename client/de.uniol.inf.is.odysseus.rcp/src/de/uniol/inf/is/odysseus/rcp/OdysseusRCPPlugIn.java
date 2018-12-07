@@ -17,26 +17,10 @@ package de.uniol.inf.is.odysseus.rcp;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.Filter;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.OutputStreamAppender;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
@@ -44,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventListener {
