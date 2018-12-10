@@ -49,28 +49,25 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 
 public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends AbstractPartitionedWindowTIPO<T> {
 
-	final private IPredicate<? super T> start;
-	final private IPredicate<? super T> end;
-	final private long maxWindowTime;
-	final private boolean sameStarttime;
-	final private Map<Object, Boolean> openedWindow = new HashMap<>();
-	final private boolean keepEndElement;
+	private final IPredicate<? super T> start;
+	private final IPredicate<? super T> end;
+	private final long maxWindowTime;
+	private final boolean sameStarttime;
+	private final Map<Object, Boolean> openedWindow = new HashMap<>();
+	private final boolean keepEndElement;
 
 	@SuppressWarnings("unchecked")
 	public PredicateWindowTIPO(AbstractWindowAO windowao) {
 		super(windowao);
-		IPredicate<?> start = windowao.getStartCondition();
-		IPredicate<?> end = windowao.getEndCondition();
-		TimeValueItem maxWindowTime = windowao.getWindowSize();
 
-		this.start = (IPredicate<? super T>) start.clone();
-		if (end != null) {
-			this.end = (IPredicate<? super T>) end.clone();
+		this.start = (IPredicate<? super T>) windowao.getStartCondition().clone();
+		if (windowao.getEndCondition() != null) {
+			this.end = (IPredicate<? super T>) windowao.getEndCondition().clone();
 		} else {
 			this.end = null;
 		}
-		if (maxWindowTime != null) {
-			this.maxWindowTime = windowao.getBaseTimeUnit().convert(maxWindowTime.getTime(), maxWindowTime.getUnit());
+		if (windowao.getWindowSize() != null) {
+			this.maxWindowTime = windowao.getBaseTimeUnit().convert(windowao.getWindowSize().getTime(), windowao.getWindowSize().getUnit());
 		} else {
 			this.maxWindowTime = 0;
 		}
@@ -83,27 +80,25 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open(){
 		openedWindow.clear();
 		super.process_open();
 	}
 
 	@Override
 	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {
+		initBuffer(bufferId);
 		// Test if elements need to be written
-		boolean startEval = start.evaluate(object);
-		Boolean opened = openedWindow.get(bufferId);
-		if (opened == null) {
-			openedWindow.put(bufferId, false);
-		}
+		boolean startEval = evaluateStartCondition(object,buffer);
 		if (openedWindow.get(bufferId)) {
 			// Two cases: end is set --> use end predicate
 			// end is not set --> use negated start predicate
 			// maximum window size reached
 
-			if ((end != null && end.evaluate(object)) || (end == null && !startEval)
-					|| (maxWindowTime > 0 && PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
-							.afterOrEquals(object.getMetadata().getStart()))) {
+			if ((end != null && evaluateEndCondition(object,buffer)) 
+					|| (end == null && !startEval)
+					|| (maxWindowTime > 0 && !buffer.isEmpty() && 
+						PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).afterOrEquals(object.getMetadata().getStart()))) {
 				if (keepEndElement) {
 					appendData(object, bufferId, buffer);
 				}
@@ -124,20 +119,35 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 	}
 
+	private void initBuffer(Object bufferId) {
+		Boolean opened = openedWindow.get(bufferId);
+		if (opened == null) {
+			openedWindow.put(bufferId, false);
+		}
+	}
+
+	protected Boolean evaluateStartCondition(T object, List<T> buffer) {
+		return start.evaluate(object);
+	}
+
+	protected Boolean evaluateEndCondition(T object, List<T> buffer) {
+		return end.evaluate(object);
+	}
+	
 	private void appendData(T object, Object bufferId, List<T> buffer) {
 		openedWindow.put(bufferId, true);
 		buffer.add(object);
 	}
 
 	private void produceData(PointInTime endTimestamp, Object bufferId, List<T> buffer) {
-		PointInTime start = null;
-		if (sameStarttime && buffer.size() > 0) {
-			start = buffer.get(0).getMetadata().getStart();
+		PointInTime startTS = null;
+		if (sameStarttime && !buffer.isEmpty()) {
+			startTS = buffer.get(0).getMetadata().getStart();
 		}
 		while (!buffer.isEmpty()) {
 			T toTransfer = buffer.remove(0);
-			if (start != null) {
-				toTransfer.getMetadata().setStart(new PointInTime(start));
+			if (startTS != null) {
+				toTransfer.getMetadata().setStart(new PointInTime(startTS));
 			}
 			// We can produce tuple with no validity --> Do not send them
 			if (endTimestamp.after(toTransfer.getMetadata().getStart())) {
