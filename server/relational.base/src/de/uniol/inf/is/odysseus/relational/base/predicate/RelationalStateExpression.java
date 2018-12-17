@@ -27,7 +27,7 @@ public class RelationalStateExpression<T extends IMetaAttribute> extends Relatio
 			throw new IllegalArgumentException("State is currently not supported for multiple inputs");
 		}
 		SDFSchema schema = schemata.get(0);
-		if (curAttribute.getNumber() > 0) {
+		if (curAttribute.getNumber() >= 0) {
 			int pos = curAttribute.getNumber();
 			if (pos > maxHistoryElements) {
 				maxHistoryElements = pos + 1;
@@ -49,10 +49,13 @@ public class RelationalStateExpression<T extends IMetaAttribute> extends Relatio
 	
 	@Override
 	public Tuple<T> determineObjectForExpression(Tuple<T> object,
-			List<Tuple<T>> lastObjects, int j) {
+			List<Tuple<T>> history, int j) {
 		Tuple<T> obj = null;
-		if (lastObjects.size() > this.variables[j].getObjectPosToUse()) {
-			obj = lastObjects.get(this.variables[j].getObjectPosToUse());
+		// return current object, if 0 should be used, else get from history
+		if (this.variables[j].getObjectPosToUse() == -1) {
+			obj = object;
+		}else if (history.size() > this.variables[j].getObjectPosToUse()) {
+			obj = history.get(this.variables[j].getObjectPosToUse());
 		}
 		return obj;
 	}

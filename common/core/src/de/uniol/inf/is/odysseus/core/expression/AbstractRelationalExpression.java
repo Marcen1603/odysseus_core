@@ -93,11 +93,11 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 			}
 			// Attribute is part of payload
 			if (index >= 0) {
-				return new VarHelper(index, (-1) * (i + 1), 0);
+				return new VarHelper(index, (-1) * (i + 1), -1);
 			} else { // Attribute is (potentially) part of meta data;
 				Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
 				if (pos != null) {
-					return new VarHelper(pos.getE2(), pos.getE1(), 0);
+					return new VarHelper(pos.getE2(), pos.getE1(), -1);
 				}
 			}
 			if (curAttribute.getAttributeName().equalsIgnoreCase(SDFAttribute.THIS)) {

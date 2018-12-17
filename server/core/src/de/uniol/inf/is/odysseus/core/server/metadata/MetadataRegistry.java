@@ -61,7 +61,7 @@ public class MetadataRegistry {
 
 	private static Map<String, IMetaAttribute> byName = new HashMap<>();
 
-	public static void addMetadataType(IMetaAttribute type) {
+	public void addMetadataType(IMetaAttribute type) {
 
 		logger.trace("New Metadatatype registered " + type.getClass());
 
