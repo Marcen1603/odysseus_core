@@ -11,20 +11,23 @@ public class ReplacementRegistry {
 	private static List<String> keys = new LinkedList<>();
 	
 	static{
-		addReplacement(new LinearReplacement());
-		addReplacement(new LastElementReplacement<>());
-		addReplacement(new MinMaxReplacement<>(true));
-		addReplacement(new MinMaxReplacement<>(false));
+		addReplacement2(new LinearReplacement());
+		addReplacement2(new LastElementReplacement<>());
+		addReplacement2(new MinMaxReplacement<>(true));
+		addReplacement2(new MinMaxReplacement<>(false));
 	}
-	
-	public static void addReplacement(IReplacement<?> replacement){
+
+	public static void addReplacement2(IReplacement<?> replacement){
 		if (!reg.containsKey(replacement.getName().toUpperCase())){
 			reg.put(replacement.getName().toUpperCase(), replacement);
 			keys.add(replacement.getName().toUpperCase());
 		}
 	}
+	public void addReplacement(IReplacement<?> replacement){
+		addReplacement2(replacement);
+	}
 	
-	public static void removeReplacement(IReplacement<?> replacement){
+	public void removeReplacement(IReplacement<?> replacement){
 		if (reg.containsKey(replacement.getName().toUpperCase())){
 			reg.remove(replacement.getName().toUpperCase());
 			keys.remove(replacement.getName().toUpperCase());

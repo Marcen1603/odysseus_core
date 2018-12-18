@@ -35,12 +35,12 @@ public class ConsoleCommandView extends ViewPart {
 	private Combo inputCombo;
 
 	// called by OSGi-DS
-	public static void bindCommandProvider(CommandProvider serv) {
+	public void bindCommandProvider(CommandProvider serv) {
 		COMMAND_PROVIDERS.add(serv);
 	}
 
 	// called by OSGi-DS
-	public static void unbindCommandProvider(CommandProvider serv) {
+	public void unbindCommandProvider(CommandProvider serv) {
 		COMMAND_PROVIDERS.remove(serv);
 	}
 

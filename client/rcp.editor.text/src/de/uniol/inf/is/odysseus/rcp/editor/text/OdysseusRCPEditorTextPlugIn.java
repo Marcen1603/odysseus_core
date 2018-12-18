@@ -107,11 +107,11 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		return executor;
 	}
 
-	public static void bindCompletionProvider(IEditorLanguagePropertiesProvider ecp) {
+	public void bindCompletionProvider(IEditorLanguagePropertiesProvider ecp) {
 		completionproviders.put(ecp.getSupportedParser(), ecp);
 	}
 
-	public static void unbindCompletionProvider(IEditorLanguagePropertiesProvider ecp) {
+	public void unbindCompletionProvider(IEditorLanguagePropertiesProvider ecp) {
 		completionproviders.remove(ecp.getSupportedParser());
 	}
 

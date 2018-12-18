@@ -207,7 +207,7 @@ public class MetadataRegistry {
 		}
 	}
 
-	public static void removeMetadataType(IMetaAttribute type) {
+	public void removeMetadataType(IMetaAttribute type) {
 		SortedSet<String> typeSet = toStringSet(type.getClasses());
 		synchronized (combinedMetadataTypes) {
 			combinedMetadataTypes.remove(typeSet);

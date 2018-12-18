@@ -20,12 +20,12 @@ public class ReplacementProviderManager {
 	private static final Collection<IReplacementProvider> PROVIDERS = Lists.newArrayList();
 
 	// called by OSGi-DS
-	public static void bindReplacementProvider( IReplacementProvider provider ) {
+	public void bindReplacementProvider( IReplacementProvider provider ) {
 		PROVIDERS.add(provider);
 	}
 
 	// called by OSGi-DS
-	public static void unbindReplacementProvider( IReplacementProvider provider ) {
+	public void unbindReplacementProvider( IReplacementProvider provider ) {
 		PROVIDERS.remove(provider);
 	}
 	

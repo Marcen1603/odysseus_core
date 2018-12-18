@@ -16,12 +16,12 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		instance = this;
 		
-		InfoService.addInfoServiceListener(INFO_SERVICE_LISTENER);
+		InfoService.addInfoServiceListener2(INFO_SERVICE_LISTENER);
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		InfoService.removeInfoSeriveListener(INFO_SERVICE_LISTENER);
+		InfoService.removeInfoSeriveListener2(INFO_SERVICE_LISTENER);
 		
 		instance = null;
 		super.stop(context);

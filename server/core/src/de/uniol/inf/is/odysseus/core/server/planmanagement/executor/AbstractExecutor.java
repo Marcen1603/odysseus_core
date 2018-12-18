@@ -371,7 +371,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	// called by OSGi-DS
-	public static void bindPreTransformationHandler(IPreTransformationHandler serv) {
+	public void bindPreTransformationHandler(IPreTransformationHandler serv) {
 		// Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()),
 			//	"preTransformationHandler's name must not be null or empty!");
 		// Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()),
@@ -384,7 +384,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	// called by OSGi-DS
-	public static void unbindPreTransformationHandler(IPreTransformationHandler serv) {
+	public void unbindPreTransformationHandler(IPreTransformationHandler serv) {
 		if (preTransformationHandlerMap.containsKey(serv.getName().toUpperCase())) {
 			preTransformationHandlerMap.remove(serv.getName().toUpperCase());
 
@@ -432,11 +432,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return queryDistributor;
 	}
 
-	public static void bindRecoveryExecutor(IRecoveryExecutor recExec) {
+	public void bindRecoveryExecutor(IRecoveryExecutor recExec) {
 		recoveryExecutors.add(recExec);
 	}
 
-	public static void unbindRecoveryExecutor(IRecoveryExecutor recExec) {
+	public void unbindRecoveryExecutor(IRecoveryExecutor recExec) {
 		recoveryExecutors.remove(recExec);
 	}
 
