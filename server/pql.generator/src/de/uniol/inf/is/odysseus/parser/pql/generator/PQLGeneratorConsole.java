@@ -18,24 +18,24 @@ public class PQLGeneratorConsole implements CommandProvider {
 	private static ISession currentSession;
 
 	// called by OSGi-DS
-	public static void bindPQLGenerator(IPQLGenerator serv) {
+	public void bindPQLGenerator(IPQLGenerator serv) {
 		pqlGenerator = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindPQLGenerator(IPQLGenerator serv) {
+	public void unbindPQLGenerator(IPQLGenerator serv) {
 		if (pqlGenerator == serv) {
 			pqlGenerator = null;
 		}
 	}
 	
 	// called by OSGi-DS
-	public static void bindExecutor(IExecutor serv) {
+	public void bindExecutor(IExecutor serv) {
 		executor = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindExecutor(IExecutor serv) {
+	public void unbindExecutor(IExecutor serv) {
 		if (executor == serv) {
 			executor = null;
 		}
