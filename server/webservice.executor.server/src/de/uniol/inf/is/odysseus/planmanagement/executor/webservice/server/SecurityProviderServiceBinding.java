@@ -10,11 +10,11 @@ public class SecurityProviderServiceBinding {
 		return provider;
 	}
 	
-	public static void bindSecurityProvider(ISecurityProvider secProvider) {
+	public void bindSecurityProvider(ISecurityProvider secProvider) {
 		provider = secProvider;
 	}
 	
-	public static void unbindSecurityProvider(ISecurityProvider secProvider) {
+	public void unbindSecurityProvider(ISecurityProvider secProvider) {
 		provider = null;
 	}
 
