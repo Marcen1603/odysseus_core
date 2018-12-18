@@ -65,8 +65,8 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 		}
 
 		// TAccessAOGenericRule handles GenericPush and GenericPull-Wrapper
-		WrapperRegistry.registerWrapper(Constants.GENERIC_PUSH);
-		WrapperRegistry.registerWrapper(Constants.GENERIC_PULL);
+		WrapperRegistry.registerWrapper2(Constants.GENERIC_PUSH);
+		WrapperRegistry.registerWrapper2(Constants.GENERIC_PULL);
 
 		context.addBundleListener(this);
 		final Bundle[] b = context.getBundles();
