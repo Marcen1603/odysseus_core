@@ -8,13 +8,13 @@ public class CommandProviderBinder {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CommandProviderBinder.class);
 	
-	public static void bindCommandProvider( CommandProvider provider ) {
+	public void bindCommandProvider( CommandProvider provider ) {
 		LOG.debug("Binding command provider {}", provider);
 		
 		ConsoleCommandExecutorPlugIn.getCommandProviderRegistry().register(provider);
 	}
 	
-	public static void unbindCommandProvider( CommandProvider provider ) {
+	public void unbindCommandProvider( CommandProvider provider ) {
 		LOG.debug("Unbinding command provider {}", provider);
 		
 		ConsoleCommandExecutorPlugIn.getCommandProviderRegistry().unregister(provider);

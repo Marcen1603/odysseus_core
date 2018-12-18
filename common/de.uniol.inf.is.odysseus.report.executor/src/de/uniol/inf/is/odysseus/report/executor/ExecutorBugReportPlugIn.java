@@ -10,12 +10,12 @@ public class ExecutorBugReportPlugIn implements BundleActivator {
 	private static IExecutor serverExecutor;
 
 	// called by OSGi-DS
-	public static void bindExecutor(IExecutor serv) {
+	public void bindExecutor(IExecutor serv) {
 		serverExecutor = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindExecutor(IExecutor serv) {
+	public void unbindExecutor(IExecutor serv) {
 		if (serverExecutor == serv) {
 			serverExecutor = null;
 		}

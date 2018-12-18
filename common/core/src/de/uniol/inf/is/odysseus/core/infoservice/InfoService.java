@@ -13,12 +13,20 @@ public class InfoService {
 		this.source = source;
 	}
 	
-	public static void addInfoServiceListener(IInfoServiceListener listener){
+	public static void addInfoServiceListener2(IInfoServiceListener listener){
 		infoServiceListener.add(listener);
 	}
+	
+	public void addInfoServiceListener(IInfoServiceListener listener){
+		addInfoServiceListener2(listener);
+	}
 
-	public static void removeInfoSeriveListener(IInfoServiceListener listener){
+	public static void removeInfoSeriveListener2(IInfoServiceListener listener){
 		infoServiceListener.remove(listener);
+	}	
+	
+	public void removeInfoSeriveListener(IInfoServiceListener listener){
+		removeInfoSeriveListener2(listener);
 	}
 	
 	public void info(String message){

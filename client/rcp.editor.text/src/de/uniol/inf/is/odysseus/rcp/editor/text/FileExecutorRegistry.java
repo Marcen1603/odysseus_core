@@ -8,11 +8,10 @@ public class FileExecutorRegistry {
 
 	
 	static {
-		registerFileExecutor(new OdysseusScriptFileExecutor());
+		registerFileExecutor2(new OdysseusScriptFileExecutor());
 	}
 	
-	
-	public static void registerFileExecutor(IFileExecutor fileExecutor) {
+	public static void registerFileExecutor2(IFileExecutor fileExecutor) {
 		if (fileExecutor.getFileExtension() == null) {
 			throw new IllegalArgumentException("file extension is null");
 		} else if (fileExecutor.getFileExtension().length() == 0) {
@@ -23,8 +22,12 @@ public class FileExecutorRegistry {
 		fileExecutors.put(fileExecutor.getFileExtension().toLowerCase(), fileExecutor);
 	}
 	
+	public void registerFileExecutor(IFileExecutor fileExecutor) {
+		registerFileExecutor2(fileExecutor);
+	}
 	
-	public static void unregisterFileExecutor(IFileExecutor fileExecutor) {
+	
+	public void unregisterFileExecutor(IFileExecutor fileExecutor) {
 		if (fileExecutor.getFileExtension() == null) {
 			throw new IllegalArgumentException("file extension is null");
 		} else if (fileExecutor.getFileExtension().length() == 0) {
