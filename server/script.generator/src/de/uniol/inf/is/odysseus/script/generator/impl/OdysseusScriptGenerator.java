@@ -15,12 +15,12 @@ public class OdysseusScriptGenerator implements IOdysseusScriptGenerator {
 	private static IPQLGenerator pqlGenerator;
 	
 	// called by OSGi
-	public static void bindPQLGenerator(IPQLGenerator serv) {
+	public void bindPQLGenerator(IPQLGenerator serv) {
 		pqlGenerator = serv;
 	}
 
 	// called by OSGi
-	public static void unbindPQLGenerator(IPQLGenerator serv) {
+	public void unbindPQLGenerator(IPQLGenerator serv) {
 		if (pqlGenerator == serv) {
 			pqlGenerator = serv;
 		}

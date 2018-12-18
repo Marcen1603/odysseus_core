@@ -6,12 +6,12 @@ import de.uniol.inf.is.odysseus.report.activator.ReportPlugIn;
 public class ReportProviderBinder {
 
 	// called by OSGi-DS
-	public static void bindReportProvider(IReportProvider serv) {
+	public void bindReportProvider(IReportProvider serv) {
 		ReportPlugIn.getReportProviderRegistry().addReportProvider(serv);
 	}
 
 	// called by OSGi-DS
-	public static void unbindReportProvider(IReportProvider serv) {
+	public void unbindReportProvider(IReportProvider serv) {
 		ReportPlugIn.getReportProviderRegistry().removeReportProvider(serv);
 	}
 }

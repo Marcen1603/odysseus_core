@@ -27,7 +27,7 @@ public class TransformerRegistry {
 
 	static private Map<String, ITransformer<?,?>> transformer = new HashMap<String, ITransformer<?,?>>();
 	
-	public static void register(ITransformer<?,?> handler){
+	public void register(ITransformer<?,?> handler){
 		logger.debug("Register Transformer "+handler.getName());
 		if (transformer.containsKey(handler.getName().toLowerCase())){
 			logger.error("Input Handler with name "+handler.getName()+" is already registered!");
@@ -36,7 +36,7 @@ public class TransformerRegistry {
 		transformer.put(handler.getName().toLowerCase(),handler);
 	}
 	
-	public static void remove(ITransformer<?,?> handler){
+	public void remove(ITransformer<?,?> handler){
 		logger.debug("Remove Transformer "+handler.getName());
 		transformer.remove(handler.getName().toLowerCase());
 	}

@@ -117,12 +117,12 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	private String currentMacro = null;
 
 	// called by OSGi-DS
-	public static void bindReportGenerator(IReportGenerator serv) {
+	public void bindReportGenerator(IReportGenerator serv) {
 		reportGenerator = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindReportGenerator(IReportGenerator serv) {
+	public void unbindReportGenerator(IReportGenerator serv) {
 		if (reportGenerator == serv) {
 			reportGenerator = null;
 		}
