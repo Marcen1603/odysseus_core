@@ -85,6 +85,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		super.process_open();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {
 		initBuffer(bufferId);
@@ -100,7 +101,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 					|| (maxWindowTime > 0 && !buffer.isEmpty() && 
 						PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).afterOrEquals(object.getMetadata().getStart()))) {
 				if (keepEndElement) {
-					appendData(object, bufferId, buffer);
+					// if element is used for start and for end, is must be cloned
+					if (startEval) {
+						appendData((T) object.clone(), bufferId, buffer);
+					}else {
+						appendData(object, bufferId, buffer);
+					}
 				}
 				openedWindow.put(bufferId, false);
 				produceData(object.getMetadata().getStart(), bufferId, buffer);
