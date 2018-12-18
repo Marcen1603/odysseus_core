@@ -8,8 +8,12 @@ public class WrapperRegistry {
 	
 	static List<String> wrapperNames = new ArrayList<String>();
 	
-	public void registerWrapper(String name){
+	public static void registerWrapper2(String name){
 		wrapperNames.add(name.toUpperCase());
+	}
+	
+	public void registerWrapper(String name){
+		registerWrapper2(name);
 	}
 	
 	public void removeWrapper(String name){
