@@ -8,19 +8,19 @@ public class WrapperRegistry {
 	
 	static List<String> wrapperNames = new ArrayList<String>();
 	
-	static public void registerWrapper(String name){
+	public void registerWrapper(String name){
 		wrapperNames.add(name.toUpperCase());
 	}
 	
-	static public void removeWrapper(String name){
+	public void removeWrapper(String name){
 		wrapperNames.remove(name.toUpperCase());
 	}
 	
-	static public List<String> getWrapperNames(){
+	public static List<String> getWrapperNames(){
 		return Collections.unmodifiableList(wrapperNames);
 	}
 	
-	static public boolean containsWrapper(String name){
+	public static boolean containsWrapper(String name){
 		return wrapperNames.contains(name.toUpperCase());
 	}
 
