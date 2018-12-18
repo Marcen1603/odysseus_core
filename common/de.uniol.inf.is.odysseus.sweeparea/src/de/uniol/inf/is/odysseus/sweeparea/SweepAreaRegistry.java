@@ -20,7 +20,7 @@ public class SweepAreaRegistry {
 		logger.trace("Created new SweepAreaRegistry");
 	}
 	
-	static public void register(ISweepArea<?> area) {
+	public void register(ISweepArea<?> area) {
 		try {
 			logger.trace("Register new area " + area.getName());
 			if (!areas.containsKey(area.getName().toLowerCase())) {
@@ -34,17 +34,17 @@ public class SweepAreaRegistry {
 		}
 	}
 
-	static public void remove(ISweepArea<?> area) {
+	public void remove(ISweepArea<?> area) {
 		logger.trace("Remove area " + area.getName());
 		areas.remove(area.getName().toLowerCase());
 	}
 
-	static public ISweepArea<?> getSweepArea(String name)
+	public static ISweepArea<?> getSweepArea(String name)
 			throws InstantiationException, IllegalAccessException {
 		return getSweepArea(name, null);
 	}
 	
-	static public ISweepArea<?> getSweepArea(String name, OptionMap options)
+	public static ISweepArea<?> getSweepArea(String name, OptionMap options)
 			throws InstantiationException, IllegalAccessException {
 		ISweepArea<?> a = areas.get(name.toLowerCase());
 		if (a != null) {
