@@ -6,4 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Automatic-Module-Name: de.uniol.inf.is.odysseus.planmanagement.executor.rest.client
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Service-Component: OSGI-INF/*
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.rest.client;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.client.common
+Bundle-ActivationPolicy: lazy

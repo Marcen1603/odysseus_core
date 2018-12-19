@@ -23,15 +23,12 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * 
- * @author Merlin Wasmann
+ * @author Marco Grawunder
  *
  */
 
 public interface IClientExecutor {
 
-	@Deprecated
-	boolean connect(String connectString);	
-	
 	/**
 	 * Opens a connection (if necessary) and logs a user in and creates a session
 	 * 
@@ -43,7 +40,7 @@ public interface IClientExecutor {
 	 *            The tenant
 	 * @return the session of the logged in user
 	 */
-	ISession login(String username, byte[] password, String tenantname, String connectString);
+	ISession login(String username, byte[] password, String tenantname, String host, int port, String connectionInfo);
 
 	List<SocketAddress> getSocketConnectionInformation(int queryId, ISession caller);	
 	

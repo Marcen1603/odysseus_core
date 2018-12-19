@@ -69,7 +69,7 @@ public class OdysseusCommunicationTest implements Observer {
 		String password = "manager";
 
 		System.out.println("Login to Odysseus ...");
-		String token = RestService.login(loginIp, username, password);
+		String token = RestService.login(loginIp, username, password, "");
 		System.out.println("Login successfull. Token: " + token);
 
 		String query = "#PARSER PQL \n #RUNQUERY \n input = TIMER({PERIOD = 1000, TIMEFROMSTART = true, SOURCE = 'Source'})";

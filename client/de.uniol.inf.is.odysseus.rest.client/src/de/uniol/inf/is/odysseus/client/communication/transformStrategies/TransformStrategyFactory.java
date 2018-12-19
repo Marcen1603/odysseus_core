@@ -38,8 +38,6 @@ public class TransformStrategyFactory {
 			return new EndTimestampTransformStrategy();
 		} else if (dataType.equalsIgnoreCase("timestamp")) {
 			return new TimestampTransformStrategy();
-		} else if (dataType.equalsIgnoreCase("SpatialGeometry")) {
-			return new SpatialGeometryTransformStrategy();
 		} else {
 			return null;
 		}

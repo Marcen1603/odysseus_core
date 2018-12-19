@@ -40,11 +40,11 @@ public class RestService {
      * @return A token which you can use to send requests
      * @throws RestException
      */
-    public static String login(String ip, String username, String password) throws RestException {
+    public static String login(String ip, String username, String password, String tenant) throws RestException {
         String hostURL = getHostURL(ip, SERVICE_PATH_CORE, RESOURCE_PATH_LOGIN);
 
         ClientResource cr = new ClientResource(hostURL);
-        LoginRequestDTO req = new LoginRequestDTO(username, password, "");
+        LoginRequestDTO req = new LoginRequestDTO(username, password, tenant);
 
         try {
             Representation t = cr.post(req);

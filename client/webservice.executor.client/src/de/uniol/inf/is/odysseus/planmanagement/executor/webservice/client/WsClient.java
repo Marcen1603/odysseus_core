@@ -38,7 +38,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.client.common.ClientSession;
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
+import de.uniol.inf.is.odysseus.client.common.ClientUser;
 import de.uniol.inf.is.odysseus.core.Activator;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -82,7 +84,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.util.BundleClassLoading;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientSession;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientUser;
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformation;
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse;
 import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
@@ -204,8 +205,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 * @param connectString
 	 *            String: expected format is wsdlLocation;serviceNamespace;service
 	 */
-	@Override
-	public boolean connect(String connectString) {
+	private boolean connect(String connectString) {
 		String[] subConnect = connectString.split(";");
 		if (subConnect.length > 1 && subConnect.length < 4) {
 			try {
@@ -249,13 +249,19 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public ISession login(String username, byte[] password, String tenant, String connectString) {
+	public ISession login(String username, byte[] password, String tenant, String host, int port, String instance) {
+		
+		String wsdlLocation = "http://"+host+":"+port+"/"+instance+"?wsdl";
+		String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
+		String service = "WebserviceServerService";
+		String connectString = wsdlLocation + ";" + serviceNamespace + ";" + service;		
+		
 		String securitytoken = getSecurityToken(username, password, tenant, connectString);
 		if (securitytoken == null) {
 			return null;
 		}
-		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, tenant, connectString);
+		IUser user = new ClientUser(username, password, true);
+		ClientSession session = new ClientSession(user, tenant, connectString);
 		session.setToken(securitytoken);
 		ClientSessionStore.addSession(connectString, session);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
@@ -299,7 +305,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			// try a relogin, can be necessary in case of server restart
 			if (r != null && !r.isSuccessful()) {
 				if (session instanceof WsClientSession) {
-					WsClientUser user = (WsClientUser) ((WsClientSession) session).getUser();
+					ClientUser user = (ClientUser) ((WsClientSession) session).getUser();
 
 					String token = getSecurityToken(user.getName(), user.getPassword(),
 							((WsClientSession) session).getTenantName(), session.getConnectionName());

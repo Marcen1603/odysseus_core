@@ -3,10 +3,18 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.rest.client;
 import java.net.SocketAddress;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.client.common.ClientSession;
+import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
+import de.uniol.inf.is.odysseus.client.common.ClientUser;
+import de.uniol.inf.is.odysseus.client.communication.rest.RestException;
+import de.uniol.inf.is.odysseus.client.communication.rest.RestService;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
@@ -38,16 +46,92 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
+	
+	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
+	final long UPDATEINTERVAL = 60000;
+
+	// Fire update events --> TODO: Get Events from Server and fire
+	private class Runner extends Thread {
+
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					synchronized (this) {
+						wait(UPDATEINTERVAL);
+					}
+					fireAllUpdateEvents();
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+				}
+			}
+		}
+	};
+
+	private void fireAllUpdateEvents() {
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.SESSION);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.USER);
+	}
+
+	private Runner generateEvents = new Runner();
+
 	@Override
-	public boolean connect(String connectString) {
-		// TODO Auto-generated method stub
-		return false;
+	public synchronized void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
+		List<IUpdateEventListener> l = updateEventListener.get(type);
+		if (l == null) {
+			l = new CopyOnWriteArrayList<>();
+			this.updateEventListener.put(type, l);
+		}
+		l.add(listener);
 	}
 
 	@Override
-	public ISession login(String username, byte[] password, String tenantname, String connectString) {
-		// TODO Auto-generated method stub
-		return null;
+	public void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
+		if (session != null) {
+			List<IUpdateEventListener> l = updateEventListener.get(type);
+			if (l != null) {
+				l.remove(listener);
+				if (l.isEmpty()) {
+					updateEventListener.get(session.getConnectionName()).remove(l);
+				}
+			}
+		}
+	}
+
+	private void fireUpdateEvent(String type) {
+		List<IUpdateEventListener> list = updateEventListener.get(type);
+		if (list != null) {
+			for (IUpdateEventListener l : list) {
+				l.eventOccured(type);
+			}
+		}
+	}
+
+
+	@Override
+	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {
+		if (!generateEvents.isAlive()) {
+			generateEvents.start();
+		}
+		String securitytoken = null;
+		String connectString = host+":"+port;
+		try {
+			securitytoken = RestService.login(connectString, username, new String(password), tenantname);
+		} catch (RestException e) {
+			e.printStackTrace();
+		}
+		if (securitytoken == null) {
+			return null;
+		}
+		IUser user = new ClientUser(username, password, true);
+		ClientSession session = new ClientSession(user, tenantname, connectString);
+		session.setToken(securitytoken);
+		ClientSessionStore.addSession(connectString, session);
+		fireUpdateEvent(IUpdateEventListener.SESSION);
+		return session;
 	}
 
 	@Override
@@ -155,19 +239,19 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public Collection<String> getQueryBuildConfigurationNames(ISession session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public Set<String> getSupportedQueryParsers(ISession session) throws PlanManagementException {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<String> getMetadataNames(ISession session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
@@ -179,14 +263,14 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public List<String> getQueryParserSuggestions(String queryParser, String hint, ISession user) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
@@ -216,7 +300,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public Collection<Integer> getLogicalQueryIds(ISession session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -234,37 +318,37 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public Collection<Integer> startAllClosedQueries(ISession user) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<String> getRegisteredSchedulingStrategies(ISession session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<String> getRegisteredSchedulers(ISession session) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
@@ -288,25 +372,25 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<String> getRegisteredWrapperNames(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<String> getRegisteredAggregateFunctions(Class<? extends IStreamObject> datamodel, ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<String> getRegisteredAggregateFunctions(String datamodel, ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
@@ -366,13 +450,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -420,7 +504,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -432,13 +516,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public List<String> getOperatorNames(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -450,25 +534,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public List<IUser> getUsers(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addUpdateEventListener(IUpdateEventListener listener, String type, ISession caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession caller) {
-		// TODO Auto-generated method stub
-
+		return Collections.emptyList();
 	}
 
 	@Override
 	public Collection<String> getUdfs() {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 }
