@@ -2,14 +2,14 @@ package de.uniol.inf.is.odysseus.client.communication.rest;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import org.json.JSONObject;
+
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
-import org.restlet.resource.ResourceException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -177,6 +177,7 @@ public class RestService {
 
 	@SuppressWarnings("unchecked")
 	public static Collection<Integer> addQuery(String ip, String token, String query, String parser) {
+		List<Integer> result = new ArrayList<>();
 		ClientResource crAddQuery = new ClientResource(getHostURL(ip, SERVICE_PATH_CORE, RESOURCE_PATH_ADD_QUERY));
 
 		// Add query
@@ -187,7 +188,11 @@ public class RestService {
 			GenericResponseDTO<Collection<Integer>> queryIds;
 			Gson gson = new Gson();
 			queryIds = gson.fromJson(addQueryRepresentation.getText(), GenericResponseDTO.class);
-			return queryIds.getValue();
+			// Need to convert to integer
+			
+			for (Number  id: queryIds.getValue()) {
+				result.add(id.intValue());
+			}
 
 		}
 
@@ -196,7 +201,7 @@ public class RestService {
 			convertAndThrowException(crAddQuery);
 		}
 
-		return Collections.emptyList();
+		return result;
 
 	}
 
