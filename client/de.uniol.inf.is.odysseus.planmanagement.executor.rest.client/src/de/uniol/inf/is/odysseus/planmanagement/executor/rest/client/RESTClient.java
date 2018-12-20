@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.rest.client;
 
 import java.net.SocketAddress;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,6 +133,26 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		return session;
 	}
 
+	public void assureLogin(ISession session) {
+		try {
+		if (session != null) {
+				if (session instanceof ClientSession) {
+					ClientUser user = (ClientUser) ((ClientSession) session).getUser();
+					String connectString = ((ClientSession)session).getConnectionName();
+
+					String token = RestService.login(connectString, user.getName(), new String(user.getPassword()),
+							((ClientSession) session).getTenantName());
+					// In case of new login the security token changes -->
+					// Update old session object
+					((ClientSession) session).setToken(token);
+				}
+			}
+		}catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	
 	@Override
 	public List<SocketAddress> getSocketConnectionInformation(int queryId, ISession caller) {
 		// TODO Auto-generated method stub
@@ -256,8 +275,12 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO: get from server!
+		Map<String, List<String>> tokens = new HashMap<>();
+		tokens.put("OdysseusScript", Collections.emptyList());
+		tokens.put("PQL", Collections.emptyList());
+		
+		return tokens;
 	}
 
 	@Override
@@ -269,8 +292,9 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
 			throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return Collections.emptySet();
+		assureLogin(user);
+		
+		return RestService.addQuery(((ClientSession)user).getConnectionName(), ((ClientSession)user).getToken(), query, parserID);
 	}
 
 	@Override

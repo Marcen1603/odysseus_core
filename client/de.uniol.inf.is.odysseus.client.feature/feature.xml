@@ -48,7 +48,7 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
+         id="de.uniol.inf.is.odysseus.planmanagement.executor.rest.client.feature"
          version="0.0.0"/>
 
    <plugin
