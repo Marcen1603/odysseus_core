@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
+import org.json.JSONObject;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
@@ -21,6 +21,8 @@ import de.uniol.inf.is.odysseus.client.communication.dto.GenericResponseDTO;
 import de.uniol.inf.is.odysseus.client.communication.dto.LoginRequestDTO;
 import de.uniol.inf.is.odysseus.client.communication.dto.SocketInfo;
 import de.uniol.inf.is.odysseus.client.communication.json.SocketInfoDeserializer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
  * @author Tobias Brandt
@@ -180,27 +182,35 @@ public class RestService {
 		// Add query
 		String transformationConfig = "";
 		AddQueryRequestDTO addQueryRequestDTO = new AddQueryRequestDTO(token, query, parser, transformationConfig);
-
 		try {
 			Representation addQueryRepresentation = crAddQuery.post(addQueryRequestDTO);
 			GenericResponseDTO<Collection<Integer>> queryIds;
-			try {
-				Gson gson = new Gson();
-				queryIds = gson.fromJson(addQueryRepresentation.getText(), GenericResponseDTO.class);
-				return queryIds.getValue();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			Gson gson = new Gson();
+			queryIds = gson.fromJson(addQueryRepresentation.getText(), GenericResponseDTO.class);
+			return queryIds.getValue();
+
 		}
 
-		catch (ResourceException ex) {
-			Representation responseRepresentation = crAddQuery.getResponseEntity();
-			System.out.println(responseRepresentation);
-			// JsonRepresentation jsonRep = new JsonRepresentation(responseRepresentation);
-			// JSONObject errors = jsonRepr.getJsonObject();
+		catch (Exception ex) {
+
+			convertAndThrowException(crAddQuery);
 		}
+
 		return Collections.emptyList();
 
+	}
+
+	private static void convertAndThrowException(ClientResource resource) {
+		Representation responseRepresentation = resource.getResponseEntity();
+		KeyValueObject<IMetaAttribute> kv;
+		String message = "";
+		try {
+			kv = KeyValueObject.createInstance(responseRepresentation.getText());
+			message = String.valueOf(kv.path("cause.message"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		throw new RuntimeException("Error on Odysseus server occurred: " + message);
 	}
 
 	public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, String queryName)

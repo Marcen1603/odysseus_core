@@ -7,7 +7,9 @@ Bundle-Vendor: University of Oldenburg
 Automatic-Module-Name: de.uniol.inf.is.odysseus.rest.client
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.restlet-osgi-2.3.12;bundle-version="2.3.12",
- com.google.code.gson;bundle-version="2.2.4"
+ com.google.code.gson;bundle-version="2.2.4",
+ org.json,
+ de.uniol.inf.is.odysseus.core
 Export-Package: de.uniol.inf.is.odysseus.client.communication,
  de.uniol.inf.is.odysseus.client.communication.dto,
  de.uniol.inf.is.odysseus.client.communication.json,
@@ -17,3 +19,4 @@ Export-Package: de.uniol.inf.is.odysseus.client.communication,
  de.uniol.inf.is.odysseus.client.configuration,
  de.uniol.inf.is.odysseus.client.data,
  de.uniol.inf.is.odysseus.client.model
+Import-Package: de.uniol.inf.is.odysseus.keyvalue.datatype
