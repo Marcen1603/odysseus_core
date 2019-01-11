@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
  * @author Tobias Brandt
+ * @author Marco Grawunder
  * @since 25.04.2015.
  */
 public class RestService {
@@ -34,6 +35,7 @@ public class RestService {
 	public static final String RESOURCE_PATH_ADD_QUERY = "addQuery";
 	public static final String RESOURCE_PATH_CREATE_SOCKET = "createMultiSocket";
 	public static final String RESOURCE_PATH_START_QUERY = "startQuery";
+	public static final String RESOURCE_PATH_GET_QUERY_INFO = "getQueryInfo";
 	/**
 	 * Base protocol is http
 	 */
@@ -203,6 +205,10 @@ public class RestService {
 
 		return result;
 
+	}
+	
+	public static getQueryInfo(int queryId) {
+		
 	}
 
 	private static void convertAndThrowException(ClientResource resource) {
