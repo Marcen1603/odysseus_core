@@ -55,6 +55,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final boolean sameStarttime;
 	private final Map<Object, Boolean> openedWindow = new HashMap<>();
 	private final boolean keepEndElement;
+	private final boolean useElementOnlyForStartOrEnd;
 
 	@SuppressWarnings("unchecked")
 	public PredicateWindowTIPO(AbstractWindowAO windowao) {
@@ -67,7 +68,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			this.end = null;
 		}
 		if (windowao.getWindowSize() != null) {
-			this.maxWindowTime = windowao.getBaseTimeUnit().convert(windowao.getWindowSize().getTime(), windowao.getWindowSize().getUnit());
+			this.maxWindowTime = windowao.getBaseTimeUnit().convert(windowao.getWindowSize().getTime(),
+					windowao.getWindowSize().getUnit());
 		} else {
 			this.maxWindowTime = 0;
 		}
@@ -77,10 +79,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		this.usesSlideParam = this.sameStarttime;
 
 		this.keepEndElement = windowao.isKeepEndElement();
+		this.useElementOnlyForStartOrEnd = windowao.isUseElementOnlyForStartOrEnd();
 	}
 
 	@Override
-	protected void process_open(){
+	protected void process_open() {
 		openedWindow.clear();
 		super.process_open();
 	}
@@ -90,21 +93,23 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {
 		initBuffer(bufferId);
 		// Test if elements need to be written
-		boolean startEval = evaluateStartCondition(object,buffer);
+		boolean startEval = evaluateStartCondition(object, buffer);
+		boolean elementForEndUsed = false;
 		if (openedWindow.get(bufferId)) {
 			// Two cases: end is set --> use end predicate
 			// end is not set --> use negated start predicate
 			// maximum window size reached
+			boolean closeWindow = (end != null && (elementForEndUsed = evaluateEndCondition(object, buffer))) || (end == null && !startEval)
+					|| (maxWindowTime > 0 && !buffer.isEmpty()
+							&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
+									.afterOrEquals(object.getMetadata().getStart()));
 
-			if ((end != null && evaluateEndCondition(object,buffer)) 
-					|| (end == null && !startEval)
-					|| (maxWindowTime > 0 && !buffer.isEmpty() && 
-						PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).afterOrEquals(object.getMetadata().getStart()))) {
+			if (closeWindow) {
 				if (keepEndElement) {
 					// if element is used for start and for end, is must be cloned
 					if (startEval) {
 						appendData((T) object.clone(), bufferId, buffer);
-					}else {
+					} else {
 						appendData(object, bufferId, buffer);
 					}
 				}
@@ -117,12 +122,16 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		// the same tuple could be start and end, so do not use else
 		if (!openedWindow.get(bufferId)) {
 			if (startEval) {
-				appendData(object, bufferId, buffer);
+				if (useElementOnlyForStartOrEnd && elementForEndUsed) {
+					System.out.println("Ignoring"+object);
+				}else {
+					appendData(object, bufferId, buffer);
+				}
 			} else {
 				transferArea.transfer(object, 1);
 			}
 		}
-
+	
 	}
 
 	private void initBuffer(Object bufferId) {
@@ -139,7 +148,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	protected Boolean evaluateEndCondition(T object, List<T> buffer) {
 		return end.evaluate(object);
 	}
-	
+
 	private void appendData(T object, Object bufferId, List<T> buffer) {
 		openedWindow.put(bufferId, true);
 		buffer.add(object);
@@ -174,19 +183,19 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		}
 		@SuppressWarnings("unchecked")
 		PredicateWindowTIPO<IStreamObject<ITimeInterval>> other = (PredicateWindowTIPO<IStreamObject<ITimeInterval>>) ipo;
-		if (!Objects.equal(this.start,other.start)) {
+		if (!Objects.equal(this.start, other.start)) {
 			return false;
 		}
-		if (!Objects.equal(this.end, other.end)){
+		if (!Objects.equal(this.end, other.end)) {
 			return false;
 		}
-		if (this.maxWindowTime != other.maxWindowTime){
+		if (this.maxWindowTime != other.maxWindowTime) {
 			return false;
 		}
-		if (this.sameStarttime != other.sameStarttime){
+		if (this.sameStarttime != other.sameStarttime) {
 			return false;
 		}
-		if (this.keepEndElement != other.keepEndElement){
+		if (this.keepEndElement != other.keepEndElement) {
 			return false;
 		}
 		return super.isSemanticallyEqual(ipo);

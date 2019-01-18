@@ -44,9 +44,15 @@ public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
 	}
 
 	@Override
-	@Parameter(type = BooleanParameter.class, optional = true)
+	@Parameter(name = "KEEPENDINGELEMENT", type = BooleanParameter.class, optional = true)
 	public void setKeepEndingElement(boolean keepEndElement) {
 		super.setKeepEndingElement(keepEndElement);
+	}
+	
+	@Override
+	@Parameter(name = "useElementOnlyForStartOrEnd", type = BooleanParameter.class, optional = true)
+	public void setUseElementOnlyForStartOrEnd(boolean useElementOnlyForStartOrEnd) {
+		super.setUseElementOnlyForStartOrEnd(useElementOnlyForStartOrEnd);
 	}
 
 	@Override

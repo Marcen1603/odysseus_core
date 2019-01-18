@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.compiler.Compiler;
 import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.IHasSecondAlias;
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
@@ -86,6 +87,9 @@ public class MetadataRegistry {
 			byName.put(type.getName(), type);
 			if (type instanceof IHasAlias){
 				byName.put(((IHasAlias)type).getAliasName(), type);
+			}
+			if (type instanceof IHasSecondAlias){
+				byName.put(((IHasSecondAlias)type).getSecondAliasName(), type);
 			}
 			combinedMetadataTypes.put(typeSet, type);
 		}

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.IHasSecondAlias;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -47,6 +48,11 @@ public class TransportHandlerRegistry implements ITransportHandlerRegistry {
 			name = ((IHasAlias) handler).getAliasName().toLowerCase();
 			register(handler, name);
 		}
+		if (handler instanceof IHasSecondAlias){
+			name = ((IHasSecondAlias) handler).getSecondAliasName().toLowerCase();
+			register(handler, name);
+		}
+
 	}
 
 	private void register(ITransportHandler handler, String name) {
@@ -63,6 +69,9 @@ public class TransportHandlerRegistry implements ITransportHandlerRegistry {
 		handlers.remove(handler.getName().toLowerCase());
 		if (handler instanceof IHasAlias){
 			handlers.remove(((IHasAlias)handler).getAliasName().toLowerCase());
+		}
+		if (handler instanceof IHasSecondAlias){
+			handlers.remove(((IHasSecondAlias)handler).getSecondAliasName().toLowerCase());
 		}
 	}
 	
