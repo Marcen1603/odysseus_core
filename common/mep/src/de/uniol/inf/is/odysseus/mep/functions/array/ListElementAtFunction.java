@@ -3,11 +3,12 @@ package de.uniol.inf.is.odysseus.mep.functions.array;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.IHasSecondAlias;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class ListElementAtFunction extends AbstractFunction<Object> implements IHasAlias{
+public class ListElementAtFunction extends AbstractFunction<Object> implements IHasAlias, IHasSecondAlias{
 
 	private static final long serialVersionUID = -3282877303737235603L;
 
@@ -32,6 +33,11 @@ public class ListElementAtFunction extends AbstractFunction<Object> implements I
 		return "[]";
 	}
 
+	@Override
+	public String getSecondAliasName() {
+		return "getElement";
+	}
+	
 	@Override
 	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		if (args != null && args.length == 2){
