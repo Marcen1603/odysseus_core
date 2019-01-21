@@ -62,7 +62,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		implements ISink<R> {
 
 	private final List<AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>> subscribedToSource = new CopyOnWriteArrayList<>();
-
+	
 	protected int noInputPorts = -1;
 	private ReentrantLock openCloseLock = new ReentrantLock();
 
@@ -780,11 +780,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 			if (sub.getSinkInPort() >= this.noInputPorts) {
 				setInputPortCount(sub.getSinkInPort() + 1);
 			}
-
-			while (this.subscribedToSource.size() < sub.getSinkInPort() + 1) {
-				this.subscribedToSource.add(null);
-			}
-			this.subscribedToSource.set(sub.getSinkInPort(), sub);
+			
+			this.subscribedToSource.add(sub);
 
 			sub.getSource().subscribeSink((AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>) sub);
 			newSourceSubscribed(sub);
@@ -808,7 +805,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	private boolean sinkInPortFree(int sinkInPort) {
 		for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub : this.subscribedToSource) {
-			if (sub.getSinkInPort() == sinkInPort) {
+			if (sub != null && sub.getSinkInPort() == sinkInPort) {
 				if (LOGGER.isErrorEnabled()) {
 					LOGGER.error(MessageFormat.format("SinkInPort {0} already bound to {1}", sinkInPort, sub));
 				}
@@ -829,7 +826,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(MessageFormat.format("Unsubscribe from Source {0}", subscription.getSource()));
 		}
-		if (this.subscribedToSource.remove(subscription)) {
+		if (subscribedToSource.remove(subscription)) {
 			subscription.getSource().unsubscribeSink((ISink<IStreamObject<?>>) this.getInstance(),
 					subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			sourceUnsubscribed(subscription);
@@ -866,7 +863,12 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	@Override
 	public final AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> getSubscribedToSource(int port) {
-		return this.subscribedToSource.get(port);
+		for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub: subscribedToSource) {
+			if (sub.getSinkInPort() == port) {
+				return sub;
+			}
+		}
+		return null;
 	}
 
 	// ------------------------------------------------------------------------
