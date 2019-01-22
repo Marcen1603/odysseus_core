@@ -1,14 +1,5 @@
 package de.uniol.inf.is.odysseus.client.communication.socket;
 
-import de.uniol.inf.is.odysseus.client.communication.dto.AttributeInformation;
-import de.uniol.inf.is.odysseus.client.communication.dto.SocketInfo;
-import de.uniol.inf.is.odysseus.client.communication.transformStrategies.ITransformStrategy;
-import de.uniol.inf.is.odysseus.client.communication.transformStrategies.QueryResults;
-import de.uniol.inf.is.odysseus.client.communication.transformStrategies.TransformStrategyFactory;
-import de.uniol.inf.is.odysseus.client.data.DataHandler;
-import de.uniol.inf.is.odysseus.client.model.JsonEvent;
-import de.uniol.inf.is.odysseus.client.model.SchemaEvent;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -19,6 +10,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.uniol.inf.is.odysseus.client.communication.transformStrategies.ITransformStrategy;
+import de.uniol.inf.is.odysseus.client.communication.transformStrategies.QueryResults;
+import de.uniol.inf.is.odysseus.client.communication.transformStrategies.TransformStrategyFactory;
+import de.uniol.inf.is.odysseus.client.data.DataHandler;
+import de.uniol.inf.is.odysseus.client.model.JsonEvent;
+import de.uniol.inf.is.odysseus.client.model.SchemaEvent;
+import de.uniol.inf.is.odysseus.rest.dto.response.AttributeInformation;
+import de.uniol.inf.is.odysseus.rest.dto.response.SocketInfo;
 
 /**
  * @author Tobias Brandt

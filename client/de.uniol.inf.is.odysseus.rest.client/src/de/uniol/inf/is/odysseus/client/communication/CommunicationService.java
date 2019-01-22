@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.client.communication.dto.SocketInfo;
 import de.uniol.inf.is.odysseus.client.communication.rest.RestService;
 import de.uniol.inf.is.odysseus.client.communication.socket.SocketReceiver;
 import de.uniol.inf.is.odysseus.client.configuration.ConnectionInformation;
 import de.uniol.inf.is.odysseus.client.data.ConnectionHandler;
+import de.uniol.inf.is.odysseus.rest.dto.response.SocketInfo;
 
 /**
  * @author Tobias Brandt

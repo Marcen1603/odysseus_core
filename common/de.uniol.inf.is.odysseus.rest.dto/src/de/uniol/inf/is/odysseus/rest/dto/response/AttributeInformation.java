@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.client.communication.dto;
+package de.uniol.inf.is.odysseus.rest.dto.response;
 
 public class AttributeInformation{
 

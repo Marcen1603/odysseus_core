@@ -15,14 +15,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import de.uniol.inf.is.odysseus.client.communication.dto.AddQueryRequestDTO;
-import de.uniol.inf.is.odysseus.client.communication.dto.CreateSocketRequestDTO;
-import de.uniol.inf.is.odysseus.client.communication.dto.GenericResponseDTO;
-import de.uniol.inf.is.odysseus.client.communication.dto.LoginRequestDTO;
-import de.uniol.inf.is.odysseus.client.communication.dto.SocketInfo;
 import de.uniol.inf.is.odysseus.client.communication.json.SocketInfoDeserializer;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.rest.dto.request.AddQueryRequestDTO;
+import de.uniol.inf.is.odysseus.rest.dto.request.CreateSocketRequestDTO;
+import de.uniol.inf.is.odysseus.rest.dto.request.LoginRequestDTO;
+import de.uniol.inf.is.odysseus.rest.dto.response.GenericResponseDTO;
+import de.uniol.inf.is.odysseus.rest.dto.response.SocketInfo;
 
 /**
  * @author Tobias Brandt
@@ -207,10 +207,6 @@ public class RestService {
 
 	}
 	
-	public static getQueryInfo(int queryId) {
-		
-	}
-
 	private static void convertAndThrowException(ClientResource resource) {
 		Representation responseRepresentation = resource.getResponseEntity();
 		KeyValueObject<IMetaAttribute> kv;
@@ -253,7 +249,7 @@ public class RestService {
 	public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, String queryName,
 			String operatorOutputName) throws RestException {
 		CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName,
-				operatorOutputName);
+				operatorOutputName, SERVICE_PORT);
 		return getResultsFromQuery(ip, createSocketRequestDTO);
 	}
 

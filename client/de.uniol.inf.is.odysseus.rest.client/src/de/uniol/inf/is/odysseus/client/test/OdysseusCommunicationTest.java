@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import de.uniol.inf.is.odysseus.client.communication.dto.AttributeInformation;
-import de.uniol.inf.is.odysseus.client.communication.dto.SocketInfo;
 import de.uniol.inf.is.odysseus.client.communication.rest.RestException;
 import de.uniol.inf.is.odysseus.client.communication.rest.RestService;
 import de.uniol.inf.is.odysseus.client.communication.socket.SocketReceiver;
 import de.uniol.inf.is.odysseus.client.data.ConnectionHandler;
 import de.uniol.inf.is.odysseus.client.data.DataHandler;
 import de.uniol.inf.is.odysseus.client.model.SchemaEvent;
+import de.uniol.inf.is.odysseus.rest.dto.response.AttributeInformation;
+import de.uniol.inf.is.odysseus.rest.dto.response.SocketInfo;
 
 /**
  * @author Tobias Brandt

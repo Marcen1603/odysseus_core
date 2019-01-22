@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.client.data;
 
-import de.uniol.inf.is.odysseus.client.communication.dto.SocketInfo;
-import de.uniol.inf.is.odysseus.client.communication.socket.SocketReceiver;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.client.communication.socket.SocketReceiver;
+import de.uniol.inf.is.odysseus.rest.dto.response.SocketInfo;
 
 /**
  * @author Tobias Brandt

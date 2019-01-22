@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.client.configuration;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.client.communication.dto.AttributeInformation;
+import de.uniol.inf.is.odysseus.rest.dto.response.AttributeInformation;
 
 /**
  * @author Tobias Brandt

@@ -1,15 +1,20 @@
 package de.uniol.inf.is.odysseus.client.communication.json;
 
 
-import com.google.gson.*;
-
-import de.uniol.inf.is.odysseus.client.communication.dto.AttributeInformation;
-import de.uniol.inf.is.odysseus.client.communication.dto.SocketInfo;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import de.uniol.inf.is.odysseus.rest.dto.response.AttributeInformation;
+import de.uniol.inf.is.odysseus.rest.dto.response.SocketInfo;
 
 /**
  * Deserializes the socket information from Odysseus
