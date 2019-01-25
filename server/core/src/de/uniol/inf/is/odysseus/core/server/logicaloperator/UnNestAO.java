@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -86,12 +87,18 @@ public class UnNestAO extends UnaryLogicalOp {
 			if (attribute.equals(this.attribute)
 					&& ((this.attribute.getDatatype().isComplex() || this.attribute
 							.getDatatype().isListValue()))) {
-				if (attribute.getDatatype().isMultiValue()
-						|| attribute.getDatatype().isListValue()) {
-					attrs.add(new SDFAttribute(attribute.getSourceName(),
-							attribute.getAttributeName(), attribute
-									.getDatatype().getSubType(), null, null,
-							null));
+				SDFDatatype attrDataType = attribute.getDatatype();
+				if (attrDataType.isMultiValue()
+						|| attrDataType.isListValue()) {
+					if(attrDataType.hasSchema()) {
+						attrs.add(new SDFAttribute(attribute.getSourceName(),
+								attribute.getAttributeName(), SDFDatatype.createTypeWithSubSchema(attrDataType.getSubType(), attrDataType.getSchema()), null, null,
+								null));
+					} else {
+						attrs.add(new SDFAttribute(attribute.getSourceName(),
+								attribute.getAttributeName(), attrDataType.getSubType(), null, null,
+								null));
+					}
 				} else {
 					SDFSchema subschema = attribute.getDatatype().getSchema();
 					for (int j = 0; j < subschema.size(); j++) {
