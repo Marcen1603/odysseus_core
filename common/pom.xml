@@ -34,6 +34,7 @@
 		<module>keyvalue.mep</module>
 		<module>mep</module>
 		<module>mep.matrix</module> 
+		<module>rest2.common</module>
 	</modules>
 </project>
 

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rest 2 Server
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rest2.server
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rest2.server
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
