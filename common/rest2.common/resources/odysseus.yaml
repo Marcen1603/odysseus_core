@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  version: "v1.0-oas3"
+  title: Odysseus REST API
+  description: 'This is the REST API for the Odysseus server.'
+paths:
+  /queries:
+    summary: This ressource represents the installed queries.
+    get:
+      summary: Returns a list of all installed queries.
+      responses:
+        '200':
+          $ref: '#/components/responses/QueryArrayResponse'
+  '/queries/{id}':
+    summary: This ressource represents an installed query.
+    get:
+      summary: Returns a query by ID.
+      parameters:
+        - $ref: '#/components/parameters/QueryIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/QueryResponse'
+        '400':
+          description: A query with the given ID was not found.
+        default:
+          description: Unexpected error
+    patch:
+      summary: Updates a query.
+      description: >
+        With this operation you can update the state of the query and create a
+        socket connection. Updating the query text is not allowed. Remove this
+        query and add a new one instead.
+      parameters:
+        - $ref: '#/components/parameters/QueryIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/QueryResponse'
+    delete:
+      summary: Removes a query.
+      description: |
+        Removes a query. A running query will be stopped before removing.
+      parameters:
+        - $ref: '#/components/parameters/QueryIdPathParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/QueryResponse'
+  /parsers:
+    summary: This resource represents all available parsers.
+    get:
+      summary: Returns a list of all available parser names.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfString'
+  /sinks:
+    summary: This resource represents all available sinks.
+    get:
+      summary: Returns a list of all avaialble sinks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfResourceInformation'
+  /sources:
+    summary: This resource represents all available sources.
+    get:
+      summary: Returns a list of all avaialble sources
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfResourceInformation'
+  
+components:
+  schemas:
+    ArrayOfString:
+      type: array
+      items: 
+        type: string
+    ArrayOfResourceInformation:
+      type: array
+      items:
+        $ref : '#/components/schemas/ResourceInformation'  
+    ResourceInformation:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Resource'
+        kind:
+          type: string
+        outputSchema:
+          $ref: '#/components/schemas/Schema'
+    Resource:
+      type: object
+      properties:
+        user:
+          type: string
+        resourceName:
+          type: string
+        marked:
+          type: boolean
+    Schema:
+      type: object
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref : '#/components/schemas/Attribute'
+    Attribute:
+      type: object
+      properties:
+        sourcename:
+          type: string
+        attributename:
+          type: string
+        datatype:
+          $ref : '#/components/schemas/Datatype'
+        subschema:
+          $ref : '#/components/schemas/Schema'
+    Datatype:
+      type: object
+      properties:
+        uri:
+          type: string
+        subtype:
+          $ref : '#/components/schemas/Datatype'
+        subschema:
+          $ref : '#/components/schemas/Schema'
+    Query:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          description: The ID of the query.
+        name:
+          type: string
+          description: The name of the query.
+        parser:
+          type: string
+          description: The parser that should be used for the query text.
+          readOnly: true
+        query_text:
+          type: string
+          description: The query text.
+          readOnly: true
+        state:
+          type: string
+          description: The state of the query.
+        socket_connection_active:
+          type: boolean
+        socket_connction_info:
+          type: object
+          properties:
+            host:
+              type: string
+              readOnly: true
+            post:
+              type: integer
+              readOnly: true
+      required:
+        - id
+        - name
+        - parser
+        - query_text
+  parameters:
+    QueryIdPathParameter:
+      name: id
+      in: path
+      required: true
+      description: The numeric query ID.
+      schema:
+        type: integer
+  responses:
+    QueryArrayResponse:
+      description: An array of queries.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Query'
+    QueryResponse:
+      description: A query response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Query'
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/corneliusludmann/odysseus/1'
