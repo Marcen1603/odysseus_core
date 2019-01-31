@@ -139,7 +139,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
                 	String text = readLinesFromFile(scriptFile);
                 	executor.run(text, ParserClientUtil.createRCPContext(scriptFile));
                } catch (final Throwable ex) {
-            	   ex.printStackTrace();
+            	   //ex.printStackTrace();
+                    LOG.error("Exception during running query file", ex);
                     ExceptionErrorDialog.open(new Status(IStatus.ERROR, IEditorTextParserConstants.PLUGIN_ID, "'Parsing and Executing Query' has encountered a problem.\n\nScript Execution Error: " + ex.getMessage(), ex), ex);
                     // return new Status(IStatus.ERROR,
                     // IEditorTextParserConstants.PLUGIN_ID,
