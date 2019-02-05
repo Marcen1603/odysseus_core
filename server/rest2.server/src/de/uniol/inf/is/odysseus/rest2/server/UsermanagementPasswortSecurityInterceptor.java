@@ -37,7 +37,7 @@ public class UsermanagementPasswortSecurityInterceptor implements RequestInterce
                 ISession session = login(username, password);
                 if (session != null) {
                 	Session httpSession = request.getSession();
-                	httpSession.setAttribute(SESSION, session);
+                	httpSession.setAttribute(SESSION, session.getToken());
                     return true;
                 }
             }
