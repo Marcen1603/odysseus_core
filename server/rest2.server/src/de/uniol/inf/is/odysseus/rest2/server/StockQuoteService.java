@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.server.exception.DuplicateSymbolException;
@@ -125,6 +126,11 @@ public class StockQuoteService implements Microservice {
         String securityToken = (String) request.getSession().getAttribute("session");
         ISession session = SessionManagement.instance.login(securityToken);
         log.info("Found session "+session.getUser().getName());
+        
+        if (ExecutorServiceBinding.getExecutor() != null) {
+        	IDataDictionaryWritable dd = ExecutorServiceBinding.getExecutor().getDataDictionary(session);
+        	log.info("access to dd "+dd.getDatatypeNames());
+        }
         
         return new Stocks(stockQuotes.values());
     }
