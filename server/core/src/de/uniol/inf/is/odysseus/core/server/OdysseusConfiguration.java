@@ -194,6 +194,9 @@ public class OdysseusConfiguration {
 		props.setProperty("webservice.queryconnect.sink.minport", "10000");
 		props.setProperty("webservice.queryconnect.sink.maxport", "20000");
 
+		// Resr
+		props.setProperty("rest2.port","8888");
+		
 		// security and crypto stuff, e.g. for creating self-signed certificates
 		props.setProperty("security.applicationName", "Odysseus");
 		props.setProperty("security.organization", "University of Oldenburg");
