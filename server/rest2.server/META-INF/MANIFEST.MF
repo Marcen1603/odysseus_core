@@ -5,7 +5,9 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rest2.server
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.uniol.inf.is.odysseus.rest2.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: org.osgi.framework
+Import-Package: de.uniol.inf.is.odysseus.core.server.usermanagement,
+ de.uniol.inf.is.odysseus.core.usermanagement,
+ org.osgi.framework
 Require-Bundle: org.wso2.msf4j;bundle-version="2.6.4"
 Service-Component: OSGI-INF/chatEndpoint.xml,
  OSGI-INF/StockQuoteService.xml
