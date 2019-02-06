@@ -125,7 +125,7 @@ public class StockQuoteService implements Microservice {
                 .getValue()));
         String securityToken = (String) request.getSession().getAttribute("session");
         ISession session = SessionManagement.instance.login(securityToken);
-        log.info("Found session "+session.getUser().getName());
+        log.info("Found session "+session.getUser().getName()+ " "+session.getToken());
         
         if (ExecutorServiceBinding.getExecutor() != null) {
         	IDataDictionaryWritable dd = ExecutorServiceBinding.getExecutor().getDataDictionary(session);
