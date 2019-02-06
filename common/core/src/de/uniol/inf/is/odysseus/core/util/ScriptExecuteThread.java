@@ -29,13 +29,13 @@ public class ScriptExecuteThread extends Thread {
 
 	@Override
 	public void run() {
-		LOG.trace("Begin script execution...");
+		LOG.debug("Begin script execution...");
 		int tries = 0;
 
 		while (true) {
 			try {
 				executor.addQuery(queryText, "OdysseusScript", user, Context.empty());
-				LOG.trace("Script executed");
+				LOG.debug("Script executed");
 				break;
 			} catch (Throwable t) {
 				tries++;
