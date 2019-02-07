@@ -10,11 +10,9 @@ public class Application implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		int port =	OdysseusConfiguration.instance.getInt("rest2.port",8888);		
-		new MicroservicesRunner(port)
-			.addGlobalRequestInterceptor(new UsermanagementPasswortSecurityInterceptor())
-			.deploy(new StockQuoteService()).deployWebSocketEndpoint(new ChatAppEndpoint())
-				.start();
+		int port = OdysseusConfiguration.instance.getInt("rest2.port", 8888);
+		new MicroservicesRunner(port).addGlobalRequestInterceptor(new SecurityAuthInterceptor())
+				.deploy(new StockQuoteService()).deployWebSocketEndpoint(new ChatAppEndpoint()).start();
 	}
 
 	@Override
