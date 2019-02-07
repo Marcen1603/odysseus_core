@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.rest2.server.StockQuoteService">
-   <implementation class="de.uniol.inf.is.odysseus.rest2.server.StockQuoteService"/>
-   <service>
-      <provide interface="org.wso2.msf4j.Microservice"/>
-   </service>
-</scr:component>
