@@ -358,10 +358,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	@Override
 	public final void process(R object, int port) {
-		fire(processInitEvent[port]);
+		
+		//fire(processInitEvent[port]);
 
 		process_next(object, port);
-		fire(processDoneEvent[port]);
+		//fire(processDoneEvent[port]);
 	}
 
 	protected abstract void process_next(R object, int port);
@@ -792,7 +793,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		// Implement this method if need to react to new source subscription
 	}
 
-	private int getNextFreeSinkInPort() {
+	final protected int getNextFreeSinkInPort() {
 		int sinkInPort = -1;
 		for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() > sinkInPort) {

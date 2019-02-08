@@ -11,7 +11,9 @@ Require-Bundle: org.wso2.msf4j;bundle-version="2.6.4",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.usermanagement.store;bundle-version="1.0.0",
  com.fasterxml.jackson,
- de.uniol.inf.is.odysseus.rest2.common;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.rest2.common;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.server.keyvalue,
+ de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.rest2.server.Application

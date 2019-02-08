@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.rest2.server.api.QueriesApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.SinksApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.UsersApi;
+import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
 
 public class Application implements BundleActivator {
 
@@ -21,7 +22,7 @@ public class Application implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		int port = OdysseusConfiguration.instance.getInt("rest2.port", 8888);
 		new MicroservicesRunner(port).addGlobalRequestInterceptor(new SecurityAuthInterceptor())
-//				.deploy(new StockQuoteService()).deployWebSocketEndpoint(new ChatAppEndpoint())
+				.deployWebSocketEndpoint(new QueryResultWebsocketEndpoint())
 				.deploy(
 						new DatastreamsApi(),
 						new DatatypesApi(),
