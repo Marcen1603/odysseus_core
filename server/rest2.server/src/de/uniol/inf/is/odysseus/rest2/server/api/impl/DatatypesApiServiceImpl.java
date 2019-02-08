@@ -17,10 +17,10 @@ import org.wso2.msf4j.Request;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.DatatypesApiService;
 import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
-import de.uniol.inf.is.odysseus.rest2.server.model.Datatype;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class DatatypesApiServiceImpl extends DatatypesApiService {

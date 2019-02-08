@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.rest2.server.api.impl;
 
 import javax.ws.rs.core.Response;
 
+import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.server.api.ApiResponseMessage;
 import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
 import de.uniol.inf.is.odysseus.rest2.server.api.QueriesApiService;
-import de.uniol.inf.is.odysseus.rest2.server.model.Query;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class QueriesApiServiceImpl extends QueriesApiService {

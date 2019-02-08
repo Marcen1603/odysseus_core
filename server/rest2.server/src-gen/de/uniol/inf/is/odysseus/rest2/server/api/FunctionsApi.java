@@ -1,25 +1,12 @@
 package de.uniol.inf.is.odysseus.rest2.server.api;
 
-import de.uniol.inf.is.odysseus.rest2.server.model.*;
+import de.uniol.inf.is.odysseus.rest2.common.model.*;
 import de.uniol.inf.is.odysseus.rest2.server.api.FunctionsApiService;
 import de.uniol.inf.is.odysseus.rest2.server.api.factories.FunctionsApiServiceFactory;
 
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
-
-import de.uniol.inf.is.odysseus.rest2.server.model.Function;
-
-import java.util.List;
 import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
 
-import java.io.InputStream;
-
-import org.wso2.msf4j.formparam.FormDataParam;
-import org.wso2.msf4j.formparam.FileInfo;
-
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.*;
 
 @Path("/functions")

@@ -7,10 +7,10 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.rest2.common.model.User;
 import de.uniol.inf.is.odysseus.rest2.server.api.ApiResponseMessage;
 import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
 import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApiService;
-import de.uniol.inf.is.odysseus.rest2.server.model.User;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class ServicesApiServiceImpl extends ServicesApiService {

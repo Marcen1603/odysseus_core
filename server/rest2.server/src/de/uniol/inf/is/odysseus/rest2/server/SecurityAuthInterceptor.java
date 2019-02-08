@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.Request;
 import org.wso2.msf4j.Response;
 import org.wso2.msf4j.Session;
