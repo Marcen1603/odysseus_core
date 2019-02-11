@@ -21,12 +21,16 @@ import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.websocket.WebSocketEndpoint;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractObjectHandlerByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.OdysseusProtocolHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -54,8 +58,16 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO Auto-generated method stub
-
+		// TODO: synchronization necessary?
+		QueryResultReceiver resultReceiver = receiver.get(port);
+		if (resultReceiver.useSendText) {
+			String toSend = punctuation.toString();
+			sendText(resultReceiver.sessions, toSend);			
+		} else {
+			ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertPunctuation(punctuation);
+			ByteBuffer toSend = ByteBuffer.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.PUNCT));	
+			sendBinary(resultReceiver.sessions, toSend);
+		}
 	}
 
 	@Override
@@ -64,27 +76,35 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		QueryResultReceiver resultReceiver = receiver.get(port);
 		if (resultReceiver.useSendText) {
 			String toSend = object.toString();
-			resultReceiver.sessions.forEach(session -> {
-				try {
-					session.getBasicRemote().sendText(toSend);
-				} catch (IOException e) {
-					LOGGER.error("Problems sending value " + object, e);
-				}
-			});
-			
+			sendText(resultReceiver.sessions, toSend);			
 		} else {
-			// TODO: Add converter
-			ByteBuffer toSend = ByteBuffer.allocate(1);
-			resultReceiver.sessions.forEach(session -> {
-				try {
-					session.getBasicRemote().sendBinary(toSend);
-				} catch (IOException e) {
-					LOGGER.error("Problems sending value " + object, e);
-				}
-			});
+			ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertObject(object, resultReceiver.dataHandler);
+			ByteBuffer toSend = ByteBuffer.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.OBJECT));	
+			sendBinary(resultReceiver.sessions, toSend);
 		}
 	}
 
+	private void sendText(List<Session> sessions, String toSend) {
+		sessions.forEach(session -> {
+			try {
+				session.getBasicRemote().sendText(toSend);
+			} catch (IOException e) {
+				LOGGER.error("Problems sending value " + toSend, e);
+			}
+		});
+	}
+
+	private void sendBinary(List<Session> sessions,
+			ByteBuffer toSend) {
+		sessions.forEach(session -> {
+			try {
+				session.getBasicRemote().sendBinary(toSend);
+			} catch (IOException e) {
+				LOGGER.error("Problems sending value ", e);
+			}
+		});
+	}
+	
 	@SuppressWarnings("unchecked")
 	@OnOpen
 	public void onOpen(@PathParam("id") String id, @PathParam("operator") String operatorName,
@@ -93,8 +113,8 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		// check login
 		try {
 			ISession odysseusSession = SessionManagement.instance.login(securityToken);
-			//ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
-			
+			// ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
+
 			if (odysseusSession != null) {
 				synchronized (this) {
 					IExecutionPlan currentPlan = ExecutorServiceBinding.getExecutor().getExecutionPlan(odysseusSession);
@@ -113,23 +133,23 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 					}
 					// TODO handle operator param
 					IPhysicalOperator operatorP = query.getRoots().get(0);
-					ISource<IStreamObject<?>> operator=null;
+					ISource<IStreamObject<?>> operator = null;
 					if (operatorP instanceof ISource) {
 						operator = (ISource<IStreamObject<?>>) operatorP;
-					}else {
+					} else {
 						// exception or use inputs?
 						throw new RuntimeException("Operator to connect is no source");
 					}
-					
+
 					Integer connectionPort = Integer.parseInt(port);
 
 					// Check, if operator with this protocol and port is already bound
 					if (connectedOperators.get(protocol) == null
 							|| connectedOperators.get(protocol).get(operator) == null
 							|| connectedOperators.get(protocol).get(operator).get(connectionPort) == null) {
-						addNewConnection(protocol, connectionPort, operator);
+						addNewConnection(protocol, connectionPort, operator, odysseusSession);
 					}
-					addQueryResultReceiver(protocol, operator, connectionPort, session);
+					addQueryResultReceiver(protocol, operator, connectionPort, session, odysseusSession);
 
 				}
 			} else {
@@ -151,11 +171,16 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	}
 
 	private void addQueryResultReceiver(String protocol, IPhysicalOperator operator, Integer connectionPort,
-			Session session) {
+			Session session, ISession odysseusSession) {
 		Integer inputPort = connectedOperators.get(protocol).get(operator).get(connectionPort);
 		QueryResultReceiver qrr = receiver.get(inputPort);
 		if (qrr == null) {
-			qrr = new QueryResultReceiver(getTypeForProtocol(protocol));
+			Class<?> type = operator.getOutputSchema().getType();
+			 IStreamObjectDataHandler<?> dh = ExecutorServiceBinding.getExecutor().getDataDictionary(odysseusSession)
+					.getDataHandlerRegistry(odysseusSession)
+					.getStreamObjectDataHandler(type.getSimpleName(), operator.getOutputSchema(connectionPort));
+						
+			qrr = new QueryResultReceiver(getTypeForProtocol(protocol), protocol, dh);
 			receiver.put(inputPort, qrr);
 		}
 		qrr.addSession(session);
@@ -184,48 +209,59 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		return false;
 	}
 
-	private void addNewConnection(String protocol, Integer connectionPort, ISource<IStreamObject<? extends IMetaAttribute>> operator) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void addNewConnection(String protocol, Integer connectionPort,
+			ISource<IStreamObject<? extends IMetaAttribute>> operator, ISession odysseusSession) {
 
 		int nextFreeInputPort = getNextFreeSinkInPort();
-		
+
 		// protocol, port, outputport, inputport
-		// private Map<String, Map<IPhysicalOperator, Map<Integer, Integer>>> connectedOperators = new HashMap<>();
+		// private Map<String, Map<IPhysicalOperator, Map<Integer, Integer>>>
+		// connectedOperators = new HashMap<>();
 
 		Map<IPhysicalOperator, Map<Integer, Integer>> protolSpecificMap = connectedOperators.get(protocol);
 		if (protolSpecificMap == null) {
 			protolSpecificMap = new HashMap<>();
 			connectedOperators.put(protocol, protolSpecificMap);
 		}
-		
+
 		Map<Integer, Integer> operatorSpecificMap = protolSpecificMap.get(operator);
 		if (operatorSpecificMap == null) {
 			operatorSpecificMap = new HashMap<>();
 			protolSpecificMap.put(operator, operatorSpecificMap);
 		}
-		
+
 		Integer inputPort = operatorSpecificMap.get(connectionPort);
 		if (inputPort != null) {
 			throw new RuntimeException("connection already established!");
 		}
 		operatorSpecificMap.put(connectionPort, nextFreeInputPort);
-				
+
 		// create new Buffer
 		ThreadedBufferPO<IStreamObject<? extends IMetaAttribute>> bufferPO = new ThreadedBufferPO<>(BUFFER_LIMIT);
 		bufferPO.addOwner(this);
-		operator.connectSink(bufferPO, 0, connectionPort, operator.getOutputSchema());
+		operator.connectSink(bufferPO, 0, connectionPort, operator.getOutputSchema(connectionPort));
 
 		AbstractPipe<IStreamObject<?>, IStreamObject<?>> converter;
-		
-		if ("JSON".equalsIgnoreCase(protocol)) {
-			converter = new TupleToKeyValuePO();
-		}else {
-			throw new RuntimeException("Only JSON supported at the moment");
+
+		if (operator.getOutputSchema(connectionPort).getType() != Tuple.class) {
+			throw new RuntimeException("Sorry, only tuples supported at the moment");
 		}
-		
-		// use output schema from operator because bufferPO does not have any 
-		bufferPO.subscribeSink((ISink)converter, 0,0,operator.getOutputSchema());
-		
-		converter.subscribeSink((ISink)this, nextFreeInputPort, 0, converter.getOutputSchema());
+
+		// Default: need to convert
+		converter = bufferPO;
+
+		if ("JSON".equalsIgnoreCase(protocol)) {
+			if (operator.getOutputSchema(connectionPort).getType() == Tuple.class) {
+				converter = new TupleToKeyValuePO();
+				bufferPO.subscribeSink((ISink) converter, 0, 0, operator.getOutputSchema());
+			}
+
+			// TODO: how to handle xml cases?
+		}
+
+		// use output schema from operator because bufferPO does not have any
+		converter.subscribeSink((ISink) this, nextFreeInputPort, 0, converter.getOutputSchema());
 		converter.addOwner(this);
 		this.addOwner(this);
 		this.open(this);
@@ -274,16 +310,20 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	@Override
 	public void done(IOwnedOperator op) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
 
 class QueryResultReceiver {
 	final boolean useSendText;
+	final String protocol;
 	final List<Session> sessions = new LinkedList<>();
-
-	QueryResultReceiver(boolean useSendText) {
+	final IStreamObjectDataHandler<?> dataHandler;
+	
+	QueryResultReceiver(boolean useSendText, String protocol, IStreamObjectDataHandler<?> dataHandler) {
 		this.useSendText = useSendText;
+		this.protocol = protocol;
+		this.dataHandler = dataHandler;
 	}
 
 	public boolean noMoreReceivers() {

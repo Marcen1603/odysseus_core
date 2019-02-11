@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class OdysseusProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends SizeByteBufferHandler<T> {
 	
-	final static byte OBJECT = 0;
-	final static byte PUNCT = 1;
+	public static final byte OBJECT = 0;
+	public static final byte PUNCT = 1;
 	
 	
 	public OdysseusProtocolHandler(){
@@ -41,6 +41,11 @@ public class OdysseusProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 	}
 
 	private void sendWithTypeInfo(ByteBuffer buffer, byte typeInfo) throws IOException {
+		byte[] rawBytes = addTypeInfo(buffer, typeInfo);
+		getTransportHandler().send(rawBytes);
+	}
+
+	public static byte[] addTypeInfo(ByteBuffer buffer, byte typeInfo) {
 		int messageSizeBytes = buffer.remaining();
 		byte[] rawBytes = new byte[messageSizeBytes + 5]; // sizeinfo = 5, typeinfo = 1
 		insertInt(rawBytes, 0, messageSizeBytes+1); // typeInfo is part of object!
@@ -49,7 +54,7 @@ public class OdysseusProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		// buffer.array() returns the complete array (1024 bytes) and
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 5, messageSizeBytes);
-		getTransportHandler().send(rawBytes);
+		return rawBytes;
 	}
 	
 	@Override
