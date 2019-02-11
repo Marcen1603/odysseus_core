@@ -147,7 +147,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 					if (connectedOperators.get(protocol) == null
 							|| connectedOperators.get(protocol).get(operator) == null
 							|| connectedOperators.get(protocol).get(operator).get(connectionPort) == null) {
-						addNewConnection(protocol, connectionPort, operator, odysseusSession);
+						addNewConnection(protocol, connectionPort, operator);
 					}
 					addQueryResultReceiver(protocol, operator, connectionPort, session, odysseusSession);
 
@@ -211,7 +211,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addNewConnection(String protocol, Integer connectionPort,
-			ISource<IStreamObject<? extends IMetaAttribute>> operator, ISession odysseusSession) {
+			ISource<IStreamObject<? extends IMetaAttribute>> operator) {
 
 		int nextFreeInputPort = getNextFreeSinkInPort();
 
@@ -243,10 +243,6 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		operator.connectSink(bufferPO, 0, connectionPort, operator.getOutputSchema(connectionPort));
 
 		AbstractPipe<IStreamObject<?>, IStreamObject<?>> converter;
-
-		if (operator.getOutputSchema(connectionPort).getType() != Tuple.class) {
-			throw new RuntimeException("Sorry, only tuples supported at the moment");
-		}
 
 		// Default: need to convert
 		converter = bufferPO;
