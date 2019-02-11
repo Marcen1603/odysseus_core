@@ -110,7 +110,6 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	public void onOpen(@PathParam("id") String id, @PathParam("operator") String operatorName,
 			@PathParam("port") String port, @PathParam("protocol") String protocol,
 			@PathParam("securityToken") String securityToken, Session session) {
-		// check login
 		try {
 			ISession odysseusSession = SessionManagement.instance.login(securityToken);
 			// ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
@@ -120,17 +119,8 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 					IExecutionPlan currentPlan = ExecutorServiceBinding.getExecutor().getExecutionPlan(odysseusSession);
 					Integer queryID = null;
 					IPhysicalQuery query = null;
-					try {
-						queryID = Integer.parseInt(id);
-						query = currentPlan.getQueryById(queryID.intValue(), odysseusSession);
-					} catch (NumberFormatException e) {
-						LOGGER.debug("No query id. Try to retrieve query by name");
-						query = currentPlan.getQueryByName(new Resource(id), odysseusSession);
-					}
-					if (query == null) {
-						// TODO:
-						throw new QueryNotFoundException("No query with name or id " + id + " found.");
-					}
+					query = getQuery(id, odysseusSession, currentPlan);
+					
 					// TODO handle operator param
 					IPhysicalOperator operatorP = query.getRoots().get(0);
 					ISource<IStreamObject<?>> operator = null;
@@ -160,6 +150,23 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		} catch (Exception e) {
 			LOGGER.error("Error in onOpen", e);
 		}
+	}
+
+	private IPhysicalQuery getQuery(String id, ISession odysseusSession, IExecutionPlan currentPlan) {
+		Integer queryID;
+		IPhysicalQuery query;
+		try {
+			queryID = Integer.parseInt(id);
+			query = currentPlan.getQueryById(queryID.intValue(), odysseusSession);
+		} catch (NumberFormatException e) {
+			LOGGER.debug("No query id. Try to retrieve query by name");
+			query = currentPlan.getQueryByName(new Resource(id), odysseusSession);
+		}
+		if (query == null) {
+			// TODO:
+			throw new QueryNotFoundException("No query with name or id " + id + " found.");
+		}
+		return query;
 	}
 
 	private void closeConnection(Session session, CloseReason reason) {
@@ -265,7 +272,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	private void removeConnection(QueryResultReceiver qrr) {
 		// TODO Auto-generated method stub
-
+		// TODO: Remove Buffer etc. 
 	}
 
 	public void onClose(CloseReason closeReason, Session session) {
