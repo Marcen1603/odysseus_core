@@ -181,7 +181,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		return false;
 	}
 
-	protected void setInputPortCount(int ports) {
+	@Override
+	public final void setInputPortCount(int ports) {
 		if (ports > noInputPorts) {
 			this.noInputPorts = ports;
 			processInitEvent = new POEvent[noInputPorts];
@@ -358,11 +359,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	@Override
 	public final void process(R object, int port) {
-		
-		//fire(processInitEvent[port]);
+		if (processInitEvent == null || processInitEvent[port] == null) {
+			setInputPortCount(port);
+		}
+		fire(processInitEvent[port]);
 
 		process_next(object, port);
-		//fire(processDoneEvent[port]);
+		fire(processDoneEvent[port]);
 	}
 
 	protected abstract void process_next(R object, int port);
