@@ -793,15 +793,16 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		// Implement this method if need to react to new source subscription
 	}
 
-	final protected int getNextFreeSinkInPort() {
-		int sinkInPort = -1;
-		for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub : this.subscribedToSource) {
-			if (sub.getSinkInPort() > sinkInPort) {
-				sinkInPort = sub.getSinkInPort();
+	protected final int getNextFreeSinkInPort() {
+		// Subscriptions can be freed. Search for first not connected port
+		int nextFreePort = 0;
+		while (nextFreePort<Integer.MAX_VALUE) {
+			if (getSubscribedToSource(nextFreePort) == null) {
+				return nextFreePort;
 			}
+			nextFreePort++;
 		}
-		sinkInPort++;
-		return sinkInPort;
+		throw new RuntimeException("No more free ports available");
 	}
 
 	private boolean sinkInPortFree(int sinkInPort) {
