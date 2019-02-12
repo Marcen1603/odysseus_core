@@ -20,20 +20,27 @@ public class Application implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		int port = OdysseusConfiguration.instance.getInt("rest2.port", 8888);
-		new MicroservicesRunner(port).addGlobalRequestInterceptor(new SecurityAuthInterceptor())
-				.deployWebSocketEndpoint(new QueryResultWebsocketEndpoint())
-				.deploy(
-						new DatastreamsApi(),
-						new DatatypesApi(),
-						new FunctionsApi(),
-						new OperatorsApi(),
-						new ParsersApi(),
-						new QueriesApi(),
-						new ServicesApi(),
-						new SinksApi(),
-						new UsersApi()
-				).start();
+		
+		Thread runner = new Thread() {
+			@Override
+			public void run() {
+				int port = OdysseusConfiguration.instance.getInt("rest2.port", 8888);
+				new MicroservicesRunner(port).addGlobalRequestInterceptor(new SecurityAuthInterceptor())
+						.deployWebSocketEndpoint(new QueryResultWebsocketEndpoint())
+						.deploy(
+								new DatastreamsApi(),
+								new DatatypesApi(),
+								new FunctionsApi(),
+								new OperatorsApi(),
+								new ParsersApi(),
+								new QueriesApi(),
+								new ServicesApi(),
+								new SinksApi(),
+								new UsersApi()
+						).start();				
+			}
+		};
+		runner.start();
 	}
 
 	@Override
