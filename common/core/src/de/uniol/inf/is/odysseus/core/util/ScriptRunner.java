@@ -37,7 +37,7 @@ public class ScriptRunner {
 							url = new URL("file:///"+path);
 						}
 					} catch (MalformedURLException e) {
-						e.printStackTrace();
+						LOG.error("Error loading script from "+path,e);
 					}
 				}
 
@@ -45,8 +45,9 @@ public class ScriptRunner {
 					runScript(user, url, executor);
 				} catch (IOException e) {
 					// Could be ignored
-					e.printStackTrace();
+					LOG.error("Error running script ",e);
 				}
+				
 			}
 
 		}
