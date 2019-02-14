@@ -859,6 +859,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public ILogicalQuery getLogicalQueryById(int id, ISession session) {
 		// TODO: Check access rights
 		IPhysicalQuery pq = executionPlan.getQueryById(id, session);
+		if(pq == null) {
+			return null;
+		}
 		if (pq.getSession().getUser() == session.getUser()) {
 			ILogicalQuery lq = null;
 			if (pq != null) {
