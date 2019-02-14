@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.rest2.common.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
-
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Query
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T17:35:32.862Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
 public class Query   {
   @JsonProperty("id")
   private Integer id;
