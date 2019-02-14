@@ -2,6 +2,7 @@
 
 err_report() {
 	echo "One auth failed on line $1"
+	exit 1
 }
 
 trap 'err_report $LINENO' ERR
@@ -26,4 +27,4 @@ trap "echo 'Wrong auth failed as expected. Fine.'" ERR
 
 echo "Testing wrong logins. Should output message on success."
 curl -s --fail --header "Content-Type: application/json" -u unkown:user localhost:8888/datatypes > /dev/null
-echo "Done"
+echo "Done."
