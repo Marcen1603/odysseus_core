@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.websocket.CloseReason;
 import javax.websocket.CloseReason.CloseCodes;
@@ -50,6 +52,10 @@ import de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator.TupleToKeyValue
 public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMetaAttribute>>
 		implements WebSocketEndpoint, IOperatorOwner {
 
+	public static final String PROTOCOL_JSON = "JSON";
+	public static final String PROTOCOL_CSV = "CSV";
+	public static final String PROTOCOL_BINARY = "Binary";
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryResultWebsocketEndpoint.class);
 	// TODO: Config!
 	private static final int BUFFER_LIMIT = 1000;
@@ -57,6 +63,16 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	private Map<Session, Integer> sessionToInputPortMapping = new HashMap<>();
 	// protocol, port, outputport, inputport
 	private Map<String, Map<IPhysicalOperator, Map<Integer, Integer>>> connectedOperators = new HashMap<>();
+	
+	public static Set<String> protocols() {
+		// use this after migration to Java > 8
+		// return Set.of(PROTOCOL_JSON, PROTOCOL_CSV, PROTOCOL_BINARY);
+		Set<String> result = new HashSet<>();
+		result.add(PROTOCOL_JSON);
+		result.add(PROTOCOL_CSV);
+		result.add(PROTOCOL_BINARY);
+		return result;
+	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
@@ -219,7 +235,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	private boolean getTypeForProtocol(String protocol) {
 		// TODO: more generic
-		if ("JSON".equalsIgnoreCase(protocol)) {
+		if (PROTOCOL_JSON.equalsIgnoreCase(protocol)) {
 			return true;
 		}
 		return false;
@@ -263,7 +279,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		// Default: need to convert
 		converter = bufferPO;
 
-		if ("JSON".equalsIgnoreCase(protocol)) {
+		if (PROTOCOL_JSON.equalsIgnoreCase(protocol)) {
 			if (operator.getOutputSchema(connectionPort).getType() == Tuple.class) {
 				converter = new TupleToKeyValuePO();
 				bufferPO.subscribeSink((ISink) converter, 0, 0, operator.getOutputSchema());
@@ -329,6 +345,16 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	public void done(IOwnedOperator op) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public static String toWebsocketUrl(ISession session, int queryid, String operator, int port, String protocol) {
+		return String.format("/queries/%s/%s/%s/%s/%s",
+					String.valueOf(queryid),
+					operator,
+					String.valueOf(port),
+					protocol,
+					session.getToken()
+				);
 	}
 }
 

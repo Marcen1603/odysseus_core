@@ -1,29 +1,30 @@
 package de.uniol.inf.is.odysseus.rest2.server.api.impl;
 
+import java.util.Optional;
+
 import javax.ws.rs.core.Response;
 
-import de.uniol.inf.is.odysseus.rest2.server.api.ApiResponseMessage;
-import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.server.api.SinksApiService;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class SinksApiServiceImpl extends SinksApiService {
-	
+
 	@Override
-	public Response sinksGet() throws NotFoundException {
+	public Response sinksGet(Optional<ISession> session) {
 		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		return Response.ok().entity("not implemented").build();
 	}
 
 	@Override
-	public Response sinksNameDelete(String name) throws NotFoundException {
+	public Response sinksNameDelete(Optional<ISession> session, String name) {
 		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		return Response.ok().entity("not implemented").build();
 	}
 
 	@Override
-	public Response sinksNameGet(String name) throws NotFoundException {
+	public Response sinksNameGet(Optional<ISession> session, String name) {
 		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		return Response.ok().entity("not implemented").build();
 	}
 }

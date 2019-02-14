@@ -1,18 +1,13 @@
 package de.uniol.inf.is.odysseus.rest2.server.api.impl;
 
-import static de.uniol.inf.is.odysseus.rest2.server.api.impl.Auxiliary.session;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.wso2.msf4j.Request;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -20,15 +15,12 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.DatatypesApiService;
-import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class DatatypesApiServiceImpl extends DatatypesApiService {
 
 	@Override
-	public Response datatypesGet(@Context Request request) throws NotFoundException {
-
-		Optional<ISession> session = session(request);
+	public Response datatypesGet(Optional<ISession> session) {
 
 		if (session.isPresent()) {
 			if (ExecutorServiceBinding.getExecutor() != null) {

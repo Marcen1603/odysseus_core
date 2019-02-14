@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rest2.server.api.impl;
 
+import java.util.Optional;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -8,15 +10,13 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
-import de.uniol.inf.is.odysseus.rest2.server.api.ApiResponseMessage;
-import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
 import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApiService;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class ServicesApiServiceImpl extends ServicesApiService {
 
 	@Override
-	public Response servicesLoginPost(User user) throws NotFoundException {
+	public Response servicesLoginPost(Optional<ISession> ignore, User user) {
 		ITenant tenant = UserManagementProvider.instance.getTenant(user.getTenant() == null ? "" : user.getTenant());
 		ISession session = SessionManagement.instance.login(user.getUsername(), user.getPassword().getBytes(), tenant);
 		if (session != null) {
@@ -27,9 +27,9 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 	}
 
 	@Override
-	public Response servicesOutputschemaPost(Integer port) throws NotFoundException {
+	public Response servicesOutputschemaPost(Optional<ISession> session, Integer port) {
 		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		return Response.ok().entity("not implemented").build();
 	}
 
 }
