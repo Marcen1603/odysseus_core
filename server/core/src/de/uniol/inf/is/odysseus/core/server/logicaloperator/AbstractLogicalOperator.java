@@ -623,6 +623,11 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		// Nothing special in logical Operators
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
+	
+	@Override
+	public Collection<LogicalSubscription> getConnectedSinks() {
+		return getSubscriptions();
+	}
 
 	@Override
 	public void disconnectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rest2.server.query;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -62,10 +64,11 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		QueryResultReceiver resultReceiver = receiver.get(port);
 		if (resultReceiver.useSendText) {
 			String toSend = punctuation.toString();
-			sendText(resultReceiver.sessions, toSend);			
+			sendText(resultReceiver.sessions, toSend);
 		} else {
 			ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertPunctuation(punctuation);
-			ByteBuffer toSend = ByteBuffer.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.PUNCT));	
+			ByteBuffer toSend = ByteBuffer
+					.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.PUNCT));
 			sendBinary(resultReceiver.sessions, toSend);
 		}
 	}
@@ -74,13 +77,17 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	protected void process_next(IStreamObject<IMetaAttribute> object, int port) {
 		// TODO: synchronization necessary?
 		QueryResultReceiver resultReceiver = receiver.get(port);
-		if (resultReceiver.useSendText) {
-			String toSend = object.toString();
-			sendText(resultReceiver.sessions, toSend);			
-		} else {
-			ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertObject(object, resultReceiver.dataHandler);
-			ByteBuffer toSend = ByteBuffer.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.OBJECT));	
-			sendBinary(resultReceiver.sessions, toSend);
+		if (resultReceiver != null) {
+			if (resultReceiver.useSendText) {
+				String toSend = object.toString();
+				sendText(resultReceiver.sessions, toSend);
+			} else {
+				ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertObject(object,
+						resultReceiver.dataHandler);
+				ByteBuffer toSend = ByteBuffer
+						.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.OBJECT));
+				sendBinary(resultReceiver.sessions, toSend);
+			}
 		}
 	}
 
@@ -90,21 +97,23 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 				session.getBasicRemote().sendText(toSend);
 			} catch (IOException e) {
 				LOGGER.error("Problems sending value " + toSend, e);
+				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
 			}
 		});
 	}
 
-	private void sendBinary(List<Session> sessions,
-			ByteBuffer toSend) {
+	private void sendBinary(List<Session> sessions, ByteBuffer toSend) {
+
 		sessions.forEach(session -> {
 			try {
 				session.getBasicRemote().sendBinary(toSend);
 			} catch (IOException e) {
 				LOGGER.error("Problems sending value ", e);
+				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
 			}
 		});
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@OnOpen
 	public void onOpen(@PathParam("id") String id, @PathParam("operator") String operatorName,
@@ -112,7 +121,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 			@PathParam("securityToken") String securityToken, Session session) {
 		try {
 			ISession odysseusSession = SessionManagement.instance.login(securityToken);
-			// ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
+			//ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
 
 			if (odysseusSession != null) {
 				synchronized (this) {
@@ -120,7 +129,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 					Integer queryID = null;
 					IPhysicalQuery query = null;
 					query = getQuery(id, odysseusSession, currentPlan);
-					
+
 					// TODO handle operator param
 					IPhysicalOperator operatorP = query.getRoots().get(0);
 					ISource<IStreamObject<?>> operator = null;
@@ -183,11 +192,11 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		QueryResultReceiver qrr = receiver.get(inputPort);
 		if (qrr == null) {
 			Class<?> type = operator.getOutputSchema().getType();
-			 IStreamObjectDataHandler<?> dh = ExecutorServiceBinding.getExecutor().getDataDictionary(odysseusSession)
+			IStreamObjectDataHandler<?> dh = ExecutorServiceBinding.getExecutor().getDataDictionary(odysseusSession)
 					.getDataHandlerRegistry(odysseusSession)
 					.getStreamObjectDataHandler(type.getSimpleName(), operator.getOutputSchema(connectionPort));
-						
-			qrr = new QueryResultReceiver(getTypeForProtocol(protocol), protocol, dh);
+
+			qrr = new QueryResultReceiver(getTypeForProtocol(protocol), protocol, dh, (ISource<?>) operator);
 			receiver.put(inputPort, qrr);
 		}
 		qrr.addSession(session);
@@ -271,8 +280,14 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	}
 
 	private void removeConnection(QueryResultReceiver qrr) {
-		// TODO Auto-generated method stub
-		// TODO: Remove Buffer etc. 
+		Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> sinks = qrr.source.getConnectedSinks();
+
+		sinks.forEach(sinksubscription -> {
+			sinksubscription.getSink().done(0);
+			qrr.source.disconnectSink(sinksubscription.getSink(), sinksubscription.getSinkInPort(),
+					sinksubscription.getSourceOutPort(), sinksubscription.getSchema());
+		});
+
 	}
 
 	public void onClose(CloseReason closeReason, Session session) {
@@ -318,15 +333,18 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 }
 
 class QueryResultReceiver {
+	public ThreadedBufferPO<IStreamObject<? extends IMetaAttribute>> buffer;
 	final boolean useSendText;
 	final String protocol;
 	final List<Session> sessions = new LinkedList<>();
 	final IStreamObjectDataHandler<?> dataHandler;
-	
-	QueryResultReceiver(boolean useSendText, String protocol, IStreamObjectDataHandler<?> dataHandler) {
+	final ISource<?> source;
+
+	QueryResultReceiver(boolean useSendText, String protocol, IStreamObjectDataHandler<?> dataHandler, ISource<?> op) {
 		this.useSendText = useSendText;
 		this.protocol = protocol;
 		this.dataHandler = dataHandler;
+		this.source = op;
 	}
 
 	public boolean noMoreReceivers() {

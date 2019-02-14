@@ -865,4 +865,10 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>>
 
 	}
 
+	@Override
+	public Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> getConnectedSinks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

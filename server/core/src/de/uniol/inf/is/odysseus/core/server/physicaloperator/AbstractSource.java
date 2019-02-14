@@ -834,6 +834,11 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		addActiveSubscription(sub);
 		connectedSinks.add(sub);
 	}
+	
+	@Override
+	public Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> getConnectedSinks() {
+		return Collections.unmodifiableCollection(connectedSinks);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
