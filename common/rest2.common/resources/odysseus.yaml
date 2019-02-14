@@ -395,6 +395,8 @@ components:
                 type: string
               port:
                 type: integer
+              protocol:
+                type: string
               websocket_url:
                 type: string
     ResourceInformation:
