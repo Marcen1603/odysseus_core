@@ -830,7 +830,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// running the query translation phase
 		sub.setNeedsClone(true);
 		sink.addOwner(this.getOwner());
-		sink.setInputPortCount(sinkInPort);
+		sink.setInputPortCount(sinkInPort+1);
 		addActiveSubscription(sub);
 		connectedSinks.add(sub);
 	}
