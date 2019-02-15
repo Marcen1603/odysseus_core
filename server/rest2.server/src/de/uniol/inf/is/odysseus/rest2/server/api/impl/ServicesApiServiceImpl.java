@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.rest2.common.model.Token;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
 import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApiService;
 
@@ -20,7 +21,9 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 		ITenant tenant = UserManagementProvider.instance.getTenant(user.getTenant() == null ? "" : user.getTenant());
 		ISession session = SessionManagement.instance.login(user.getUsername(), user.getPassword().getBytes(), tenant);
 		if (session != null) {
-			return Response.ok().entity(session.getToken()).build();
+			final Token token = new Token();
+			token.setToken(session.getToken());
+			return Response.ok().entity(token).build();
 		} else {
 			return Response.status(Status.BAD_REQUEST).build();
 		}

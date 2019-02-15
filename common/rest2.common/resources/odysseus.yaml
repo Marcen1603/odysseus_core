@@ -357,7 +357,10 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  token:
+                    type: string
   /services/outputschema:
     post:
       summary: Determines the output schema of the given query.
@@ -517,6 +520,11 @@ components:
           type: string
           writeOnly: true
         tenant:
+          type: string
+    Token:
+      type: object
+      properties:
+        token:
           type: string
   responses:
     QueryResponse:
