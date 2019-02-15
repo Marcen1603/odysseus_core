@@ -362,6 +362,9 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			parser = OdysseusScriptParser.PARSER_NAME;
 		}
 
+		// TODO: Is there a way to catch errors caused by deficient scripts? In this
+		// case returning a 4xx status code would be more appropriate.
+
 		Collection<Integer> queryIds = executor.addQuery(queryText, parser, session.get(), new Context());
 		List<Query> queries = queryIds.stream().map(x -> getQuery(session.get(), x)).filter(Optional::isPresent)
 				.map(Optional::get).collect(Collectors.toList());
