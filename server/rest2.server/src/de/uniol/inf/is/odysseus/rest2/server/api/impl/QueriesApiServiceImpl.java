@@ -160,13 +160,13 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			return Response.status(Status.BAD_REQUEST).entity("Changing the query name is not allowed.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
-		
-		if(query.getParser() != null && !query.getParser().equals(logicalQuery.getParserId())) {
+
+		if (query.getParser() != null && !query.getParser().equals(logicalQuery.getParserId())) {
 			return Response.status(Status.BAD_REQUEST).entity("Changing the parser is not allowed.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
-		
-		if(query.getQueryText() != null && !query.getQueryText().equals(logicalQuery.getQueryText())) {
+
+		if (query.getQueryText() != null && !query.getQueryText().equals(logicalQuery.getQueryText())) {
 			return Response.status(Status.BAD_REQUEST).entity("Changing the query text is not allowed.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
@@ -177,11 +177,58 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 					.type(MediaType.TEXT_PLAIN).build();
 		}
 
-		QueryState state = executor.getQueryState(id, session.get());
+		QueryState currentState = executor.getQueryState(id, session.get());
 
-		if (query.getState() != null && !query.getState().equals(state.name())) {
-			// FIXME: perform change state
-			return Response.serverError().entity("not impemented yet").type(MediaType.TEXT_PLAIN).build();
+		if (query.getState() != null && !query.getState().equals(currentState.name())) {
+			QueryState desiredState;
+			try {
+				desiredState = QueryState.valueOf(query.getState());
+			} catch (IllegalArgumentException e) {
+				String values = Arrays.asList(QueryState.values()).stream().map(QueryState::name)
+						.collect(Collectors.joining(", "));
+				return Response.status(Status.BAD_REQUEST).entity("State needs to be one of these: " + values)
+						.type(MediaType.TEXT_PLAIN).build();
+			}
+			switch (desiredState) {
+			case INACTIVE:
+				executor.stopQuery(id, session.get());
+				break;
+			case PARTIAL:
+				// TODO implement state change to PARTIAL (find a way to pass option
+				// sheddingFactor via REST)
+//				int sheddingFactor;
+//				executor.partial(id, sheddingFactor, session.get());
+				return Response.status(Status.BAD_REQUEST)
+						.entity("Changing state to " + QueryState.PARTIAL.name() + " is not supported yet.")
+						.type(MediaType.TEXT_PLAIN).build();
+			case PARTIAL_SUSPENDED:
+				// TODO implement state change to PARTIAL_SUSPENDED (find a way to pass option
+				// sheddingFactor via REST)
+//				int sheddingFactor;
+//				executor.partialQuery(id, sheddingFactor, session.get());
+				return Response.status(Status.BAD_REQUEST)
+						.entity("Changing state to " + QueryState.PARTIAL_SUSPENDED.name() + " is not supported yet.")
+						.type(MediaType.TEXT_PLAIN).build();
+			case RUNNING:
+				executor.startQuery(id, session.get());
+				break;
+			case SUSPENDED:
+				executor.suspendQuery(id, session.get());
+				break;
+			case UNDEF:
+				return Response.status(Status.BAD_REQUEST)
+						.entity("Changing state to " + QueryState.UNDEF.name() + " is not supported.")
+						.type(MediaType.TEXT_PLAIN).build();
+			}
+
+			QueryState newState = executor.getQueryState(id, session.get());
+			if (!newState.equals(desiredState)) {
+				return Response.serverError()
+						.entity(String.format(
+								"Query state is now '%s' after the attempt to change it to '%s'. This is unexpected.",
+								newState.name(), desiredState.name()))
+						.type(MediaType.TEXT_PLAIN).build();
+			}
 		}
 
 		return Response.ok().entity(getQuery(session.get(), id)).build();
@@ -304,7 +351,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			} else if (queryState.equals(QueryState.INACTIVE)) {
 				queryTextBuilder.append("#ADDQUERY").append(System.lineSeparator());
 			} else {
-				// TODO: Add support for other states
+				// TODO: Add support for other states???
 				return Response.status(Status.BAD_REQUEST)
 						.entity("Adding queries with state other than " + QueryState.RUNNING.name() + " or "
 								+ QueryState.INACTIVE.name() + " is currently not supported.")
