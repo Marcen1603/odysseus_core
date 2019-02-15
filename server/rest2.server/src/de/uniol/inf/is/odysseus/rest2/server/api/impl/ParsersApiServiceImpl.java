@@ -17,7 +17,7 @@ public class ParsersApiServiceImpl extends ParsersApiService {
 	}
 
 	@Override
-	public Response parsersNamePost(Optional<ISession> session, String name) {
+	public Response parsersNamePost(Optional<ISession> session, String parser, String scriptText) {
 		// do some magic!
 		return Response.ok().entity("not implemented").build();
 	}

@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.rest2.server.api.factories.ParsersApiServiceFact
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
+import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the parsers API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-15T17:33:08.462Z[GMT]")
 public class ParsersApi  {
    private final ParsersApiService delegate = ParsersApiServiceFactory.getParsersApi();
 
@@ -49,16 +50,19 @@ public class ParsersApi  {
     }
     @POST
     @Path("/{name}")
-    
-    
-    @io.swagger.annotations.ApiOperation(value = "Executes a script with the adressed parser.", notes = "", response = Void.class, tags={  })
+    @Consumes({ "text/plain" })
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "Executes a script with the adressed parser.", notes = "", response = Query.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 204, message = "OK", response = Void.class) })
+        @io.swagger.annotations.ApiResponse(code = 204, message = "OK", response = Query.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 201, message = "Created", response = Query.class) })
     public Response parsersNamePost(@Context Request request, @ApiParam(value = "The name of the parser.",required=true) @PathParam("name") String name
+,@ApiParam(value = "" ,required=true) String body
 ) {
     	final String securityToken = (String) request.getSession()
 				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
-        return delegate.parsersNamePost(session, name);
+        return delegate.parsersNamePost(session, name,body);
     }
 }

@@ -326,9 +326,21 @@ paths:
         description: The name of the parser.
     post:
       summary: Executes a script with the adressed parser.
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+        required: true
       responses:
         '204':
           description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Query'
 
   /services/login:
     post:
