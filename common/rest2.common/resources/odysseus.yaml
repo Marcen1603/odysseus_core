@@ -459,8 +459,45 @@ components:
     OperatorInfo:
       type: object
       properties:
-        operatorname:
+        operatorName:
           type: string
+        doc:
+          type: string
+        url:
+          type: string
+        parameters:
+          type: array
+          items:
+            type: object
+            properties:
+              parameterType:
+                type: string
+              parameterName:
+                type: string
+              list:
+                type: boolean
+              doc:
+                type: string
+              mandatory:
+                type: boolean
+              possibleValues:
+                type: array
+                items:
+                  type: string
+              deprecated:
+                type: boolean
+        maxPorts:
+          type: integer
+        minPorts:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: string
+        hidden:
+          type: boolean
+        deprecated:
+          type: boolean
     AggregateFunction:
       type: object
       properties:
