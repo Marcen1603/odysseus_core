@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class QueriesApiServiceImpl extends QueriesApiService {
 
-	private static Optional<Query> getQuery(ISession session, int queryid) {
+	static Optional<Query> getQuery(ISession session, int queryid) {
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 		if (executor != null) {
 			ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryid, session);
