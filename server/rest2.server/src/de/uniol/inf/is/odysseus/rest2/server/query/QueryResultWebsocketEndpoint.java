@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.rest2.server.query;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -117,23 +119,38 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	}
 
 	private void sendText(List<Session> sessions, String toSend) {
-		sessions.forEach(session -> {
+		// onClose() below modifies the session list because it removes the defective
+		// session. This would lead to a ConcurrentModificationException. Thus we make a
+		// copy.
+		List<Session> sessionsCopy = new ArrayList<>(sessions);
+		sessionsCopy.forEach(session -> {
 			try {
 				session.getBasicRemote().sendText(toSend);
 			} catch (IOException e) {
-				LOGGER.error("Problems sending value " + toSend, e);
+				if (e instanceof ClosedChannelException) {
+					LOGGER.debug("Channel closed", e);
+				} else {
+					LOGGER.error("Problems sending value " + toSend, e);
+				}
 				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
 			}
 		});
 	}
 
 	private void sendBinary(List<Session> sessions, ByteBuffer toSend) {
-
-		sessions.forEach(session -> {
+		// onClose() below modifies the session list because it removes the defective
+		// session. This would lead to a ConcurrentModificationException. Thus we make a
+		// copy.
+		List<Session> sessionsCopy = new ArrayList<>(sessions);
+		sessionsCopy.forEach(session -> {
 			try {
 				session.getBasicRemote().sendBinary(toSend);
 			} catch (IOException e) {
-				LOGGER.error("Problems sending value ", e);
+				if (e instanceof ClosedChannelException) {
+					LOGGER.debug("Channel closed", e);
+				} else {
+					LOGGER.error("Problems sending value", e);
+				}
 				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
 			}
 		});
