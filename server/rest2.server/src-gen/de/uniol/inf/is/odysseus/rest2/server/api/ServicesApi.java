@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.rest2.server.api.factories.ServicesApiServiceFac
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
+import de.uniol.inf.is.odysseus.rest2.common.model.BundleInfo;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
 
@@ -32,17 +33,31 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the services API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T08:59:53.113Z[GMT]")
 public class ServicesApi  {
    private final ServicesApiService delegate = ServicesApiServiceFactory.getServicesApi();
 
+    @GET
+    @Path("/bundles")
+    
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "Returns a list of installed OSGi bundles.", notes = "", response = BundleInfo.class, responseContainer = "List", tags={  })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = BundleInfo.class, responseContainer = "List") })
+    public Response servicesBundlesGet(@Context Request request, @ApiParam(value = "If filter is given only bundles whose symbolic name contains the given filter string are returned.") @QueryParam("filter") String filter
+) {
+    	final String securityToken = (String) request.getSession()
+				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
+		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
+        return delegate.servicesBundlesGet(session, filter);
+    }
     @POST
     @Path("/login")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Executes a login and returns a token.", notes = "", response = String.class, tags={  })
+    @io.swagger.annotations.ApiOperation(value = "Executes a login and returns a token.", notes = "", response = Object.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = String.class) })
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Object.class) })
     public Response servicesLoginPost(@Context Request request, @ApiParam(value = "" ,required=true) User user
 ) {
     	final String securityToken = (String) request.getSession()

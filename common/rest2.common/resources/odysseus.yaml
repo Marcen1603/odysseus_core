@@ -357,10 +357,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
+                $ref: ''#/components/schemas/Token'
   /services/outputschema:
     post:
       summary: Determines the output schema of the given query.
@@ -380,6 +377,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Schema'
+  /services/bundles:
+    get:
+      summary: Returns a list of installed OSGi bundles.
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+          description: If filter is given only bundles whose symbolic name contains the given filter string are returned.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BundleInfo'
 
 components:
   schemas:
@@ -502,10 +517,9 @@ components:
         deprecated:
           type: boolean
     AggregateFunction:
-      type: object
-      properties:
-        name:
-          type: string
+      type: array
+      items:
+        type: string
     Function:
       type: object
       properties:
@@ -525,6 +539,26 @@ components:
       type: object
       properties:
         token:
+          type: string
+    BundleInfo:
+      type: object
+      properties:
+        bundleId:
+          type: long
+        lastModified:
+          type: long
+        state:
+          type: string
+          enum:
+            - ACTIVE
+            - INSTALLED
+            - RESOLVED
+            - UNINSTALLED
+            - STARTING
+            - STOPPING
+        symbolicName:
+          type: string
+        version:
           type: string
   responses:
     QueryResponse:

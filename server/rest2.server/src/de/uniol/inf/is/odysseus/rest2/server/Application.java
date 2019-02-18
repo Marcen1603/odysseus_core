@@ -26,9 +26,17 @@ import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
 public class Application implements BundleActivator {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Application.class);
+	
+	private static BundleContext context;
+
+	public static BundleContext getContext() {
+		return context;
+	}
 
 	@Override
 	public void start(BundleContext context) throws Exception {
+		
+		Application.context = context;
 		
 		Thread runner = new Thread() {
 			@Override
@@ -66,7 +74,7 @@ public class Application implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-
+		Application.context = null;
 	}
 
 }
