@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.SinksApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.UsersApi;
 import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
+import de.uniol.inf.is.odysseus.rest2.server.query.ServerEventsWebsocketEndpoint;
 
 public class Application implements BundleActivator {
 	
@@ -56,6 +57,7 @@ public class Application implements BundleActivator {
 							}
 						})
 						.deployWebSocketEndpoint(new QueryResultWebsocketEndpoint())
+						.deployWebSocketEndpoint(new ServerEventsWebsocketEndpoint())
 						.deploy(
 								new DatastreamsApi(),
 								new DatatypesApi(),
