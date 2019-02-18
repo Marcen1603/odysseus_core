@@ -50,7 +50,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Query'
-    patch:
+    put:
       summary: Updates the query with the given ID.
       description: With this operation you can update the state of the query (e.g. to start or stop a query). Updating the query text is not allowed. Remove this query and add a new one instead.
       requestBody:
@@ -88,7 +88,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Query'
-    patch:
+    put:
       summary: Updates the query with the given name.
       description: With this operation you can update the state of the query (e.g. to start or stop a query). Updating the query text is not allowed. Remove this query and add a new one instead.
       requestBody:

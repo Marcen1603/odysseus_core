@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the queries API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T12:26:51.729Z[GMT]")
 public class QueriesApi  {
    private final QueriesApiService delegate = QueriesApiServiceFactory.getQueriesApi();
 
@@ -76,20 +76,20 @@ public class QueriesApi  {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.queriesIdGet(session, id);
     }
-    @PATCH
+    @PUT
     @Path("/{id}")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Updates the query with the given ID.", notes = "With this operation you can update the state of the query (e.g. to start or stop a query). Updating the query text is not allowed. Remove this query and add a new one instead.", response = Query.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Query.class) })
-    public Response queriesIdPatch(@Context Request request, @ApiParam(value = "The ID of the query.",required=true) @PathParam("id") Integer id
+    public Response queriesIdPut(@Context Request request, @ApiParam(value = "The ID of the query.",required=true) @PathParam("id") Integer id
 ,@ApiParam(value = "" ,required=true) Query query
 ) {
     	final String securityToken = (String) request.getSession()
 				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
-        return delegate.queriesIdPatch(session, id,query);
+        return delegate.queriesIdPut(session, id,query);
     }
     @DELETE
     @Path("/{name}")
@@ -119,20 +119,20 @@ public class QueriesApi  {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.queriesNameGet(session, name);
     }
-    @PATCH
+    @PUT
     @Path("/{name}")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Updates the query with the given name.", notes = "With this operation you can update the state of the query (e.g. to start or stop a query). Updating the query text is not allowed. Remove this query and add a new one instead.", response = Query.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Query.class) })
-    public Response queriesNamePatch(@Context Request request, @ApiParam(value = "The name of the query.",required=true) @PathParam("name") String name
+    public Response queriesNamePut(@Context Request request, @ApiParam(value = "The name of the query.",required=true) @PathParam("name") String name
 ,@ApiParam(value = "" ,required=true) Query query
 ) {
     	final String securityToken = (String) request.getSession()
 				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
-        return delegate.queriesNamePatch(session, name,query);
+        return delegate.queriesNamePut(session, name,query);
     }
     @POST
     

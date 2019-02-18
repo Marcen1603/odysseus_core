@@ -18,21 +18,21 @@ import javax.ws.rs.core.SecurityContext;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T12:26:51.729Z[GMT]")
 public abstract class QueriesApiService {
     public abstract Response queriesGet(Optional<ISession> session);
     public abstract Response queriesIdDelete(Optional<ISession> session, Integer id
  );
     public abstract Response queriesIdGet(Optional<ISession> session, Integer id
  );
-    public abstract Response queriesIdPatch(Optional<ISession> session, Integer id
+    public abstract Response queriesIdPut(Optional<ISession> session, Integer id
  ,Query query
  );
     public abstract Response queriesNameDelete(Optional<ISession> session, String name
  );
     public abstract Response queriesNameGet(Optional<ISession> session, String name
  );
-    public abstract Response queriesNamePatch(Optional<ISession> session, String name
+    public abstract Response queriesNamePut(Optional<ISession> session, String name
  ,Query query
  );
     public abstract Response queriesPost(Optional<ISession> session, Query query

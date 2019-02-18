@@ -130,7 +130,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	}
 
 	@Override
-	public Response queriesIdPatch(Optional<ISession> session, Integer id, Query query) {
+	public Response queriesIdPut(Optional<ISession> session, Integer id, Query query) {
 
 		if (!session.isPresent()) {
 			return Response.status(Status.FORBIDDEN).build();
@@ -287,8 +287,8 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	}
 
 	@Override
-	public Response queriesNamePatch(Optional<ISession> session, String name, Query query) {
-		return callWithQueryId(session, name, (t, u) -> queriesIdPatch(t, u, query));
+	public Response queriesNamePut(Optional<ISession> session, String name, Query query) {
+		return callWithQueryId(session, name, (t, u) -> queriesIdPut(t, u, query));
 	}
 
 	@Override
