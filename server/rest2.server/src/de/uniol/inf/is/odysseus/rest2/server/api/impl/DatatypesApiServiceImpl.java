@@ -92,7 +92,9 @@ public class DatatypesApiServiceImpl extends DatatypesApiService {
 		result.setAttributename(attribute.getAttributeName());
 		result.setSourcename(attribute.getSourceName());
 		result.setDatatype(transform(attribute.getDatatype()));
-		result.setSubschema(transform(attribute.getDatatype().getSchema()));
+		if (attribute.getDatatype().getSchema() != null) {
+			result.setSubschema(transform(attribute.getDatatype().getSchema()));
+		}
 		return result;
 	}
 }
