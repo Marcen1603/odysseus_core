@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.rest2.server.api.factories.AggregateFunctionsApi
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
-import de.uniol.inf.is.odysseus.rest2.common.model.AggregateFunction;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the aggregate_functions API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T19:23:10.153Z[GMT]")
 public class AggregateFunctionsApi  {
    private final AggregateFunctionsApiService delegate = AggregateFunctionsApiServiceFactory.getAggregateFunctionsApi();
 
@@ -39,13 +38,14 @@ public class AggregateFunctionsApi  {
     
     
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns a list of all available aggregate functions.", notes = "Returns a list of functions that can be used in the [aggregate operator](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Aggregate+%28and+Group%29+operator).", response = AggregateFunction.class, responseContainer = "List", tags={  })
+    @io.swagger.annotations.ApiOperation(value = "Returns a list of all available aggregate functions.", notes = "Returns a list of functions that can be used in the [aggregate operator](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Aggregate+%28and+Group%29+operator).", response = List.class, responseContainer = "List", tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = AggregateFunction.class, responseContainer = "List") })
-    public Response aggregateFunctionsGet(@Context Request request) {
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = List.class, responseContainer = "List") })
+    public Response aggregateFunctionsGet(@Context Request request, @ApiParam(value = "", defaultValue="de.uniol.inf.is.odysseus.core.collection.Tuple") @DefaultValue("de.uniol.inf.is.odysseus.core.collection.Tuple") @QueryParam("datamodel") String datamodel
+) {
     	final String securityToken = (String) request.getSession()
 				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
-        return delegate.aggregateFunctionsGet(session);
+        return delegate.aggregateFunctionsGet(session, datamodel);
     }
 }

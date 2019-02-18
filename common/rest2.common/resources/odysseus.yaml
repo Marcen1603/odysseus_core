@@ -281,6 +281,12 @@ paths:
     get:
       summary: Returns a list of all available aggregate functions.
       description: Returns a list of functions that can be used in the [aggregate operator](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Aggregate+%28and+Group%29+operator).
+      parameters:
+        - in: query
+          name: datamodel
+          schema:
+            type: string
+            default: de.uniol.inf.is.odysseus.core.collection.Tuple
       responses:
         '200':
           description: OK

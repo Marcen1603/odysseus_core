@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.MicroservicesRunner;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.rest2.server.api.AggregateFunctionsApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.DatastreamsApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.DatatypesApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.FunctionsApi;
@@ -59,6 +60,7 @@ public class Application implements BundleActivator {
 						.deployWebSocketEndpoint(new QueryResultWebsocketEndpoint())
 						.deployWebSocketEndpoint(new ServerEventsWebsocketEndpoint())
 						.deploy(
+								new AggregateFunctionsApi(),
 								new DatastreamsApi(),
 								new DatatypesApi(),
 								new FunctionsApi(),
