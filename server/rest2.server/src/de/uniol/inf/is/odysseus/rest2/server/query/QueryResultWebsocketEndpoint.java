@@ -145,8 +145,8 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 			@PathParam("port") String port, @PathParam("protocol") String protocol,
 			@PathParam("securityToken") String securityToken, Session session) {
 		try {
-			//ISession odysseusSession = SessionManagement.instance.login(securityToken);
-			ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
+			ISession odysseusSession = SessionManagement.instance.login(securityToken);
+			//ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
 
 			if (odysseusSession != null) {
 				synchronized (this) {
