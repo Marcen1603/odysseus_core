@@ -34,6 +34,6 @@ public interface IStreamObjectDataHandler<T extends IStreamObject<? extends IMet
 
 	void setMetaAttribute(IMetaAttribute metaAttribute);
 
-	public void writeCSVData(StringBuilder string, Object data, WriteOptions options);
-
+	void writeCSVData(StringBuilder string, Object data, WriteOptions options);
+	
 }

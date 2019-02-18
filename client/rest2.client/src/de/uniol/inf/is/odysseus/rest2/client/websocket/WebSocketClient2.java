@@ -12,7 +12,7 @@ public class WebSocketClient2 {
 
 	public static void main(String[] args) throws URISyntaxException {
 
-		WebSocketClient mWs = new WebSocketClient(new URI("ws://localhost:8888/queries/0/egal/0/BINARY/egal"),
+		WebSocketClient mWs = new WebSocketClient(new URI("ws://localhost:8888/queries/0/egal/0/csv/egal"),
 				new Draft_6455()) {
 			
 			@Override

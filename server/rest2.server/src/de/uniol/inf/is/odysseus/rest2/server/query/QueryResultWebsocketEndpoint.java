@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.websocket.WebSocketEndpoint;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -63,6 +64,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	private Map<Session, Integer> sessionToInputPortMapping = new HashMap<>();
 	// protocol, port, outputport, inputport
 	private Map<String, Map<IPhysicalOperator, Map<Integer, Integer>>> connectedOperators = new HashMap<>();
+
 	
 	public static Set<String> protocols() {
 		// use this after migration to Java > 8
@@ -73,19 +75,21 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		result.add(PROTOCOL_BINARY);
 		return result;
 	}
-
+	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO: synchronization necessary?
 		QueryResultReceiver resultReceiver = receiver.get(port);
-		if (resultReceiver.useSendText) {
-			String toSend = punctuation.toString();
-			sendText(resultReceiver.sessions, toSend);
-		} else {
-			ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertPunctuation(punctuation);
-			ByteBuffer toSend = ByteBuffer
-					.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.PUNCT));
-			sendBinary(resultReceiver.sessions, toSend);
+		if (resultReceiver != null) {
+			if (resultReceiver.useSendText) {
+				String toSend = punctuation.toString();
+				sendText(resultReceiver.sessions, toSend);
+			} else {
+				ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertPunctuation(punctuation);
+				ByteBuffer toSend = ByteBuffer
+						.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.PUNCT));
+				sendBinary(resultReceiver.sessions, toSend);
+			}
 		}
 	}
 
@@ -95,8 +99,13 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		QueryResultReceiver resultReceiver = receiver.get(port);
 		if (resultReceiver != null) {
 			if (resultReceiver.useSendText) {
-				String toSend = object.toString();
-				sendText(resultReceiver.sessions, toSend);
+				if (resultReceiver.convertToCSV) {
+					StringBuilder out = new StringBuilder();
+					resultReceiver.dataHandler.writeCSVData(out, object, WriteOptions.defaultOptions);
+					sendText(resultReceiver.sessions, out.toString());
+				} else {
+					sendText(resultReceiver.sessions,object.toString());
+				}
 			} else {
 				ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertObject(object,
 						resultReceiver.dataHandler);
@@ -136,15 +145,13 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 			@PathParam("port") String port, @PathParam("protocol") String protocol,
 			@PathParam("securityToken") String securityToken, Session session) {
 		try {
-			ISession odysseusSession = SessionManagement.instance.login(securityToken);
-			//ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
+			//ISession odysseusSession = SessionManagement.instance.login(securityToken);
+			ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
 
 			if (odysseusSession != null) {
 				synchronized (this) {
 					IExecutionPlan currentPlan = ExecutorServiceBinding.getExecutor().getExecutionPlan(odysseusSession);
-					Integer queryID = null;
-					IPhysicalQuery query = null;
-					query = getQuery(id, odysseusSession, currentPlan);
+					final IPhysicalQuery query = getQuery(id, odysseusSession, currentPlan);
 
 					// TODO handle operator param
 					IPhysicalOperator operatorP = query.getRoots().get(0);
@@ -179,12 +186,13 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	private IPhysicalQuery getQuery(String id, ISession odysseusSession, IExecutionPlan currentPlan) {
 		Integer queryID;
-		IPhysicalQuery query;
+		IPhysicalQuery query = null;
 		try {
 			queryID = Integer.parseInt(id);
 			query = currentPlan.getQueryById(queryID.intValue(), odysseusSession);
 		} catch (NumberFormatException e) {
-			LOGGER.debug("No query id. Try to retrieve query by name");
+		}
+		if (query == null) {
 			query = currentPlan.getQueryByName(new Resource(id), odysseusSession);
 		}
 		if (query == null) {
@@ -212,7 +220,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 					.getDataHandlerRegistry(odysseusSession)
 					.getStreamObjectDataHandler(type.getSimpleName(), operator.getOutputSchema(connectionPort));
 
-			qrr = new QueryResultReceiver(getTypeForProtocol(protocol), protocol, dh, (ISource<?>) operator);
+			qrr = new QueryResultReceiver(protocol, dh, (ISource<?>) operator);
 			receiver.put(inputPort, qrr);
 		}
 		qrr.addSession(session);
@@ -233,13 +241,6 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	}
 
-	private boolean getTypeForProtocol(String protocol) {
-		// TODO: more generic
-		if (PROTOCOL_JSON.equalsIgnoreCase(protocol)) {
-			return true;
-		}
-		return false;
-	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addNewConnection(String protocol, Integer connectionPort,
@@ -346,7 +347,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	public static String toWebsocketUrl(ISession session, int queryid, String operator, int port, String protocol) {
 		return String.format("/queries/%s/%s/%s/%s/%s",
 					String.valueOf(queryid),
@@ -361,16 +362,18 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 class QueryResultReceiver {
 	public ThreadedBufferPO<IStreamObject<? extends IMetaAttribute>> buffer;
 	final boolean useSendText;
+	final boolean convertToCSV;
 	final String protocol;
 	final List<Session> sessions = new LinkedList<>();
 	final IStreamObjectDataHandler<?> dataHandler;
 	final ISource<?> source;
 
-	QueryResultReceiver(boolean useSendText, String protocol, IStreamObjectDataHandler<?> dataHandler, ISource<?> op) {
-		this.useSendText = useSendText;
+	QueryResultReceiver(String protocol, IStreamObjectDataHandler<?> dataHandler, ISource<?> op) {
+		this.useSendText = getTypeForProtocol(protocol);
 		this.protocol = protocol;
 		this.dataHandler = dataHandler;
 		this.source = op;
+		this.convertToCSV = protocol.equalsIgnoreCase("csv");
 	}
 
 	public boolean noMoreReceivers() {
@@ -388,5 +391,17 @@ class QueryResultReceiver {
 	List<Session> getSessions() {
 		return sessions;
 	}
+	
+	private boolean getTypeForProtocol(String protocol) {
+		// TODO: more generic
+		if (QueryResultWebsocketEndpoint.PROTOCOL_JSON.equalsIgnoreCase(protocol)) {
+			return true;
+		}
+		if (QueryResultWebsocketEndpoint.PROTOCOL_CSV.equalsIgnoreCase(protocol)) {
+			return true;
+		}
+		return false;
+	}
+
 
 }
