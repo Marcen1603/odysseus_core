@@ -48,7 +48,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			}
 			query.setParser(logicalQuery.getParserId());
 			query.setQueryText(logicalQuery.getQueryText());
-			QueryState state = executor.getQueryState(logicalQuery.getName(), session);
+			QueryState state = executor.getQueryState(queryid, session);
 			query.setState(state.name());
 
 			Set<String> protocols = QueryResultWebsocketEndpoint.protocols();
