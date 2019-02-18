@@ -376,6 +376,12 @@ paths:
             default: 0
           required: false
           description: The port number of the output port of the root operator that should be used to determine the output schema.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Query'
+        required: true
       responses:
         '200':
           description: OK

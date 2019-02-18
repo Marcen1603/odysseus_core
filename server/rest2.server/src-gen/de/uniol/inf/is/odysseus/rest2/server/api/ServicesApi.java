@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
 import de.uniol.inf.is.odysseus.rest2.common.model.BundleInfo;
+import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
 
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the services API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T08:59:53.113Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T19:38:36.797Z[GMT]")
 public class ServicesApi  {
    private final ServicesApiService delegate = ServicesApiServiceFactory.getServicesApi();
 
@@ -67,16 +68,17 @@ public class ServicesApi  {
     }
     @POST
     @Path("/outputschema")
-    
+    @Consumes({ "application/json" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Determines the output schema of the given query.", notes = "", response = Schema.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Schema.class) })
-    public Response servicesOutputschemaPost(@Context Request request, @ApiParam(value = "The port number of the output port of the root operator that should be used to determine the output schema.", defaultValue="0") @DefaultValue("0") @QueryParam("port") Integer port
+    public Response servicesOutputschemaPost(@Context Request request, @ApiParam(value = "" ,required=true) Query query
+,@ApiParam(value = "The port number of the output port of the root operator that should be used to determine the output schema.", defaultValue="0") @DefaultValue("0") @QueryParam("port") Integer port
 ) {
     	final String securityToken = (String) request.getSession()
 				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
-        return delegate.servicesOutputschemaPost(session, port);
+        return delegate.servicesOutputschemaPost(session, query,port);
     }
 }
