@@ -120,7 +120,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResourceInformation'
+                  $ref: '#/components/schemas/Resource'
   /datastreams/{name}:
     parameters:
       - in: path
@@ -137,7 +137,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceInformation'
+                $ref: '#/components/schemas/Resource'
     delete:
       summary: Removes the data stream with the given name.
       responses:
@@ -154,7 +154,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResourceInformation'
+                  $ref: '#/components/schemas/Resource'
   /sinks/{name}:
     parameters:
       - in: path
@@ -171,7 +171,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceInformation'
+                $ref: '#/components/schemas/Resource'
     delete:
       summary: Removes the sink with the given name.
       responses:
@@ -429,24 +429,19 @@ components:
                 type: string
               websocket_url:
                 type: string
-    ResourceInformation:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/Resource'
-        kind:
-          type: string
-        outputSchema:
-          $ref: '#/components/schemas/Schema'
     Resource:
       type: object
       properties:
-        user:
+        owner:
+          type: String
+          description: The user that owns this resource.
+        name:
           type: string
-        resourceName:
+          description: The name of the resource.
+        schema:
+          $ref: '#/components/schemas/Schema'
+        type:
           type: string
-        marked:
-          type: boolean
     Schema:
       type: object
       properties:

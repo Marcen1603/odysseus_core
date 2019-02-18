@@ -3,75 +3,97 @@ package de.uniol.inf.is.odysseus.rest2.common.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Resource
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T18:25:21.780Z[GMT]")
 public class Resource   {
-  @JsonProperty("user")
-  private String user;
+  @JsonProperty("owner")
+  private String owner = null;
 
-  @JsonProperty("resourceName")
-  private String resourceName;
+  @JsonProperty("name")
+  private String name;
 
-  @JsonProperty("marked")
-  private Boolean marked;
+  @JsonProperty("schema")
+  private Schema schema = null;
 
-  public Resource user(String user) {
-    this.user = user;
+  @JsonProperty("type")
+  private String type;
+
+  public Resource owner(String owner) {
+    this.owner = owner;
     return this;
   }
 
    /**
-   * Get user
-   * @return user
+   * The user that owns this resource.
+   * @return owner
   **/
-  @ApiModelProperty(value = "")
-  public String getUser() {
-    return user;
+  @ApiModelProperty(value = "The user that owns this resource.")
+  public String getOwner() {
+    return owner;
   }
 
-  public void setUser(String user) {
-    this.user = user;
+  public void setOwner(String owner) {
+    this.owner = owner;
   }
 
-  public Resource resourceName(String resourceName) {
-    this.resourceName = resourceName;
+  public Resource name(String name) {
+    this.name = name;
     return this;
   }
 
    /**
-   * Get resourceName
-   * @return resourceName
+   * The name of the resource.
+   * @return name
   **/
-  @ApiModelProperty(value = "")
-  public String getResourceName() {
-    return resourceName;
+  @ApiModelProperty(value = "The name of the resource.")
+  public String getName() {
+    return name;
   }
 
-  public void setResourceName(String resourceName) {
-    this.resourceName = resourceName;
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public Resource marked(Boolean marked) {
-    this.marked = marked;
+  public Resource schema(Schema schema) {
+    this.schema = schema;
     return this;
   }
 
    /**
-   * Get marked
-   * @return marked
+   * Get schema
+   * @return schema
   **/
   @ApiModelProperty(value = "")
-  public Boolean getMarked() {
-    return marked;
+  public Schema getSchema() {
+    return schema;
   }
 
-  public void setMarked(Boolean marked) {
-    this.marked = marked;
+  public void setSchema(Schema schema) {
+    this.schema = schema;
+  }
+
+  public Resource type(String type) {
+    this.type = type;
+    return this;
+  }
+
+   /**
+   * Get type
+   * @return type
+  **/
+  @ApiModelProperty(value = "")
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 
 
@@ -84,14 +106,15 @@ public class Resource   {
       return false;
     }
     Resource resource = (Resource) o;
-    return Objects.equals(this.user, resource.user) &&
-        Objects.equals(this.resourceName, resource.resourceName) &&
-        Objects.equals(this.marked, resource.marked);
+    return Objects.equals(this.owner, resource.owner) &&
+        Objects.equals(this.name, resource.name) &&
+        Objects.equals(this.schema, resource.schema) &&
+        Objects.equals(this.type, resource.type);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user, resourceName, marked);
+    return Objects.hash(owner, name, schema, type);
   }
 
   @Override
@@ -99,9 +122,10 @@ public class Resource   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Resource {\n");
     
-    sb.append("    user: ").append(toIndentedString(user)).append("\n");
-    sb.append("    resourceName: ").append(toIndentedString(resourceName)).append("\n");
-    sb.append("    marked: ").append(toIndentedString(marked)).append("\n");
+    sb.append("    owner: ").append(toIndentedString(owner)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("}");
     return sb.toString();
   }

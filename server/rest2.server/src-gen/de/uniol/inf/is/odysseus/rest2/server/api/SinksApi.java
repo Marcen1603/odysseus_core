@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.rest2.server.api.factories.SinksApiServiceFactor
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
-import de.uniol.inf.is.odysseus.rest2.common.model.ResourceInformation;
+import de.uniol.inf.is.odysseus.rest2.common.model.Resource;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the sinks API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T18:25:21.780Z[GMT]")
 public class SinksApi  {
    private final SinksApiService delegate = SinksApiServiceFactory.getSinksApi();
 
@@ -39,9 +39,9 @@ public class SinksApi  {
     
     
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns a list of all available sinks.", notes = "", response = ResourceInformation.class, responseContainer = "List", tags={  })
+    @io.swagger.annotations.ApiOperation(value = "Returns a list of all available sinks.", notes = "", response = Resource.class, responseContainer = "List", tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = ResourceInformation.class, responseContainer = "List") })
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Resource.class, responseContainer = "List") })
     public Response sinksGet(@Context Request request) {
     	final String securityToken = (String) request.getSession()
 				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
@@ -66,9 +66,9 @@ public class SinksApi  {
     @Path("/{name}")
     
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns a sink by name.", notes = "", response = ResourceInformation.class, tags={  })
+    @io.swagger.annotations.ApiOperation(value = "Returns a sink by name.", notes = "", response = Resource.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = ResourceInformation.class) })
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Resource.class) })
     public Response sinksNameGet(@Context Request request, @ApiParam(value = "The name of the sink.",required=true) @PathParam("name") String name
 ) {
     	final String securityToken = (String) request.getSession()
