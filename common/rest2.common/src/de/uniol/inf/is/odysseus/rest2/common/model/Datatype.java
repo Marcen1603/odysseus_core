@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rest2.common.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,10 +11,52 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Datatype
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T16:05:16.362Z[GMT]")
 public class Datatype   {
   @JsonProperty("uri")
   private String uri;
+
+  /**
+   * Gets or Sets type
+   */
+  public enum TypeEnum {
+    BASE("BASE"),
+    
+    TUPLE("TUPLE"),
+    
+    MULTI_VALUE("MULTI_VALUE"),
+    
+    BEAN("BEAN"),
+    
+    LIST("LIST"),
+    
+    GENERIC("GENERIC");
+
+    private String value;
+
+    TypeEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static TypeEnum fromValue(String text) {
+      for (TypeEnum b : TypeEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      throw new IllegalArgumentException("Unexpected value '" + text + "'");
+    }
+  }
+
+  @JsonProperty("type")
+  private TypeEnum type;
 
   @JsonProperty("subtype")
   private Datatype subtype = null;
@@ -37,6 +80,24 @@ public class Datatype   {
 
   public void setUri(String uri) {
     this.uri = uri;
+  }
+
+  public Datatype type(TypeEnum type) {
+    this.type = type;
+    return this;
+  }
+
+   /**
+   * Get type
+   * @return type
+  **/
+  @ApiModelProperty(value = "")
+  public TypeEnum getType() {
+    return type;
+  }
+
+  public void setType(TypeEnum type) {
+    this.type = type;
   }
 
   public Datatype subtype(Datatype subtype) {
@@ -86,13 +147,14 @@ public class Datatype   {
     }
     Datatype datatype = (Datatype) o;
     return Objects.equals(this.uri, datatype.uri) &&
+        Objects.equals(this.type, datatype.type) &&
         Objects.equals(this.subtype, datatype.subtype) &&
         Objects.equals(this.subschema, datatype.subschema);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uri, subtype, subschema);
+    return Objects.hash(uri, type, subtype, subschema);
   }
 
   @Override
@@ -101,6 +163,7 @@ public class Datatype   {
     sb.append("class Datatype {\n");
     
     sb.append("    uri: ").append(toIndentedString(uri)).append("\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    subtype: ").append(toIndentedString(subtype)).append("\n");
     sb.append("    subschema: ").append(toIndentedString(subschema)).append("\n");
     sb.append("}");

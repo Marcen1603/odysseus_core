@@ -12,10 +12,52 @@ import java.util.List;
 /**
  * Schema
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T16:05:16.362Z[GMT]")
 public class Schema   {
+  @JsonProperty("uri")
+  private String uri;
+
+  @JsonProperty("typeClass")
+  private String typeClass;
+
   @JsonProperty("attributes")
   private List<Attribute> attributes = null;
+
+  public Schema uri(String uri) {
+    this.uri = uri;
+    return this;
+  }
+
+   /**
+   * Get uri
+   * @return uri
+  **/
+  @ApiModelProperty(value = "")
+  public String getUri() {
+    return uri;
+  }
+
+  public void setUri(String uri) {
+    this.uri = uri;
+  }
+
+  public Schema typeClass(String typeClass) {
+    this.typeClass = typeClass;
+    return this;
+  }
+
+   /**
+   * Get typeClass
+   * @return typeClass
+  **/
+  @ApiModelProperty(value = "")
+  public String getTypeClass() {
+    return typeClass;
+  }
+
+  public void setTypeClass(String typeClass) {
+    this.typeClass = typeClass;
+  }
 
   public Schema attributes(List<Attribute> attributes) {
     this.attributes = attributes;
@@ -53,12 +95,14 @@ public class Schema   {
       return false;
     }
     Schema schema = (Schema) o;
-    return Objects.equals(this.attributes, schema.attributes);
+    return Objects.equals(this.uri, schema.uri) &&
+        Objects.equals(this.typeClass, schema.typeClass) &&
+        Objects.equals(this.attributes, schema.attributes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(attributes);
+    return Objects.hash(uri, typeClass, attributes);
   }
 
   @Override
@@ -66,6 +110,8 @@ public class Schema   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Schema {\n");
     
+    sb.append("    uri: ").append(toIndentedString(uri)).append("\n");
+    sb.append("    typeClass: ").append(toIndentedString(typeClass)).append("\n");
     sb.append("    attributes: ").append(toIndentedString(attributes)).append("\n");
     sb.append("}");
     return sb.toString();

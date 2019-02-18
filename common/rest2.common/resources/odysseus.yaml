@@ -450,6 +450,10 @@ components:
     Schema:
       type: object
       properties:
+        uri:
+          type: string
+        typeClass:
+          type: string
         attributes:
           type: array
           items:
@@ -470,6 +474,15 @@ components:
       properties:
         uri:
           type: string
+        type:
+          type: string
+          enum:
+            - BASE
+            - TUPLE
+            - MULTI_VALUE
+            - BEAN
+            - LIST
+            - GENERIC
         subtype:
           $ref : '#/components/schemas/Datatype'
         subschema:
