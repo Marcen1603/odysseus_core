@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import de.uniol.inf.is.odysseus.core.mep.IFunctionSignatur;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class FunctionSignature {
+public class FunctionSignature implements IFunctionSignatur{
     private final String symbol;
     private final List<SDFDatatype[]> parameters;
 
@@ -51,14 +52,17 @@ public class FunctionSignature {
         }
     }
 
+    @Override
     public String getSymbol() {
         return symbol;
     }
 
+    @Override
     public List<SDFDatatype[]> getParameters() {
     	return parameters;
     }
     
+    @Override
     public boolean contains(List<SDFDatatype> parameters) {
         Objects.requireNonNull(parameters);
         boolean contains = true;
