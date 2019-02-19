@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rest2.server.api.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.rest2.common.model.BundleInfo;
+import de.uniol.inf.is.odysseus.rest2.common.model.EventWebSocket;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.common.model.Token;
@@ -146,5 +148,23 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 			result.setVersion(bundle.getVersion().toString());
 		}
 		return result;
+	}
+
+	@Override
+	public Response servicesEventsGet(Optional<ISession> session) {
+
+		if (!session.isPresent()) {
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
+
+		final List<EventWebSocket> result = new ArrayList<>();
+
+		final EventWebSocket eventWebSocket = new EventWebSocket();
+
+		// TODO create EventWebSockets items
+
+		result.add(eventWebSocket);
+
+		return Response.ok().entity(result).build();
 	}
 }

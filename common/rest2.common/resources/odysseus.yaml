@@ -407,6 +407,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BundleInfo'
+  /services/events:
+    get:
+      summary: Returns a list of websockets that provides server events.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventWebSocket'
 
 components:
   schemas:
@@ -603,6 +615,15 @@ components:
         symbolicName:
           type: string
         version:
+          type: string
+    EventWebSocket:
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        websocket_uri:
           type: string
   responses:
     QueryResponse:

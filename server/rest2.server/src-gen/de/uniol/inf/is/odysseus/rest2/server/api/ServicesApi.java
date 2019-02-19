@@ -8,8 +8,10 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
 import de.uniol.inf.is.odysseus.rest2.common.model.BundleInfo;
+import de.uniol.inf.is.odysseus.rest2.common.model.EventWebSocket;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
+import de.uniol.inf.is.odysseus.rest2.common.model.Token;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
 
 import java.util.List;
@@ -34,7 +36,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the services API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T19:38:36.797Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-19T15:31:13.631Z[GMT]")
 public class ServicesApi  {
    private final ServicesApiService delegate = ServicesApiServiceFactory.getServicesApi();
 
@@ -52,13 +54,26 @@ public class ServicesApi  {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.servicesBundlesGet(session, filter);
     }
+    @GET
+    @Path("/events")
+    
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "Returns a list of websockets that provides server events.", notes = "", response = EventWebSocket.class, responseContainer = "List", tags={  })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = EventWebSocket.class, responseContainer = "List") })
+    public Response servicesEventsGet(@Context Request request) {
+    	final String securityToken = (String) request.getSession()
+				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);
+		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
+        return delegate.servicesEventsGet(session);
+    }
     @POST
     @Path("/login")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Executes a login and returns a token.", notes = "", response = Object.class, tags={  })
+    @io.swagger.annotations.ApiOperation(value = "Executes a login and returns a token.", notes = "", response = Token.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Object.class) })
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Token.class) })
     public Response servicesLoginPost(@Context Request request, @ApiParam(value = "" ,required=true) User user
 ) {
     	final String securityToken = (String) request.getSession()
