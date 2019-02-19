@@ -34,7 +34,7 @@ public class SecurityAuthInterceptor implements RequestInterceptor {
 	private static final int AUTH_TYPE_BEARER_LENGTH = AUTH_TYPE_BEARER.length();
 
 	// Change to Set.of("...") after switch to Java 9
-	private static final Set<String> PUBLIC_URIS = Arrays.stream(new String[] { "/services/login" })
+	private static final Set<String> PUBLIC_URIS = Arrays.stream(new String[] { "/services/login", "/swagger" })
 			.collect(collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
 
 	@Override
