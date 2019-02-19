@@ -363,7 +363,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ''#/components/schemas/Token'
+                $ref: '#/components/schemas/Token'
   /services/outputschema:
     post:
       summary: Determines the output schema of the given query.
@@ -445,7 +445,7 @@ components:
       type: object
       properties:
         owner:
-          type: String
+          type: string
           description: The user that owns this resource.
         name:
           type: string
@@ -564,9 +564,11 @@ components:
       type: object
       properties:
         bundleId:
-          type: long
+          type: integer
+          format: int64
         lastModified:
-          type: long
+          type: integer
+          format: int64
         state:
           type: string
           enum:
