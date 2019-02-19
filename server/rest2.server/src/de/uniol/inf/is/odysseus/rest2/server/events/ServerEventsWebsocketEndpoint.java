@@ -53,13 +53,14 @@ import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
  * @author Tobias Brandt
  *
  */
-@ServerEndpoint(value = "/server/events/{type}/{securityToken}")
+@ServerEndpoint(value = "/services/events/{type}/{securityToken}")
 public class ServerEventsWebsocketEndpoint
 		implements WebSocketEndpoint, IUpdateEventListener, IQueryAddedListener, IErrorEventListener,
 		IPlanModificationListener, IPlanExecutionListener, IExecutorCommandListener, ICompilerListener {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerEventsWebsocketEndpoint.class);
 	private final Gson gson = new Gson();
+	public static final String SERVER_ENDPOINT_URI = "/services/events/{type}/{securityToken}";
 
 	// type to sessions
 	private Map<ServerEventType, List<Session>> typeListeners = new HashMap<>();

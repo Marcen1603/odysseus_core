@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.rest2.server.Application;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApiService;
+import de.uniol.inf.is.odysseus.rest2.server.events.ServerEventType;
+import de.uniol.inf.is.odysseus.rest2.server.events.ServerEventsWebsocketEndpoint;
 
 /**
  * This class provides the implementation for the REST service
@@ -159,11 +161,14 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 
 		final List<EventWebSocket> result = new ArrayList<>();
 
-		final EventWebSocket eventWebSocket = new EventWebSocket();
-
-		// TODO create EventWebSockets items
-
-		result.add(eventWebSocket);
+		for (ServerEventType type : ServerEventType.values()) {
+			final EventWebSocket eventWebSocket = new EventWebSocket();
+			eventWebSocket.setType(type.toString());
+			eventWebSocket.setDescription(type.description());
+			eventWebSocket.setWebsocketUri(
+					ServerEventsWebsocketEndpoint.SERVER_ENDPOINT_URI.replace("{type}", type.toString()));
+			result.add(eventWebSocket);
+		}
 
 		return Response.ok().entity(result).build();
 	}
