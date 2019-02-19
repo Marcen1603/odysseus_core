@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
  * @author Tobias Brandt
  *
  */
-@ServerEndpoint(value = "/server/updateevents/{type}/{securityToken}")
+@ServerEndpoint(value = "/server/events/{type}/{securityToken}")
 public class ServerEventsWebsocketEndpoint
 		implements WebSocketEndpoint, IUpdateEventListener, IQueryAddedListener, IErrorEventListener,
 		IPlanModificationListener, IPlanExecutionListener, IExecutorCommandListener, ICompilerListener {
