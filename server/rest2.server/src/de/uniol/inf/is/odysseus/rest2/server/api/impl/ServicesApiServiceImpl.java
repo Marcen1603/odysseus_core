@@ -58,7 +58,7 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 	public Response servicesOutputschemaPost(Optional<ISession> session, Query query, Integer port) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
@@ -102,7 +102,7 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 	public Response servicesBundlesGet(Optional<ISession> session, String filter) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		final BundleContext context = Application.getContext();

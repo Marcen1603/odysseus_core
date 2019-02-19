@@ -35,7 +35,7 @@ public class DatatypesApiServiceImpl extends DatatypesApiService {
 	public Response datatypesGet(Optional<ISession> session) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		IDataDictionaryWritable dd = ExecutorServiceBinding.getExecutor().getDataDictionary(session.get());

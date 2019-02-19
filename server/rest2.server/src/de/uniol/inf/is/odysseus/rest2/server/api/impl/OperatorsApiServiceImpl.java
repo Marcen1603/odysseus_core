@@ -22,7 +22,7 @@ public class OperatorsApiServiceImpl extends OperatorsApiService {
 	public Response operatorsGet(Optional<ISession> session) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		List<LogicalOperatorInformation> operatorInformations = ExecutorServiceBinding.getExecutor()

@@ -29,7 +29,7 @@ public class DatastreamsApiServiceImpl extends DatastreamsApiService {
 	public Response datastreamsGet(Optional<ISession> session) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		List<ViewInformation> datastreams = ExecutorServiceBinding.getExecutor()
@@ -45,7 +45,7 @@ public class DatastreamsApiServiceImpl extends DatastreamsApiService {
 	public Response datastreamsNameDelete(Optional<ISession> session, String name) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		// TODO: Should we check if the stream exists to response with a 404?
@@ -62,7 +62,7 @@ public class DatastreamsApiServiceImpl extends DatastreamsApiService {
 	public Response datastreamsNameGet(Optional<ISession> session, String name) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		List<ViewInformation> datastreams = ExecutorServiceBinding.getExecutor()

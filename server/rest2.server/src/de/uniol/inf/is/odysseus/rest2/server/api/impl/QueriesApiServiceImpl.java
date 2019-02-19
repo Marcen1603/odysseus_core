@@ -80,7 +80,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	public Response queriesGet(Optional<ISession> session) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
@@ -94,7 +94,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	public Response queriesIdDelete(Optional<ISession> session, Integer id) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
@@ -118,7 +118,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	public Response queriesIdGet(Optional<ISession> session, Integer id) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		Optional<Query> query = getQuery(session.get(), id);
@@ -133,7 +133,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	public Response queriesIdPut(Optional<ISession> session, Integer id, Query query) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		if (query.getId() != null && !query.getId().equals(id)) {
@@ -251,7 +251,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			BiFunction<Optional<ISession>, Integer, Response> delegate) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
@@ -295,7 +295,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	public Response queriesPost(Optional<ISession> session, Query query) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		final IServerExecutor executor = ExecutorServiceBinding.getExecutor();

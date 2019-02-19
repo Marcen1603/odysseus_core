@@ -25,7 +25,7 @@ public class AggregateFunctionsApiServiceImpl extends AggregateFunctionsApiServi
 	public Response aggregateFunctionsGet(Optional<ISession> session, String datamodel) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		if (datamodel == null || datamodel.trim().equals("")) {

@@ -23,7 +23,7 @@ public class ParsersApiServiceImpl extends ParsersApiService {
 	@Override
 	public Response parsersGet(Optional<ISession> session) {
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 		final IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 		return Response.ok().entity(executor.getSupportedQueryParsers(session.get())).build();
@@ -33,7 +33,7 @@ public class ParsersApiServiceImpl extends ParsersApiService {
 	public Response parsersNamePost(Optional<ISession> session, String parser, String scriptText) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		final IServerExecutor executor = ExecutorServiceBinding.getExecutor();

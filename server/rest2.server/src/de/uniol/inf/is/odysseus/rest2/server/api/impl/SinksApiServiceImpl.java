@@ -20,7 +20,7 @@ public class SinksApiServiceImpl extends SinksApiService {
 	public Response sinksGet(Optional<ISession> session) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		List<SinkInformation> sinks = ExecutorServiceBinding.getExecutor().getSinks(session.get());
@@ -34,7 +34,7 @@ public class SinksApiServiceImpl extends SinksApiService {
 	public Response sinksNameDelete(Optional<ISession> session, String name) {
 
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		// TODO: Should we check if the sink exists to response with a 404?
@@ -50,7 +50,7 @@ public class SinksApiServiceImpl extends SinksApiService {
 	@Override
 	public Response sinksNameGet(Optional<ISession> session, String name) {
 		if (!session.isPresent()) {
-			return Response.status(Status.FORBIDDEN).build();
+			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
 		List<SinkInformation> sinks = ExecutorServiceBinding.getExecutor().getSinks(session.get());
