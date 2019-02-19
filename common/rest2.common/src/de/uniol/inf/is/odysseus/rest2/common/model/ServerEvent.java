@@ -3,9 +3,13 @@ package de.uniol.inf.is.odysseus.rest2.common.model;
 public class ServerEvent {
 	
 	public String type;
+	public String value;
+	public String message;
 	
-	public ServerEvent(String type) {
+	public ServerEvent(String type, String value, String message) {
 		this.type = type;
+		this.value = value;
+		this.message = message;
 	}
 	
 

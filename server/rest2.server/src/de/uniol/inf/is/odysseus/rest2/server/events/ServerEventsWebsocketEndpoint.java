@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.common.model.QueryAddedEvent;
+import de.uniol.inf.is.odysseus.rest2.common.model.ServerEvent;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 
 /**
@@ -219,7 +220,9 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 			// No one is interested in this event (should not occur)
 			return;
 		}
-		sendText(list, type);
+		ServerEvent event = new ServerEvent(type, "", "");
+		String asJson = gson.toJson(event);
+		sendText(list, asJson);
 	}
 
 	@Override
@@ -233,21 +236,25 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 
 	@Override
 	public void errorEventOccured(ErrorEvent eventArgs) {
-		String asJson = gson.toJson(eventArgs);
+		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(),
+				eventArgs.getMessage());
+		String asJson = gson.toJson(event);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.ERROR_EVENT);
 		sendText(sessions, asJson);
 	}
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		String asJson = gson.toJson(eventArgs);
+		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(), "");
+		String asJson = gson.toJson(event);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_MODIFICATION);
 		sendText(sessions, asJson);
 	}
 
 	@Override
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
-		String asJson = gson.toJson(eventArgs);
+		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(), "");
+		String asJson = gson.toJson(event);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_EXECUTION);
 		sendText(sessions, asJson);
 	}
