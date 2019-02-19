@@ -3,33 +3,66 @@ package de.uniol.inf.is.odysseus.rest2.common.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Function
+ * A [functions or operations (MEP)](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/MEP%3A+Functions+and+Operators) that can be used in operators like [MAP](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator).
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@ApiModel(description = "A [functions or operations (MEP)](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/MEP%3A+Functions+and+Operators) that can be used in operators like [MAP](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator).")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-19T10:53:43.202Z[GMT]")
 public class Function   {
-  @JsonProperty("name")
-  private String name;
+  @JsonProperty("symbol")
+  private String symbol;
 
-  public Function name(String name) {
-    this.name = name;
+  @JsonProperty("parameters")
+  private List<List<Datatype>> parameters = null;
+
+  public Function symbol(String symbol) {
+    this.symbol = symbol;
     return this;
   }
 
    /**
-   * Get name
-   * @return name
+   * The symbol or name of the function.
+   * @return symbol
   **/
-  @ApiModelProperty(value = "")
-  public String getName() {
-    return name;
+  @ApiModelProperty(value = "The symbol or name of the function.")
+  public String getSymbol() {
+    return symbol;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setSymbol(String symbol) {
+    this.symbol = symbol;
+  }
+
+  public Function parameters(List<List<Datatype>> parameters) {
+    this.parameters = parameters;
+    return this;
+  }
+
+  public Function addParametersItem(List<Datatype> parametersItem) {
+    if (this.parameters == null) {
+      this.parameters = new ArrayList<List<Datatype>>();
+    }
+    this.parameters.add(parametersItem);
+    return this;
+  }
+
+   /**
+   * A list of parameters with the allowed datatypes.
+   * @return parameters
+  **/
+  @ApiModelProperty(value = "A list of parameters with the allowed datatypes.")
+  public List<List<Datatype>> getParameters() {
+    return parameters;
+  }
+
+  public void setParameters(List<List<Datatype>> parameters) {
+    this.parameters = parameters;
   }
 
 
@@ -42,12 +75,13 @@ public class Function   {
       return false;
     }
     Function function = (Function) o;
-    return Objects.equals(this.name, function.name);
+    return Objects.equals(this.symbol, function.symbol) &&
+        Objects.equals(this.parameters, function.parameters);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(symbol, parameters);
   }
 
   @Override
@@ -55,7 +89,8 @@ public class Function   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Function {\n");
     
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    symbol: ").append(toIndentedString(symbol)).append("\n");
+    sb.append("    parameters: ").append(toIndentedString(parameters)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -464,7 +464,7 @@ components:
         attributes:
           type: array
           items:
-            $ref : '#/components/schemas/Attribute'
+            $ref: '#/components/schemas/Attribute'
     Attribute:
       type: object
       properties:
@@ -473,9 +473,9 @@ components:
         attributename:
           type: string
         datatype:
-          $ref : '#/components/schemas/Datatype'
+          $ref: '#/components/schemas/Datatype'
         subschema:
-          $ref : '#/components/schemas/Schema'
+          $ref: '#/components/schemas/Schema'
     Datatype:
       type: object
       properties:
@@ -491,9 +491,9 @@ components:
             - LIST
             - GENERIC
         subtype:
-          $ref : '#/components/schemas/Datatype'
+          $ref: '#/components/schemas/Datatype'
         subschema:
-          $ref : '#/components/schemas/Schema'
+          $ref: '#/components/schemas/Schema'
     OperatorInfo:
       type: object
       properties:
@@ -542,9 +542,19 @@ components:
         type: string
     Function:
       type: object
+      description: A [functions or operations (MEP)](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/MEP%3A+Functions+and+Operators) that can be used in operators like [MAP](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator).
       properties:
-        name:
+        symbol:
           type: string
+          description: The symbol or name of the function.
+        parameters:
+          type: array
+          description: A list of parameters with the allowed datatypes.
+          items:
+            type: array
+            description: A list of datatypes that are allowed for the certain parameter.
+            items:
+              $ref: '#/components/schemas/Datatype'
     User:
       type: object
       properties:
