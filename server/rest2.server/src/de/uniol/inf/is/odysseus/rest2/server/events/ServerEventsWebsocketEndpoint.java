@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rest2.server.events;
 import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,10 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.executorcommand.IExecutorCommandListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -36,8 +40,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rest2.common.model.QueryAddedEvent;
-import de.uniol.inf.is.odysseus.rest2.common.model.ServerEvent;
+import de.uniol.inf.is.odysseus.rest2.common.model.events.CompilerEvent;
+import de.uniol.inf.is.odysseus.rest2.common.model.events.ExecutorCommandEvent;
+import de.uniol.inf.is.odysseus.rest2.common.model.events.QueryAddedEvent;
+import de.uniol.inf.is.odysseus.rest2.common.model.events.ServerEvent;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 
 /**
@@ -48,8 +54,9 @@ import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
  *
  */
 @ServerEndpoint(value = "/server/updateevents/{type}/{securityToken}")
-public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdateEventListener, IQueryAddedListener,
-		IErrorEventListener, IPlanModificationListener, IPlanExecutionListener {
+public class ServerEventsWebsocketEndpoint
+		implements WebSocketEndpoint, IUpdateEventListener, IQueryAddedListener, IErrorEventListener,
+		IPlanModificationListener, IPlanExecutionListener, IExecutorCommandListener, ICompilerListener {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerEventsWebsocketEndpoint.class);
 	private final Gson gson = new Gson();
@@ -90,6 +97,12 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 			break;
 		case SCHEDULER_MANAGER:
 			executor.addPlanExecutionListener(this);
+			break;
+		case EXECUTOR_COMMAND:
+			executor.addExecutorCommandListener(this);
+			break;
+		case COMPILER:
+			executor.addCompilerListener(this, odysseusSession);
 			break;
 		case SESSION:
 		case DATADICTIONARY:
@@ -196,6 +209,12 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		case SCHEDULER_MANAGER:
 			executor.removePlanExecutionListener(this);
 			break;
+		case EXECUTOR_COMMAND:
+			executor.removeExecutorCommandListener(this);
+			break;
+		case COMPILER:
+			// Currently, it is not possible to remove me as a listener
+			break;
 		case SESSION:
 		case DATADICTIONARY:
 		case USER:
@@ -260,4 +279,45 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
+	@Override
+	public void executorCommandEvent(IExecutorCommand command) {
+		Collection<Integer> createdQueryIds = command.getCreatedQueryIds();
+		ExecutorCommandEvent event = new ExecutorCommandEvent(ServerEventType.EXECUTOR_COMMAND.toString(),
+				createdQueryIds);
+		String asJson = gson.toJson(event);
+		List<Session> sessions = this.typeListeners.get(ServerEventType.EXECUTOR_COMMAND);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
+	}
+
+	@Override
+	public void parserBound(String parserID) {
+		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "parserBound", parserID);
+		String asJson = gson.toJson(event);
+		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
+	}
+
+	@Override
+	public void rewriteBound() {
+		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "rewriteBound", "");
+		String asJson = gson.toJson(event);
+		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
+	}
+
+	@Override
+	public void transformationBound() {
+		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "transformationBound", "");
+		String asJson = gson.toJson(event);
+		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
+	}
+
+	@Override
+	public void planGeneratorBound() {
+		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "planGeneratorBound", "");
+		String asJson = gson.toJson(event);
+		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
+	}
 }

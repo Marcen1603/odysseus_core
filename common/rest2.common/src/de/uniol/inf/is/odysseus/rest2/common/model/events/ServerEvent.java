@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rest2.common.model;
+package de.uniol.inf.is.odysseus.rest2.common.model.events;
 
 public class ServerEvent {
 	
