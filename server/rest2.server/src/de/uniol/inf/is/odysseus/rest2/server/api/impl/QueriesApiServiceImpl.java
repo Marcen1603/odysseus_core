@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
+import de.uniol.inf.is.odysseus.rest2.common.model.QueryPorts;
+import de.uniol.inf.is.odysseus.rest2.common.model.QueryRootOperators;
 import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.QueriesApiService;
@@ -54,20 +56,31 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			Set<String> protocols = QueryResultWebsocketEndpoint.protocols();
 			List<IPhysicalOperator> physicalRoots = executor.getPhysicalRoots(queryid, session);
 			physicalRoots.forEach(physicalRoot -> {
-				physicalRoot.getOutputSchemas().keySet().forEach(port -> {
-					protocols.forEach(protocol -> {
-						QueryWebsockets queryWebsockets = new QueryWebsockets();
-						// TODO: Is getName() the appropriate operator identificator?
-						String operator = physicalRoot.getName();
-						queryWebsockets.setOperator(operator);
-						queryWebsockets.setPort(port);
-						queryWebsockets.setProtocol(protocol);
-						queryWebsockets.setWebsocketUrl(QueryResultWebsocketEndpoint.toWebsocketUrl(session, queryid,
-								operator, port, protocol));
-						query.addWebsocketsItem(queryWebsockets);
 
+				QueryRootOperators queryRootOperator = new QueryRootOperators();
+
+				// TODO: Is getName() the appropriate operator identificator?
+				String operator = physicalRoot.getName();
+				queryRootOperator.setOperatorName(operator);
+
+				physicalRoot.getOutputSchemas().keySet().forEach(port -> {
+
+					QueryPorts queryPort = new QueryPorts();
+					queryPort.setPort(port);
+					queryPort.setSchema(DatatypesApiServiceImpl.transform(physicalRoot.getOutputSchema(port)));
+
+					protocols.forEach(protocol -> {
+						QueryWebsockets queryWebsocket = new QueryWebsockets();
+						queryWebsocket.setProtocol(protocol);
+						queryWebsocket.setUri(QueryResultWebsocketEndpoint.toWebsocketUrl(session, queryid, operator,
+								port, protocol));
+						queryPort.addWebsocketsItem(queryWebsocket);
 					});
+
+					queryRootOperator.addPortsItem(queryPort);
 				});
+
+				query.addRootOperatorsItem(queryRootOperator);
 			});
 
 			return Optional.of(query);
@@ -171,9 +184,9 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 					.type(MediaType.TEXT_PLAIN).build();
 		}
 
-		if (query.getWebsockets() != null && !query.getWebsockets().isEmpty()) {
+		if (query.getRootOperators() != null && !query.getRootOperators().isEmpty()) {
 			return Response.status(Status.BAD_REQUEST)
-					.entity("Changing websocket URLs is not allowed. Don't set these values at all.")
+					.entity("Changing root operators is not allowed. Don't set these values at all.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
 
@@ -318,8 +331,8 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			return Response.status(Status.BAD_REQUEST).entity("Setting an ID is not allowed.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
-		if (query.getWebsockets() != null && !query.getWebsockets().isEmpty()) {
-			return Response.status(Status.BAD_REQUEST).entity("Setting websocket URLs is not allowed.")
+		if (query.getRootOperators() != null && !query.getRootOperators().isEmpty()) {
+			return Response.status(Status.BAD_REQUEST).entity("Setting root operators is not allowed.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
 

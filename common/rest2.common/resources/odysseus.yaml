@@ -428,19 +428,31 @@ components:
         state:
           type: string
           description: The state of the query.
-        websockets:
+        rootOperators:
           type: array
           items:
             type: object
             properties:
-              operator:
+              operatorName:
                 type: string
-              port:
-                type: integer
-              protocol:
-                type: string
-              websocket_url:
-                type: string
+              ports:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+                    schema:
+                      $ref: '#/components/schemas/Schema'
+                    websockets:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          protocol:
+                            type: string
+                          uri:
+                            type: string
     Resource:
       type: object
       properties:

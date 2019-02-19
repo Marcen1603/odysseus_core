@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.rest2.common.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
+import de.uniol.inf.is.odysseus.rest2.common.model.QueryRootOperators;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Query
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-19T12:33:30.209Z[GMT]")
 public class Query   {
   @JsonProperty("id")
   private Integer id;
@@ -29,8 +29,8 @@ public class Query   {
   @JsonProperty("state")
   private String state;
 
-  @JsonProperty("websockets")
-  private List<QueryWebsockets> websockets = null;
+  @JsonProperty("rootOperators")
+  private List<QueryRootOperators> rootOperators = null;
 
   public Query id(Integer id) {
     this.id = id;
@@ -122,30 +122,30 @@ public class Query   {
     this.state = state;
   }
 
-  public Query websockets(List<QueryWebsockets> websockets) {
-    this.websockets = websockets;
+  public Query rootOperators(List<QueryRootOperators> rootOperators) {
+    this.rootOperators = rootOperators;
     return this;
   }
 
-  public Query addWebsocketsItem(QueryWebsockets websocketsItem) {
-    if (this.websockets == null) {
-      this.websockets = new ArrayList<QueryWebsockets>();
+  public Query addRootOperatorsItem(QueryRootOperators rootOperatorsItem) {
+    if (this.rootOperators == null) {
+      this.rootOperators = new ArrayList<QueryRootOperators>();
     }
-    this.websockets.add(websocketsItem);
+    this.rootOperators.add(rootOperatorsItem);
     return this;
   }
 
    /**
-   * Get websockets
-   * @return websockets
+   * Get rootOperators
+   * @return rootOperators
   **/
   @ApiModelProperty(value = "")
-  public List<QueryWebsockets> getWebsockets() {
-    return websockets;
+  public List<QueryRootOperators> getRootOperators() {
+    return rootOperators;
   }
 
-  public void setWebsockets(List<QueryWebsockets> websockets) {
-    this.websockets = websockets;
+  public void setRootOperators(List<QueryRootOperators> rootOperators) {
+    this.rootOperators = rootOperators;
   }
 
 
@@ -163,12 +163,12 @@ public class Query   {
         Objects.equals(this.parser, query.parser) &&
         Objects.equals(this.queryText, query.queryText) &&
         Objects.equals(this.state, query.state) &&
-        Objects.equals(this.websockets, query.websockets);
+        Objects.equals(this.rootOperators, query.rootOperators);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, parser, queryText, state, websockets);
+    return Objects.hash(id, name, parser, queryText, state, rootOperators);
   }
 
   @Override
@@ -181,7 +181,7 @@ public class Query   {
     sb.append("    parser: ").append(toIndentedString(parser)).append("\n");
     sb.append("    queryText: ").append(toIndentedString(queryText)).append("\n");
     sb.append("    state: ").append(toIndentedString(state)).append("\n");
-    sb.append("    websockets: ").append(toIndentedString(websockets)).append("\n");
+    sb.append("    rootOperators: ").append(toIndentedString(rootOperators)).append("\n");
     sb.append("}");
     return sb.toString();
   }

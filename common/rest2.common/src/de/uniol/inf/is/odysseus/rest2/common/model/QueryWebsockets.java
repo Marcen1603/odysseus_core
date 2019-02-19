@@ -9,55 +9,13 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * QueryWebsockets
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-19T12:33:30.209Z[GMT]")
 public class QueryWebsockets   {
-  @JsonProperty("operator")
-  private String operator;
-
-  @JsonProperty("port")
-  private Integer port;
-
   @JsonProperty("protocol")
   private String protocol;
 
-  @JsonProperty("websocket_url")
-  private String websocketUrl;
-
-  public QueryWebsockets operator(String operator) {
-    this.operator = operator;
-    return this;
-  }
-
-   /**
-   * Get operator
-   * @return operator
-  **/
-  @ApiModelProperty(value = "")
-  public String getOperator() {
-    return operator;
-  }
-
-  public void setOperator(String operator) {
-    this.operator = operator;
-  }
-
-  public QueryWebsockets port(Integer port) {
-    this.port = port;
-    return this;
-  }
-
-   /**
-   * Get port
-   * @return port
-  **/
-  @ApiModelProperty(value = "")
-  public Integer getPort() {
-    return port;
-  }
-
-  public void setPort(Integer port) {
-    this.port = port;
-  }
+  @JsonProperty("uri")
+  private String uri;
 
   public QueryWebsockets protocol(String protocol) {
     this.protocol = protocol;
@@ -77,22 +35,22 @@ public class QueryWebsockets   {
     this.protocol = protocol;
   }
 
-  public QueryWebsockets websocketUrl(String websocketUrl) {
-    this.websocketUrl = websocketUrl;
+  public QueryWebsockets uri(String uri) {
+    this.uri = uri;
     return this;
   }
 
    /**
-   * Get websocketUrl
-   * @return websocketUrl
+   * Get uri
+   * @return uri
   **/
   @ApiModelProperty(value = "")
-  public String getWebsocketUrl() {
-    return websocketUrl;
+  public String getUri() {
+    return uri;
   }
 
-  public void setWebsocketUrl(String websocketUrl) {
-    this.websocketUrl = websocketUrl;
+  public void setUri(String uri) {
+    this.uri = uri;
   }
 
 
@@ -105,15 +63,13 @@ public class QueryWebsockets   {
       return false;
     }
     QueryWebsockets queryWebsockets = (QueryWebsockets) o;
-    return Objects.equals(this.operator, queryWebsockets.operator) &&
-        Objects.equals(this.port, queryWebsockets.port) &&
-        Objects.equals(this.protocol, queryWebsockets.protocol) &&
-        Objects.equals(this.websocketUrl, queryWebsockets.websocketUrl);
+    return Objects.equals(this.protocol, queryWebsockets.protocol) &&
+        Objects.equals(this.uri, queryWebsockets.uri);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(operator, port, protocol, websocketUrl);
+    return Objects.hash(protocol, uri);
   }
 
   @Override
@@ -121,10 +77,8 @@ public class QueryWebsockets   {
     StringBuilder sb = new StringBuilder();
     sb.append("class QueryWebsockets {\n");
     
-    sb.append("    operator: ").append(toIndentedString(operator)).append("\n");
-    sb.append("    port: ").append(toIndentedString(port)).append("\n");
     sb.append("    protocol: ").append(toIndentedString(protocol)).append("\n");
-    sb.append("    websocketUrl: ").append(toIndentedString(websocketUrl)).append("\n");
+    sb.append("    uri: ").append(toIndentedString(uri)).append("\n");
     sb.append("}");
     return sb.toString();
   }
