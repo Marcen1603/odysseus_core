@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import javax.websocket.CloseReason;
 import javax.websocket.CloseReason.CloseCodes;
@@ -215,14 +216,14 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 
 	@Override
 	public void eventOccured(String type) {
-		List<Session> list = this.typeListeners.get(ServerEventType.valueOf(type));
-		if (list == null) {
+		List<Session> sessions = this.typeListeners.get(ServerEventType.valueOf(type));
+		if (sessions == null) {
 			// No one is interested in this event (should not occur)
 			return;
 		}
 		ServerEvent event = new ServerEvent(type, "", "");
 		String asJson = gson.toJson(event);
-		sendText(list, asJson);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
 	@Override
@@ -231,7 +232,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		QueryAddedEvent event = new QueryAddedEvent(query, queryIds, parserID);
 		String asJson = gson.toJson(event);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.QUERY_ADDED);
-		sendText(sessions, asJson);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
 	@Override
@@ -240,7 +241,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 				eventArgs.getMessage());
 		String asJson = gson.toJson(event);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.ERROR_EVENT);
-		sendText(sessions, asJson);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
 	@Override
@@ -248,7 +249,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(), "");
 		String asJson = gson.toJson(event);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_MODIFICATION);
-		sendText(sessions, asJson);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
 	@Override
@@ -256,7 +257,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(), "");
 		String asJson = gson.toJson(event);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_EXECUTION);
-		sendText(sessions, asJson);
+		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
 }
