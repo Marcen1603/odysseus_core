@@ -88,7 +88,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		case PLAN_MODIFICATION:
 			executor.addPlanModificationListener(this);
 			break;
-		case PLAN_EXECUTION:
+		case SCHEDULER_MANAGER:
 			executor.addPlanExecutionListener(this);
 			break;
 		case SESSION:
@@ -193,7 +193,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		case PLAN_MODIFICATION:
 			executor.removePlanModificationListener(this);
 			break;
-		case PLAN_EXECUTION:
+		case SCHEDULER_MANAGER:
 			executor.removePlanExecutionListener(this);
 			break;
 		case SESSION:
@@ -256,7 +256,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
 		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(), "");
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_EXECUTION);
+		List<Session> sessions = this.typeListeners.get(ServerEventType.SCHEDULER_MANAGER);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
