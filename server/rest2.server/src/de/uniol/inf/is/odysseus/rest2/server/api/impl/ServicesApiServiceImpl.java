@@ -161,12 +161,17 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 
 		final List<EventWebSocket> result = new ArrayList<>();
 
+		/*
+		 * Add all ServerEventTypes and their descriptions from the enum and create the
+		 * URI where the WebSocket for the respective event can be accessed.
+		 */
 		for (ServerEventType type : ServerEventType.values()) {
 			final EventWebSocket eventWebSocket = new EventWebSocket();
 			eventWebSocket.setType(type.toString());
 			eventWebSocket.setDescription(type.description());
-			eventWebSocket.setWebsocketUri(
-					ServerEventsWebsocketEndpoint.SERVER_ENDPOINT_URI.replace("{type}", type.toString()));
+			String webSocketUri = ServerEventsWebsocketEndpoint.SERVER_ENDPOINT_URI.replace("{type}", type.toString())
+					.replace("{securityToken}", session.get().getToken());
+			eventWebSocket.setWebsocketUri(webSocketUri);
 			result.add(eventWebSocket);
 		}
 
