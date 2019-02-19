@@ -81,8 +81,8 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 			return Response.status(Status.BAD_REQUEST).entity("Setting an ID is not allowed.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
-		if (query.getWebsockets() != null && !query.getWebsockets().isEmpty()) {
-			return Response.status(Status.BAD_REQUEST).entity("Setting websocket URLs is not allowed.")
+		if (query.getRootOperators() != null && !query.getRootOperators().isEmpty()) {
+			return Response.status(Status.BAD_REQUEST).entity("Setting root operators is not allowed.")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
 		if (query.getState() != null) {
