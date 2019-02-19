@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListene
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
@@ -45,7 +47,7 @@ import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
  */
 @ServerEndpoint(value = "/server/updateevents/{type}/{securityToken}")
 public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdateEventListener, IQueryAddedListener,
-		IErrorEventListener, IPlanModificationListener {
+		IErrorEventListener, IPlanModificationListener, IPlanExecutionListener {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerEventsWebsocketEndpoint.class);
 	private final Gson gson = new Gson();
@@ -83,6 +85,9 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 			break;
 		case PLAN_MODIFICATION:
 			executor.addPlanModificationListener(this);
+			break;
+		case PLAN_EXECUTION:
+			executor.addPlanExecutionListener(this);
 			break;
 		case SESSION:
 		case DATADICTIONARY:
@@ -175,14 +180,7 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 	}
 
 	private void unsubscribeFromType(ServerEventType type) {
-		/*
-		 * We cannot unsubscribe without a session, but we cannot force the client to
-		 * give us the securityToken again when closing the connection. Use the
-		 * superuser instead.
-		 */
-		ISession odysseusSession = SessionManagement.instance.loginSuperUser(null);
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
-
 		switch (type) {
 		case QUERY_ADDED:
 			executor.removeQueryAddedListener(this);
@@ -193,11 +191,20 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 		case PLAN_MODIFICATION:
 			executor.removePlanModificationListener(this);
 			break;
+		case PLAN_EXECUTION:
+			executor.removePlanExecutionListener(this);
+			break;
 		case SESSION:
 		case DATADICTIONARY:
 		case USER:
 		case QUERY:
 		case SCHEDULING:
+			/*
+			 * We cannot unsubscribe without a session, but we cannot force the client to
+			 * give us the securityToken again when closing the connection. Use the
+			 * superuser instead.
+			 */
+			ISession odysseusSession = SessionManagement.instance.loginSuperUser(null);
 			executor.removeUpdateEventListener(this, type.name(), odysseusSession);
 			break;
 		default:
@@ -235,6 +242,13 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		String asJson = gson.toJson(eventArgs);
 		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_MODIFICATION);
+		sendText(sessions, asJson);
+	}
+
+	@Override
+	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
+		String asJson = gson.toJson(eventArgs);
+		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_EXECUTION);
 		sendText(sessions, asJson);
 	}
 
