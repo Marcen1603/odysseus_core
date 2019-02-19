@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.rest2.server.api.QueriesApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.ServicesApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.SinksApi;
 import de.uniol.inf.is.odysseus.rest2.server.api.UsersApi;
+import de.uniol.inf.is.odysseus.rest2.server.events.ServerEventsWebsocketEndpoint;
 import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
-import de.uniol.inf.is.odysseus.rest2.server.query.ServerEventsWebsocketEndpoint;
 
 public class Application implements BundleActivator {
 	

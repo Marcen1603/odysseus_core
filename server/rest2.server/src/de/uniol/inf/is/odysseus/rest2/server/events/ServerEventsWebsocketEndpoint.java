@@ -1,7 +1,8 @@
-package de.uniol.inf.is.odysseus.rest2.server.query;
+package de.uniol.inf.is.odysseus.rest2.server.events;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,19 +19,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.websocket.WebSocketEndpoint;
 
+import com.google.gson.Gson;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rest2.common.model.ServerEvent;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 
+/**
+ * Websocket to receive messages when a server event occurs. This could, for
+ * example, be a new query.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 @ServerEndpoint(value = "/server/updateevents/{type}/{securityToken}")
 public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdateEventListener {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerEventsWebsocketEndpoint.class);
+	private final Gson gson = new Gson();
 
 	// type to sessions
-	private Map<String, List<Session>> typeListeners;
+	private Map<String, List<Session>> typeListeners = new HashMap<String, List<Session>>();
 
 	@OnOpen
 	public void onOpen(@PathParam("type") String type, @PathParam("securityToken") String securityToken,
@@ -97,9 +109,11 @@ public class ServerEventsWebsocketEndpoint implements WebSocketEndpoint, IUpdate
 	}
 
 	private void sendText(List<Session> sessions, String toSend) {
+		ServerEvent event = new ServerEvent(toSend);
+		String asJson = gson.toJson(event);
 		sessions.forEach(session -> {
 			try {
-				session.getBasicRemote().sendText(toSend);
+				session.getBasicRemote().sendText(asJson);
 			} catch (IOException e) {
 				LOGGER.error("Problems sending value " + toSend, e);
 				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
