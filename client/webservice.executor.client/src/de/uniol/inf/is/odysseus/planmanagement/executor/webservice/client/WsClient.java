@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.mep.IFunctionSignatur;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
@@ -1113,6 +1114,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			}
 		}
 		return new ArrayList<>();
+	}
+	
+	@Override
+	public Set<IFunctionSignatur> getMepFunctions() {
+		return new HashSet<>();
 	}
 
 	private Map<String, List<LogicalOperatorInformation>> logicalOperatorInformationCache = new HashMap<>();
