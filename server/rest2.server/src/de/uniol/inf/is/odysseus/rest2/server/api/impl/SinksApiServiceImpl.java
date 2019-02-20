@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response.Status;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rest2.common.model.Resource;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.SinksApiService;
@@ -36,14 +37,22 @@ public class SinksApiServiceImpl extends SinksApiService {
 		if (!session.isPresent()) {
 			return Response.status(Status.UNAUTHORIZED).build();
 		}
+		
+		if (!ExecutorServiceBinding.getExecutor().containsSink(name, session.get())){
+			return Response.status(Status.NOT_FOUND).build();
+		}
 
-		// TODO: Should we check if the sink exists to response with a 404?
-
-		// TODO: Do we need to ask for the owner to avoid a name collision?
-		ExecutorServiceBinding.getExecutor().removeSink(name, session.get());
-
-		// TODO: Do we need to check if the sink was successfully removed?
-
+		try {
+			ExecutorServiceBinding.getExecutor().removeSink(name, session.get());
+		}catch(PermissionException e) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
+		
+		// TODO: Check reasons, why sink could be removed
+		if (ExecutorServiceBinding.getExecutor().containsSink(name, session.get())){
+			return Response.status(Status.NOT_MODIFIED).build();
+		}
+		
 		return Response.ok().build();
 	}
 
@@ -55,8 +64,6 @@ public class SinksApiServiceImpl extends SinksApiService {
 
 		List<SinkInformation> sinks = ExecutorServiceBinding.getExecutor().getSinks(session.get());
 
-		// TODO: Do we need to check if there is more than one resource with the given
-		// name or do we need ask for the user (owner)?
 		Optional<SinkInformation> result = sinks.stream()
 				.filter(datastream -> datastream.getName().getResourceName().equals(name)).findAny();
 
