@@ -50,7 +50,9 @@ public class SinksApiServiceImpl extends SinksApiService {
 		
 		// TODO: Check reasons, why sink could be removed
 		if (ExecutorServiceBinding.getExecutor().containsSink(name, session.get())){
-			return Response.status(Status.NOT_MODIFIED).build();
+			// 423: Locked (the resouce is currently locked)
+			// https://de.wikipedia.org/wiki/HTTP-Statuscode
+			return Response.status(423).build();
 		}
 		
 		return Response.ok().build();
