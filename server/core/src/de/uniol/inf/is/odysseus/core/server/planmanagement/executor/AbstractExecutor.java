@@ -1394,6 +1394,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return getDataDictionary(caller).containsViewOrStream(name, caller);
 	}
 
+	@Override
+	public boolean containsSink(String sinkname, ISession caller) {
+		return getDataDictionary(caller).containsSink(sinkname, caller);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 *

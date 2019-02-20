@@ -471,6 +471,14 @@ public interface IExecutor extends IClientPlanManager {
 	public boolean containsViewOrStream(String name, ISession caller);
 
 	/**
+	 * Checks whether the sink exists
+	 * @param name The name of the sink
+	 * @param caller The current user
+	 * @return true, if the sink exits
+	 */
+	boolean containsSink(String name, ISession caller);
+	
+	/**
 	 * Invokes to reload stored queries.
 	 *
 	 * @param caller
