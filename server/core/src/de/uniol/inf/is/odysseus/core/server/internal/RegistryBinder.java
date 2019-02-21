@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.internal;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 public class RegistryBinder {
 	
@@ -50,7 +51,18 @@ public class RegistryBinder {
 	public static IDataHandlerRegistry getDataHandlerRegistry() {
 		return dataHandlerRegistry;
 	}
+	
+	public static ITransportHandlerRegistry getTransportHandlerRegistry(ITenant tenant) {
+		return transportHandlerRegistry;
+	}
+	
+	public static IProtocolHandlerRegistry getProtocolHandlerRegistry(ITenant tenant) {
+		return protocolHandlerRegistry;
+	}
 
+	public static IDataHandlerRegistry getDataHandlerRegistry(ITenant tenant) {
+		return dataHandlerRegistry;
+	}
 
 }
 
