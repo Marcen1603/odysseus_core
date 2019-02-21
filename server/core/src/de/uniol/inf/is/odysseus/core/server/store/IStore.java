@@ -124,7 +124,7 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> extends Seriali
 	 * Dump all elements that are stored to a string buffer (typically only used for debugging)
 	 * @param buffer
 	 */
-	void dumpTo(StringBuffer buffer);
+	void dumpTo(StringBuilder buffer);
 
 	/**
 	 * Get the global unique type of the store
