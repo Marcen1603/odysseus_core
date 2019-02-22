@@ -40,13 +40,8 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			}
 			Query query = new Query();
 			query.setId(queryid);
-			// TODO: Resource instead of name?
-//			Resource resource = new Resource();
-//			resource.setResourceName(logicalQuery.getName().getResourceName());
-//			resource.setUser(logicalQuery.getName().getUser());
-//			resource.setMarked(logicalQuery.getName().isMarked());
 			if (logicalQuery.getName() != null) {
-				query.setName(logicalQuery.getName().getResourceName());
+				query.setName(String.valueOf(logicalQuery.getName()));
 			}
 			query.setParser(logicalQuery.getParserId());
 			query.setQueryText(logicalQuery.getQueryText());
@@ -58,10 +53,8 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			physicalRoots.forEach(physicalRoot -> {
 
 				QueryRootOperators queryRootOperator = new QueryRootOperators();
-
-				// TODO: Is getName() the appropriate operator identificator?
-				String operator = physicalRoot.getName();
-				queryRootOperator.setOperatorName(operator);
+				String operatorId = String.valueOf(physicalRoot.getUUID());
+				queryRootOperator.setOperatorName(operatorId);
 
 				physicalRoot.getOutputSchemas().keySet().forEach(port -> {
 
@@ -72,7 +65,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 					protocols.forEach(protocol -> {
 						QueryWebsockets queryWebsocket = new QueryWebsockets();
 						queryWebsocket.setProtocol(protocol);
-						queryWebsocket.setUri(QueryResultWebsocketEndpoint.toWebsocketUrl(session, queryid, operator,
+						queryWebsocket.setUri(QueryResultWebsocketEndpoint.toWebsocketUrl(session, queryid, operatorId,
 								port, protocol));
 						queryPort.addWebsocketsItem(queryWebsocket);
 					});

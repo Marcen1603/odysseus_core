@@ -1398,4 +1398,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		return null;
 	}
 
+	@Override
+	public ILogicalQuery getLogicalQueryByString(String idOrName, ISession session) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
