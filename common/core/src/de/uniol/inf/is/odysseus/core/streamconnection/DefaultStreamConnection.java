@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,12 @@ public class DefaultStreamConnection<I extends IStreamObject<?>> extends Listene
 
 	}
 
+	private final UUID uuid = UUID.randomUUID();
+
+	public UUID getUUID() {
+		return uuid;
+	}
+	
 	@Override
 	public ImmutableList<IPhysicalOperator> getConnectedOperators() {
 		return ImmutableList.copyOf(operators);

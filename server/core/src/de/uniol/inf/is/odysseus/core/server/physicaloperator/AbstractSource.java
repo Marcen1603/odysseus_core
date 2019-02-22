@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,9 +44,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
@@ -92,7 +93,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		}
 
 	};
-
+	
 	private boolean readdedConnectedSinks = false;
 	private final Map<Integer, Integer> consumerCount = new HashMap<>();
 
@@ -114,6 +115,16 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	 * loaded.
 	 */
 	private boolean operatorStateLoaded = false;
+	
+	// --------------------------------------------------------------------
+	// Identification 
+	// --------------------------------------------------------------------
+
+	private final UUID uuid = UUID.randomUUID();
+
+	public UUID getUUID() {
+		return uuid;
+	}
 
 	// --------------------------------------------------------------------
 	// Logging

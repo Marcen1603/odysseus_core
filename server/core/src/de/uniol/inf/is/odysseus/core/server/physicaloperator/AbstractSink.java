@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -75,6 +76,16 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	private final OwnerHandler ownerHandler;
 	private final Map<IOperatorOwner, Integer> openFor = new HashMap<>();
 
+	// --------------------------------------------------------------------
+	// Identification 
+	// --------------------------------------------------------------------
+
+	private final UUID uuid = UUID.randomUUID();
+
+	public UUID getUUID() {
+		return uuid;
+	}
+	
 	// --------------------------------------------------------------------
 	// Logging
 	// --------------------------------------------------------------------
