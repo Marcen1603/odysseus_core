@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.mep.IFunctionSignatur;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -1439,6 +1441,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public List<String> getOperatorNames(ISession caller) {
 		return new ArrayList<String>(OperatorBuilderFactory.getOperatorBuilderNames());
+	}
+	
+	@Override
+	public Set<IFunctionSignatur> getMepFunctions() {
+		return new HashSet<>(MEP.getFunctions());
 	}
 
 	/*
