@@ -59,7 +59,7 @@ public class ParsersApiServiceImpl extends ParsersApiService {
 		if (queryIds == null || queryIds.isEmpty()) {
 			return Response.noContent().build();
 		} else {
-			List<Query> queries = queryIds.stream().map(x -> QueriesApiServiceImpl.getQuery(session.get(), x))
+			List<Query> queries = queryIds.stream().map(x -> QueriesApiServiceImpl.getQuery(session.get(), x, false))
 					.filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 
 			return Response.ok().entity(queries).build();

@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class QueriesApiServiceImpl extends QueriesApiService {
 
-	static Optional<Query> getQuery(ISession session, int queryid) {
+	static Optional<Query> getQuery(ISession session, int queryid, boolean includeAllOps) {
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 		if (executor != null) {
 			ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryid, session);
@@ -49,7 +49,13 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			query.setState(state.name());
 
 			Set<String> protocols = QueryResultWebsocketEndpoint.protocols();
-			List<IPhysicalOperator> physicalRoots = executor.getPhysicalRoots(queryid, session);
+			Collection<IPhysicalOperator> physicalRoots;
+			if (includeAllOps) {
+				physicalRoots = executor.getPhysicalQueryByString(queryid+"", session).getAllOperators();
+			}else {
+				physicalRoots = executor.getPhysicalRoots(queryid, session);
+			}
+		
 			physicalRoots.forEach(physicalRoot -> {
 
 				QueryRootOperators queryRootOperator = new QueryRootOperators();
@@ -91,7 +97,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 		Collection<Integer> queryIds = executor.getLogicalQueryIds(session.get());
-		List<Query> queries = queryIds.stream().map(x -> getQuery(session.get(), x)).filter(Optional::isPresent)
+		List<Query> queries = queryIds.stream().map(x -> getQuery(session.get(), x, false)).filter(Optional::isPresent)
 				.map(Optional::get).collect(Collectors.toList());
 		return Response.ok().entity(queries).build();
 	}
@@ -127,7 +133,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
-		Optional<Query> query = getQuery(session.get(), id);
+		Optional<Query> query = getQuery(session.get(), id, true);
 		if (query.isPresent()) {
 			return Response.ok().entity(query.get()).build();
 		} else {
@@ -237,7 +243,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			}
 		}
 
-		return Response.ok().entity(getQuery(session.get(), id)).build();
+		return Response.ok().entity(getQuery(session.get(), id, true)).build();
 	}
 
 	/**
@@ -372,7 +378,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 		// case returning a 4xx status code would be more appropriate.
 
 		Collection<Integer> queryIds = executor.addQuery(queryText, parser, session.get(), new Context());
-		List<Query> queries = queryIds.stream().map(x -> getQuery(session.get(), x)).filter(Optional::isPresent)
+		List<Query> queries = queryIds.stream().map(x -> getQuery(session.get(), x, false)).filter(Optional::isPresent)
 				.map(Optional::get).collect(Collectors.toList());
 
 		return Response.ok().entity(queries).build();
