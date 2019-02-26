@@ -47,7 +47,8 @@ public class Application implements BundleActivator {
 				int port = OdysseusConfiguration.instance.getInt("rest2.port", 8888);
 				new MicroservicesRunner(port)
 						.addGlobalRequestInterceptor(new SecurityAuthInterceptor())
-						.addExceptionMapper(new ExceptionMapper<RuntimeException>() {
+						.addExceptionMapper(new PlanManagementExceptionMapper(), 
+								new ExceptionMapper<RuntimeException>() {
 							@Override
 							public Response toResponse(RuntimeException t) {
 								LOGGER.error("Interal Server Error", t);
@@ -57,7 +58,7 @@ public class Application implements BundleActivator {
 										.type(MediaType.TEXT_PLAIN)
 										.build();
 							}
-						}, new PlanManagementExceptionMapper())
+						})
 						.deployWebSocketEndpoint(new QueryResultWebsocketEndpoint())
 						.deployWebSocketEndpoint(new ServerEventsWebsocketEndpoint())
 						.deploy(
