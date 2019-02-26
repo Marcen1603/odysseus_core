@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
 
 public class Application implements BundleActivator {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(Application.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 	
 	private static BundleContext context;
 
