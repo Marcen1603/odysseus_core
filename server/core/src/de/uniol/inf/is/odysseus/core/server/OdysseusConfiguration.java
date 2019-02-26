@@ -37,7 +37,7 @@ public class OdysseusConfiguration {
 	 * use osgi injection instead
 	 */
 	///@Deprecated
-	public static OdysseusConfiguration instance;
+	public static OdysseusConfiguration instance = new OdysseusConfiguration();
 
 	public static final String CLONING_UPDATER = "CloningUpdater";
 	public static final String DEFAULT_UPDATE_SITE = "Update.DefaultUpdateSite";
