@@ -48,7 +48,7 @@ public class SinksApiServiceImpl extends SinksApiService {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		
-		// TODO: Check reasons, why sink could be removed
+		// TODO: Check reasons, why sink could not be removed
 		if (ExecutorServiceBinding.getExecutor().containsSink(name, session.get())){
 			// 423: Locked (the resouce is currently locked)
 			// https://de.wikipedia.org/wiki/HTTP-Statuscode
