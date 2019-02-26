@@ -48,12 +48,18 @@ public class DatastreamsApiServiceImpl extends DatastreamsApiService {
 			return Response.status(Status.UNAUTHORIZED).build();
 		}
 
-		// TODO: Should we check if the stream exists to response with a 404?
+		if (!ExecutorServiceBinding.getExecutor().getDataDictionary(session.get()).containsViewOrStream(name, session.get())) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 
-		// TODO: Do we need to ask for the owner to avoid a name collision?
 		ExecutorServiceBinding.getExecutor().removeViewOrStream(name, session.get());
-
-		// TODO: Do we need to check if the stream was successfully removed?
+		
+		// TODO: Check reasons, why stream could not be removed
+		if (ExecutorServiceBinding.getExecutor().getDataDictionary(session.get()).containsViewOrStream(name, session.get())) {
+			// 423: Locked (the resouce is currently locked)
+			// https://de.wikipedia.org/wiki/HTTP-Statuscode
+			return Response.status(423).build();
+		}	
 
 		return Response.ok().build();
 	}
@@ -68,11 +74,9 @@ public class DatastreamsApiServiceImpl extends DatastreamsApiService {
 		List<ViewInformation> datastreams = ExecutorServiceBinding.getExecutor()
 				.getStreamsAndViewsInformation(session.get());
 
-		// TODO: Do we need to check if there is more than one resource with the given
-		// name or do we need ask for the user (owner)?
 		Optional<ViewInformation> result = datastreams.stream()
 				.filter(datastream -> datastream.getName().getResourceName().equals(name)).findAny();
-
+				
 		if (result.isPresent()) {
 			return Response.ok().entity(transform(result.get())).build();
 		} else {
