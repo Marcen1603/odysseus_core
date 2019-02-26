@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
@@ -54,7 +55,13 @@ public class ParsersApiServiceImpl extends ParsersApiService {
 		// TODO: Is there a way to catch errors caused by deficient scripts? In this
 		// case returning a 4xx status code would be more appropriate.
 
-		Collection<Integer> queryIds = executor.addQuery(scriptText, parser, session.get(), new Context());
+		Collection<Integer> queryIds=null;
+		
+		try {
+			queryIds = executor.addQuery(scriptText, parser, session.get(), new Context());
+		}catch(Exception e) {
+			throw new PlanManagementException(e.getMessage());
+		}
 
 		if (queryIds == null || queryIds.isEmpty()) {
 			return Response.noContent().build();
