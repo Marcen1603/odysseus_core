@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.websocket.CloseReason;
 import javax.websocket.CloseReason.CloseCodes;
@@ -119,11 +120,8 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	}
 
 	private void sendText(List<Session> sessions, String toSend) {
-		// onClose() below modifies the session list because it removes the defective
-		// session. This would lead to a ConcurrentModificationException. Thus we make a
-		// copy.
-		List<Session> sessionsCopy = new ArrayList<>(sessions);
-		sessionsCopy.forEach(session -> {
+		// Sessions are now CopyOnWriteArrayLists
+		sessions.forEach(session -> {
 			try {
 				session.getBasicRemote().sendText(toSend);
 			} catch (IOException e) {
@@ -138,11 +136,8 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	}
 
 	private void sendBinary(List<Session> sessions, ByteBuffer toSend) {
-		// onClose() below modifies the session list because it removes the defective
-		// session. This would lead to a ConcurrentModificationException. Thus we make a
-		// copy.
-		List<Session> sessionsCopy = new ArrayList<>(sessions);
-		sessionsCopy.forEach(session -> {
+		// Sessions are now CopyOnWriteArrayLists
+		sessions.forEach(session -> {
 			try {
 				session.getBasicRemote().sendBinary(toSend);
 			} catch (IOException e) {
@@ -170,14 +165,13 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 					IExecutionPlan currentPlan = ExecutorServiceBinding.getExecutor().getExecutionPlan(odysseusSession);
 					final IPhysicalQuery query = getQuery(id, odysseusSession, currentPlan);
 
-					// TODO handle operator param
-					IPhysicalOperator operatorP = query.getRoots().get(0);
+					IPhysicalOperator operatorP = query.getOperator(UUID.fromString(operatorName));
 					ISource<IStreamObject<?>> operator = null;
 					if (operatorP instanceof ISource) {
 						operator = (ISource<IStreamObject<?>>) operatorP;
 					} else {
 						// exception or use inputs?
-						throw new RuntimeException("Operator to connect is no source");
+						throw new RuntimeException("Operator to connect is not available or no source");
 					}
 
 					Integer connectionPort = Integer.parseInt(port);
@@ -333,12 +327,12 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	@OnMessage
 	public void onTextMessage(String text, Session session) throws IOException {
-		LOGGER.info("Received Text : " + text + " from  " + session.getId());
+		LOGGER.info("Received Text : {} from  {}", text, session.getId()+"");
 	}
 
 	@OnError
 	public void onError(Throwable throwable, Session session) {
-		LOGGER.error("Error found in method : " + throwable.toString());
+		LOGGER.error("Error found in method : {}", throwable);
 	}
 
 	@Override
@@ -377,11 +371,14 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 }
 
 class QueryResultReceiver {
-	public ThreadedBufferPO<IStreamObject<? extends IMetaAttribute>> buffer;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueryResultReceiver.class);
+	
+	ThreadedBufferPO<IStreamObject<? extends IMetaAttribute>> buffer;
 	final boolean useSendText;
 	final boolean convertToCSV;
 	final String protocol;
-	final List<Session> sessions = new LinkedList<>();
+	final List<Session> sessions = new CopyOnWriteArrayList<>();
 	final IStreamObjectDataHandler<?> dataHandler;
 	final ISource<?> source;
 
@@ -399,10 +396,12 @@ class QueryResultReceiver {
 
 	public void removeSession(Session session) {
 		this.sessions.remove(session);
+		LOGGER.debug("Session {} removed",session);
 	}
 
 	void addSession(Session session) {
 		this.sessions.add(session);
+		LOGGER.debug("Session {} added",session);
 	}
 
 	List<Session> getSessions() {
