@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.rest2.server.query;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -231,7 +228,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 					.getDataHandlerRegistry(odysseusSession)
 					.getStreamObjectDataHandler(type.getSimpleName(), operator.getOutputSchema(connectionPort));
 
-			qrr = new QueryResultReceiver(protocol, dh, (ISource<?>) operator);
+			qrr = new QueryResultReceiver(protocol, dh, (ISource<?>) operator, connectionPort);
 			receiver.put(inputPort, qrr);
 		}
 		qrr.addSession(session);
@@ -239,7 +236,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	}
 
-	private void removeQueryResultReceiver(Integer inputPort, Session session) {
+	private synchronized void removeQueryResultReceiver(Integer inputPort, Session session) {
 		QueryResultReceiver qrr = receiver.get(inputPort);
 		if (qrr != null) {
 			qrr.removeSession(session);
@@ -308,14 +305,8 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	}
 
 	private void removeConnection(QueryResultReceiver qrr) {
-		Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> sinks = qrr.source.getConnectedSinks();
-
-		sinks.forEach(sinksubscription -> {
-			sinksubscription.getSink().done(0);
-			qrr.source.disconnectSink(sinksubscription.getSink(), sinksubscription.getSinkInPort(),
-					sinksubscription.getSourceOutPort(), sinksubscription.getSchema());
-		});
-
+		// Remove only subscription to buffer
+		qrr.source.disconnectSink(qrr.buffer, 0, qrr.connectionPort, qrr.source.getOutputSchema(qrr.connectionPort));			
 	}
 
 	public void onClose(CloseReason closeReason, Session session) {
@@ -381,12 +372,14 @@ class QueryResultReceiver {
 	final List<Session> sessions = new CopyOnWriteArrayList<>();
 	final IStreamObjectDataHandler<?> dataHandler;
 	final ISource<?> source;
+	final int connectionPort; 
 
-	QueryResultReceiver(String protocol, IStreamObjectDataHandler<?> dataHandler, ISource<?> op) {
+	QueryResultReceiver(String protocol, IStreamObjectDataHandler<?> dataHandler, ISource<?> op, Integer connectionPort) {
 		this.useSendText = getTypeForProtocol(protocol);
 		this.protocol = protocol;
 		this.dataHandler = dataHandler;
 		this.source = op;
+		this.connectionPort = connectionPort;
 		this.convertToCSV = protocol.equalsIgnoreCase("csv");
 	}
 
