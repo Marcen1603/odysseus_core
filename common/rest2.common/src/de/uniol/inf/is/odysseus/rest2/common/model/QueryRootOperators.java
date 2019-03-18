@@ -12,10 +12,19 @@ import java.util.List;
 /**
  * QueryRootOperators
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-19T12:33:30.209Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-03-18T14:18:36.268Z[GMT]")
 public class QueryRootOperators   {
   @JsonProperty("operatorName")
   private String operatorName;
+
+  @JsonProperty("operatorDisplayName")
+  private String operatorDisplayName;
+
+  @JsonProperty("operatorType")
+  private String operatorType;
+
+  @JsonProperty("operatorImplementation")
+  private String operatorImplementation;
 
   @JsonProperty("ports")
   private List<QueryPorts> ports = null;
@@ -26,16 +35,70 @@ public class QueryRootOperators   {
   }
 
    /**
-   * Get operatorName
+   * The name that identifies the operator instance (usually a UUID).
    * @return operatorName
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "The name that identifies the operator instance (usually a UUID).")
   public String getOperatorName() {
     return operatorName;
   }
 
   public void setOperatorName(String operatorName) {
     this.operatorName = operatorName;
+  }
+
+  public QueryRootOperators operatorDisplayName(String operatorDisplayName) {
+    this.operatorDisplayName = operatorDisplayName;
+    return this;
+  }
+
+   /**
+   * The name that is set as 'NAME' property by the user.
+   * @return operatorDisplayName
+  **/
+  @ApiModelProperty(value = "The name that is set as 'NAME' property by the user.")
+  public String getOperatorDisplayName() {
+    return operatorDisplayName;
+  }
+
+  public void setOperatorDisplayName(String operatorDisplayName) {
+    this.operatorDisplayName = operatorDisplayName;
+  }
+
+  public QueryRootOperators operatorType(String operatorType) {
+    this.operatorType = operatorType;
+    return this;
+  }
+
+   /**
+   * The name of the operator type (logical operator type, e.g. SELECT or PROJECT).
+   * @return operatorType
+  **/
+  @ApiModelProperty(value = "The name of the operator type (logical operator type, e.g. SELECT or PROJECT).")
+  public String getOperatorType() {
+    return operatorType;
+  }
+
+  public void setOperatorType(String operatorType) {
+    this.operatorType = operatorType;
+  }
+
+  public QueryRootOperators operatorImplementation(String operatorImplementation) {
+    this.operatorImplementation = operatorImplementation;
+    return this;
+  }
+
+   /**
+   * The name of the operator type implementation (physical operator type, e.g. SelectPO or RelationalProjectPO).
+   * @return operatorImplementation
+  **/
+  @ApiModelProperty(value = "The name of the operator type implementation (physical operator type, e.g. SelectPO or RelationalProjectPO).")
+  public String getOperatorImplementation() {
+    return operatorImplementation;
+  }
+
+  public void setOperatorImplementation(String operatorImplementation) {
+    this.operatorImplementation = operatorImplementation;
   }
 
   public QueryRootOperators ports(List<QueryPorts> ports) {
@@ -75,12 +138,15 @@ public class QueryRootOperators   {
     }
     QueryRootOperators queryRootOperators = (QueryRootOperators) o;
     return Objects.equals(this.operatorName, queryRootOperators.operatorName) &&
+        Objects.equals(this.operatorDisplayName, queryRootOperators.operatorDisplayName) &&
+        Objects.equals(this.operatorType, queryRootOperators.operatorType) &&
+        Objects.equals(this.operatorImplementation, queryRootOperators.operatorImplementation) &&
         Objects.equals(this.ports, queryRootOperators.ports);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(operatorName, ports);
+    return Objects.hash(operatorName, operatorDisplayName, operatorType, operatorImplementation, ports);
   }
 
   @Override
@@ -89,6 +155,9 @@ public class QueryRootOperators   {
     sb.append("class QueryRootOperators {\n");
     
     sb.append("    operatorName: ").append(toIndentedString(operatorName)).append("\n");
+    sb.append("    operatorDisplayName: ").append(toIndentedString(operatorDisplayName)).append("\n");
+    sb.append("    operatorType: ").append(toIndentedString(operatorType)).append("\n");
+    sb.append("    operatorImplementation: ").append(toIndentedString(operatorImplementation)).append("\n");
     sb.append("    ports: ").append(toIndentedString(ports)).append("\n");
     sb.append("}");
     return sb.toString();

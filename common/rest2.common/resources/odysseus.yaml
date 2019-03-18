@@ -160,7 +160,7 @@ paths:
         '403':
            description: Access to restricted resource is not allowed for current user.
         '404':
-           description: A sink with the given name was not found.  
+           description: A sink with the given name was not found.
         '423':
            description: The sink could not be removed. This could happend, if the sink is part of a running query.
   /sinks/{name}:
@@ -442,7 +442,7 @@ components:
         parser:
           type: string
           description: The parser that should be used to parse the query text.
-        query_text:
+        queryText:
           type: string
           description: The query text.
         state:
@@ -455,6 +455,16 @@ components:
             properties:
               operatorName:
                 type: string
+                description: The name that identifies the operator instance (usually a UUID).
+              operatorDisplayName:
+                type: string
+                description: The name that is set as 'NAME' property by the user.
+              operatorType:
+                type: string
+                description: The name of the operator type (logical operator type, e.g. SELECT or PROJECT).
+              operatorImplementation:
+                type: string
+                description: The name of the operator type implementation (physical operator type, e.g. SelectPO or RelationalProjectPO).
               ports:
                 type: array
                 items:

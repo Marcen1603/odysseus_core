@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
@@ -61,6 +62,18 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 				QueryRootOperators queryRootOperator = new QueryRootOperators();
 				String operatorId = String.valueOf(physicalRoot.getUUID());
 				queryRootOperator.setOperatorName(operatorId);
+				
+				queryRootOperator.setOperatorDisplayName(physicalRoot.getName());
+				
+				if (physicalRoot.getLogicalOperator() != null) {
+					LogicalOperator annotation = physicalRoot.getLogicalOperator().getClass()
+							.getAnnotation(LogicalOperator.class);
+					if (annotation != null) {
+						queryRootOperator.setOperatorType(annotation.name());
+					}
+				}
+				
+				queryRootOperator.setOperatorImplementation(physicalRoot.getClass().getSimpleName());
 
 				physicalRoot.getOutputSchemas().keySet().forEach(port -> {
 
