@@ -7,3 +7,9 @@ Automatic-Module-Name: de.uniol.inf.is.odysseus.rest2.client
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.rest2.common;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
+Bundle-ClassPath: lib/okhttp-3.14.0.jar,
+ lib/okio-2.2.2.jar,
+ .,
+ lib/gson-2.8.5.jar,
+ lib/logging-interceptor-3.14.0.jar,
+ lib/gson-fire-1.8.3.jar
