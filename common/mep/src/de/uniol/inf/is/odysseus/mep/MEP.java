@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -43,6 +44,7 @@ import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 import de.uniol.inf.is.odysseus.mep.intern.Constant;
+import de.uniol.inf.is.odysseus.mep.intern.Variable;
 
 public class MEP implements IMepExpressionParser {
 
@@ -63,6 +65,17 @@ public class MEP implements IMepExpressionParser {
 	
 	public static <T> IMepConstant<T> createConstant(T value, SDFDatatype type){
 		return new Constant<>(value, type);
+	}
+	
+	/**
+	 * Creates a new variable
+	 * 
+	 * @param id   The name of the variable
+	 * @param type The type of the variable
+	 * @return The new variable
+	 */
+	public static <T> IMepVariable createVariable(String id, SDFDatatype type) {
+		return new Variable(id, type);
 	}
 
 	@Override
