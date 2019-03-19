@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.crypto.CipherInputStream;
+
 import de.uniol.inf.is.odysseus.client.common.ClientSession;
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.client.common.ClientUser;
@@ -34,6 +36,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.rest2.client.api.ApiClient;
+import de.uniol.inf.is.odysseus.rest2.client.api.ApiException;
+import de.uniol.inf.is.odysseus.rest2.client.api.RestService;
+import de.uniol.inf.is.odysseus.rest2.common.model.Token;
+import de.uniol.inf.is.odysseus.rest2.common.model.User;
 
 /**
  * Client that uses the REST interface to communicate with the Odysseus Server
@@ -47,7 +54,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
 	final long UPDATEINTERVAL = 60000;
-
+	
+	
 	// Fire update events --> TODO: Get Events from Server and fire
 	private class Runner extends Thread {
 
@@ -111,22 +119,35 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {
+		String connectString = host+":"+port;
+
+
+		RestService restService = new RestService(connectString, username, new String(password));
+		
+		// Store rest service ...
+		
 		if (!generateEvents.isAlive()) {
 			generateEvents.start();
 		}
-		String securitytoken = null;
-		String connectString = host+":"+port;
-//		try {
-//			securitytoken = RestService.login(connectString, username, new String(password), tenantname);
-//		} catch (RestException e) {
-//			e.printStackTrace();
-//		}
-		if (securitytoken == null) {
+		
+		User user = new User();
+		user.setUsername(username);
+		user.setPassword(new String(password));
+		user.setTenant(tenantname);
+
+		Token token = null;
+		try {
+			token = restService.servicesLoginPost(user);
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (token == null) {
 			return null;
 		}
-		IUser user = new ClientUser(username, password, true);
-		ClientSession session = new ClientSession(user, tenantname, connectString);
-		session.setToken(securitytoken);
+		IUser clientUser = new ClientUser(username, password, true);
+		ClientSession session = new ClientSession(clientUser, tenantname, connectString);
+		session.setToken(token.getToken());
 		ClientSessionStore.addSession(connectString, session);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;

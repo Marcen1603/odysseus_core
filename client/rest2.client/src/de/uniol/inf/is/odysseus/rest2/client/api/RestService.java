@@ -31,15 +31,22 @@ import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.common.model.Token;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
 
-public class DefaultApi {
+public class RestService {
 	private ApiClient apiClient;
 
-	public DefaultApi() {
+	public RestService() {
 		this(Configuration.getDefaultApiClient());
 	}
 
-	public DefaultApi(ApiClient apiClient) {
+	public RestService(ApiClient apiClient) {
 		this.apiClient = apiClient;
+	}
+	
+	public RestService(String connectString, String username, String password) {
+		this.apiClient = new ApiClient();
+		apiClient.setBasePath(connectString);
+		apiClient.setUsername(username);
+		apiClient.setPassword(password);
 	}
 
 	public ApiClient getApiClient() {

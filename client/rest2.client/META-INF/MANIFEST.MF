@@ -13,3 +13,6 @@ Bundle-ClassPath: lib/okhttp-3.14.0.jar,
  lib/gson-2.8.5.jar,
  lib/logging-interceptor-3.14.0.jar,
  lib/gson-fire-1.8.3.jar
+Export-Package: de.uniol.inf.is.odysseus.rest2.client.api,
+ de.uniol.inf.is.odysseus.rest2.client.api.auth,
+ de.uniol.inf.is.odysseus.rest2.client.websocket
