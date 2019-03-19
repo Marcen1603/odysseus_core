@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -44,6 +45,10 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 	}
 
 	protected ByteBuffer prepareObject(IPunctuation punctuation) {
+		return convertPunctuation(punctuation);
+	}
+
+	public static ByteBuffer convertPunctuation(IPunctuation punctuation) {
 		ByteBuffer buffer;
 		int puncNumber = punctuation.getNumber();
 		// TODO: Move to registry
@@ -65,8 +70,12 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 	}
 
 	protected ByteBuffer prepareObject(T object) {
+		return convertObject(object, getDataHandler());
+	}
+
+	public static ByteBuffer convertObject(Object object, IDataHandler dataHandler) {
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		getDataHandler().writeData(buffer, object);
+		dataHandler.writeData(buffer, object);
 		buffer.flip();
 		return buffer;
 	}

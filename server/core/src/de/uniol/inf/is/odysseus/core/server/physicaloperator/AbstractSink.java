@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,13 +39,11 @@ import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POPortEvent;
@@ -77,6 +76,16 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	private final OwnerHandler ownerHandler;
 	private final Map<IOperatorOwner, Integer> openFor = new HashMap<>();
 
+	// --------------------------------------------------------------------
+	// Identification 
+	// --------------------------------------------------------------------
+
+	private final UUID uuid = UUID.randomUUID();
+
+	public UUID getUUID() {
+		return uuid;
+	}
+	
 	// --------------------------------------------------------------------
 	// Logging
 	// --------------------------------------------------------------------
@@ -181,7 +190,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		return false;
 	}
 
-	protected void setInputPortCount(int ports) {
+	@Override
+	public final void setInputPortCount(int ports) {
 		if (ports > noInputPorts) {
 			this.noInputPorts = ports;
 			processInitEvent = new POEvent[noInputPorts];
@@ -211,7 +221,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void open(IOperatorOwner owner) throws OpenFailedException {
+	public void open(IOperatorOwner owner) {
 		List<IOperatorOwner> forOwners = null;
 		if (owner != null) {
 			forOwners = new ArrayList<>();
@@ -224,7 +234,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	@SuppressWarnings("unchecked")
 	protected void open(List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath,
-			List<IOperatorOwner> forOwners) throws OpenFailedException {
+			List<IOperatorOwner> forOwners) {
 
 		openCloseLock.lock();
 		try {
@@ -280,7 +290,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		return false;
 	}
 
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() {
 		// Empty Default Implementation
 	}
 
@@ -304,7 +314,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void start(IOperatorOwner owner) throws StartFailedException {
+	public void start(IOperatorOwner owner) {
 
 		List<IOperatorOwner> forOwners = null;
 		if (owner != null) {
@@ -318,7 +328,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	@SuppressWarnings("unchecked")
 	protected void start(List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath,
-			List<IOperatorOwner> forOwners) throws OpenFailedException {
+			List<IOperatorOwner> forOwners){
 
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(MessageFormat.format("Calling start on {0}for {1}", this, forOwners));
@@ -359,7 +369,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	@Override
 	public final void process(R object, int port) {
 		fire(processInitEvent[port]);
-
 		process_next(object, port);
 		fire(processDoneEvent[port]);
 	}
@@ -399,37 +408,46 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 		openCloseLock.lock();
 		try {
-			for (IOperatorOwner o : forOwners) {
-				Integer count = openFor.get(o);
-				if (count == null) {
-					throw new IllegalArgumentException("Call from not opened sink");
-				} else {
-					if (count == 1) {
-						openFor.remove(o);
-					} else {
-						openFor.put(o, count - 1);
-					}
-				}
-			}
-			if (this.sinkOpen.get()) {
-				try {
-					callCloseOnChildren(callPath, forOwners);
-					if (openFor.size() == 0) {
-						if (doProcessClose) {
-							process_close();
-						}
-						stopMonitoring();
-					}
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				} finally {
-					if (openFor.size() == 0) {
-						this.sinkOpen.set(false);
-					}
-				}
-			}
+			closeForOwners(forOwners);
+			closeForAll(callPath, forOwners, doProcessClose);
 		} finally {
 			openCloseLock.unlock();
+		}
+	}
+
+	private void closeForAll(List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath,
+			List<IOperatorOwner> forOwners, boolean doProcessClose) {
+		if (this.sinkOpen.get()) {
+			try {
+				callCloseOnChildren(callPath, forOwners);
+				if (openFor.size() == 0) {
+					if (doProcessClose) {
+						process_close();
+					}
+					stopMonitoring();
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			} finally {
+				if (openFor.size() == 0) {
+					this.sinkOpen.set(false);
+				}
+			}
+		}
+	}
+
+	private void closeForOwners(List<IOperatorOwner> forOwners) {
+		for (IOperatorOwner o : forOwners) {
+			Integer count = openFor.get(o);
+			if (count == null) {
+				throw new IllegalArgumentException("Call from not opened sink");
+			} else {
+				if (count == 1) {
+					openFor.remove(o);
+				} else {
+					openFor.put(o, count - 1);
+				}
+			}
 		}
 	}
 
@@ -452,7 +470,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 								+ Thread.currentThread().getName());
 						sub.getSource().close(instance, outport, inPort, callPath, forOwners);
 					}
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					LOGGER.error("Error calling close",e);
 				}
 			}
@@ -484,7 +502,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 					owner.done(this);
 				}
 			} catch (NoSuchElementException e) {
-				// TODO Timing Problem? MBr
 				LOGGER.error("Error while calling done of owner!", e);
 			}
 		}
@@ -763,7 +780,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 			setInputPortCount(sinkInPort + 1);
 		}
 
-		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<>(
 				source, (ISink<IStreamObject<?>>) getInstance(), sinkInPort, sourceOutPort, schema);
 		subscribeToSource(sub);
 
@@ -792,15 +809,16 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		// Implement this method if need to react to new source subscription
 	}
 
-	private int getNextFreeSinkInPort() {
-		int sinkInPort = -1;
-		for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub : this.subscribedToSource) {
-			if (sub.getSinkInPort() > sinkInPort) {
-				sinkInPort = sub.getSinkInPort();
+	protected final int getNextFreeSinkInPort() {
+		// Subscriptions can be freed. Search for first not connected port
+		int nextFreePort = 0;
+		while (nextFreePort<Integer.MAX_VALUE) {
+			if (getSubscribedToSource(nextFreePort) == null) {
+				return nextFreePort;
 			}
+			nextFreePort++;
 		}
-		sinkInPort++;
-		return sinkInPort;
+		throw new RuntimeException("No more free ports available");
 	}
 
 	private boolean sinkInPortFree(int sinkInPort) {
@@ -816,7 +834,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	}
 
 	@Override
-	final public List<AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>> getSubscribedToSource() {
+	public final List<AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>> getSubscribedToSource() {
 		return Collections.unmodifiableList(this.subscribedToSource);
 	}
 
@@ -887,7 +905,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		return process_isSemanticallyEqual(ipo);
 	}
 
-	// TODO: Make abstract again and implement in Children
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
 	}

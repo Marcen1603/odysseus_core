@@ -55,6 +55,8 @@
 		<module>rcp.wizard</module>
 		<module>webservice.client</module>
 		<module>webservice.executor.client</module>
+		<module>rest2.client</module>
+		<module>rest2.client.feature</module>
 	</modules>
 </project>
 

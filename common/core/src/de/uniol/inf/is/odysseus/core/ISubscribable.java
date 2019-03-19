@@ -33,14 +33,14 @@ public interface ISubscribable<O, S extends ISubscription<?,O>> {
 	 * Subscription is initial inactive, call open to active, close to deactivate
 	 *
 	 */
-	public void subscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
-	public void subscribeSink(S subscription);
-	public void subscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive, int openCalls);
+	void subscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	void subscribeSink(S subscription);
+	void subscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive, int openCalls);
 	
 	/**
 	 * Removes a subscription installed by {@link ISubscribable#subscribe(Object, int, int)}
 	 */
-	public void unsubscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	void unsubscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	
 	/**
 	 * Removes a subscription installed by the methods
@@ -48,9 +48,9 @@ public interface ISubscribable<O, S extends ISubscription<?,O>> {
 	 * {@link ISubscribable#subscribe(Object, int, int)}
 	 * @param subscription
 	 */
-	public void unsubscribeSink(S subscription);
-	public Collection<S> getSubscriptions();
-	public void unsubscribeFromAllSinks();
+	void unsubscribeSink(S subscription);
+	Collection<S> getSubscriptions();
+	void unsubscribeFromAllSinks();
 	
 	
 	/**
@@ -62,7 +62,8 @@ public interface ISubscribable<O, S extends ISubscription<?,O>> {
 	 * @param sourceOutPort
 	 * @param schema
 	 */
-	public void connectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
-	public void disconnectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	void connectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	void disconnectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	Collection<S> getConnectedSinks();
 	
 }

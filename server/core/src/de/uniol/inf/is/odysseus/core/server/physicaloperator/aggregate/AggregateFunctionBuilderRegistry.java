@@ -111,8 +111,16 @@ public class AggregateFunctionBuilderRegistry {
 		return getFunctionNames(datamodel.getName());
 	}
 
-	public static Collection<String> getFunctionNames(String datamodel){
-		return Collections.unmodifiableCollection(aggFuncNames.get(datamodel));
+	public static Collection<String> getFunctionNames(String datamodel) {
+		if (datamodel == null) {
+			return Collections.emptyList();
+		}
+		List<String> result = aggFuncNames.get(datamodel);
+		if (result == null) {
+			return Collections.emptyList();
+		} else {
+			return Collections.unmodifiableCollection(result);
+		}
 	}
 
 	static public IAggregateFunctionBuilder getBuilder(

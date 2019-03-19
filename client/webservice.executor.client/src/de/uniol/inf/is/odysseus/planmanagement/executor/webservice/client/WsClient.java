@@ -35,6 +35,7 @@ import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.ranges.RangeException;
 
 import com.google.common.base.Optional;
 
@@ -1378,6 +1379,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
+	public boolean containsSink(String name, ISession caller) {
+		throw new RuntimeException("Currently not implemented");
+	}
+	
+	@Override
 	public Set<String> getMetadataNames(ISession session) {
 		if (session == null) {
 			return null;
@@ -1395,6 +1401,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			}
 		}
 
+		return null;
+	}
+
+	@Override
+	public ILogicalQuery getLogicalQueryByString(String idOrName, ISession session) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

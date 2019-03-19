@@ -112,6 +112,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 		physical.setDebug(logical.isDebug());
 		physical.setSuppressPunctuations(logical.isSuppressPunctuations());
 		physical.getParameterInfos().putAll(logical.getParameterInfos());
+		physical.setLogicalOperator(logical);
 	}
 
 	protected void handleOperatorID(ILogicalOperator logical, IPhysicalOperator physical,

@@ -27,10 +27,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
-   <url>
-      
-   </url>
-
    <includes
          id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
          version="0.0.0"/>
@@ -61,6 +57,10 @@ limitations under the License.
 
    <includes
          id="de.uniol.inf.is.odysseus.usermanagement.store.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.rest2.server.feature"
          version="0.0.0"/>
 
 </feature>

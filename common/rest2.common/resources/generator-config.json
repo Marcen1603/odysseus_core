@@ -1,0 +1,8 @@
+{
+	"modelPackage": "de.uniol.inf.is.odysseus.rest2.common.model",
+	"apiPackage": "de.uniol.inf.is.odysseus.rest2.server.api",
+	"invokerPackage": "de.uniol.inf.is.odysseus.rest2.server.api",
+	"dateLibrary": "legacy",
+	"sourceFolder": "src-gen",
+	"implFolder": "src"
+}

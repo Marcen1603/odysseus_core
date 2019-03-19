@@ -1,0 +1,652 @@
+openapi: 3.0.0
+
+info:
+  title: Odysseus API
+  description: This is the API of the [Odysseus](https://odysseus.uni-oldenburg.de/) server.
+  version: "1"
+
+paths:
+  /queries:
+    get:
+      summary: Returns a list of all installed queries.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Query'
+    post:
+      summary: Installs a new query.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Query'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Query'
+  /queries/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: The ID of the query.
+    get:
+      summary: Returns a query by ID.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Query'
+    put:
+      summary: Updates the query with the given ID.
+      description: With this operation you can update the state of the query (e.g. to start or stop a query). Updating the query text is not allowed. Remove this query and add a new one instead.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Query'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Query'
+    delete:
+      summary: Removes the query with the given ID.
+      responses:
+        '200':
+          description: Deleted
+  /queries/{name}:
+    parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+        description: The name of the query.
+    get:
+      summary: Returns a query by name.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Query'
+    put:
+      summary: Updates the query with the given name.
+      description: With this operation you can update the state of the query (e.g. to start or stop a query). Updating the query text is not allowed. Remove this query and add a new one instead.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Query'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Query'
+    delete:
+      summary: Removes the query with the given name.
+      responses:
+        '200':
+          description: Deleted
+  /datastreams:
+    get:
+      summary: Returns a list of all available data streams. A data stream is provided by a source or a query (as view).
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
+  /datastreams/{name}:
+    parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+        description: The name of the data stream.
+    get:
+      summary: Returns a data stream by name.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+    delete:
+      summary: Removes the data stream with the given name.
+      responses:
+        '200':
+          description: Deleted
+  /sinks:
+    get:
+      summary: Returns a list of all available sinks.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
+        '401':
+           description: Access to resource requires authentication.
+        '403':
+           description: Access to restricted resource is not allowed for current user.
+        '404':
+           description: A sink with the given name was not found.
+        '423':
+           description: The sink could not be removed. This could happend, if the sink is part of a running query.
+  /sinks/{name}:
+    parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+        description: The name of the sink.
+    get:
+      summary: Returns a sink by name.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+    delete:
+      summary: Removes the sink with the given name.
+      responses:
+        '200':
+          description: Deleted
+
+  /users:
+    get:
+      summary: Returns a list of all users.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Creates a new user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{name}:
+    parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+        description: The username.
+    get:
+      summary: Returns a user by username.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Updates the user with the given username. This actions needs a complete user object.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    patch:
+      summary: Updates the user with the given username. This action allows to send a partial user object.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /datatypes:
+    get:
+      summary: Returns a list of all available data types.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Datatype'
+  /operators:
+    get:
+      summary: Returns a list of all available operators.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OperatorInfo'
+  /aggregate_functions:
+    get:
+      summary: Returns a list of all available aggregate functions.
+      description: Returns a list of functions that can be used in the [aggregate operator](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Aggregate+%28and+Group%29+operator).
+      parameters:
+        - in: query
+          name: datamodel
+          schema:
+            type: string
+            default: de.uniol.inf.is.odysseus.core.collection.Tuple
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AggregateFunction'
+  /functions:
+    get:
+      summary: Returns a list of all available functions.
+      description: Returns a list of [functions and operations (MEP)](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/MEP%3A+Functions+and+Operators) Odysseus provides.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Function'
+
+  /parsers:
+    get:
+      summary: Returns a list of all available parsers.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /parsers/{name}:
+    parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+        description: The name of the parser.
+    post:
+      summary: Executes a script with the adressed parser.
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+        required: true
+      responses:
+        '204':
+          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Query'
+
+  /services/login:
+    post:
+      summary: Executes a login and returns a token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+  /services/outputschema:
+    post:
+      summary: Determines the output schema of the given query.
+      parameters:
+        - in: query
+          name: port
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: The port number of the output port of the root operator that should be used to determine the output schema.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Query'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+  /services/bundles:
+    get:
+      summary: Returns a list of installed OSGi bundles.
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+          description: If filter is given only bundles whose symbolic name contains the given filter string are returned.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BundleInfo'
+  /services/events:
+    get:
+      summary: Returns a list of websockets that provides server events.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventWebSocket'
+
+components:
+  schemas:
+    Query:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the query.
+        name:
+          type: string
+          description: The name of the query.
+        parser:
+          type: string
+          description: The parser that should be used to parse the query text.
+        queryText:
+          type: string
+          description: The query text.
+        state:
+          type: string
+          description: The state of the query.
+        rootOperators:
+          type: array
+          items:
+            type: object
+            properties:
+              operatorName:
+                type: string
+                description: The name that identifies the operator instance (usually a UUID).
+              operatorDisplayName:
+                type: string
+                description: The name that is set as 'NAME' property by the user.
+              operatorType:
+                type: string
+                description: The name of the operator type (logical operator type, e.g. SELECT or PROJECT).
+              operatorImplementation:
+                type: string
+                description: The name of the operator type implementation (physical operator type, e.g. SelectPO or RelationalProjectPO).
+              ports:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    port:
+                      type: integer
+                    schema:
+                      $ref: '#/components/schemas/Schema'
+                    websockets:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          protocol:
+                            type: string
+                          uri:
+                            type: string
+    Resource:
+      type: object
+      properties:
+        owner:
+          type: string
+          description: The user that owns this resource.
+        name:
+          type: string
+          description: The name of the resource.
+        schema:
+          $ref: '#/components/schemas/Schema'
+        type:
+          type: string
+    Schema:
+      type: object
+      properties:
+        uri:
+          type: string
+        typeClass:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attribute'
+    Attribute:
+      type: object
+      properties:
+        sourcename:
+          type: string
+        attributename:
+          type: string
+        datatype:
+          $ref: '#/components/schemas/Datatype'
+        subschema:
+          $ref: '#/components/schemas/Schema'
+    Datatype:
+      type: object
+      properties:
+        uri:
+          type: string
+        type:
+          type: string
+          enum:
+            - BASE
+            - TUPLE
+            - MULTI_VALUE
+            - BEAN
+            - LIST
+            - GENERIC
+        subtype:
+          $ref: '#/components/schemas/Datatype'
+        subschema:
+          $ref: '#/components/schemas/Schema'
+    OperatorInfo:
+      type: object
+      properties:
+        operatorName:
+          type: string
+        doc:
+          type: string
+        url:
+          type: string
+        parameters:
+          type: array
+          items:
+            type: object
+            properties:
+              parameterType:
+                type: string
+              parameterName:
+                type: string
+              list:
+                type: boolean
+              doc:
+                type: string
+              mandatory:
+                type: boolean
+              possibleValues:
+                type: array
+                items:
+                  type: string
+              deprecated:
+                type: boolean
+        maxPorts:
+          type: integer
+        minPorts:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: string
+        hidden:
+          type: boolean
+        deprecated:
+          type: boolean
+    AggregateFunction:
+      type: array
+      items:
+        type: string
+    Function:
+      type: object
+      description: A [functions or operations (MEP)](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/MEP%3A+Functions+and+Operators) that can be used in operators like [MAP](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator).
+      properties:
+        symbol:
+          type: string
+          description: The symbol or name of the function.
+        parameters:
+          type: array
+          description: A list of parameters with the allowed datatypes.
+          items:
+            type: array
+            description: A list of datatypes that are allowed for the certain parameter.
+            items:
+              $ref: '#/components/schemas/Datatype'
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        tenant:
+          type: string
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+    BundleInfo:
+      type: object
+      properties:
+        bundleId:
+          type: integer
+          format: int64
+        lastModified:
+          type: integer
+          format: int64
+        state:
+          type: string
+          enum:
+            - ACTIVE
+            - INSTALLED
+            - RESOLVED
+            - UNINSTALLED
+            - STARTING
+            - STOPPING
+        symbolicName:
+          type: string
+        version:
+          type: string
+    EventWebSocket:
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        websocket_uri:
+          type: string
+  responses:
+    QueryResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Query'
