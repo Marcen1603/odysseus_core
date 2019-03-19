@@ -12,8 +12,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import de.uniol.inf.is.odysseus.client.common.ClientSession;
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.client.common.ClientUser;
-import de.uniol.inf.is.odysseus.client.communication.rest.RestException;
-import de.uniol.inf.is.odysseus.client.communication.rest.RestService;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
@@ -118,11 +116,11 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 		String securitytoken = null;
 		String connectString = host+":"+port;
-		try {
-			securitytoken = RestService.login(connectString, username, new String(password), tenantname);
-		} catch (RestException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			securitytoken = RestService.login(connectString, username, new String(password), tenantname);
+//		} catch (RestException e) {
+//			e.printStackTrace();
+//		}
 		if (securitytoken == null) {
 			return null;
 		}
@@ -141,11 +139,11 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 					ClientUser user = (ClientUser) ((ClientSession) session).getUser();
 					String connectString = ((ClientSession)session).getConnectionName();
 
-					String token = RestService.login(connectString, user.getName(), new String(user.getPassword()),
-							((ClientSession) session).getTenantName());
+//					String token = RestService.login(connectString, user.getName(), new String(user.getPassword()),
+//							((ClientSession) session).getTenantName());
 					// In case of new login the security token changes -->
 					// Update old session object
-					((ClientSession) session).setToken(token);
+//					((ClientSession) session).setToken(token);
 				}
 			}
 		}catch(Exception e) {
@@ -295,7 +293,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 			throws PlanManagementException {
 		assureLogin(user);
 		
-		return RestService.addQuery(((ClientSession)user).getConnectionName(), ((ClientSession)user).getToken(), query, parserID);
+		//return RestService.addQuery(((ClientSession)user).getConnectionName(), ((ClientSession)user).getToken(), query, parserID);
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override
