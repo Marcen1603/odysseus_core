@@ -574,4 +574,16 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		return null;
 	}
 
+	@Override
+	public ILogicalQuery getLogicalQueryByString(String idOrName, ISession session) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean containsSink(String name, ISession caller) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
