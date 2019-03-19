@@ -51,6 +51,8 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	@Deprecated
 	private TimeUnit timeUnit = null;
 
+	private boolean useElementOnlyForStartOrEnd;
+
 	public AbstractWindowAO(WindowType windowType) {
 		super();
 		this.windowType = windowType;
@@ -71,6 +73,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		}
 		this.sameStarttime = windowAO.sameStarttime;
 		this.keepEndElement = windowAO.keepEndElement;
+		this.useElementOnlyForStartOrEnd = windowAO.useElementOnlyForStartOrEnd;
 	}
 
 	public AbstractWindowAO() {
@@ -165,6 +168,16 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	public boolean isKeepEndElement() {
 		return keepEndElement;
 	}
+	
+	public void setUseElementOnlyForStartOrEnd(boolean useElementOnlyForStartOrEnd) {
+		this.useElementOnlyForStartOrEnd = useElementOnlyForStartOrEnd;
+	}
+	
+	
+	public boolean isUseElementOnlyForStartOrEnd() {
+		return useElementOnlyForStartOrEnd;
+	}
+
 
 	/**
 	 * @param sameStarttime
@@ -333,5 +346,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		return TimeUnit.MILLISECONDS.convert(getWindowAdvance().getTime(),
 				getBaseTimeUnit());
 	}
+
 
 }

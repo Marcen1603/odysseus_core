@@ -26,10 +26,6 @@ Unless required by applicable law or agreed to in writing, software
  limitations under the License.
    </license>
 
-   <url>
-
-   </url>
-
    <includes
          id="de.uniol.inf.is.odysseus.rest.feature"
          version="0.0.0"/>
@@ -209,6 +205,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.compiler"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.felix.scr"
          download-size="0"
          install-size="0"
          version="0.0.0"
