@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.client.communication.rest.RestService;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.mep.IFunctionSignatur;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -565,6 +566,12 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	public Collection<String> getUdfs() {
 		// TODO Auto-generated method stub
 		return Collections.emptySet();
+	}
+
+	@Override
+	public Set<IFunctionSignatur> getMepFunctions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
