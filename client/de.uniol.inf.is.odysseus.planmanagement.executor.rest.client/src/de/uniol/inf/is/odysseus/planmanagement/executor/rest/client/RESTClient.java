@@ -246,6 +246,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		try {
 			Query query = new Query().id(queryID).state(newState);
 			api.queriesIdPut(queryID, query);
+			RESTClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -280,6 +281,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		try {
 			Query query = new Query().name(String.valueOf(queryName)).state(newState);
 			api.queriesNamePut(String.valueOf(queryName), query);
+			RESTClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -387,6 +389,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 		query.setParserId(q.getParser());
 		query.setQueryText(q.getQueryText());
+		query.setParameter("STATE", QueryState.valueOf(q.getState()));
 		// FIXME: Query needs to have an own user
 		query.setUser(session);
 		return query;
