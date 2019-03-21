@@ -30,7 +30,8 @@ import java.util.Map;
  */
 
 public class DefaultApi {
-  private static final String APPLICATION_JSON = "application/json";
+  private static final String DELETE = "DELETE";
+private static final String APPLICATION_JSON = "application/json";
 private RestService apiClient;
 
   public DefaultApi() {
@@ -67,7 +68,9 @@ private RestService apiClient;
     Map<String, String> localVarHeaderParams = new HashMap<>();
     Map<String, Object> localVarFormParams = new HashMap<>();
 
-    localVarQueryParams.addAll(apiClient.parameterToPairs("", "datamodel", datamodel));    
+    localVarQueryParams.addAll(apiClient.parameterToPairs("", "datamodel", datamodel));   
+    
+    String method = "GET";
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -82,7 +85,7 @@ private RestService apiClient;
     String[] localVarAuthNames = new String[] {  };
 
     GenericType<List<List<Object>>> localVarReturnType = new GenericType<List<List<Object>>>() {};
-    return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+    return apiClient.invokeAPI(localVarPath, method, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
   /**
    * Returns a list of all available data streams. A data stream is provided by a source or a query (as view).
@@ -152,7 +155,7 @@ private RestService apiClient;
     String[] localVarAuthNames = new String[] {  };
 
 
-    apiClient.invokeAPI(localVarPath, "DELETE", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
+    apiClient.invokeAPI(localVarPath, DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
   /**
    * Returns a data stream by name.
@@ -171,7 +174,7 @@ private RestService apiClient;
     
     // create path and map variables
     String localVarPath = "/datastreams/{name}"
-      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
+      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
     List<Pair> localVarQueryParams = new ArrayList<>();
@@ -347,7 +350,7 @@ private RestService apiClient;
       .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
+    List<Pair> localVarQueryParams = new ArrayList<>();
     Map<String, String> localVarHeaderParams = new HashMap<>();
     Map<String, Object> localVarFormParams = new HashMap<>();    
     
@@ -415,14 +418,12 @@ private RestService apiClient;
     // create path and map variables
     String localVarPath = "/queries/{id}"
       .replaceAll("\\{" + "id" + "\\}", apiClient.escapeString(id.toString()));
+    String method = DELETE;
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       
@@ -437,7 +438,7 @@ private RestService apiClient;
     String[] localVarAuthNames = new String[] {  };
 
 
-    apiClient.invokeAPI(localVarPath, "DELETE", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
+    apiClient.invokeAPI(localVarPath, method, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
   /**
    * Returns a query by ID.
@@ -459,13 +460,10 @@ private RestService apiClient;
       .replaceAll("\\{" + "id" + "\\}", apiClient.escapeString(id.toString()));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
 
-
-    
-    
     final String[] localVarAccepts = {
       APPLICATION_JSON
     };
@@ -507,12 +505,9 @@ private RestService apiClient;
       .replaceAll("\\{" + "id" + "\\}", apiClient.escapeString(id.toString()));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -548,12 +543,9 @@ private RestService apiClient;
       .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       
@@ -568,7 +560,7 @@ private RestService apiClient;
     String[] localVarAuthNames = new String[] {  };
 
 
-    apiClient.invokeAPI(localVarPath, "DELETE", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
+    apiClient.invokeAPI(localVarPath, DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
   /**
    * Returns a query by name.
@@ -587,15 +579,12 @@ private RestService apiClient;
     
     // create path and map variables
     String localVarPath = "/queries/{name}"
-      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
+      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -635,15 +624,12 @@ private RestService apiClient;
     
     // create path and map variables
     String localVarPath = "/queries/{name}"
-      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
+      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -679,12 +665,9 @@ private RestService apiClient;
     String localVarPath = "/queries";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -715,13 +698,11 @@ private RestService apiClient;
     String localVarPath = "/services/bundles";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
 
     localVarQueryParams.addAll(apiClient.parameterToPairs("", "filter", filter));
-
-    
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -751,12 +732,9 @@ private RestService apiClient;
     String localVarPath = "/services/events";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -792,12 +770,9 @@ private RestService apiClient;
     String localVarPath = "/services/login";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -834,13 +809,11 @@ private RestService apiClient;
     String localVarPath = "/services/outputschema";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
 
     localVarQueryParams.addAll(apiClient.parameterToPairs("", "port", port));
-
-    
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -870,12 +843,9 @@ private RestService apiClient;
     String localVarPath = "/sinks";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -908,15 +878,12 @@ private RestService apiClient;
     
     // create path and map variables
     String localVarPath = "/sinks/{name}"
-      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
+      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       
@@ -931,7 +898,7 @@ private RestService apiClient;
     String[] localVarAuthNames = new String[] {  };
 
 
-    apiClient.invokeAPI(localVarPath, "DELETE", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
+    apiClient.invokeAPI(localVarPath, DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
   }
   /**
    * Returns a sink by name.
@@ -950,16 +917,13 @@ private RestService apiClient;
     
     // create path and map variables
     String localVarPath = "/sinks/{name}"
-      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
+      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
 
-
-    
-    
     final String[] localVarAccepts = {
       APPLICATION_JSON
     };
@@ -988,12 +952,9 @@ private RestService apiClient;
     String localVarPath = "/users";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -1027,15 +988,12 @@ private RestService apiClient;
     
     // create path and map variables
     String localVarPath = "/users/{name}"
-      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
+      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -1075,15 +1033,12 @@ private RestService apiClient;
     
     // create path and map variables
     String localVarPath = "/users/{name}"
-      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name.toString()));
+      .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(name));
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -1129,9 +1084,6 @@ private RestService apiClient;
     List<Pair> localVarQueryParams = new ArrayList<>();
     Map<String, String> localVarHeaderParams = new HashMap<>();
     Map<String, Object> localVarFormParams = new HashMap<>();
-
-
-    
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
@@ -1167,12 +1119,9 @@ private RestService apiClient;
     String localVarPath = "/users";
 
     // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
     
     final String[] localVarAccepts = {
       APPLICATION_JSON
