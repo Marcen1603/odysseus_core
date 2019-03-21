@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.client.common.ClientSession;
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.client.common.ClientUser;
@@ -34,9 +37,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.rest2.client.ApiException;
 import de.uniol.inf.is.odysseus.rest2.client.RestService;
-import de.uniol.inf.is.odysseus.rest2.client.Test;
 import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
+import de.uniol.inf.is.odysseus.rest2.client.model.Query;
 import de.uniol.inf.is.odysseus.rest2.client.model.Token;
 import de.uniol.inf.is.odysseus.rest2.client.model.User;
 
@@ -49,11 +53,11 @@ import de.uniol.inf.is.odysseus.rest2.client.model.User;
 
 public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
-	
-	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
+	Logger LOG = LoggerFactory.getLogger(RESTClient.class);
+
+	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<>();
 	final long UPDATEINTERVAL = 60000;
-	
-	
+
 	// Fire update events --> TODO: Get Events from Server and fire
 	private class Runner extends Thread {
 
@@ -114,23 +118,22 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 	}
 
-
 	@Override
 	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {
-		String connectString = host+":"+port;
-		
+		String connectString = host + ":" + port;
+
 		RestService restService = new RestService();
 		restService.setBasePath(connectString);
 		restService.setUsername(username);
 		restService.setPassword(new String(password));
 		DefaultApi api = new DefaultApi(restService);
-				
+
 		// Store rest service ...
-		
+
 		if (!generateEvents.isAlive()) {
 			generateEvents.start();
 		}
-		
+
 		User user = new User();
 		user.setUsername(username);
 		user.setPassword(new String(password));
@@ -141,7 +144,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		try {
 			token = api.servicesLoginPost(user);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Login error", e);
 		}
 
 		if (token == null) {
@@ -151,36 +154,42 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		ClientSession session = new ClientSession(clientUser, tenantname, connectString);
 		session.setToken(token.getToken());
 		ClientSessionStore.addSession(connectString, session);
+		ClientSessionStore.putSessionContext(session, api);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
 	}
 
-	public void assureLogin(ISession session) {
+	public DefaultApi getAPI(ISession session) {
 		try {
-		if (session != null) {
-				if (session instanceof ClientSession) {
-					ClientUser user = (ClientUser) ((ClientSession) session).getUser();
-					String connectString = ((ClientSession)session).getConnectionName();
+			if (session instanceof ClientSession) {
+				ClientUser clientUser = (ClientUser) ((ClientSession) session).getUser();
 
-//					String token = RestService.login(connectString, user.getName(), new String(user.getPassword()),
-//							((ClientSession) session).getTenantName());
-					// In case of new login the security token changes -->
-					// Update old session object
-//					((ClientSession) session).setToken(token);
-				}
+				User user = new User();
+				user.setUsername(clientUser.getName());
+				user.setPassword(new String(clientUser.getPassword()));
+				user.setTenant(((ClientSession) session).getTenantName());
+
+				DefaultApi api = (DefaultApi) ClientSessionStore.getSessionContext(session);
+
+				Token token = api.servicesLoginPost(user);
+				// In case of new login the security token changes -->
+				// Update old session object
+				((ClientSession) session).setToken(token.getToken());
+				
+				return api;
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		throw new IllegalArgumentException("Session is ClientSession");
 	}
 
-	
 	@Override
 	public List<SocketAddress> getSocketConnectionInformation(int queryId, ISession caller) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
 		// TODO Auto-generated method stub
@@ -301,7 +310,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		Map<String, List<String>> tokens = new HashMap<>();
 		tokens.put("OdysseusScript", Collections.emptyList());
 		tokens.put("PQL", Collections.emptyList());
-		
+
 		return tokens;
 	}
 
@@ -314,9 +323,17 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
 			throws PlanManagementException {
-		assureLogin(user);
-		
-		//return RestService.addQuery(((ClientSession)user).getConnectionName(), ((ClientSession)user).getToken(), query, parserID);
+		 DefaultApi api = getAPI(user);
+		Query queryModel = new Query();
+		queryModel.setQueryText(query);
+		queryModel.setParser(parserID);
+		 
+		 try {
+			api.queriesPost(queryModel);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
+
 		return Collections.EMPTY_LIST;
 	}
 

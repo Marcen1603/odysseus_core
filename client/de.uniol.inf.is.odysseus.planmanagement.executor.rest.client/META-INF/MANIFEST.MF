@@ -9,5 +9,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.client.common,
- de.uniol.inf.is.odysseus.rest2.client;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.rest2.client;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
 Bundle-ActivationPolicy: lazy

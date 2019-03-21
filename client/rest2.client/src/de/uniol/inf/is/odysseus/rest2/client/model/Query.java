@@ -37,7 +37,7 @@ public class Query {
   @JsonProperty("parser")
   private String parser = null;
 
-  @JsonProperty("query_text")
+  @JsonProperty("queryText")
   private String queryText = null;
 
   @JsonProperty("state")

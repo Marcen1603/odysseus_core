@@ -23,7 +23,7 @@ public class Query   {
   @JsonProperty("parser")
   private String parser;
 
-  @JsonProperty("query_text")
+  @JsonProperty("queryText")
   private String queryText;
 
   @JsonProperty("state")
@@ -32,6 +32,10 @@ public class Query   {
   @JsonProperty("rootOperators")
   private List<QueryRootOperators> rootOperators = null;
 
+  public Query() {
+	  super();
+  }
+  
   public Query id(Integer id) {
     this.id = id;
     return this;
