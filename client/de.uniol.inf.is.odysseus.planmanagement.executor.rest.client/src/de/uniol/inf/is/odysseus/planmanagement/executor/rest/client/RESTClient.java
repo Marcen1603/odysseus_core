@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.rest2.client.model.Token;
 import de.uniol.inf.is.odysseus.rest2.client.model.User;
 
 /**
- * Client that uses the REST interface to communicate with the Odysseus Server
+ * Client that uses the new REST2 interface to communicate with the Odysseus Server
  * 
  * @author Marco Grawunder
  *
@@ -480,8 +480,12 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+		List<IPhysicalOperator> roots = new ArrayList<>();
+//		Optional<ClientReceiver> receiver = createClientReceiver(this, queryID, session);
+//		if (receiver.isPresent()) {
+//			roots.add(receiver.get());
+//		}
+		return roots;
 	}
 
 	@Override
