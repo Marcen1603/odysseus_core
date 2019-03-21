@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.crypto.CipherInputStream;
-
 import de.uniol.inf.is.odysseus.client.common.ClientSession;
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.client.common.ClientUser;
@@ -36,11 +34,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.rest2.client.api.ApiClient;
-import de.uniol.inf.is.odysseus.rest2.client.api.ApiException;
-import de.uniol.inf.is.odysseus.rest2.client.api.RestService;
-import de.uniol.inf.is.odysseus.rest2.common.model.Token;
-import de.uniol.inf.is.odysseus.rest2.common.model.User;
+import de.uniol.inf.is.odysseus.rest2.client.RestService;
+import de.uniol.inf.is.odysseus.rest2.client.Test;
+import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
+import de.uniol.inf.is.odysseus.rest2.client.model.Token;
+import de.uniol.inf.is.odysseus.rest2.client.model.User;
 
 /**
  * Client that uses the REST interface to communicate with the Odysseus Server
@@ -120,10 +118,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {
 		String connectString = host+":"+port;
-
-
-		RestService restService = new RestService(connectString, username, new String(password));
 		
+		RestService restService = new RestService();
+		restService.setBasePath(connectString);
+		restService.setUsername(username);
+		restService.setPassword(new String(password));
+		DefaultApi api = new DefaultApi(restService);
+				
 		// Store rest service ...
 		
 		if (!generateEvents.isAlive()) {
@@ -136,12 +137,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		user.setTenant(tenantname);
 
 		Token token = null;
+
 		try {
-			token = restService.servicesLoginPost(user);
-		} catch (ApiException e) {
-			// TODO Auto-generated catch block
+			token = api.servicesLoginPost(user);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		if (token == null) {
 			return null;
 		}
