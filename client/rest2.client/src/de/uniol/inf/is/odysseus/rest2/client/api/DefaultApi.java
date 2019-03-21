@@ -653,7 +653,7 @@ private RestService apiClient;
    * @return Query
    * @throws ApiException if fails to make API call
    */
-  public Query queriesPost(Query body) throws ApiException {
+  public List<Query> queriesPost(Query body) throws ApiException {
     Object localVarPostBody = body;
     
     // verify the required parameter 'body' is set
@@ -681,7 +681,7 @@ private RestService apiClient;
 
     String[] localVarAuthNames = new String[] {  };
 
-    GenericType<Query> localVarReturnType = new GenericType<Query>() {};
+    GenericType<List<Query>> localVarReturnType = new GenericType<List<Query>>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
   /**

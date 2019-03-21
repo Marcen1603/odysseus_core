@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.rest.client;
 
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListene
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -175,7 +177,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 				// In case of new login the security token changes -->
 				// Update old session object
 				((ClientSession) session).setToken(token.getToken());
-				
+
 				return api;
 			}
 		} catch (Exception e) {
@@ -192,74 +194,95 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
+		DefaultApi api = getAPI(caller);
+		try {
+			api.queriesIdDelete(queryID);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
 	}
 
 	@Override
 	public void removeQuery(Resource queryName, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
+		DefaultApi api = getAPI(caller);
+		try {
+			api.queriesNameDelete(String.valueOf(queryName));
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
 
 	}
+
+	// FIXME: Calls depends on current state (so maybe simple to set new state is
+	// not not right decision)
+	// QueryState.PARTIAL_SUSPENDED is currently not reachable
 
 	@Override
 	public void startQuery(int queryID, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void startQuery(Resource queryName, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
+		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.RUNNING));
 	}
 
 	@Override
 	public void stopQuery(int queryID, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void stopQuery(Resource queryName, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
+		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.INACTIVE));
 	}
 
 	@Override
 	public void suspendQuery(int queryID, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void suspendQuery(Resource queryName, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
+		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.SUSPENDED));
 	}
 
 	@Override
 	public void resumeQuery(int queryID, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void resumeQuery(Resource queryName, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
-
+		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.RUNNING));
 	}
 
 	@Override
 	public void partialQuery(int queryID, int sheddingFactor, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
+		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.PARTIAL));
+	}
 
+	private void changeQueryState(int queryID, DefaultApi api, String newState) {
+		try {
+			Query query = new Query().id(queryID).state(newState);
+			api.queriesIdPut(queryID, query);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
+	}
+
+	@Override
+	public void startQuery(Resource queryName, ISession caller) throws PlanManagementException {
+		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.RUNNING));
+	}
+
+	@Override
+	public void stopQuery(Resource queryName, ISession caller) throws PlanManagementException {
+		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.INACTIVE));
+	}
+
+	@Override
+	public void suspendQuery(Resource queryName, ISession caller) throws PlanManagementException {
+		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.SUSPENDED));
+	}
+
+	@Override
+	public void resumeQuery(Resource queryName, ISession caller) throws PlanManagementException {
+		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.RUNNING));
 	}
 
 	@Override
 	public void partialQuery(Resource queryName, int sheddingFactor, ISession caller) throws PlanManagementException {
-		// TODO Auto-generated method stub
+		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.PARTIAL));
+	}
 
+	private void changeQueryState(Resource queryName, DefaultApi api, String newState) {
+		try {
+			Query query = new Query().name(String.valueOf(queryName)).state(newState);
+			api.queriesNamePut(String.valueOf(queryName), query);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
 	}
 
 	@Override
@@ -323,18 +346,24 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
 			throws PlanManagementException {
-		 DefaultApi api = getAPI(user);
+		Collection<Integer> createdQueries = new ArrayList<>();
+		DefaultApi api = getAPI(user);
 		Query queryModel = new Query();
 		queryModel.setQueryText(query);
 		queryModel.setParser(parserID);
-		 
-		 try {
-			api.queriesPost(queryModel);
+
+		try {
+			List<Query> queries = api.queriesPost(queryModel);
+			for(Query q:queries) {
+				createdQueries.add(q.getId());
+			}
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
 
-		return Collections.EMPTY_LIST;
+		fireAllUpdateEvents();
+		
+		return createdQueries;
 	}
 
 	@Override
@@ -351,8 +380,16 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id, ISession session) {
-		// TODO Auto-generated method stub
-		return null;
+		Query q = getQuery(id, session);
+		ILogicalQuery query = new LogicalQuery(id);
+		if (q.getName() != null) {
+			query.setName(new Resource(q.getName()));
+		}
+		query.setParserId(q.getParser());
+		query.setQueryText(q.getQueryText());
+		// FIXME: Query needs to have an own user
+		query.setUser(session);
+		return query;
 	}
 
 	@Override
@@ -363,19 +400,57 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public Collection<Integer> getLogicalQueryIds(ISession session) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+		DefaultApi api = getAPI(session);
+		Collection<Integer> queryIDs = new ArrayList<>();
+		try {
+			List<Query> queries = api.queriesGet();
+			for (Query q : queries) {
+				queryIDs.add(q.getId());
+			}
+
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
+		return queryIDs;
 	}
 
 	@Override
 	public QueryState getQueryState(int queryID, ISession session) {
-		// TODO Auto-generated method stub
+		Query query = getQuery(queryID, session);
+		if (query != null) {
+			return QueryState.valueOf(query.getState());
+		}
 		return null;
+	}
+
+	private Query getQuery(int queryID, ISession session) {
+		DefaultApi api = getAPI(session);
+		Query query;
+		try {
+			query = api.queriesIdGet(queryID);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
+		return query;
+	}
+
+	private Query getQuery(String name, ISession session) {
+		DefaultApi api = getAPI(session);
+		Query query;
+		try {
+			query = api.queriesNameGet(name);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
+		return query;
 	}
 
 	@Override
 	public QueryState getQueryState(String queryName, ISession session) {
-		// TODO Auto-generated method stub
+		Query query = getQuery(queryName, session);
+		if (query != null) {
+			return QueryState.valueOf(query.getState());
+		}
 		return null;
 	}
 
