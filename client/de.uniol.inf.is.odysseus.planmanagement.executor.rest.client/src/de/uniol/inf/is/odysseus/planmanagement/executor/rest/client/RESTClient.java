@@ -455,9 +455,14 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+	public List<QueryState> getQueryStates(List<Integer> ids, List<ISession> session) {
+		List<QueryState> states = new ArrayList<>();
+		// TODO: why list of sessions?
+		for (int i=0;i<ids.size();i++) {
+			Query q = getQuery(ids.get(i), session.get(i));
+			states.add(QueryState.valueOf(q.getState()));
+		}
+		return states;
 	}
 
 	@Override
