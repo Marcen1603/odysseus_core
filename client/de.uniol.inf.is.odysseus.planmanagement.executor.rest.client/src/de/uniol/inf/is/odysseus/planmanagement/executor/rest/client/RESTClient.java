@@ -35,14 +35,18 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.rest2.client.ApiException;
 import de.uniol.inf.is.odysseus.rest2.client.RestService;
 import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
+import de.uniol.inf.is.odysseus.rest2.client.model.Attribute;
 import de.uniol.inf.is.odysseus.rest2.client.model.Query;
+import de.uniol.inf.is.odysseus.rest2.client.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.client.model.Token;
 import de.uniol.inf.is.odysseus.rest2.client.model.User;
 
@@ -105,7 +109,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 			if (l != null) {
 				l.remove(listener);
 				if (l.isEmpty()) {
-					updateEventListener.get(session.getConnectionName()).remove(l);
+					updateEventListener.get(session.getConnectionName()).remove(listener);
 				}
 			}
 		}
@@ -129,8 +133,6 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		restService.setUsername(username);
 		restService.setPassword(new String(password));
 		DefaultApi api = new DefaultApi(restService);
-
-		// Store rest service ...
 
 		if (!generateEvents.isAlive()) {
 			generateEvents.start();
@@ -356,7 +358,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 		try {
 			List<Query> queries = api.queriesPost(queryModel);
-			for(Query q:queries) {
+			for (Query q : queries) {
 				createdQueries.add(q.getId());
 			}
 		} catch (ApiException e) {
@@ -364,7 +366,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 
 		fireAllUpdateEvents();
-		
+
 		return createdQueries;
 	}
 
@@ -383,6 +385,10 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id, ISession session) {
 		Query q = getQuery(id, session);
+		return convertToLogicalQuery(id, session, q);
+	}
+
+	private ILogicalQuery convertToLogicalQuery(int id, ISession session, Query q) {
 		ILogicalQuery query = new LogicalQuery(id);
 		if (q.getName() != null) {
 			query.setName(new Resource(q.getName()));
@@ -397,8 +403,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public ILogicalQuery getLogicalQueryByName(Resource name, ISession session) {
-		// TODO Auto-generated method stub
-		return null;
+		Query q = getQuery(name, session);
+		return convertToLogicalQuery(q.getId(), session, q);
 	}
 
 	@Override
@@ -437,6 +443,10 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		return query;
 	}
 
+	private Query getQuery(Resource name, ISession session) {
+		return getQuery(String.valueOf(name), session);
+	}
+
 	private Query getQuery(String name, ISession session) {
 		DefaultApi api = getAPI(session);
 		Query query;
@@ -461,7 +471,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	public List<QueryState> getQueryStates(List<Integer> ids, List<ISession> session) {
 		List<QueryState> states = new ArrayList<>();
 		// TODO: why list of sessions?
-		for (int i=0;i<ids.size();i++) {
+		for (int i = 0; i < ids.size(); i++) {
 			Query q = getQuery(ids.get(i), session.get(i));
 			states.add(QueryState.valueOf(q.getState()));
 		}
@@ -596,14 +606,60 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+		DefaultApi api = getAPI(caller);
+		List<ViewInformation> vis = new ArrayList<>();
+
+		try {
+			List<de.uniol.inf.is.odysseus.rest2.client.model.Resource> streams = api.datastreamsGet();
+			for (de.uniol.inf.is.odysseus.rest2.client.model.Resource r : streams) {
+				ViewInformation vi = new ViewInformation();
+				vi.setName(new Resource(r.getOwner(), r.getName()));
+				vi.setType(r.getType());
+				vi.setOutputSchema(convertToSDFSchema(r.getSchema()));
+				vis.add(vi);
+			}
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
+
+		return vis;
+	}
+
+	private SDFSchema convertToSDFSchema(Schema schema) {
+		List<Attribute> attributes = schema.getAttributes();
+		List<SDFAttribute> sdfAttributes = new ArrayList<>();
+		for (Attribute a : attributes) {
+			sdfAttributes.add(new SDFAttribute(a.getSourcename(), a.getAttributename(),
+					SDFDatatype.getType(a.getDatatype().getUri())));
+		}
+		try {
+			return SDFSchemaFactory.createNewSchema(schema.getUri(), Class.forName(schema.getTypeClass()),
+					sdfAttributes);
+		} catch (ClassNotFoundException e) {
+			LOG.warn("Error converting schema ", e);
+		}
+		return null;
 	}
 
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+		DefaultApi api = getAPI(caller);
+		List<SinkInformation> sinks = new ArrayList<>();
+
+		try {
+			List<de.uniol.inf.is.odysseus.rest2.client.model.Resource> sinkDefs = api.sinksGet();
+			for (de.uniol.inf.is.odysseus.rest2.client.model.Resource r : sinkDefs) {
+				SinkInformation si = new SinkInformation();
+				si.setName(new Resource(r.getOwner(), r.getName()));
+				si.setType(r.getType());
+				si.setOutputSchema(convertToSDFSchema(r.getSchema()));
+				sinks.add(si);
+			}
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
+
+		return sinks;
 	}
 
 	@Override
