@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.rest.client;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,11 +19,23 @@ import de.uniol.inf.is.odysseus.client.common.ClientSession;
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.client.common.ClientUser;
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.mep.IFunctionSignatur;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpClientHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
@@ -46,12 +60,15 @@ import de.uniol.inf.is.odysseus.rest2.client.RestService;
 import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
 import de.uniol.inf.is.odysseus.rest2.client.model.Attribute;
 import de.uniol.inf.is.odysseus.rest2.client.model.Query;
+import de.uniol.inf.is.odysseus.rest2.client.model.QueryWebsockets;
 import de.uniol.inf.is.odysseus.rest2.client.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.client.model.Token;
 import de.uniol.inf.is.odysseus.rest2.client.model.User;
+import de.uniol.inf.is.odysseus.wrapper.websocket.WebSocketClientTransportHandler;
 
 /**
- * Client that uses the new REST2 interface to communicate with the Odysseus Server
+ * Client that uses the new REST2 interface to communicate with the Odysseus
+ * Server
  * 
  * @author Marco Grawunder
  *
@@ -60,6 +77,11 @@ import de.uniol.inf.is.odysseus.rest2.client.model.User;
 public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	Logger LOG = LoggerFactory.getLogger(RESTClient.class);
+
+	@SuppressWarnings("rawtypes")
+	private Map<String, Map<Integer, ClientReceiver>> receivers = new HashMap<>();
+	@SuppressWarnings("rawtypes")
+	private Map<ClientReceiver, Integer> opReceivers = new HashMap<>();
 
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<>();
 	final long UPDATEINTERVAL = 60000;
@@ -481,11 +503,90 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
 		List<IPhysicalOperator> roots = new ArrayList<>();
-//		Optional<ClientReceiver> receiver = createClientReceiver(this, queryID, session);
-//		if (receiver.isPresent()) {
-//			roots.add(receiver.get());
-//		}
+		Optional<ClientReceiver> receiver = createClientReceiver(queryID, session);
+		if (receiver.isPresent()) {
+			roots.add(receiver.get());
+		}
 		return roots;
+	}
+
+	private Optional<ClientReceiver> createClientReceiver(int queryId, ISession caller) {
+		DefaultApi api = getAPI(caller);
+
+		if (receivers.get(caller.getConnectionName()) != null
+				&& receivers.get(caller.getConnectionName()).containsKey(queryId)) {
+			return Optional.of(receivers.get(caller.getConnectionName()).get(queryId));
+		}
+
+		SDFSchema outputSchema = getOutputSchema(queryId, caller);
+		String type = outputSchema.getType().getSimpleName();
+		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.instance.getStreamObjectDataHandler(type,
+				outputSchema);
+
+		if (dataHandler == null) {
+			throw new RuntimeException("Cannot find data handler for type " + type);
+		}
+
+		// TODO: Handle generic metadata ...
+		dataHandler.setMetaAttribute(new TimeInterval());
+
+		// TODO: Switch to binary
+
+		// TODO: Handle cases with multiple roots
+		Query query = getQuery(queryId, caller);
+		OptionMap options = new OptionMap();
+		List<QueryWebsockets> wsDefs = query.getRootOperators().get(0).getPorts().get(0).getWebsockets();
+		for (QueryWebsockets wsDef : wsDefs) {
+			if ("tuple".equalsIgnoreCase(type)) {
+				if ("csv".equalsIgnoreCase(wsDef.getProtocol())) {
+					options.setOption("uri", caller.getConnectionName().replace("http", "ws") + wsDef.getUri());
+				}
+			}else if ("keyvalue".equalsIgnoreCase(type)) {
+				if ("json".equalsIgnoreCase(wsDef.getProtocol()) && "keyvalue".equalsIgnoreCase(type)) {
+					options.setOption("uri", caller.getConnectionName().replace("http", "ws") + wsDef.getUri());
+				}
+			}else {
+				if ("binary".equalsIgnoreCase(wsDef.getProtocol())) {
+					options.setOption("uri", caller.getConnectionName().replace("http", "ws") + wsDef.getUri());
+				}
+			}
+		}
+		
+		final IProtocolHandler h;
+		
+		if ("tuple".equalsIgnoreCase(type)) {
+			h = ProtocolHandlerRegistry.instance.getInstance("CSV", ITransportDirection.IN,
+					IAccessPattern.PUSH, options, dataHandler);			
+		}else if ("keyvalue".equalsIgnoreCase(type)) {
+			h = ProtocolHandlerRegistry.instance.getInstance("JSON", ITransportDirection.IN,
+					IAccessPattern.PUSH, options, dataHandler);						
+		}else {
+			h = ProtocolHandlerRegistry.instance.getInstance("Odysseus", ITransportDirection.IN,
+				IAccessPattern.PUSH, options, dataHandler);
+		}
+		// Must be done to add the transport to the protocoll ... seems not
+		// really intuitive ...
+		ITransportHandler th = TransportHandlerRegistry.instance.getInstance(WebSocketClientTransportHandler.NAME, h,
+				options);
+		if (th == null) {
+			throw new RuntimeException("Fatal! WebSocketClientTransportHandler not found!");
+		}
+		h.setTransportHandler(th);
+		ClientReceiver receiver = new ClientReceiver(h);
+		receiver.setOutputSchema(outputSchema);
+		receiver.open(null, 0, 0, null, null);
+		receiver.addOwner(this);
+		Map<Integer, ClientReceiver> r = receivers.get(caller.getConnectionName());
+		if (r == null) {
+			r = new HashMap<>();
+			receivers.put(caller.getConnectionName(), r);
+		}
+		r.put(queryId, receiver);
+		// TODO: FIXME for multiple server version
+		opReceivers.put(receiver, queryId);
+
+		return Optional.of(receiver);
+
 	}
 
 	@Override
@@ -556,8 +657,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "REST2Executor";
 	}
 
 	@Override
@@ -619,7 +719,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 				ViewInformation vi = new ViewInformation();
 				vi.setName(new Resource(r.getOwner(), r.getName()));
 				vi.setType(r.getType());
-				vi.setOutputSchema(convertToSDFSchema(r.getSchema()));
+				vi.setOutputSchema(toSDFSchema(r.getSchema()));
 				vis.add(vi);
 			}
 		} catch (ApiException e) {
@@ -629,7 +729,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		return vis;
 	}
 
-	private SDFSchema convertToSDFSchema(Schema schema) {
+	private SDFSchema toSDFSchema(Schema schema) {
 		List<Attribute> attributes = schema.getAttributes();
 		List<SDFAttribute> sdfAttributes = new ArrayList<>();
 		for (Attribute a : attributes) {
@@ -656,7 +756,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 				SinkInformation si = new SinkInformation();
 				si.setName(new Resource(r.getOwner(), r.getName()));
 				si.setType(r.getType());
-				si.setOutputSchema(convertToSDFSchema(r.getSchema()));
+				si.setOutputSchema(toSDFSchema(r.getSchema()));
 				sinks.add(si);
 			}
 		} catch (ApiException e) {
@@ -686,7 +786,17 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public SDFSchema getOutputSchema(int queryId, ISession session) {
-		// TODO Auto-generated method stub
+		Query q = getQuery(queryId, session);
+
+		DefaultApi api = getAPI(session);
+		try {
+			Schema schema = api.servicesOutputschemaPost(q, 0);
+			if (schema != null) {
+				return toSDFSchema(schema);
+			}
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
 		return null;
 	}
 

@@ -11,7 +11,7 @@ public class WebSocketClient2 {
 
 	public static void main(String[] args) throws URISyntaxException {
 
-		WebSocketClient mWs = new WebSocketClient(new URI("ws://localhost:8888/queries/0/40242b3b-d6a0-4368-85c3-087e6fa76390/0/JSON/vnjd7be522p0kto4o3e0lcfap2")) {
+		WebSocketClient mWs = new WebSocketClient(new URI("ws://localhost:8888/queries/0/02300fc8-2116-47c5-873a-ecf68f776114/0/Binary/ce945i0iaknu4fite5keeiire7")) {
 			
 			@Override
 			public void onMessage(String message) {

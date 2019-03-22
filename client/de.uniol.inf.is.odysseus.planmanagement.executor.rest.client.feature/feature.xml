@@ -20,6 +20,10 @@
          id="de.uniol.inf.is.odysseus.rest2.client.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.wrapper.websocket.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.executor.rest.client"
          download-size="0"

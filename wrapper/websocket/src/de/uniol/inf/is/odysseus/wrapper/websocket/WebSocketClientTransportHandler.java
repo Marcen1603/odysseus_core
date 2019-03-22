@@ -9,141 +9,158 @@ import java.nio.ByteBuffer;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class WebSocketClientTransportHandler extends AbstractTransportHandler{
-	
-	
-		private static final String URI = "uri";
-		private WebSocketClient client;
+public class WebSocketClientTransportHandler extends AbstractTransportHandler {
 
-		public WebSocketClientTransportHandler() {
-			super();
+	Logger LOG = LoggerFactory.getLogger(WebSocketClientTransportHandler.class);
+
+	private static final String URI = "uri";
+	public static final String NAME = "WebsocketClient";
+
+	private WebSocketClient client;
+	private URI uri;
+
+	public WebSocketClientTransportHandler() {
+		super();
+	}
+
+	public WebSocketClientTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
+		super(protocolHandler, options);
+		init(options);
+	}
+
+	private void init(OptionMap options) {
+		options.checkRequiredException(URI);
+		try {
+			this.uri = new URI(getOptionsMap().get(URI));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
 		}
 
-		public WebSocketClientTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
-			super(protocolHandler, options);
-		}
+	}
 
-		@Override
-		public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
-			return new WebSocketClientTransportHandler(protocolHandler, options);
-		}
+	@Override
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
+		return new WebSocketClientTransportHandler(protocolHandler, options);
+	}
 
-		@Override
-		public String getName() {
-			return "WebsocketClient";
-		}
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
-		@Override
-		public void processInOpen() throws IOException {
+	@Override
+	public void processInOpen() throws IOException {
 
-			client = new WebSocketClient(getUri()) {
+		LOG.info("Connecting to " + uri);
+		
+		if (client == null) {
+
+			client = new WebSocketClient(uri) {
 
 				@Override
 				public void onOpen(ServerHandshake handshakedata) {
+					LOG.info("Connected to " + uri);
 				}
 
 				@Override
 				public void onMessage(String message) {
-					ByteBuffer bytes = ByteBuffer.wrap(message.getBytes());
-					bytes.position(bytes.limit());
-					fireProcess(bytes);
+					fireProcess(message);
 				}
+
 				@Override
 				public void onMessage(ByteBuffer bytes) {
-					bytes.position(bytes.limit());
-					fireProcess(bytes);
+					ByteBuffer copy = ByteBuffer.allocate(bytes.capacity());
+					final ByteBuffer readOnly = bytes.asReadOnlyBuffer();
+					copy.put(readOnly);
+					fireProcess(copy);
 				}
 
 				@Override
 				public void onError(Exception ex) {
+					LOG.error("ERROR in Websocket Connection", ex);
 				}
 
 				@Override
 				public void onClose(int code, String reason, boolean remote) {
+					LOG.info("Disconnected from %s", uri);
 				}
 			};
 			client.connect();
 		}
+	}
 
-		@Override
-		public void processOutOpen() throws IOException {
+	@Override
+	public void processOutOpen() throws IOException {
 
-			client = new WebSocketClient(getUri()) {
+		LOG.info("Connecting to " + uri);
 
-				@Override
-				public void onOpen(ServerHandshake handshakedata) {
+		client = new WebSocketClient(uri) {
 
-				}
+			@Override
+			public void onOpen(ServerHandshake handshakedata) {
 
-				@Override
-				public void onMessage(String message) {
-
-				}
-
-				@Override
-				public void onError(Exception ex) {
-
-				}
-
-				@Override
-				public void onClose(int code, String reason, boolean remote) {
-				}
-			};
-			client.connect();
-			
-		}
-
-		private URI getUri() {
-			URI uri;
-			try {
-				uri = new URI(getOptionsMap().get(URI));
-			} catch (URISyntaxException e) {
-				throw new RuntimeException(e);
 			}
-			return uri;
-		}
 
-		@Override
-		public void processInClose() throws IOException {
-			if (client != null) {
-				client.close();
-				client = null;
+			@Override
+			public void onMessage(String message) {
+
 			}
-		}
 
-		@Override
-		public void processOutClose() throws IOException {
-			if (client != null) {
-				client.close();
-				client = null;
+			@Override
+			public void onError(Exception ex) {
+
 			}
-		}
 
-		@Override
-		public void send(byte[] message) throws IOException {
-			client.send(message);
-		}
+			@Override
+			public void onClose(int code, String reason, boolean remote) {
+			}
+		};
+		client.connect();
 
-		@Override
-		public InputStream getInputStream() {
-			throw new UnsupportedOperationException();
-		}
+	}
 
-		@Override
-		public OutputStream getOutputStream() {
-			throw new UnsupportedOperationException();
+	@Override
+	public void processInClose() throws IOException {
+		if (client != null) {
+			client.close();
+			client = null;
 		}
+	}
 
-		@Override
-		public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-			return false;
+	@Override
+	public void processOutClose() throws IOException {
+		if (client != null) {
+			client.close();
+			client = null;
 		}
+	}
 
-	
+	@Override
+	public void send(byte[] message) throws IOException {
+		client.send(message);
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
+		return false;
+	}
+
 }
