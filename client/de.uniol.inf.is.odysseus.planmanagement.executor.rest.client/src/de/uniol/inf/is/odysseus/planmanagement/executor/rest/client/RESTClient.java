@@ -58,12 +58,12 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.rest2.client.ApiException;
 import de.uniol.inf.is.odysseus.rest2.client.RestService;
 import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
-import de.uniol.inf.is.odysseus.rest2.client.model.Attribute;
-import de.uniol.inf.is.odysseus.rest2.client.model.Query;
-import de.uniol.inf.is.odysseus.rest2.client.model.QueryWebsockets;
-import de.uniol.inf.is.odysseus.rest2.client.model.Schema;
-import de.uniol.inf.is.odysseus.rest2.client.model.Token;
-import de.uniol.inf.is.odysseus.rest2.client.model.User;
+import de.uniol.inf.is.odysseus.rest2.common.model.Attribute;
+import de.uniol.inf.is.odysseus.rest2.common.model.Query;
+import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
+import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
+import de.uniol.inf.is.odysseus.rest2.common.model.Token;
+import de.uniol.inf.is.odysseus.rest2.common.model.User;
 import de.uniol.inf.is.odysseus.wrapper.websocket.WebSocketClientTransportHandler;
 
 /**
@@ -714,8 +714,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		List<ViewInformation> vis = new ArrayList<>();
 
 		try {
-			List<de.uniol.inf.is.odysseus.rest2.client.model.Resource> streams = api.datastreamsGet();
-			for (de.uniol.inf.is.odysseus.rest2.client.model.Resource r : streams) {
+			List<de.uniol.inf.is.odysseus.rest2.common.model.Resource> streams = api.datastreamsGet();
+			for (de.uniol.inf.is.odysseus.rest2.common.model.Resource r : streams) {
 				ViewInformation vi = new ViewInformation();
 				vi.setName(new Resource(r.getOwner(), r.getName()));
 				vi.setType(r.getType());
@@ -751,8 +751,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		List<SinkInformation> sinks = new ArrayList<>();
 
 		try {
-			List<de.uniol.inf.is.odysseus.rest2.client.model.Resource> sinkDefs = api.sinksGet();
-			for (de.uniol.inf.is.odysseus.rest2.client.model.Resource r : sinkDefs) {
+			List<de.uniol.inf.is.odysseus.rest2.common.model.Resource> sinkDefs = api.sinksGet();
+			for (de.uniol.inf.is.odysseus.rest2.common.model.Resource r : sinkDefs) {
 				SinkInformation si = new SinkInformation();
 				si.setName(new Resource(r.getOwner(), r.getName()));
 				si.setType(r.getType());
