@@ -7,16 +7,16 @@ import de.uniol.inf.is.odysseus.rest2.client.Pair;
 
 import javax.ws.rs.core.GenericType;
 
-import de.uniol.inf.is.odysseus.rest2.client.model.BundleInfo;
-import de.uniol.inf.is.odysseus.rest2.client.model.Datatype;
-import de.uniol.inf.is.odysseus.rest2.client.model.EventWebSocket;
-import de.uniol.inf.is.odysseus.rest2.client.model.Function;
-import de.uniol.inf.is.odysseus.rest2.client.model.OperatorInfo;
-import de.uniol.inf.is.odysseus.rest2.client.model.Query;
-import de.uniol.inf.is.odysseus.rest2.client.model.Resource;
-import de.uniol.inf.is.odysseus.rest2.client.model.Schema;
-import de.uniol.inf.is.odysseus.rest2.client.model.Token;
-import de.uniol.inf.is.odysseus.rest2.client.model.User;
+import de.uniol.inf.is.odysseus.rest2.common.model.BundleInfo;
+import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
+import de.uniol.inf.is.odysseus.rest2.common.model.EventWebSocket;
+import de.uniol.inf.is.odysseus.rest2.common.model.Function;
+import de.uniol.inf.is.odysseus.rest2.common.model.OperatorInfo;
+import de.uniol.inf.is.odysseus.rest2.common.model.Query;
+import de.uniol.inf.is.odysseus.rest2.common.model.Resource;
+import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
+import de.uniol.inf.is.odysseus.rest2.common.model.Token;
+import de.uniol.inf.is.odysseus.rest2.common.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;

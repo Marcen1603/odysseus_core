@@ -7,4 +7,6 @@ Automatic-Module-Name: de.uniol.inf.is.odysseus.rest2.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.rest2.common.model,
  de.uniol.inf.is.odysseus.rest2.common.model.events
-Require-Bundle: org.wso2.msf4j;bundle-version="2.6.4"
+Require-Bundle: com.fasterxml.jackson;bundle-version="1.0.0"
+Bundle-ClassPath: lib/swagger-annotations-1.5.15.jar,
+ .
