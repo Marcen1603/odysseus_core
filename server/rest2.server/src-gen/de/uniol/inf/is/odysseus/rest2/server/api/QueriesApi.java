@@ -140,7 +140,7 @@ public class QueriesApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Installs a new query.", notes = "", response = Query.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 201, message = "Created", response = Query.class) })
+        @io.swagger.annotations.ApiResponse(code = 201, message = "Created", response = Query.class ,responseContainer = "List" )})
     public Response queriesPost(@Context Request request, @ApiParam(value = "" ,required=true) Query query
 ) {
     	final String securityToken = (String) request.getSession()

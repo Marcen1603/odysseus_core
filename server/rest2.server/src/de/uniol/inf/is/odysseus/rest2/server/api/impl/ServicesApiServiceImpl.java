@@ -72,33 +72,36 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 			return Response.status(Status.BAD_REQUEST).entity("Query needs to be not null.").type(MediaType.TEXT_PLAIN)
 					.build();
 		}
-		if (query.getParser() == null || !supportedParsers.contains(query.getParser())) {
-			return Response.status(Status.BAD_REQUEST)
-					.entity("Parser needs to be one of these: " + String.join(", ", supportedParsers))
-					.type(MediaType.TEXT_PLAIN).build();
-		}
-		if (query.getQueryText() == null) {
-			return Response.status(Status.BAD_REQUEST).entity("Query text needs to be not null.")
-					.type(MediaType.TEXT_PLAIN).build();
-		}
+		
+		SDFSchema schema;
+	
 		if (query.getId() != null) {
-			return Response.status(Status.BAD_REQUEST).entity("Setting an ID is not allowed.")
-					.type(MediaType.TEXT_PLAIN).build();
-		}
-		if (query.getRootOperators() != null && !query.getRootOperators().isEmpty()) {
-			return Response.status(Status.BAD_REQUEST).entity("Setting root operators is not allowed.")
-					.type(MediaType.TEXT_PLAIN).build();
-		}
-		if (query.getState() != null) {
-			return Response.status(Status.BAD_REQUEST).entity("Setting a state is not allowed.")
-					.type(MediaType.TEXT_PLAIN).build();
-		}
+			schema = executor.getOutputSchema(query.getId(), session.get());
+		} else {
 
-		SDFSchema schema = executor.determineOutputSchema(query.getQueryText(), query.getParser(), session.get(), port,
-				Context.empty());
+			if (query.getParser() == null || !supportedParsers.contains(query.getParser())) {
+				return Response.status(Status.BAD_REQUEST)
+						.entity("Parser needs to be one of these: " + String.join(", ", supportedParsers))
+						.type(MediaType.TEXT_PLAIN).build();
+			}
+			if (query.getQueryText() == null) {
+				return Response.status(Status.BAD_REQUEST).entity("Query text needs to be not null.")
+						.type(MediaType.TEXT_PLAIN).build();
+			}
+			if (query.getRootOperators() != null && !query.getRootOperators().isEmpty()) {
+				return Response.status(Status.BAD_REQUEST).entity("Setting root operators is not allowed.")
+						.type(MediaType.TEXT_PLAIN).build();
+			}
+			if (query.getState() != null) {
+				return Response.status(Status.BAD_REQUEST).entity("Setting a state is not allowed.")
+						.type(MediaType.TEXT_PLAIN).build();
+			}
 
+			schema = executor.determineOutputSchema(query.getQueryText(), query.getParser(), session.get(),
+					port, Context.empty());
+			
+		}
 		Schema result = DatatypesApiServiceImpl.transform(schema);
-
 		return Response.ok().entity(result).build();
 	}
 

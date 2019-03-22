@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: REST DTOs
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rest.dto
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Automatic-Module-Name: de.uniol.inf.is.odysseus.rest.dto
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.uniol.inf.is.odysseus.rest.dto.request,
+ de.uniol.inf.is.odysseus.rest.dto.response

@@ -13,12 +13,11 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  com.google.guava;bundle-version="18.0.0",
- org.restlet-osgi-2.3.12;bundle-version="2.3.12"
+ org.restlet-osgi-2.3.12;bundle-version="2.3.12",
+ de.uniol.inf.is.odysseus.rest.dto;bundle-version="1.0.0"
 Service-Component: OSGI-INF/RestService.xml,OSGI-INF/ExecutorServiceBinding.xml,
  OSGI-INF/CoreRestProvider.xml
-Export-Package: de.uniol.inf.is.odysseus.rest.dto.request,
- de.uniol.inf.is.odysseus.rest.dto.response,
- de.uniol.inf.is.odysseus.rest.provider,
+Export-Package: de.uniol.inf.is.odysseus.rest.provider,
  de.uniol.inf.is.odysseus.rest.serverresources,
  de.uniol.inf.is.odysseus.rest.service,
  de.uniol.inf.is.odysseus.rest.socket

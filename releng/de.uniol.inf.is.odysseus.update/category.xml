@@ -93,6 +93,9 @@
 	<feature id="de.uniol.inf.is.odysseus.datarate.feature">
 		<category name="common"/>
 	</feature>
+	<feature id="de.uniol.inf.is.odysseus.planmanagement.executor.rest.client.feature">
+		<category name="client"/>
+	</feature>
 	<feature id="de.uniol.inf.is.odysseus.wrapper.json.feature">
 		<category name="wrapper"/>
 	</feature>

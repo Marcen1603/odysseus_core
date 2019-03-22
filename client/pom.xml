@@ -40,6 +40,9 @@
 		<module>de.uniol.inf.is.odysseus.rcp.viewer.stream.interval</module>
 		<module>de.uniol.inf.is.odysseus.rcp.webservice</module>
 		<module>de.uniol.inf.is.odysseus.report.rcp</module>
+		<module>de.uniol.inf.is.odysseus.planmanagement.executor.rest.client</module>
+		<module>de.uniol.inf.is.odysseus.planmanagement.executor.rest.client.feature</module>
+		<module>de.uniol.inf.is.odysseus.rest.client</module>
 		<module>de.uniol.inf.is.odysseus.studio.feature</module>
 		<module>executor.wsclient.feature</module>
 		<module>rcp.dashboard.part.graphics</module>

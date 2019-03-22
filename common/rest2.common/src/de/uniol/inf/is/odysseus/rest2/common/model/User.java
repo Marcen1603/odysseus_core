@@ -19,6 +19,10 @@ public class User   {
 
   @JsonProperty("tenant")
   private String tenant;
+  
+  public User() {
+	  super();
+  }
 
   public User username(String username) {
     this.username = username;

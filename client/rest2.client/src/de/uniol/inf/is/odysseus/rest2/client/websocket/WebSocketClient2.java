@@ -5,15 +5,13 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
 public class WebSocketClient2 {
 
 	public static void main(String[] args) throws URISyntaxException {
 
-		WebSocketClient mWs = new WebSocketClient(new URI("ws://localhost:8888/queries/0/358e8e63-8afe-4c78-856e-2d278e406c4e/0/JSON/achttrkfh3nvbr1sff1cc6ccot"),
-				new Draft_6455()) {
+		WebSocketClient mWs = new WebSocketClient(new URI("ws://localhost:8888/queries/0/02300fc8-2116-47c5-873a-ecf68f776114/0/Binary/ce945i0iaknu4fite5keeiire7")) {
 			
 			@Override
 			public void onMessage(String message) {

@@ -21,6 +21,7 @@
 		<module>de.uniol.inf.is.odysseus.report</module>
 		<module>de.uniol.inf.is.odysseus.report.executor</module>
 		<module>de.uniol.inf.is.odysseus.report.general</module>
+		<module>de.uniol.inf.is.odysseus.rest.dto</module>
 		<module>de.uniol.inf.is.odysseus.slf4j</module>
 		<module>de.uniol.inf.is.odysseus.slf4j.feature</module>
 		<module>de.uniol.inf.is.odysseus.sweeparea</module>
