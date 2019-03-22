@@ -177,9 +177,9 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
 				if (direction == ITransportDirection.OUT
-						|| direction == ITransportDirection.INOUT)
-					;
-				callOnMe.processOutClose();
+						|| direction == ITransportDirection.INOUT) {
+					callOnMe.processOutClose();
+				}
 			}
 		}
 	}
