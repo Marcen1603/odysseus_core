@@ -400,7 +400,18 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public SDFSchema determineOutputSchema(String query, String parserID, ISession user, int port, Context context) {
-		// TODO Auto-generated method stub
+		DefaultApi api = getAPI(user);
+		Query q = new Query();
+		q.setQueryText(query);
+		q.setParser(parserID);
+		
+		try {
+			Schema schema = api.servicesOutputschemaPost(q, port);
+			return toSDFSchema(schema);
+		} catch (ApiException e) {
+			LOG.warn("Error resolving output schema for query ",e);
+		}
+
 		return null;
 	}
 
@@ -788,14 +799,9 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	public SDFSchema getOutputSchema(int queryId, ISession session) {
 		Query q = getQuery(queryId, session);
 
-		DefaultApi api = getAPI(session);
-		try {
-			Schema schema = api.servicesOutputschemaPost(q, 0);
-			if (schema != null) {
-				return toSDFSchema(schema);
-			}
-		} catch (ApiException e) {
-			throw new PlanManagementException(e);
+		Schema schema = q.getRootOperators().get(0).getPorts().get(0).getSchema();
+		if (schema != null) {
+			return toSDFSchema(schema);
 		}
 		return null;
 	}
