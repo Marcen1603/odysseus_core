@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.rest.client;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpClientHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -51,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -59,6 +59,7 @@ import de.uniol.inf.is.odysseus.rest2.client.ApiException;
 import de.uniol.inf.is.odysseus.rest2.client.RestService;
 import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
 import de.uniol.inf.is.odysseus.rest2.common.model.Attribute;
+import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
@@ -212,12 +213,11 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public List<SocketAddress> getSocketConnectionInformation(int queryId, ISession caller) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("This method cannot be used in REST Scenario");
 	}
 
 	@Override
-	public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void removeQuery(int queryID, ISession caller) {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.queriesIdDelete(queryID);
@@ -227,7 +227,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void removeQuery(Resource queryName, ISession caller) throws PlanManagementException {
+	public void removeQuery(Resource queryName, ISession caller) {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.queriesNameDelete(String.valueOf(queryName));
@@ -242,27 +242,27 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	// QueryState.PARTIAL_SUSPENDED is currently not reachable
 
 	@Override
-	public void startQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void startQuery(int queryID, ISession caller) {
 		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.RUNNING));
 	}
 
 	@Override
-	public void stopQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void stopQuery(int queryID, ISession caller) {
 		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.INACTIVE));
 	}
 
 	@Override
-	public void suspendQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void suspendQuery(int queryID, ISession caller){
 		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.SUSPENDED));
 	}
 
 	@Override
-	public void resumeQuery(int queryID, ISession caller) throws PlanManagementException {
+	public void resumeQuery(int queryID, ISession caller) {
 		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.RUNNING));
 	}
 
 	@Override
-	public void partialQuery(int queryID, int sheddingFactor, ISession caller) throws PlanManagementException {
+	public void partialQuery(int queryID, int sheddingFactor, ISession caller){
 		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.PARTIAL));
 	}
 
@@ -277,27 +277,27 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void startQuery(Resource queryName, ISession caller) throws PlanManagementException {
+	public void startQuery(Resource queryName, ISession caller) {
 		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.RUNNING));
 	}
 
 	@Override
-	public void stopQuery(Resource queryName, ISession caller) throws PlanManagementException {
+	public void stopQuery(Resource queryName, ISession caller) {
 		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.INACTIVE));
 	}
 
 	@Override
-	public void suspendQuery(Resource queryName, ISession caller) throws PlanManagementException {
+	public void suspendQuery(Resource queryName, ISession caller) {
 		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.SUSPENDED));
 	}
 
 	@Override
-	public void resumeQuery(Resource queryName, ISession caller) throws PlanManagementException {
+	public void resumeQuery(Resource queryName, ISession caller) {
 		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.RUNNING));
 	}
 
 	@Override
-	public void partialQuery(Resource queryName, int sheddingFactor, ISession caller) throws PlanManagementException {
+	public void partialQuery(Resource queryName, int sheddingFactor, ISession caller){
 		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.PARTIAL));
 	}
 
@@ -311,50 +311,57 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 	}
 
+	// ------------------------------------------
+	// Most Operator owner methods can be ignored
+	// ------------------------------------------
+	
 	@Override
 	public int compareTo(IOperatorOwner arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new RuntimeException("Not implemented");
 	}
 
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public ISession getSession() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void done(IOwnedOperator op) {
-		// TODO Auto-generated method stub
-
+		// Ignored
 	}
 
 	@Override
 	public Collection<String> getQueryBuildConfigurationNames(ISession session) {
-		// TODO Auto-generated method stub
 		return Collections.emptyList();
 	}
 
 	@Override
-	public Set<String> getSupportedQueryParsers(ISession session) throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return Collections.emptySet();
+	public Set<String> getSupportedQueryParsers(ISession session) {
+		Set<String> parsers = new TreeSet<>();
+		DefaultApi api = getAPI(session);
+		try {
+			parsers.addAll(api.parsersGet());
+		} catch (ApiException e) {
+			LOG.warn("Error reading parsers",e);
+		}
+		return parsers;
 	}
 
 	@Override
 	public Set<String> getMetadataNames(ISession session) {
-		// TODO Auto-generated method stub
+		DefaultApi api = getAPI(session);
+		// TODO: Create on Server side
 		return Collections.emptySet();
 	}
 
 	@Override
 	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user) {
+		DefaultApi api = getAPI(user);
 		// TODO: get from server!
 		Map<String, List<String>> tokens = new HashMap<>();
 		tokens.put("OdysseusScript", Collections.emptyList());
@@ -370,8 +377,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
-			throws PlanManagementException {
+	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context){
 		Collection<Integer> createdQueries = new ArrayList<>();
 		DefaultApi api = getAPI(user);
 		Query queryModel = new Query();
@@ -394,8 +400,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public void runCommand(String commandExpression, ISession caller) {
-		// TODO Auto-generated method stub
-
+		throw new RuntimeException("Not implemented for REST");
 	}
 
 	@Override
@@ -418,10 +423,10 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id, ISession session) {
 		Query q = getQuery(id, session);
-		return convertToLogicalQuery(id, session, q);
+		return toLogicalQuery(id, session, q);
 	}
 
-	private ILogicalQuery convertToLogicalQuery(int id, ISession session, Query q) {
+	private ILogicalQuery toLogicalQuery(int id, ISession session, Query q) {
 		ILogicalQuery query = new LogicalQuery(id);
 		if (q.getName() != null) {
 			query.setName(new Resource(q.getName()));
@@ -437,7 +442,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	@Override
 	public ILogicalQuery getLogicalQueryByName(Resource name, ISession session) {
 		Query q = getQuery(name, session);
-		return convertToLogicalQuery(q.getId(), session, q);
+		return toLogicalQuery(q.getId(), session, q);
+	}
+	
+	@Override
+	public ILogicalQuery getLogicalQueryByString(String idOrName, ISession session) {
+		Query q = getQuery(idOrName, session);
+		return toLogicalQuery(q.getId(), session, q);
 	}
 
 	@Override
@@ -602,6 +613,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public Collection<Integer> startAllClosedQueries(ISession user) {
+		
 		// TODO Auto-generated method stub
 		return Collections.emptyList();
 	}
@@ -644,8 +656,31 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller) {
-		// TODO Auto-generated method stub
-		return Collections.emptySet();
+		DefaultApi api = getAPI(caller);
+		Set<SDFDatatype> ret = new TreeSet<>();
+		try {
+			List<Datatype> dts = api.datatypesGet();
+			for (Datatype dt: dts) {
+				ret.add(toSDFDatatype(dt));
+			}
+		} catch (ApiException e) {
+			throw new RuntimeException("Error retrieving data types from server",e);
+		}
+			
+		return ret;
+	}
+
+	private SDFDatatype toSDFDatatype(Datatype dt) {
+		SDFDatatype subtype = null;
+		if (dt.getSubtype() != null) {
+			subtype = toSDFDatatype(dt.getSubtype());
+		}
+		SDFSchema subSchema = null;
+		if (dt.getSubschema() != null) {
+			subSchema = toSDFSchema(dt.getSubschema());
+		}
+		KindOfDatatype kind = SDFDatatype.KindOfDatatype.valueOf(dt.getType().name());
+		return new SDFDatatype(dt.getUri(), kind, subtype, subSchema);
 	}
 
 	@Override
@@ -656,13 +691,19 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public Set<String> getRegisteredAggregateFunctions(Class<? extends IStreamObject> datamodel, ISession caller) {
-		// TODO Auto-generated method stub
-		return Collections.emptySet();
+		return getRegisteredAggregateFunctions(datamodel.getSimpleName(), caller);
 	}
 
 	@Override
 	public Set<String> getRegisteredAggregateFunctions(String datamodel, ISession caller) {
-		// TODO Auto-generated method stub
+		DefaultApi api = getAPI(caller);
+		try {
+			List<List<Object>> fktn = api.aggregateFunctionsGet(datamodel);
+			
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return Collections.emptySet();
 	}
 
@@ -673,50 +714,53 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public ISession login(String username, byte[] password, String tenantname) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not implemented in REST");
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		// TODO Auto-generated method stub
-		return null;
+		return login(username, password, "");
 	}
 
 	@Override
 	public void logout(ISession caller) {
-		// TODO Auto-generated method stub
-
+		ClientSessionStore.removeSession(caller.getConnectionName());
 	}
 
 	@Override
 	public boolean isValid(ISession session) {
-		// TODO Auto-generated method stub
-		return false;
+		return session.isValid();
 	}
 
 	@Override
 	public ILogicalPlan removeSink(String name, ISession caller) {
-		// TODO Auto-generated method stub
+		DefaultApi api = getAPI(caller);
+		try {
+			api.sinksNameDelete(name);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
 		return null;
 	}
 
 	@Override
 	public ILogicalPlan removeSink(Resource name, ISession caller) {
-		// TODO Auto-generated method stub
-		return null;
+		return removeSink(String.valueOf(name), caller);
 	}
 
 	@Override
 	public void removeViewOrStream(String name, ISession caller) {
-		// TODO Auto-generated method stub
-
+		DefaultApi api = getAPI(caller);
+		try {
+			api.datastreamsNameDelete(name);
+		} catch (ApiException e) {
+			throw new PlanManagementException(e);
+		}
 	}
 
 	@Override
 	public void removeViewOrStream(Resource name, ISession caller) {
-		// TODO Auto-generated method stub
-
+		removeViewOrStream(String.valueOf(name), caller);
 	}
 
 	@Override
@@ -779,21 +823,16 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public boolean containsViewOrStream(Resource name, ISession caller) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException("Not available for REST");
 	}
 
 	@Override
 	public boolean containsViewOrStream(String name, ISession caller) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		throw new UnsupportedOperationException("Not available for REST");	}
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
-		// TODO Auto-generated method stub
-
-	}
+		throw new UnsupportedOperationException("Not available for REST");	}
 
 	@Override
 	public SDFSchema getOutputSchema(int queryId, ISession session) {
@@ -808,33 +847,23 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public void addStoredProcedure(String name, StoredProcedure proc, ISession caller) {
-		// TODO Auto-generated method stub
-
-	}
+		throw new UnsupportedOperationException("Not available for REST");	}
 
 	@Override
 	public void removeStoredProcedure(String name, ISession caller) {
-		// TODO Auto-generated method stub
-
-	}
+		throw new UnsupportedOperationException("Not available for REST");	}
 
 	@Override
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		throw new UnsupportedOperationException("Not available for REST");	}
 
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
-	}
+		throw new UnsupportedOperationException("Not available for REST");	}
 
 	@Override
 	public boolean containsStoredProcedures(String name, ISession caller) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		throw new UnsupportedOperationException("Not available for REST");	}
 
 	@Override
 	public List<String> getOperatorNames(ISession caller) {
@@ -856,31 +885,37 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public List<IUser> getUsers(ISession caller) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
+		List<IUser> users = new ArrayList<>();
+		DefaultApi api = getAPI(caller);
+		try {
+			List<User> user = api.usersGet();
+			for (User u:user) {
+				users.add(convertToUser(u));
+			}
+		} catch (ApiException e) {
+			throw new RuntimeException(e);
+		}
+		return users;
+	}
+
+	private IUser convertToUser(User u) {
+		return new ClientUser(u.getUsername(), u.getPassword().getBytes(), true);
 	}
 
 	@Override
 	public Collection<String> getUdfs() {
-		// TODO Auto-generated method stub
 		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<IFunctionSignatur> getMepFunctions() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
-	@Override
-	public ILogicalQuery getLogicalQueryByString(String idOrName, ISession session) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public boolean containsSink(String name, ISession caller) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
