@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractOb
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.OdysseusProtocolHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.ThreadedBufferPO;
@@ -227,7 +228,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 			IStreamObjectDataHandler<?> dh = ExecutorServiceBinding.getExecutor().getDataDictionary(odysseusSession)
 					.getDataHandlerRegistry(odysseusSession)
 					.getStreamObjectDataHandler(type.getSimpleName(), operator.getOutputSchema(connectionPort));
-
+			dh.setMetaAttribute(MetadataRegistry.getMetadataType(operator.getOutputSchema().getMetaAttributeNames()));
 			qrr = new QueryResultReceiver(protocol, dh, (ISource<?>) operator, connectionPort);
 			receiver.put(inputPort, qrr);
 		}

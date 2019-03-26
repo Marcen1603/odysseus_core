@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rest2.server.api.impl;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -11,11 +12,13 @@ import javax.ws.rs.core.Response.Status;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest2.common.model.Attribute;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
+import de.uniol.inf.is.odysseus.rest2.common.model.Metaschema;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype.TypeEnum;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
@@ -77,6 +80,16 @@ public class DatatypesApiServiceImpl extends DatatypesApiService {
 		result.setTypeClass(schema.getType().getName());
 		result.setAttributes(
 				schema.getAttributes().stream().map(DatatypesApiServiceImpl::transform).collect(Collectors.toList()));
+		List<SDFMetaSchema> metaschemas = schema.getMetaschema();
+		if (metaschemas != null) {
+			List<Metaschema> convMetaSchema = new ArrayList<>();
+			for (SDFMetaSchema metaSch:metaschemas) {
+				Metaschema metaSchema = new Metaschema(transform(metaSch), metaSch.getMetaAttribute().getName());
+				convMetaSchema.add(metaSchema);
+			}
+			result.setMetaschema(convMetaSchema);
+		}
+		
 		return result;
 	}
 

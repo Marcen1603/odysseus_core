@@ -25,7 +25,9 @@ import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.mep.IFunctionSignatur;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -51,6 +53,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -60,6 +63,7 @@ import de.uniol.inf.is.odysseus.rest2.client.RestService;
 import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
 import de.uniol.inf.is.odysseus.rest2.common.model.Attribute;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
+import de.uniol.inf.is.odysseus.rest2.common.model.Metaschema;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
@@ -252,7 +256,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void suspendQuery(int queryID, ISession caller){
+	public void suspendQuery(int queryID, ISession caller) {
 		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.SUSPENDED));
 	}
 
@@ -262,7 +266,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void partialQuery(int queryID, int sheddingFactor, ISession caller){
+	public void partialQuery(int queryID, int sheddingFactor, ISession caller) {
 		changeQueryState(queryID, getAPI(caller), String.valueOf(QueryState.PARTIAL));
 	}
 
@@ -297,7 +301,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void partialQuery(Resource queryName, int sheddingFactor, ISession caller){
+	public void partialQuery(Resource queryName, int sheddingFactor, ISession caller) {
 		changeQueryState(queryName, getAPI(caller), String.valueOf(QueryState.PARTIAL));
 	}
 
@@ -314,7 +318,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	// ------------------------------------------
 	// Most Operator owner methods can be ignored
 	// ------------------------------------------
-	
+
 	@Override
 	public int compareTo(IOperatorOwner arg0) {
 		throw new RuntimeException("Not implemented");
@@ -347,7 +351,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		try {
 			parsers.addAll(api.parsersGet());
 		} catch (ApiException e) {
-			LOG.warn("Error reading parsers",e);
+			LOG.warn("Error reading parsers", e);
 		}
 		return parsers;
 	}
@@ -377,7 +381,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context){
+	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context) {
 		Collection<Integer> createdQueries = new ArrayList<>();
 		DefaultApi api = getAPI(user);
 		Query queryModel = new Query();
@@ -409,12 +413,12 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		Query q = new Query();
 		q.setQueryText(query);
 		q.setParser(parserID);
-		
+
 		try {
 			Schema schema = api.servicesOutputschemaPost(q, port);
 			return toSDFSchema(schema);
 		} catch (ApiException e) {
-			LOG.warn("Error resolving output schema for query ",e);
+			LOG.warn("Error resolving output schema for query ", e);
 		}
 
 		return null;
@@ -444,7 +448,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		Query q = getQuery(name, session);
 		return toLogicalQuery(q.getId(), session, q);
 	}
-	
+
 	@Override
 	public ILogicalQuery getLogicalQueryByString(String idOrName, ISession session) {
 		Query q = getQuery(idOrName, session);
@@ -549,9 +553,16 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 			throw new RuntimeException("Cannot find data handler for type " + type);
 		}
 
-		// TODO: Handle generic metadata ...
+		// TODO: Find generic way for meta data ... problem: currently, meta data handling is part of server only
+		if (!outputSchema.getMetaschema().isEmpty()) {
+	
+			if (outputSchema.getMetaschema().get(0).getMetaAttribute() != ITimeInterval.class) {
+				throw new RuntimeException("Sorry. Currently only metadata with time interval can be used for client/server communication");
+			}
+		}
+		// set fix time interval meta attribute
 		dataHandler.setMetaAttribute(new TimeInterval());
-
+			
 		// TODO: Switch to binary
 
 		// TODO: Handle cases with multiple roots
@@ -563,28 +574,28 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 				if ("csv".equalsIgnoreCase(wsDef.getProtocol())) {
 					options.setOption("uri", caller.getConnectionName().replace("http", "ws") + wsDef.getUri());
 				}
-			}else if ("keyvalue".equalsIgnoreCase(type)) {
+			} else if ("keyvalue".equalsIgnoreCase(type)) {
 				if ("json".equalsIgnoreCase(wsDef.getProtocol()) && "keyvalue".equalsIgnoreCase(type)) {
 					options.setOption("uri", caller.getConnectionName().replace("http", "ws") + wsDef.getUri());
 				}
-			}else {
+			} else {
 				if ("binary".equalsIgnoreCase(wsDef.getProtocol())) {
 					options.setOption("uri", caller.getConnectionName().replace("http", "ws") + wsDef.getUri());
 				}
 			}
 		}
-		
+
 		final IProtocolHandler h;
-		
+
 		if ("tuple".equalsIgnoreCase(type)) {
-			h = ProtocolHandlerRegistry.instance.getInstance("CSV", ITransportDirection.IN,
-					IAccessPattern.PUSH, options, dataHandler);			
-		}else if ("keyvalue".equalsIgnoreCase(type)) {
-			h = ProtocolHandlerRegistry.instance.getInstance("JSON", ITransportDirection.IN,
-					IAccessPattern.PUSH, options, dataHandler);						
-		}else {
-			h = ProtocolHandlerRegistry.instance.getInstance("Odysseus", ITransportDirection.IN,
-				IAccessPattern.PUSH, options, dataHandler);
+			h = ProtocolHandlerRegistry.instance.getInstance("CSV", ITransportDirection.IN, IAccessPattern.PUSH,
+					options, dataHandler);
+		} else if ("keyvalue".equalsIgnoreCase(type)) {
+			h = ProtocolHandlerRegistry.instance.getInstance("JSON", ITransportDirection.IN, IAccessPattern.PUSH,
+					options, dataHandler);
+		} else {
+			h = ProtocolHandlerRegistry.instance.getInstance("Odysseus", ITransportDirection.IN, IAccessPattern.PUSH,
+					options, dataHandler);
 		}
 		// Must be done to add the transport to the protocoll ... seems not
 		// really intuitive ...
@@ -613,7 +624,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public Collection<Integer> startAllClosedQueries(ISession user) {
-		
+
 		// TODO Auto-generated method stub
 		return Collections.emptyList();
 	}
@@ -660,13 +671,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		Set<SDFDatatype> ret = new TreeSet<>();
 		try {
 			List<Datatype> dts = api.datatypesGet();
-			for (Datatype dt: dts) {
+			for (Datatype dt : dts) {
 				ret.add(toSDFDatatype(dt));
 			}
 		} catch (ApiException e) {
-			throw new RuntimeException("Error retrieving data types from server",e);
+			throw new RuntimeException("Error retrieving data types from server", e);
 		}
-			
+
 		return ret;
 	}
 
@@ -699,7 +710,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			List<List<Object>> fktn = api.aggregateFunctionsGet(datamodel);
-			
+
 		} catch (ApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -785,21 +796,39 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	}
 
 	private SDFSchema toSDFSchema(Schema schema) {
-		List<Attribute> attributes = schema.getAttributes();
-		List<SDFAttribute> sdfAttributes = new ArrayList<>();
-		for (Attribute a : attributes) {
-			sdfAttributes.add(new SDFAttribute(a.getSourcename(), a.getAttributename(),
-					SDFDatatype.getType(a.getDatatype().getUri())));
-		}
+		List<SDFAttribute> sdfAttributes = convertAttributes(schema.getAttributes());
+		List<SDFMetaSchema> metaSchema = new ArrayList<>();
 		try {
-			return SDFSchemaFactory.createNewSchema(schema.getUri(), Class.forName(schema.getTypeClass()),
+			if (schema.getMetaschema() != null) {
+				for (Metaschema s : schema.getMetaschema()) {
+					Collection<SDFAttribute> metaAttributes = convertAttributes(s.getAttributes());
+					metaSchema.add(SDFSchemaFactory.createNewMetaSchema(s.getUri(), Class.forName(s.getTypeClass()),
+							metaAttributes,
+							(Class<? extends IMetaAttribute>) Class.forName(s.getMetaattributeClass())));
+				}
+			}
+			SDFSchema schemaWithoutMeta = SDFSchemaFactory.createNewSchema(schema.getUri(), Class.forName(schema.getTypeClass()),
 					sdfAttributes);
+			if (!metaSchema.isEmpty()) {
+				return SDFSchemaFactory.createNewWithMetaSchema(schemaWithoutMeta, metaSchema);
+			}else {
+				return schemaWithoutMeta;
+			}
 		} catch (ClassNotFoundException e) {
 			LOG.warn("Error converting schema ", e);
 		}
 		return null;
 	}
 
+	private List<SDFAttribute> convertAttributes(List<Attribute> attributes) {
+		List<SDFAttribute> sdfAttributes = new ArrayList<>();
+		for (Attribute a : attributes) {
+			sdfAttributes.add(new SDFAttribute(a.getSourcename(), a.getAttributename(),
+					SDFDatatype.getType(a.getDatatype().getUri())));
+		}
+		return sdfAttributes;
+	}
+	
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
 		DefaultApi api = getAPI(caller);
@@ -828,11 +857,13 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public boolean containsViewOrStream(String name, ISession caller) {
-		throw new UnsupportedOperationException("Not available for REST");	}
+		throw new UnsupportedOperationException("Not available for REST");
+	}
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
-		throw new UnsupportedOperationException("Not available for REST");	}
+		throw new UnsupportedOperationException("Not available for REST");
+	}
 
 	@Override
 	public SDFSchema getOutputSchema(int queryId, ISession session) {
@@ -847,23 +878,28 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public void addStoredProcedure(String name, StoredProcedure proc, ISession caller) {
-		throw new UnsupportedOperationException("Not available for REST");	}
+		throw new UnsupportedOperationException("Not available for REST");
+	}
 
 	@Override
 	public void removeStoredProcedure(String name, ISession caller) {
-		throw new UnsupportedOperationException("Not available for REST");	}
+		throw new UnsupportedOperationException("Not available for REST");
+	}
 
 	@Override
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
-		throw new UnsupportedOperationException("Not available for REST");	}
+		throw new UnsupportedOperationException("Not available for REST");
+	}
 
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
-		throw new UnsupportedOperationException("Not available for REST");	}
+		throw new UnsupportedOperationException("Not available for REST");
+	}
 
 	@Override
 	public boolean containsStoredProcedures(String name, ISession caller) {
-		throw new UnsupportedOperationException("Not available for REST");	}
+		throw new UnsupportedOperationException("Not available for REST");
+	}
 
 	@Override
 	public List<String> getOperatorNames(ISession caller) {
@@ -889,7 +925,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			List<User> user = api.usersGet();
-			for (User u:user) {
+			for (User u : user) {
 				users.add(convertToUser(u));
 			}
 		} catch (ApiException e) {
@@ -911,8 +947,6 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	public Set<IFunctionSignatur> getMepFunctions() {
 		return Collections.emptySet();
 	}
-
-
 
 	@Override
 	public boolean containsSink(String name, ISession caller) {

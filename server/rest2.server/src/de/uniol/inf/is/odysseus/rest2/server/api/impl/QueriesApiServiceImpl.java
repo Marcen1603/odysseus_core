@@ -12,6 +12,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -31,8 +34,16 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class QueriesApiServiceImpl extends QueriesApiService {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(QueriesApiServiceImpl.class);
 
 	static Optional<Query> getQuery(ISession session, int queryid, boolean includeAllOps) {
+		if (includeAllOps) {
+			LOG.warn("Currently, only root operators are supported!");
+			includeAllOps = false;
+		}
+
+		
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 		if (executor != null) {
 			ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryid, session);
