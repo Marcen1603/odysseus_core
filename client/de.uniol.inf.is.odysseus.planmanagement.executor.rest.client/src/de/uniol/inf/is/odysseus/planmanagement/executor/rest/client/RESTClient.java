@@ -442,8 +442,10 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		query.setParserId(q.getParser());
 		query.setQueryText(q.getQueryText());
 		query.setParameter("STATE", QueryState.valueOf(q.getState()));
-		// FIXME: Query needs to have an own user
-		query.setUser(session);
+		// Create a local user object, just to show the owner of a query
+		IUser user = new ClientUser(q.getUser(),"".getBytes(), false);
+		ISession newUser = new ClientSession(user, "", "");
+		query.setUser(newUser);
 		return query;
 	}
 

@@ -52,6 +52,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			}
 			Query query = new Query();
 			query.setId(queryid);
+			query.setUser(logicalQuery.getUser().getUser().getName());
 			if (logicalQuery.getName() != null) {
 				query.setName(String.valueOf(logicalQuery.getName()));
 			}

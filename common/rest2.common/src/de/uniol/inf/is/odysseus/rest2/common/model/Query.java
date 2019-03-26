@@ -42,6 +42,9 @@ public class Query {
 
   @JsonProperty("state")
   private String state = null;
+  
+  @JsonProperty("user")
+  private String user = null;
 
   @JsonProperty("rootOperators")
   private List<QueryRootOperators> rootOperators = null;
@@ -64,11 +67,29 @@ public class Query {
     this.id = id;
   }
 
+  /**
+   * The user of the query.
+   * @return user
+  **/
+  @ApiModelProperty(value = "The creator of the query.")
+  public String getUser() {
+    return user;
+  }
+
+  public void setUser(String user) {
+    this.user = user;
+  }
+
+  public Query user(String user) {
+    this.user = user;
+    return this;
+  }
+  
   public Query name(String name) {
     this.name = name;
     return this;
   }
-
+  
    /**
    * The name of the query.
    * @return name
