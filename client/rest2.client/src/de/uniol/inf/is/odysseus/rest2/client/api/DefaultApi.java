@@ -720,6 +720,8 @@ private RestService apiClient;
     GenericType<List<BundleInfo>> localVarReturnType = new GenericType<List<BundleInfo>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
+ 
+  
   /**
    * Returns a list of websockets that provides server events.
    * 
@@ -790,6 +792,41 @@ private RestService apiClient;
     GenericType<Token> localVarReturnType = new GenericType<Token>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
+  
+  /**
+   * Returns the current server session.
+   * 
+   * @return List&lt;EventWebSocket&gt;
+   * @throws ApiException if fails to make API call
+   */
+  public Token servicesSessionGet() throws ApiException {
+    Object localVarPostBody = null;
+    
+    // create path and map variables
+    String localVarPath = "/services/session";
+
+    // query params
+    List<Pair> localVarQueryParams = new ArrayList<>();
+    Map<String, String> localVarHeaderParams = new HashMap<>();
+    Map<String, Object> localVarFormParams = new HashMap<>();
+    
+    final String[] localVarAccepts = {
+      APPLICATION_JSON
+    };
+    final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+
+    final String[] localVarContentTypes = {
+      
+    };
+    final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
+
+    GenericType<Token> localVarReturnType = new GenericType<Token>() {};
+    return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+      }
+  
+  
   /**
    * Determines the output schema of the given query.
    * 
