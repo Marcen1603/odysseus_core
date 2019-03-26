@@ -225,6 +225,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.queriesIdDelete(queryID);
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -235,6 +237,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.queriesNameDelete(String.valueOf(queryName));
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -748,6 +752,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.sinksNameDelete(name);
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -764,6 +769,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.datastreamsNameDelete(name);
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
