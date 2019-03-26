@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.rest.client;
 
 import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +15,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +68,7 @@ import de.uniol.inf.is.odysseus.rest2.client.RestService;
 import de.uniol.inf.is.odysseus.rest2.client.api.DefaultApi;
 import de.uniol.inf.is.odysseus.rest2.common.model.Attribute;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
+import de.uniol.inf.is.odysseus.rest2.common.model.EventWebSocket;
 import de.uniol.inf.is.odysseus.rest2.common.model.Metaschema;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
@@ -89,35 +95,72 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	private Map<ClientReceiver, Integer> opReceivers = new HashMap<>();
 
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<>();
-	final long UPDATEINTERVAL = 60000;
+//	final long UPDATEINTERVAL = 60000;
+//
+//	// Fire update events --> TODO: Get Events from Server and fire
+//	private class Runner extends Thread {
+//
+//		@Override
+//		public void run() {
+//			while (true) {
+//				try {
+//					synchronized (this) {
+//						wait(UPDATEINTERVAL);
+//					}
+//					fireAllUpdateEvents();
+//				} catch (InterruptedException e) {
+//					// e.printStackTrace();
+//				}
+//			}
+//		}
+//	};
 
-	// Fire update events --> TODO: Get Events from Server and fire
-	private class Runner extends Thread {
+	class EventWebSocketClient extends WebSocketClient {
+
+		private String type;
+
+		public EventWebSocketClient(URI serverURI, String type) {
+			super(serverURI);
+			this.type = type;
+		}
 
 		@Override
-		public void run() {
-			while (true) {
-				try {
-					synchronized (this) {
-						wait(UPDATEINTERVAL);
-					}
-					fireAllUpdateEvents();
-				} catch (InterruptedException e) {
-					// e.printStackTrace();
-				}
-			}
+		public void onMessage(String arg0) {
+			System.out.println(arg0);
+			RESTClient.this.fireUpdateEvent(type);
 		}
-	};
 
-	private void fireAllUpdateEvents() {
-		RESTClient.this.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-		RESTClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
-		RESTClient.this.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
-		RESTClient.this.fireUpdateEvent(IUpdateEventListener.SESSION);
-		RESTClient.this.fireUpdateEvent(IUpdateEventListener.USER);
+		@Override
+		public void onOpen(ServerHandshake handshakedata) {
+			LOG.info("Connected to " + uri);
+		}
+
+		@Override
+		public void onMessage(ByteBuffer bytes) {
+			RESTClient.this.fireUpdateEvent(type);
+		}
+
+		@Override
+		public void onError(Exception ex) {
+			LOG.error("ERROR in Websocket Connection", ex);
+		}
+
+		@Override
+		public void onClose(int code, String reason, boolean remote) {
+			LOG.info("Disconnected from %s", uri);
+		}
+
 	}
 
-	private Runner generateEvents = new Runner();
+//	private void fireAllUpdateEvents() {
+//		RESTClient.this.//fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+//		RESTClient.this.//fireUpdateEvent(IUpdateEventListener.QUERY);
+//		RESTClient.this.//fireUpdateEvent(IUpdateEventListener.SCHEDULING);
+//		RESTClient.this.//fireUpdateEvent(IUpdateEventListener.SESSION);
+//		RESTClient.this.//fireUpdateEvent(IUpdateEventListener.USER);
+//	}
+
+	//private Runner generateEvents = new Runner();
 
 	@Override
 	public synchronized void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
@@ -146,6 +189,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		List<IUpdateEventListener> list = updateEventListener.get(type);
 		if (list != null) {
 			for (IUpdateEventListener l : list) {
+				System.err.println(type);
 				l.eventOccured(type);
 			}
 		}
@@ -161,9 +205,9 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		restService.setPassword(new String(password));
 		DefaultApi api = new DefaultApi(restService);
 
-		if (!generateEvents.isAlive()) {
-			generateEvents.start();
-		}
+//		if (!generateEvents.isAlive()) {
+//			generateEvents.start();
+//		}
 
 		User user = new User();
 		user.setUsername(username);
@@ -181,31 +225,94 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		if (token == null) {
 			return null;
 		}
+		restService.setAccessToken(token.getToken());
 		IUser clientUser = new ClientUser(username, password, true);
 		ClientSession session = new ClientSession(clientUser, tenantname, connectString);
 		session.setToken(token.getToken());
 		ClientSessionStore.addSession(connectString, session);
 		ClientSessionStore.putSessionContext(session, api);
-		fireUpdateEvent(IUpdateEventListener.SESSION);
+		//fireUpdateEvent(IUpdateEventListener.SESSION);
+
+		try {
+			addServerEventListner(session);
+		} catch (URISyntaxException | ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return session;
+	}
+
+	private void addServerEventListner(ISession session) throws URISyntaxException, ApiException {
+
+		DefaultApi api = getAPI(session);
+		List<EventWebSocket> websockets = api.servicesEventsGet();
+
+		for (EventWebSocket socket : websockets) {
+			
+			String type = "";
+			switch (socket.getType()) {
+			case "QUERY_ADDED":
+				type = IUpdateEventListener.QUERY;
+				break;
+			case "ERROR_EVENT":
+				break;
+			case "PLAN_MODIFICATION":
+				break;
+			case "SCHEDULER_MANAGER":
+				break;
+			case "EXECUTOR_COMMAND":
+				break;
+			case "COMPILER":
+				break;
+			case "SESSION":
+				type = IUpdateEventListener.SESSION;
+				break;
+			case "DATADICTIONARY":
+				type = IUpdateEventListener.DATADICTIONARY;
+				break;
+			case "USER":
+				type = IUpdateEventListener.USER;
+				break;
+			case "QUERY":
+				type = IUpdateEventListener.QUERY;
+				break;
+			case "SCHEDULING":
+				break;
+			default:
+			}
+
+			if (type.length() > 0) {
+				URI uri = new URI(session.getConnectionName().replaceAll("http", "ws")+socket.getWebsocketUri());
+				EventWebSocketClient client = new EventWebSocketClient(uri, type);
+				client.connect();
+				// TODO: Remove client again after logout
+			}
+			
+		}
+
 	}
 
 	public DefaultApi getAPI(ISession session) {
 		try {
 			if (session instanceof ClientSession) {
-				ClientUser clientUser = (ClientUser) ((ClientSession) session).getUser();
-
-				User user = new User();
-				user.setUsername(clientUser.getName());
-				user.setPassword(new String(clientUser.getPassword()));
-				user.setTenant(((ClientSession) session).getTenantName());
-
+				//ClientUser clientUser = (ClientUser) ((ClientSession) session).getUser();
+				
 				DefaultApi api = (DefaultApi) ClientSessionStore.getSessionContext(session);
 
-				Token token = api.servicesLoginPost(user);
-				// In case of new login the security token changes -->
-				// Update old session object
-				((ClientSession) session).setToken(token.getToken());
+//				if (api == null) {
+//
+//				User user = new User();
+//				user.setUsername(clientUser.getName());
+//				user.setPassword(new String(clientUser.getPassword()));
+//				user.setTenant(((ClientSession) session).getTenantName());
+//
+//				DefaultApi api = (DefaultApi) ClientSessionStore.getSessionContext(session);
+//
+//				Token token = api.servicesLoginPost(user);
+//				// In case of new login the security token changes -->
+//				// Update old session object
+//				((ClientSession) session).setToken(token.getToken());
 
 				return api;
 			}
@@ -225,8 +332,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.queriesIdDelete(queryID);
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-			fireUpdateEvent(IUpdateEventListener.QUERY);
+			//fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			//fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -237,8 +344,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.queriesNameDelete(String.valueOf(queryName));
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-			fireUpdateEvent(IUpdateEventListener.QUERY);
+			//fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			//fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -278,7 +385,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		try {
 			Query query = new Query().id(queryID).state(newState);
 			api.queriesIdPut(queryID, query);
-			RESTClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
+			//fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -313,7 +420,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		try {
 			Query query = new Query().name(String.valueOf(queryName)).state(newState);
 			api.queriesNamePut(String.valueOf(queryName), query);
-			RESTClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
+			//fireUpdateEvent(IUpdateEventListener.QUERY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -401,7 +508,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 			throw new PlanManagementException(e);
 		}
 
-		fireAllUpdateEvents();
+		//fireAllUpdateEvents();
 
 		return createdQueries;
 	}
@@ -443,7 +550,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		query.setQueryText(q.getQueryText());
 		query.setParameter("STATE", QueryState.valueOf(q.getState()));
 		// Create a local user object, just to show the owner of a query
-		IUser user = new ClientUser(q.getUser(),"".getBytes(), false);
+		IUser user = new ClientUser(q.getUser(), "".getBytes(), false);
 		ISession newUser = new ClientSession(user, "", "");
 		query.setUser(newUser);
 		return query;
@@ -559,16 +666,18 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 			throw new RuntimeException("Cannot find data handler for type " + type);
 		}
 
-		// TODO: Find generic way for meta data ... problem: currently, meta data handling is part of server only
+		// TODO: Find generic way for meta data ... problem: currently, meta data
+		// handling is part of server only
 		if (!outputSchema.getMetaschema().isEmpty()) {
-	
+
 			if (outputSchema.getMetaschema().get(0).getMetaAttribute() != ITimeInterval.class) {
-				throw new RuntimeException("Sorry. Currently only metadata with time interval can be used for client/server communication");
+				throw new RuntimeException(
+						"Sorry. Currently only metadata with time interval can be used for client/server communication");
 			}
 		}
 		// set fix time interval meta attribute
 		dataHandler.setMetaAttribute(new TimeInterval());
-			
+
 		// TODO: Switch to binary
 
 		// TODO: Handle cases with multiple roots
@@ -754,7 +863,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.sinksNameDelete(name);
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			//fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -771,7 +880,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.datastreamsNameDelete(name);
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			//fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -815,11 +924,11 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 							(Class<? extends IMetaAttribute>) Class.forName(s.getMetaattributeClass())));
 				}
 			}
-			SDFSchema schemaWithoutMeta = SDFSchemaFactory.createNewSchema(schema.getUri(), Class.forName(schema.getTypeClass()),
-					sdfAttributes);
+			SDFSchema schemaWithoutMeta = SDFSchemaFactory.createNewSchema(schema.getUri(),
+					Class.forName(schema.getTypeClass()), sdfAttributes);
 			if (!metaSchema.isEmpty()) {
 				return SDFSchemaFactory.createNewWithMetaSchema(schemaWithoutMeta, metaSchema);
-			}else {
+			} else {
 				return schemaWithoutMeta;
 			}
 		} catch (ClassNotFoundException e) {
@@ -836,7 +945,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 		return sdfAttributes;
 	}
-	
+
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
 		DefaultApi api = getAPI(caller);

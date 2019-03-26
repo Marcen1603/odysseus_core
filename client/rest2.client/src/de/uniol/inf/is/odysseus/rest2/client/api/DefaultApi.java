@@ -32,6 +32,7 @@ import java.util.Map;
 public class DefaultApi {
   private static final String DELETE = "DELETE";
 private static final String APPLICATION_JSON = "application/json";
+
 private RestService apiClient;
 
   public DefaultApi() {
@@ -49,7 +50,7 @@ private RestService apiClient;
   public void setApiClient(RestService apiClient) {
     this.apiClient = apiClient;
   }
-
+  
   /**
    * Returns a list of all available aggregate functions.
    * Returns a list of functions that can be used in the [aggregate operator](https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Aggregate+%28and+Group%29+operator).
@@ -82,7 +83,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+    String[] localVarAuthNames = new String[] { RestService.O_AUTH };
 
     GenericType<List<List<Object>>> localVarReturnType = new GenericType<List<List<Object>>>() {};
     return apiClient.invokeAPI(localVarPath, method, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -114,7 +115,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+    String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<Resource>> localVarReturnType = new GenericType<List<Resource>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -152,7 +153,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+    String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
 
     apiClient.invokeAPI(localVarPath, DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
@@ -191,7 +192,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Resource> localVarReturnType = new GenericType<Resource>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -223,7 +224,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<Datatype>> localVarReturnType = new GenericType<List<Datatype>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -255,7 +256,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<Function>> localVarReturnType = new GenericType<List<Function>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -287,7 +288,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<OperatorInfo>> localVarReturnType = new GenericType<List<OperatorInfo>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -319,7 +320,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<String>> localVarReturnType = new GenericType<List<String>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -364,7 +365,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Query> localVarReturnType = new GenericType<Query>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -396,7 +397,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<Query>> localVarReturnType = new GenericType<List<Query>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -435,7 +436,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
 
     apiClient.invokeAPI(localVarPath, method, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
@@ -474,7 +475,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Query> localVarReturnType = new GenericType<Query>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -519,7 +520,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Query> localVarReturnType = new GenericType<Query>() {};
     return apiClient.invokeAPI(localVarPath, "PUT", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -557,7 +558,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
 
     apiClient.invokeAPI(localVarPath, DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
@@ -596,7 +597,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Query> localVarReturnType = new GenericType<Query>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -641,7 +642,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Query> localVarReturnType = new GenericType<Query>() {};
     return apiClient.invokeAPI(localVarPath, "PUT", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -679,7 +680,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<Query>> localVarReturnType = new GenericType<List<Query>>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -714,7 +715,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<BundleInfo>> localVarReturnType = new GenericType<List<BundleInfo>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -746,7 +747,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<EventWebSocket>> localVarReturnType = new GenericType<List<EventWebSocket>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -784,7 +785,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+    String[] localVarAuthNames = new String[] { "HttpBasicAuth" };
 
     GenericType<Token> localVarReturnType = new GenericType<Token>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -825,7 +826,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Schema> localVarReturnType = new GenericType<Schema>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -857,7 +858,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<Resource>> localVarReturnType = new GenericType<List<Resource>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -895,7 +896,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
 
     apiClient.invokeAPI(localVarPath, DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, null);
@@ -934,7 +935,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<Resource> localVarReturnType = new GenericType<Resource>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -966,7 +967,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<List<User>> localVarReturnType = new GenericType<List<User>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -1005,7 +1006,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<User> localVarReturnType = new GenericType<User>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -1050,7 +1051,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<User> localVarReturnType = new GenericType<User>() {};
     return apiClient.invokeAPI(localVarPath, "PATCH", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -1095,7 +1096,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<User> localVarReturnType = new GenericType<User>() {};
     return apiClient.invokeAPI(localVarPath, "PUT", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
@@ -1133,7 +1134,7 @@ private RestService apiClient;
     };
     final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-    String[] localVarAuthNames = new String[] {  };
+   String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
     GenericType<User> localVarReturnType = new GenericType<User>() {};
     return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
