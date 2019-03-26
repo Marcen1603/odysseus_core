@@ -57,6 +57,18 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 	}
+	
+	@Override
+	public Response servicesValidateSession(Optional<ISession> session) {
+		if (!session.isPresent()) {
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
+
+		final Token token = new Token();
+		token.setToken(session.get().getToken());
+		return Response.ok().entity(token).build();
+
+	}
 
 	@Override
 	public Response servicesOutputschemaPost(Optional<ISession> session, Query query, Integer port) {
