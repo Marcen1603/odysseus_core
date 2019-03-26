@@ -195,14 +195,19 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 	}
 
+	
 	@Override
-	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {
+	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {		
 		String connectString = host + ":" + port;
+		return login(username, new String(password), tenantname, connectString);
+	}
+	
+	private ISession login(String username, String password, String tenantname, String connectString) {
 
 		RestService restService = new RestService();
 		restService.setBasePath(connectString);
 		restService.setUsername(username);
-		restService.setPassword(new String(password));
+		restService.setPassword(password);
 		DefaultApi api = new DefaultApi(restService);
 
 		// if (!generateEvents.isAlive()) {
@@ -211,7 +216,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 		User user = new User();
 		user.setUsername(username);
-		user.setPassword(new String(password));
+		user.setPassword(password);
 		user.setTenant(tenantname);
 
 		Token token = null;
@@ -226,7 +231,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 			return null;
 		}
 		restService.setAccessToken(token.getToken());
-		IUser clientUser = new ClientUser(username, password, true);
+		IUser clientUser = new ClientUser(username, password.getBytes(), true);
 		ClientSession session = new ClientSession(clientUser, tenantname, connectString);
 		session.setToken(token.getToken());
 		ClientSessionStore.addSession(connectString, session);
@@ -241,6 +246,10 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		}
 
 		return session;
+	}
+	
+	private void reconnect(ISession session) {
+		login(session.getUser().getName(), new String(((ClientUser)session.getUser()).getPassword()), ((ClientSession)session).getTenantName(), session.getConnectionName());
 	}
 
 	private void addServerEventListner(ISession session) throws URISyntaxException, ApiException {
@@ -314,11 +323,16 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 					user.setUsername(clientUser.getName());
 					user.setPassword(new String(clientUser.getPassword()));
 					user.setTenant(((ClientSession) session).getTenantName());
-
-					token = api.servicesLoginPost(user);
-					// In case of new login the security token changes -->
-					// Update old session object
-					((ClientSession) session).setToken(token.getToken());
+					try {
+						token = api.servicesLoginPost(user);
+						// In case of new login the security token changes -->
+						// Update old session object
+						((ClientSession) session).setToken(token.getToken());
+					} catch (Exception e) {
+						// Connection could be broken, try to reconnect
+						reconnect(session);	
+						api = (DefaultApi) ClientSessionStore.getSessionContext(session); 
+					}
 				}
 				return api;
 			}
@@ -856,6 +870,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	@Override
 	public void logout(ISession caller) {
+		// TODO: Remove Websocket for events
 		ClientSessionStore.removeSession(caller.getConnectionName());
 	}
 
