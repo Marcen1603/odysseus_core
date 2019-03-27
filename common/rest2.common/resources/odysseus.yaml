@@ -372,6 +372,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Token'
+  /services/session:
+    get:
+      summary: Returns the current token. Can be used to check if the current session is still valid.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
   /services/outputschema:
     post:
       summary: Determines the output schema of the given query.
@@ -427,7 +437,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventWebSocket'
-
 components:
   schemas:
     Query:
@@ -448,41 +457,48 @@ components:
         state:
           type: string
           description: The state of the query.
+        user:
+          type: string
+          description: The user that created the query.
         rootOperators:
+          type: array
+          items:
+             $ref: '#/components/schemas/Operator'
+    Operator:
+      type: object
+      properties:
+        operatorName:
+          type: string
+          description: The name that identifies the operator instance (usually a UUID).
+        operatorDisplayName:
+          type: string
+          description: The name that is set as 'NAME' property by the user.
+        operatorType:
+          type: string
+          description: The name of the operator type (logical operator type, e.g. SELECT or PROJECT).
+        operatorImplementation:
+          type: string
+          description: The name of the operator type implementation (physical operator type, e.g. SelectPO or RelationalProjectPO).
+        ports:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperatorPort'
+    OperatorPort:
+      type: object
+      properties:
+        port:
+          type: integer
+        schema:
+          $ref: '#/components/schemas/Schema'
+        websockets:
           type: array
           items:
             type: object
             properties:
-              operatorName:
+              protocol:
                 type: string
-                description: The name that identifies the operator instance (usually a UUID).
-              operatorDisplayName:
-                type: string
-                description: The name that is set as 'NAME' property by the user.
-              operatorType:
-                type: string
-                description: The name of the operator type (logical operator type, e.g. SELECT or PROJECT).
-              operatorImplementation:
-                type: string
-                description: The name of the operator type implementation (physical operator type, e.g. SelectPO or RelationalProjectPO).
-              ports:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    port:
-                      type: integer
-                    schema:
-                      $ref: '#/components/schemas/Schema'
-                    websockets:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          protocol:
-                            type: string
-                          uri:
-                            type: string
+              uri:
+                type: string              
     Resource:
       type: object
       properties:
@@ -507,6 +523,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Attribute'
+        metaschema:
+           type: array
+           items: 
+              $ref: '#/components/schemas/Metaschema'
+    Metaschema:
+      type: object
+      properties:        
+        uri:
+          type: string
+        typeClass:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attribute'
+        metaattributeClass:
+           type: string          
     Attribute:
       type: object
       properties:
