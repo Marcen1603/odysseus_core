@@ -117,6 +117,10 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		public void partial(IOperatorOwner id, int sheddingFactor) {
 			AbstractPipe.this.partial(id, sheddingFactor);
 		}
+		
+		public int hashCode() {
+			return AbstractPipe.this.hashCode();
+		}
 	}
 
 	public enum OutputMode {

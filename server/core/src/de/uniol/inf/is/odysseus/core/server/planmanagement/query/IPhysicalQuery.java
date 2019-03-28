@@ -252,5 +252,11 @@ public interface IPhysicalQuery extends IMonitoringDataProvider,
 	 */
 
 	boolean isACquery();
+	
+	/**
+	 * For performance reasons the query determines sources only 
+	 * at creation time. This method forces an update
+	 */
+	void update();
 
 }

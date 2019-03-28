@@ -214,6 +214,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 		determineIteratableSourcesAndLeafs();
 	}
 
+	public void update() {
+		initializePhysicalRoots(this.getRoots());
+		determineIteratableSourcesAndLeafs(this.getRoots());
+	}
+	
 	/**
 	 * Some operators need to be scheduled typically buffers To allow other
 	 * processing of operators that are sources these iteratableleafSources are

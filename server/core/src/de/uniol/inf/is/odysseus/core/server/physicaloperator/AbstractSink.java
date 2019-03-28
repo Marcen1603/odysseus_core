@@ -791,7 +791,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	public void subscribeToSource(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub) {
 		if (!this.subscribedToSource.contains(sub)) {
 			if (!sinkInPortFree(sub.getSinkInPort())) {
-				throw new IllegalArgumentException("SinkInPort " + sub.getSinkInPort() + " already bound ");
+				throw new IllegalArgumentException("SinkInPort " + sub.getSinkInPort() + " already bound in "+getName());
 			}
 
 			if (sub.getSinkInPort() >= this.noInputPorts) {

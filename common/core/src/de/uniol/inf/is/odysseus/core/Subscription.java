@@ -163,7 +163,7 @@ public class Subscription<I,O> implements ISubscription<I,O>, Serializable{
 				return false;
 			}
         // ACHTUNG. KEIN EQUALS AUF DER TARGET!!
-		} else if (!(sink == other.sink)) {
+		} else if (!(sink.hashCode() == other.sink.hashCode())) {
 			return false;
 		}
 
