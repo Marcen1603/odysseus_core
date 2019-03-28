@@ -74,6 +74,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype DOUBLE = new SDFDatatype("Double");
 	public static final SDFDatatype DATE = new SDFDatatype("Date");
 	public static final SDFDatatype PERIOD = new SDFDatatype("Period");
+	public static final SDFDatatype DURATION = new SDFDatatype("Duration");
 	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 	public static final SDFDatatype SHORT = new SDFDatatype("Short");
 	public static final SDFDatatype BITVECTOR = new SDFDatatype("BitVector");

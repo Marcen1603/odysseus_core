@@ -52,37 +52,31 @@ public class AddPeriodToDateFunction extends AbstractBinaryOperator<Date> {
 
 	@Override
 	public boolean isCommutative() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isAssociative() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isLeftDistributiveWith(IOperator<Date> operator) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isRightDistributiveWith(IOperator<Date> operator) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public ASSOCIATIVITY getAssociativity() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
