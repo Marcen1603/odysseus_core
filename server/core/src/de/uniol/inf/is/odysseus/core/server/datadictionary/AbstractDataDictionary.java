@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
@@ -85,6 +86,7 @@ public abstract class AbstractDataDictionary implements IDataDictionary, IDataDi
 	private IStore<Integer, String> savedQueries; // store the query text
 													// because of
 													// serializability trouble
+	private final List<ILogicalQuery> logicalQueries = Lists.newArrayList();
 	private IStore<Integer, IUser> savedQueriesForUser;
 
 	private IStore<Integer, String> savedQueriesBuildParameterName;
@@ -380,7 +382,7 @@ public abstract class AbstractDataDictionary implements IDataDictionary, IDataDi
 		}
 	}
 
-	// Add accessaos from plan to accessao map to allow checking if
+	// Add  from plan to accessao map to allow checking if
 	// two plans contain accessao with different names that are not equal
 	private void findAndAddAccessAO(ILogicalPlan plan, Resource viewname) {
 		for (ILogicalOperator a : plan.getSources()) {
@@ -875,6 +877,7 @@ public abstract class AbstractDataDictionary implements IDataDictionary, IDataDi
 	@Override
 	public void addQuery(ILogicalQuery q, ISession caller, String buildParameterName) {
 		this.savedQueries.put(q.getID(), q.getQueryText());
+		this.logicalQueries.add(q);
 		this.savedQueriesForUser.put(q.getID(), caller.getUser());
 		this.savedQueriesBuildParameterName.put(q.getID(), buildParameterName);
 		addEntityForPlan(q.getLogicalPlan(), createResource(Integer.toString(q.getID()), caller), EntityType.QUERY,
@@ -914,8 +917,20 @@ public abstract class AbstractDataDictionary implements IDataDictionary, IDataDi
 		this.savedQueries.remove(q.getID());
 		this.savedQueriesForUser.remove(q.getID());
 		this.savedQueriesBuildParameterName.remove(q.getID());
+		this.logicalQueries.remove(q);
 		removeEntityForPlan(q.getLogicalPlan(), createResource(Integer.toString(q.getID()), caller), EntityType.QUERY,
 				caller);
+	}
+	
+	private synchronized boolean noQueryContainsAccessAO(Resource accessAO) {
+		for (ILogicalQuery q:logicalQueries) {
+			for (ILogicalOperator s: q.getLogicalPlan().getSources()) {		
+				if (s instanceof AbstractAccessAO && Objects.equals(((AbstractAccessAO)s).getAccessAOName(),accessAO)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	// ----------------------------------------------------------------------------
@@ -1280,7 +1295,7 @@ public abstract class AbstractDataDictionary implements IDataDictionary, IDataDi
 				curEntry.getValue().unsubscribeFromAllSinks();
 				it.remove();
 			}
-			if (!accessAOViewMapping.containsKey(curEntry.getKey())) {
+			if (!accessAOViewMapping.containsKey(curEntry.getKey()) && noQueryContainsAccessAO(curEntry.getKey())) {
 				accessAOs.remove(curEntry.getKey());
 			}
 		}

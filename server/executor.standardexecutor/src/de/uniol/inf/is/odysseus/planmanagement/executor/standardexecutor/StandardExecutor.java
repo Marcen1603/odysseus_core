@@ -1014,6 +1014,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				if (queryToRemove.getLogicalQuery() != null) {
 					queryBuildParameter.remove(queryToRemove.getLogicalQuery());
 				}
+				if (queryToRemove.getLogicalQuery() != null) {
+					if (getDataDictionary(caller) != null) {
+						getDataDictionary(caller).removeQuery(queryToRemove.getLogicalQuery(), caller);
+					}
+				}
 				if (getDataDictionary(caller) != null) {
 					getDataDictionary(caller).removeClosedSources();
 					getDataDictionary(caller).removeClosedSinks();
@@ -1021,11 +1026,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				LOG.info("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(
 						new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
-				if (queryToRemove.getLogicalQuery() != null) {
-					if (getDataDictionary(caller) != null) {
-						getDataDictionary(caller).removeQuery(queryToRemove.getLogicalQuery(), caller);
-					}
-				}
+	
 				if (executionPlan.isEmpty()) {
 					schedulerManager.getActiveScheduler().clear();
 				}
