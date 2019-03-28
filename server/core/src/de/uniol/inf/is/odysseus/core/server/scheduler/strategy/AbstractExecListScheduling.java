@@ -31,12 +31,11 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.Monitori
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
-abstract public class AbstractExecListScheduling extends
-		AbstractScheduling {
+public abstract class AbstractExecListScheduling extends AbstractScheduling {
 
 	/**
-	 * contains all operators to schedule, Strategy stops if no more operators
-	 * in List
+	 * contains all operators to schedule, Strategy stops if no more operators in
+	 * List
 	 */
 	protected List<IIterableSource<?>> executionList;
 
@@ -46,7 +45,8 @@ abstract public class AbstractExecListScheduling extends
 	public AbstractExecListScheduling(IPhysicalQuery plan) {
 		super(plan);
 		executionList = calculateExecutionList(plan);
-		// Nur die Operatoren im Plan d�rfen gescheduled werden (in den abgeleiten Methoden Aufruf entfernen)
+		// Nur die Operatoren im Plan d�rfen gescheduled werden (in den abgeleiten
+		// Methoden Aufruf entfernen)
 		executionList.retainAll(plan.getIterableSources());
 		iterator = executionList.iterator();
 	}
@@ -59,12 +59,10 @@ abstract public class AbstractExecListScheduling extends
 			}
 		} else {
 			// ist hier was echt komisch gelaufen ... TODO
-			//throw new IllegalArgumentException();
+			// throw new IllegalArgumentException();
 		}
 	}
 
-	
-	
 	@Override
 	public boolean isDone() {
 		synchronized (executionList) {
@@ -72,22 +70,21 @@ abstract public class AbstractExecListScheduling extends
 		}
 	}
 
-	abstract protected List<IIterableSource<?>> calculateExecutionList(
-			IPhysicalQuery operators);
+	protected abstract List<IIterableSource<?>> calculateExecutionList(IPhysicalQuery operators);
 
 	protected synchronized Iterator<IIterableSource<?>> getExecutionListIterator() {
 		return executionList.iterator();
 	}
-	
-	protected synchronized boolean executionListHasElements(){
+
+	protected synchronized boolean executionListHasElements() {
 		return !executionList.isEmpty();
 	}
-	
+
 	@Override
 	public synchronized IIterableSource<?> nextSource() {
 		return nextSourceIter();
 	}
-	
+
 	private IIterableSource<?> nextSourceIter() {
 		curSource = null;
 		synchronized (this.iterator) {
@@ -102,50 +99,54 @@ abstract public class AbstractExecListScheduling extends
 			return curSource;
 		}
 	}
-	
+
 	protected double calcPathCost(List<ISource<?>> p) {
 		double selProd = 1;
 		double cAvg = 0;
-		for (ISource<?>s:p){
+		for (ISource<?> s : p) {
 			IMonitoringData<Double> sel = s.getMonitoringData(MonitoringDataTypes.ESTIMATED_PRODUCTIVITY.name);
 			IMonitoringData<Double> c = s.getMonitoringData(MonitoringDataTypes.ESTIMATED_PROCESSING_COST.name);
-			
+
 			// Abort if not MetadataElement available
-			if (sel == null || c == null){
-				System.err.println(s+" no MetaData");
+			if (sel == null || c == null) {
+				System.err.println(s + " no MetaData");
 				return -1;
 			}
-			cAvg += (((Number)c.getValue()).doubleValue() * selProd);
-			selProd *= sel.getValue();			
+			cAvg += (((Number) c.getValue()).doubleValue() * selProd);
+			selProd *= sel.getValue();
 		}
-		if (p.size() > 0){
-			return selProd/cAvg;
+		if (p.size() > 0) {
+			return selProd / cAvg;
 		}
-		
+
 		return 0;
 	}
 
-	/** Calculates for s which (out: schedulable, nonschedulable, virtual) operators are passed on the way to the root node
-	 * 	and returns this this 
+	/**
+	 * Calculates for s which (out: schedulable, nonschedulable, virtual) operators
+	 * are passed on the way to the root node and returns this this
+	 * 
 	 * @param s
 	 * 
 	 * @return
 	 */
-	static public void getPathToRoot(ISource<?> s, List<IIterableSource<?>> schedulableOps, List<ISource<?>> allOps, Map<IIterableSource<?>,List<ISource<?>>> virtualOps) {
-		if (s instanceof IIterableSource<?>){
+	public static void getPathToRoot(ISource<?> s, List<IIterableSource<?>> schedulableOps, List<ISource<?>> allOps,
+			Map<IIterableSource<?>, List<ISource<?>>> virtualOps) {
+		if (s instanceof IIterableSource<?>) {
 			IIterableSource<?> is = (IIterableSource<?>) s;
-			if (!schedulableOps.contains(is)){
+			if (!schedulableOps.contains(is)) {
 				schedulableOps.add(is);
 			}
-		}else if (!allOps.contains(s)){
+		} else if (!allOps.contains(s)) {
 			allOps.add(s);
-			if (virtualOps != null){
+			if (virtualOps != null) {
 				// last from scheduleableOPs is Buffer for following virtual op
-				if (schedulableOps.size() > 0){ // TODO: Eigentlich muss dies immer der Fall sein? Hinter jeder Quelle erscheint ein Puffer ...
-					IIterableSource<?> key = schedulableOps.get(schedulableOps.size()-1);				
-					if (key != null){
+				if (schedulableOps.size() > 0) { // TODO: Eigentlich muss dies immer der Fall sein? Hinter jeder Quelle
+													// erscheint ein Puffer ...
+					IIterableSource<?> key = schedulableOps.get(schedulableOps.size() - 1);
+					if (key != null) {
 						List<ISource<?>> list = virtualOps.get(key);
-						if (list == null){
+						if (list == null) {
 							list = new LinkedList<ISource<?>>();
 							virtualOps.put(key, list);
 						}
@@ -154,42 +155,43 @@ abstract public class AbstractExecListScheduling extends
 				}
 			}
 		}
-		for (AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>> sub: s.getSubscriptions() ){
-			getPathToRoot(sub.getSource(), schedulableOps, allOps, virtualOps);
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : s.getSubscriptions()) {
+			if (sub.getSink().isSource()) {
+				getPathToRoot((ISource)sub.getSink(), schedulableOps, allOps, virtualOps);
+			}
 		}
 	}
 
-	static public void calcForLeafsPathsToRoots(List<ISink<IStreamObject<?>>> roots, Map<IIterableSource<?>, List<ISource<?>>> virtualOps,
-			List<List<IIterableSource<?>>> pathes) {
-				List<ISource<?>> leafs = new ArrayList<ISource<?>>();
-				List<ISource<?>> lleafs = new ArrayList<ISource<?>>();
-				for (ISink<IStreamObject<?>> sink : roots) {
-					findLeafs(sink, lleafs);
-				}
-				for (ISource<?> leaf : lleafs) {
-					if (!leafs.contains(leaf)) {
-						leafs.add(leaf);
-						List<IIterableSource<?>> schPath = new LinkedList<IIterableSource<?>>();
-						List<ISource<?>> opPath = new LinkedList<ISource<?>>();
-						Map<IIterableSource<?>, List<ISource<?>>> pVirtualOps = new HashMap<IIterableSource<?>, List<ISource<?>>>();
-						getPathToRoot(leaf, schPath, opPath, pVirtualOps);
-						virtualOps.putAll(pVirtualOps);
-						pathes.add(schPath);
-					}
-				}
+	public static void calcForLeafsPathsToRoots(List<ISink<IStreamObject<?>>> roots,
+			Map<IIterableSource<?>, List<ISource<?>>> virtualOps, List<List<IIterableSource<?>>> pathes) {
+		List<ISource<?>> leafs = new ArrayList<ISource<?>>();
+		List<ISource<?>> lleafs = new ArrayList<ISource<?>>();
+		for (ISink<IStreamObject<?>> sink : roots) {
+			findLeafs(sink, lleafs);
+		}
+		for (ISource<?> leaf : lleafs) {
+			if (!leafs.contains(leaf)) {
+				leafs.add(leaf);
+				List<IIterableSource<?>> schPath = new LinkedList<IIterableSource<?>>();
+				List<ISource<?>> opPath = new LinkedList<ISource<?>>();
+				Map<IIterableSource<?>, List<ISource<?>>> pVirtualOps = new HashMap<IIterableSource<?>, List<ISource<?>>>();
+				getPathToRoot(leaf, schPath, opPath, pVirtualOps);
+				virtualOps.putAll(pVirtualOps);
+				pathes.add(schPath);
 			}
+		}
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	static public void findLeafs(ISink<IStreamObject<?>> sink, List<ISource<?>> leafs) {
-		if (sink.getSubscribedToSource() == null
-				|| sink.getSubscribedToSource().size() == 0) {
+	public static void findLeafs(ISink<IStreamObject<?>> sink, List<ISource<?>> leafs) {
+		if (sink.getSubscribedToSource() == null || sink.getSubscribedToSource().size() == 0) {
 			leafs.add((ISource<?>) sink);
 		} else {
-			for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub : sink.getSubscribedToSource()) {
-			
+			for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub : sink.getSubscribedToSource()) {
+
 				// A source could also be a sink if it has children
 				if (sub.getSource().isSink()) {
-					findLeafs((ISink)sub.getSource(), leafs);
+					findLeafs((ISink) sub.getSource(), leafs);
 				} else {
 					// Only ISource
 					leafs.add(sub.getSource());

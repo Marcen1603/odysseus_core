@@ -114,7 +114,7 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		// optimization for event dispatcher
 		if (hashCode == -1) {
 			hashCode = super.hashCode();
