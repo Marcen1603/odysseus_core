@@ -216,7 +216,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	public void update() {
 		initializePhysicalRoots(this.getRoots());
-		determineIteratableSourcesAndLeafs(this.getRoots());
+		determineIteratableSourcesAndLeafs();
 	}
 	
 	/**

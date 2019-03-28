@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the queries API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T12:26:51.729Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-03-27T10:38:43.789+01:00[Europe/Berlin]")
 public class QueriesApi  {
    private final QueriesApiService delegate = QueriesApiServiceFactory.getQueriesApi();
 
@@ -140,7 +140,7 @@ public class QueriesApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Installs a new query.", notes = "", response = Query.class, tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 201, message = "Created", response = Query.class ,responseContainer = "List" )})
+        @io.swagger.annotations.ApiResponse(code = 201, message = "Created", response = Query.class) })
     public Response queriesPost(@Context Request request, @ApiParam(value = "" ,required=true) Query query
 ) {
     	final String securityToken = (String) request.getSession()

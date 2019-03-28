@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the sinks API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T18:25:21.780Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-03-27T10:38:43.789+01:00[Europe/Berlin]")
 public class SinksApi  {
    private final SinksApiService delegate = SinksApiServiceFactory.getSinksApi();
 
@@ -41,7 +41,15 @@ public class SinksApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Returns a list of all available sinks.", notes = "", response = Resource.class, responseContainer = "List", tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Resource.class, responseContainer = "List") })
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Resource.class, responseContainer = "List"),
+        
+        @io.swagger.annotations.ApiResponse(code = 401, message = "Access to resource requires authentication.", response = Resource.class, responseContainer = "List"),
+        
+        @io.swagger.annotations.ApiResponse(code = 403, message = "Access to restricted resource is not allowed for current user.", response = Resource.class, responseContainer = "List"),
+        
+        @io.swagger.annotations.ApiResponse(code = 404, message = "A sink with the given name was not found.", response = Resource.class, responseContainer = "List"),
+        
+        @io.swagger.annotations.ApiResponse(code = 423, message = "The sink could not be removed. This could happend, if the sink is part of a running query.", response = Resource.class, responseContainer = "List") })
     public Response sinksGet(@Context Request request) {
     	final String securityToken = (String) request.getSession()
 				.getAttribute(SecurityAuthInterceptor.SESSION_ATTRIBUTE_NAME);

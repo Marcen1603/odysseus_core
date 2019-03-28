@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rest2.common.model.Operator;
+import de.uniol.inf.is.odysseus.rest2.common.model.OperatorPort;
+import de.uniol.inf.is.odysseus.rest2.common.model.OperatorPortWebsockets;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
-import de.uniol.inf.is.odysseus.rest2.common.model.QueryPorts;
-import de.uniol.inf.is.odysseus.rest2.common.model.QueryRootOperators;
-import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.QueriesApiService;
 import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
@@ -71,7 +71,7 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 		
 			physicalRoots.forEach(physicalRoot -> {
 
-				QueryRootOperators queryRootOperator = new QueryRootOperators();
+				Operator queryRootOperator = new Operator();
 				String operatorId = String.valueOf(physicalRoot.getUUID());
 				queryRootOperator.setOperatorName(operatorId);
 				
@@ -89,12 +89,12 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 
 				physicalRoot.getOutputSchemas().keySet().forEach(port -> {
 
-					QueryPorts queryPort = new QueryPorts();
+					OperatorPort queryPort = new OperatorPort();
 					queryPort.setPort(port);
 					queryPort.setSchema(DatatypesApiServiceImpl.transform(physicalRoot.getOutputSchema(port)));
 
 					protocols.forEach(protocol -> {
-						QueryWebsockets queryWebsocket = new QueryWebsockets();
+						OperatorPortWebsockets queryWebsocket = new OperatorPortWebsockets();
 						queryWebsocket.setProtocol(protocol);
 						queryWebsocket.setUri(QueryResultWebsocketEndpoint.toWebsocketUrl(session, queryid, operatorId,
 								port, protocol));

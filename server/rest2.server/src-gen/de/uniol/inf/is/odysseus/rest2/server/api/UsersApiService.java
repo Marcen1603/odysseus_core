@@ -18,7 +18,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-14T10:51:57.707Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-03-27T10:38:43.789+01:00[Europe/Berlin]")
 public abstract class UsersApiService {
     public abstract Response usersGet(Optional<ISession> session);
     public abstract Response usersNameGet(Optional<ISession> session, String name

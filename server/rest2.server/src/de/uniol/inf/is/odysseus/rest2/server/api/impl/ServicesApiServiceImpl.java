@@ -59,7 +59,7 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 	}
 	
 	@Override
-	public Response servicesValidateSession(Optional<ISession> session) {
+	public Response servicesSessionGet(Optional<ISession> session) {
 		if (!session.isPresent()) {
 			return Response.status(Status.UNAUTHORIZED).build();
 		}
@@ -67,7 +67,6 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 		final Token token = new Token();
 		token.setToken(session.get().getToken());
 		return Response.ok().entity(token).build();
-
 	}
 
 	@Override
@@ -192,4 +191,8 @@ public class ServicesApiServiceImpl extends ServicesApiService {
 
 		return Response.ok().entity(result).build();
 	}
+
+
+
+
 }

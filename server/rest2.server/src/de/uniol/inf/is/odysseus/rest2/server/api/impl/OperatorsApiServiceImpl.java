@@ -10,8 +10,8 @@ import javax.ws.rs.core.Response.Status;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rest2.common.model.OperatorInfo;
-import de.uniol.inf.is.odysseus.rest2.common.model.OperatorInfoParameters;
+import de.uniol.inf.is.odysseus.rest2.common.model.LogicalOperatorTypeInfo;
+import de.uniol.inf.is.odysseus.rest2.common.model.LogicalOperatorTypeInfoParameters;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.OperatorsApiService;
 
@@ -28,19 +28,19 @@ public class OperatorsApiServiceImpl extends OperatorsApiService {
 		List<LogicalOperatorInformation> operatorInformations = ExecutorServiceBinding.getExecutor()
 				.getOperatorInformations(session.get());
 
-		List<OperatorInfo> result = operatorInformations.stream().map(OperatorsApiServiceImpl::transform)
+		List<LogicalOperatorTypeInfo> result = operatorInformations.stream().map(OperatorsApiServiceImpl::transform)
 				.collect(Collectors.toList());
 
 		return Response.ok().entity(result).build();
 	}
 
-	static OperatorInfo transform(LogicalOperatorInformation logicalOperatorInformation) {
-		final OperatorInfo result = new OperatorInfo();
+	static LogicalOperatorTypeInfo transform(LogicalOperatorInformation logicalOperatorInformation) {
+		final LogicalOperatorTypeInfo result = new LogicalOperatorTypeInfo();
 		result.setOperatorName(logicalOperatorInformation.getOperatorName());
 		result.setDoc(logicalOperatorInformation.getDoc());
 		result.setUrl(logicalOperatorInformation.getUrl());
 		logicalOperatorInformation.getParameters().forEach(parameter -> {
-			final OperatorInfoParameters parametersItem = new OperatorInfoParameters();
+			final LogicalOperatorTypeInfoParameters parametersItem = new LogicalOperatorTypeInfoParameters();
 			parametersItem.setParameterType(parameter.getParameterClass().getName());
 			parametersItem.setParameterName(parameter.getName());
 			parametersItem.setList(parameter.isList());

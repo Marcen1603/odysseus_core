@@ -18,7 +18,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T18:25:21.780Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-03-27T10:38:43.789+01:00[Europe/Berlin]")
 public abstract class SinksApiService {
     public abstract Response sinksGet(Optional<ISession> session);
     public abstract Response sinksNameDelete(Optional<ISession> session, String name

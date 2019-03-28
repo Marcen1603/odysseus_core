@@ -1,27 +1,26 @@
 package de.uniol.inf.is.odysseus.rest2.client.api;
 
-import de.uniol.inf.is.odysseus.rest2.client.ApiException;
-import de.uniol.inf.is.odysseus.rest2.client.RestService;
-import de.uniol.inf.is.odysseus.rest2.client.Configuration;
-import de.uniol.inf.is.odysseus.rest2.client.Pair;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.GenericType;
 
+import de.uniol.inf.is.odysseus.rest2.client.ApiException;
+import de.uniol.inf.is.odysseus.rest2.client.Configuration;
+import de.uniol.inf.is.odysseus.rest2.client.Pair;
+import de.uniol.inf.is.odysseus.rest2.client.RestService;
 import de.uniol.inf.is.odysseus.rest2.common.model.BundleInfo;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
 import de.uniol.inf.is.odysseus.rest2.common.model.EventWebSocket;
 import de.uniol.inf.is.odysseus.rest2.common.model.Function;
-import de.uniol.inf.is.odysseus.rest2.common.model.OperatorInfo;
+import de.uniol.inf.is.odysseus.rest2.common.model.LogicalOperatorTypeInfo;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.common.model.Resource;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.common.model.Token;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Code base based on generate code, needed some modifications
@@ -264,10 +263,10 @@ private RestService apiClient;
   /**
    * Returns a list of all available operators.
    * 
-   * @return List&lt;OperatorInfo&gt;
+   * @return List&lt;LogicalOperatorTypeInfo&gt;
    * @throws ApiException if fails to make API call
    */
-  public List<OperatorInfo> operatorsGet() throws ApiException {
+  public List<LogicalOperatorTypeInfo> operatorsGet() throws ApiException {
     Object localVarPostBody = null;
     
     // create path and map variables
@@ -290,7 +289,7 @@ private RestService apiClient;
 
    String[] localVarAuthNames = new String[] { RestService.O_AUTH  };
 
-    GenericType<List<OperatorInfo>> localVarReturnType = new GenericType<List<OperatorInfo>>() {};
+    GenericType<List<LogicalOperatorTypeInfo>> localVarReturnType = new GenericType<List<LogicalOperatorTypeInfo>>() {};
     return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
       }
   /**

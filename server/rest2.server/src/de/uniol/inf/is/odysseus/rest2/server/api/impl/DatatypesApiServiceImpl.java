@@ -84,7 +84,12 @@ public class DatatypesApiServiceImpl extends DatatypesApiService {
 		if (metaschemas != null) {
 			List<Metaschema> convMetaSchema = new ArrayList<>();
 			for (SDFMetaSchema metaSch:metaschemas) {
-				Metaschema metaSchema = new Metaschema(transform(metaSch), metaSch.getMetaAttribute().getName());
+				Metaschema metaSchema = new Metaschema();
+				Schema m1 = transform(metaSch);
+				metaSchema.setMetaattributeClass(metaSch.getMetaAttribute().getName());
+				metaSchema.setAttributes(m1.getAttributes());
+				metaSchema.setTypeClass(m1.getTypeClass());
+				metaSchema.setUri(m1.getUri());
 				convMetaSchema.add(metaSchema);
 			}
 			result.setMetaschema(convMetaSchema);

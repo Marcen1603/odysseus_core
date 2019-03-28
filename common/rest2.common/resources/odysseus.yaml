@@ -284,7 +284,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OperatorInfo'
+                  $ref: '#/components/schemas/LogicalOperatorTypeInfo'
   /aggregate_functions:
     get:
       summary: Returns a list of all available aggregate functions.
@@ -569,7 +569,7 @@ components:
           $ref: '#/components/schemas/Datatype'
         subschema:
           $ref: '#/components/schemas/Schema'
-    OperatorInfo:
+    LogicalOperatorTypeInfo:
       type: object
       properties:
         operatorName:

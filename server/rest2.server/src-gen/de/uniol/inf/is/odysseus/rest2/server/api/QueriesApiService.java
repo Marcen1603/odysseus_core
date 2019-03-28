@@ -18,7 +18,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-18T12:26:51.729Z[GMT]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-03-27T10:38:43.789+01:00[Europe/Berlin]")
 public abstract class QueriesApiService {
     public abstract Response queriesGet(Optional<ISession> session);
     public abstract Response queriesIdDelete(Optional<ISession> session, Integer id

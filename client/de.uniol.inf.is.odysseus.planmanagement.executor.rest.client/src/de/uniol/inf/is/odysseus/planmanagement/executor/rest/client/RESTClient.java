@@ -70,8 +70,8 @@ import de.uniol.inf.is.odysseus.rest2.common.model.Attribute;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
 import de.uniol.inf.is.odysseus.rest2.common.model.EventWebSocket;
 import de.uniol.inf.is.odysseus.rest2.common.model.Metaschema;
+import de.uniol.inf.is.odysseus.rest2.common.model.OperatorPortWebsockets;
 import de.uniol.inf.is.odysseus.rest2.common.model.Query;
-import de.uniol.inf.is.odysseus.rest2.common.model.QueryWebsockets;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
 import de.uniol.inf.is.odysseus.rest2.common.model.Token;
 import de.uniol.inf.is.odysseus.rest2.common.model.User;
@@ -703,8 +703,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		// TODO: Handle cases with multiple roots
 		Query query = getQuery(queryId, caller);
 		OptionMap options = new OptionMap();
-		List<QueryWebsockets> wsDefs = query.getRootOperators().get(0).getPorts().get(0).getWebsockets();
-		for (QueryWebsockets wsDef : wsDefs) {
+		List<OperatorPortWebsockets> wsDefs = query.getRootOperators().get(0).getPorts().get(0).getWebsockets();
+		for (OperatorPortWebsockets wsDef : wsDefs) {
 			if ("tuple".equalsIgnoreCase(type)) {
 				if ("csv".equalsIgnoreCase(wsDef.getProtocol())) {
 					options.setOption("uri", caller.getConnectionName().replace("http", "ws") + wsDef.getUri());
