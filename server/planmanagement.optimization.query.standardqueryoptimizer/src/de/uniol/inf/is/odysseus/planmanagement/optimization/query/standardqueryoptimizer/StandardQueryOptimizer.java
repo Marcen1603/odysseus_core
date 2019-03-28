@@ -178,6 +178,8 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 						"Adding Buffers with Strategy "
 								+ bufferPlacementStrategy.getName());
 				bufferPlacementStrategy.addBuffers(query);
+				// update query to determine iteratable sources!
+				query.update();
 			} catch (Exception e) {
 				throw new QueryOptimizationException(
 						"Exeception while initialize query.", e);
