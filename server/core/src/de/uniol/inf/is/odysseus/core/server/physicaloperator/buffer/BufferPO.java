@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,7 +199,7 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 			return false;
 		}
 		BufferPO bp = (BufferPO) ipo;
-		if (this.buffername.equals(bp.buffername)) {
+		if (Objects.equals(this.buffername,bp.buffername)) {
 			return true;
 		}
 		return false;
