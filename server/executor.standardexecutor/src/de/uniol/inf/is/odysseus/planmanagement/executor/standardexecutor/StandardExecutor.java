@@ -1013,8 +1013,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				}
 				if (queryToRemove.getLogicalQuery() != null) {
 					queryBuildParameter.remove(queryToRemove.getLogicalQuery());
-				}
-				if (queryToRemove.getLogicalQuery() != null) {
+
 					if (getDataDictionary(caller) != null) {
 						getDataDictionary(caller).removeQuery(queryToRemove.getLogicalQuery(), caller);
 					}
