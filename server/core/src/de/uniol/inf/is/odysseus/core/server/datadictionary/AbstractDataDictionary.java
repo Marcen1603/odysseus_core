@@ -24,12 +24,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -55,7 +55,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
@@ -382,7 +381,7 @@ public abstract class AbstractDataDictionary implements IDataDictionary, IDataDi
 		}
 	}
 
-	// Add  from plan to accessao map to allow checking if
+	// Add accessaos from plan to accessao map to allow checking if
 	// two plans contain accessao with different names that are not equal
 	private void findAndAddAccessAO(ILogicalPlan plan, Resource viewname) {
 		for (ILogicalOperator a : plan.getSources()) {
