@@ -120,7 +120,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 				}
 			}
 			if (!foundMatch && outer) {
-				T obj = this.dataMergeFunction.merge(object, emptyObject, metaMergeFunction, Order.LeftRight);
+				T obj = this.dataMergeFunction.merge(emptyObject, object, metaMergeFunction, Order.LeftRight);
 				transfer(obj);
 			}
 	}
