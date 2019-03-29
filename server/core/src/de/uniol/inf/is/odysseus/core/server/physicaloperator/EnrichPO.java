@@ -15,13 +15,15 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -29,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
 
 /**
  * @author Dennis Geesen
+ * @author Marco Grawunder
  *
  */
 public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
@@ -36,38 +39,22 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 
 	private IPredicate<T> predicate;
 	// TODO: check, if it can be merged with caching strategies form DB-Enrich
-	private List<T> cache = new ArrayList<>();
-	private List<T> buffer = new ArrayList<>();
+	private List<T> cache = new CopyOnWriteArrayList<>();
+	private List<T> buffer = new CopyOnWriteArrayList<>();
 	private UseRightInputMetadata<M> metaMergeFunction = new UseRightInputMetadata<>();
 	private IDataMergeFunction<T, M> dataMergeFunction;
 
 	private int minSize = 0;
-
-	public EnrichPO(IPredicate<T> predicate) {
-		this.predicate = predicate;
-	}
-
-	public EnrichPO(int minimalSize) {
-		this.minSize = minimalSize;
-	}
+	private T emptyObject;
+	private final boolean outer;
 
 	@SuppressWarnings("unchecked")
-	public EnrichPO(IPredicate<?> predicate, int minimumSize) {
+	public EnrichPO(IPredicate<?> predicate, int minimumSize, boolean outer) {
 		this.predicate = (IPredicate<T>) predicate;
 		this.minSize = minimumSize;
+		this.outer = outer;
 	}
 
-	/**
-	 * @param enrichPO
-	 */
-	public EnrichPO(EnrichPO<T, M> po) {
-		super(po);
-		this.minSize = po.minSize;
-		this.predicate = po.predicate.clone();
-		this.dataMergeFunction = po.dataMergeFunction.clone();
-		this.dataMergeFunction.init();
-		this.metaMergeFunction.init();
-	}
 
 	@Override
 	public IPredicate<?> getPredicate() {
@@ -88,11 +75,15 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		this.cache.clear();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 		// if port == 0, it is a cached-object
 		if (port == 0) {
 			this.cache.add(object);
+			if (emptyObject == null) {
+				this.emptyObject = (T) object.copyAndReturnEmptyInstance();
+			}
 			// check, whether there are enough items in cache to write out the
 			// buffer
 			if (this.cache.size() >= minSize) {
@@ -119,24 +110,26 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	private void processEnrich(T object) {
-		synchronized (cache) {
+			boolean foundMatch = false;
 			for (T cached : this.cache) {
 				if (this.predicate.evaluate(cached, object)) {
 					T enriched = this.dataMergeFunction.merge(cached, object,
 							metaMergeFunction, Order.LeftRight);
 					transfer(enriched);
+					foundMatch=true;
 				}
 			}
-		}
+			if (!foundMatch && outer) {
+				T obj = this.dataMergeFunction.merge(object, emptyObject, metaMergeFunction, Order.LeftRight);
+				transfer(obj);
+			}
 	}
 
 	@Override
 	protected void process_close() {
 		super.process_close();
 		this.buffer.clear();
-		synchronized (cache) {
-			this.cache.clear();
-		}
+		this.cache.clear();
 	}
 
 	@Override
@@ -163,9 +156,23 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		return buffer.size();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
-		//TODO
+		this.predicate = (IPredicate<T>)predicate;
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof EnrichPO)) {
+			return false;
+		}
+		EnrichPO other = (EnrichPO) ipo;
+		return Objects.equals(this.predicate, other.predicate) &&
+				this.minSize == other.minSize &&
+				this.outer == other.outer;
+		
+	}
+	
 }

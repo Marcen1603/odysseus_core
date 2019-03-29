@@ -46,16 +46,19 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	// -------------------------------------
 
 	@Override
-	final public IStreamObject<T> merge(IStreamObject<T> left, IStreamObject<T> right, IMetadataMergeFunction<T> metamerge,
-			Order order) {
+	final public IStreamObject<T> merge(IStreamObject<T> left, IStreamObject<T> right,
+			IMetadataMergeFunction<T> metamerge, Order order) {
 		// Preserve meta data
 		T metadateleft = left.getMetadata();
-		T metadateright = right.getMetadata();
+		T metadateright = right != null ? right.getMetadata() : null;
 
 		IStreamObject<T> ret = process_merge(left, right, order);
 		ret.setMetadata(metamerge.mergeMetadata(metadateleft, metadateright));
-
-		this.timeOrderMarker = left.isTimeProgressMarker() && right.isTimeProgressMarker();
+		if (right != null) {
+			this.timeOrderMarker = left.isTimeProgressMarker() && right.isTimeProgressMarker();
+		} else {
+			this.timeOrderMarker = left.isTimeProgressMarker();
+		}
 
 		return ret;
 	}
@@ -81,6 +84,15 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	abstract public AbstractStreamObject<T> newInstance();
 
 	@Override
+	public AbstractStreamObject<T> copyAndReturnEmptyInstance() {
+		if (isSchemaLess()) {
+			return newInstance();
+		}else {
+			throw new UnsupportedOperationException("This stream object does not support this copy method");
+		}
+	}
+
+	@Override
 	public boolean isPunctuation() {
 		return false;
 	}
@@ -92,14 +104,12 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	}
 
 	@Override
-	public int hashCode(boolean calcWithMeta){
-		if (!calcWithMeta){
+	public int hashCode(boolean calcWithMeta) {
+		if (!calcWithMeta) {
 			return this.hashCode();
 		}
-		return Objects.hash(this.getMetadata(),this);
+		return Objects.hash(this.getMetadata(), this);
 	}
-
-
 
 	@Override
 	public boolean equalsTolerance(Object o, double tolerance) {
@@ -110,7 +120,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	@Override
 	public boolean equals(IStreamObject<IMetaAttribute> o, boolean compareMeta) {
 		boolean ret = equals(o);
-		if (compareMeta){
+		if (compareMeta) {
 			ret = ret & o.getMetadata().equals(this.getMetadata());
 		}
 		return ret;
@@ -125,7 +135,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	@Override
 	public void setTransientMarker(String key, Object value) {
-		if (transientMarker == null){
+		if (transientMarker == null) {
 			transientMarker = new HashMap<>();
 		}
 		this.transientMarker.put(key, value);
@@ -133,6 +143,6 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	@Override
 	public Object getTransientMarker(String key) {
-		return transientMarker!=null?transientMarker.get(key):null;
+		return transientMarker != null ? transientMarker.get(key) : null;
 	}
 }
