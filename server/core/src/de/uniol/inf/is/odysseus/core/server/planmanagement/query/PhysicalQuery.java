@@ -30,8 +30,11 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
@@ -48,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataPro
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -218,7 +222,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		initializePhysicalRoots(this.getRoots());
 		determineIteratableSourcesAndLeafs();
 	}
-	
+
 	/**
 	 * Some operators need to be scheduled typically buffers To allow other
 	 * processing of operators that are sources these iteratableleafSources are
@@ -329,17 +333,36 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
-	public void initializePhysicalRoots(List<IPhysicalOperator> roots) {
+	public void initializePhysicalRoots(List<IPhysicalOperator> rootsToSet) {
+
+		// There is a special case, when a root operator is only a source operator
+		// here an additional sink is necessary (else stopping this single
+		// operator query has impact on other queries, that are using this op)
+		// --> create new roots list and replace single source operator root with
+		// sink and single source operator with root
+		List<IPhysicalOperator> newRoots = Lists.newArrayList();
+		for (IPhysicalOperator r: rootsToSet) {
+			if (r.isSource() && !r.isSink()) {
+				SinkPO<IStreamObject<?>> sink = new SinkPO<>();
+				String no = getLogicalQuery()!=null?"#"+getLogicalQuery().getID():"";
+				sink.setName("QueryRoot"+no);
+				sink.subscribeToSource((ISource) r, 0, 0, r.getOutputSchema());
+				newRoots.add(sink);
+			}else {
+				newRoots.add(r);
+			}
+		}
+
 		// set root of this query
-		setRoots(roots);
+		setRoots(newRoots);
 
 		this.physicalChilds.clear();
 		// Store each child in a list. And set this Query as owner of each child
-		for (IPhysicalOperator root : roots) {
+		for (IPhysicalOperator root : newRoots) {
+			// addPhysicalChildren(GraphHelper.getChildren(root));
 			addPhysicalChildren(getChildren(root));
 		}
 		determineIteratableSourcesAndLeafs();
-
 	}
 
 	@SuppressWarnings("unchecked")
