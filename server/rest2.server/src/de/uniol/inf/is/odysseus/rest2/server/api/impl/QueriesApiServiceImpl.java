@@ -17,7 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -34,16 +38,16 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class QueriesApiServiceImpl extends QueriesApiService {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(QueriesApiServiceImpl.class);
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	static Optional<Query> getQuery(ISession session, int queryid, boolean includeAllOps) {
 		if (includeAllOps) {
 			LOG.warn("Currently, only root operators are supported!");
 			includeAllOps = false;
 		}
 
-		
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 		if (executor != null) {
 			ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryid, session);
@@ -64,53 +68,68 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			Set<String> protocols = QueryResultWebsocketEndpoint.protocols();
 			Collection<IPhysicalOperator> physicalRoots;
 			if (includeAllOps) {
-				physicalRoots = executor.getPhysicalQueryByString(queryid+"", session).getAllOperators();
-			}else {
+				physicalRoots = executor.getPhysicalQueryByString(queryid + "", session).getAllOperators();
+			} else {
 				physicalRoots = executor.getPhysicalRoots(queryid, session);
 			}
-		
-			physicalRoots.forEach(physicalRoot -> {
 
-				Operator queryRootOperator = new Operator();
-				String operatorId = String.valueOf(physicalRoot.getUUID());
-				queryRootOperator.setOperatorName(operatorId);
-				
-				queryRootOperator.setOperatorDisplayName(physicalRoot.getName());
-				
-				if (physicalRoot.getLogicalOperator() != null) {
-					LogicalOperator annotation = physicalRoot.getLogicalOperator().getClass()
-							.getAnnotation(LogicalOperator.class);
-					if (annotation != null) {
-						queryRootOperator.setOperatorType(annotation.name());
-					}
-				}
-				
-				queryRootOperator.setOperatorImplementation(physicalRoot.getClass().getSimpleName());
-
-				physicalRoot.getOutputSchemas().keySet().forEach(port -> {
-
-					OperatorPort queryPort = new OperatorPort();
-					queryPort.setPort(port);
-					queryPort.setSchema(DatatypesApiServiceImpl.transform(physicalRoot.getOutputSchema(port)));
-
-					protocols.forEach(protocol -> {
-						OperatorPortWebsockets queryWebsocket = new OperatorPortWebsockets();
-						queryWebsocket.setProtocol(protocol);
-						queryWebsocket.setUri(QueryResultWebsocketEndpoint.toWebsocketUrl(session, queryid, operatorId,
-								port, protocol));
-						queryPort.addWebsocketsItem(queryWebsocket);
+			physicalRoots.forEach(currentPhysicalRoot -> {
+				// if root is sink, use all connected sources as roots, there is no
+				// way to connect to a sink
+				if (currentPhysicalRoot.isSink() && !currentPhysicalRoot.isSource()) {
+					((ISink) currentPhysicalRoot).getSubscribedToSource().forEach(sub -> {
+						handlePhysicalRoot(session, queryid, query, protocols,
+								((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>) sub)
+										.getSource());
 					});
 
-					queryRootOperator.addPortsItem(queryPort);
-				});
-
-				query.addRootOperatorsItem(queryRootOperator);
+				} else {
+					handlePhysicalRoot(session, queryid, query, protocols, currentPhysicalRoot);
+				}
 			});
 
 			return Optional.of(query);
 		}
 
 		return Optional.empty();
+	}
+
+	private static void handlePhysicalRoot(ISession session, int queryid, Query query, Set<String> protocols,
+			IPhysicalOperator physicalRoot) {
+		Operator queryRootOperator = new Operator();
+		String operatorId = String.valueOf(physicalRoot.getUUID());
+		queryRootOperator.setOperatorName(operatorId);
+
+		queryRootOperator.setOperatorDisplayName(physicalRoot.getName());
+
+		if (physicalRoot.getLogicalOperator() != null) {
+			LogicalOperator annotation = physicalRoot.getLogicalOperator().getClass()
+					.getAnnotation(LogicalOperator.class);
+			if (annotation != null) {
+				queryRootOperator.setOperatorType(annotation.name());
+			}
+		}
+
+		queryRootOperator.setOperatorImplementation(physicalRoot.getClass().getSimpleName());
+
+		physicalRoot.getOutputSchemas().keySet().forEach(port -> {
+
+			OperatorPort queryPort = new OperatorPort();
+			queryPort.setPort(port);
+			queryPort.setSchema(DatatypesApiServiceImpl.transform(physicalRoot.getOutputSchema(port)));
+
+			protocols.forEach(protocol -> {
+				OperatorPortWebsockets queryWebsocket = new OperatorPortWebsockets();
+				queryWebsocket.setProtocol(protocol);
+				queryWebsocket.setUri(
+						QueryResultWebsocketEndpoint.toWebsocketUrl(session, queryid, operatorId, port, protocol));
+				queryPort.addWebsocketsItem(queryWebsocket);
+			});
+
+			queryRootOperator.addPortsItem(queryPort);
+		});
+
+		query.addRootOperatorsItem(queryRootOperator);
 	}
 
 	@Override
@@ -233,16 +252,16 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 			case PARTIAL:
 				// TODO implement state change to PARTIAL (find a way to pass option
 				// sheddingFactor via REST)
-//				int sheddingFactor;
-//				executor.partial(id, sheddingFactor, session.get());
+				// int sheddingFactor;
+				// executor.partial(id, sheddingFactor, session.get());
 				return Response.status(Status.BAD_REQUEST)
 						.entity("Changing state to " + QueryState.PARTIAL.name() + " is not supported yet.")
 						.type(MediaType.TEXT_PLAIN).build();
 			case PARTIAL_SUSPENDED:
 				// TODO implement state change to PARTIAL_SUSPENDED (find a way to pass option
 				// sheddingFactor via REST)
-//				int sheddingFactor;
-//				executor.partialQuery(id, sheddingFactor, session.get());
+				// int sheddingFactor;
+				// executor.partialQuery(id, sheddingFactor, session.get());
 				return Response.status(Status.BAD_REQUEST)
 						.entity("Changing state to " + QueryState.PARTIAL_SUSPENDED.name() + " is not supported yet.")
 						.type(MediaType.TEXT_PLAIN).build();
@@ -276,10 +295,12 @@ public class QueriesApiServiceImpl extends QueriesApiService {
 	 * session object and the query id that is given as string or that belongs to
 	 * the query with the given name.
 	 * 
-	 * @param session  The session object.
-	 * @param idOrName The numerical ID as string or the name of the query.
-	 * @param delegate The function which should be called with the appropriate
-	 *                 query ID.
+	 * @param session
+	 *            The session object.
+	 * @param idOrName
+	 *            The numerical ID as string or the name of the query.
+	 * @param delegate
+	 *            The function which should be called with the appropriate query ID.
 	 * @return The response given by the delegate function or FORBIDDEN, when the
 	 *         session is not present or NOT_FOUND if no query with the given name
 	 *         exists.
