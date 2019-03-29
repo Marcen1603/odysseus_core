@@ -187,6 +187,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public AbstractStreamObject<T> newInstance() {
 		return new Tuple<>();
 	}
+	
+	@Override
+	public AbstractStreamObject<T> copyAndReturnEmptyInstance() {
+		return new Tuple<>(this.size(), true);
+	}
 
 	public static <T extends IMetaAttribute> Tuple<T> createEmptyTupleWithMeta(int size, IStreamObject<T> from,
 			boolean requiresDeepClone) {

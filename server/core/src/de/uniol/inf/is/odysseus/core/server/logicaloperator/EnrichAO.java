@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
@@ -37,6 +38,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 	private static final long serialVersionUID = -4221371391163499952L;
 	private int minimumSize = 0;
 	private IPredicate<?> predicate;
+	private boolean outerEnrich = true;
 
 	public EnrichAO(){
 		
@@ -48,6 +50,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 		if (enrichAO.predicate != null){
 			this.predicate = enrichAO.predicate.clone();
 		}
+		this.outerEnrich = enrichAO.outerEnrich;
 	}
 
 	@Override
@@ -57,7 +60,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 	
 	
 	@Parameter(name = "minimumSize", type = IntegerParameter.class, optional = true, doc = "Blocks all until there are at least minimumSize elements in the chache")
-	public synchronized void setMinimumSize(int i) {
+	public void setMinimumSize(int i) {
 		this.minimumSize   = i;
 	}
 	
@@ -75,8 +78,17 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 		return predicate;
 	}
 	
+	public boolean isOuterEnrich() {
+		return outerEnrich;
+	}
+	
+	@Parameter(name = "outer", type = BooleanParameter.class, doc = "If no enrichment can be found, use null values. Default is true!")
+	public void setOuterEnrich(boolean outerEnrich) {
+		this.outerEnrich = outerEnrich;
+	}
+	
 	@Override
-	public synchronized SDFSchema getOutputSchemaIntern(int pos) {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		// The Sum of all InputSchema
 		Iterator<LogicalSubscription> iter = getSubscribedToSource().iterator();
 		SDFSchema left = iter.next().getSchema();
