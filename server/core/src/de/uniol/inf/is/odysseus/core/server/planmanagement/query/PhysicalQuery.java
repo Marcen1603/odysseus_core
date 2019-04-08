@@ -28,8 +28,11 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
@@ -48,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataPro
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -228,7 +232,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		initializePhysicalRoots(this.getRoots());
 		determineIteratableSourcesAndLeafs(this.getRoots());
 	}
-	
+
 	/**
 	 * Some operators need to be scheduled typically buffers To allow other
 	 * processing of operators that are sources these iteratableleafSources are
@@ -340,18 +344,42 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
-	public void initializePhysicalRoots(List<IPhysicalOperator> roots) {
+	public void initializePhysicalRoots(List<IPhysicalOperator> rootsToSet) {
+
+		List<IPhysicalOperator> newRoots = handleSingleRootPlans(rootsToSet);
+
 		// set root of this query
-		setRoots(roots);
+		setRoots(newRoots);
 
 		this.physicalChilds.clear();
 		// Store each child in a list. And set this Query as owner of each child
-		for (IPhysicalOperator root : roots) {
+		for (IPhysicalOperator root : newRoots) {
 			// addPhysicalChildren(GraphHelper.getChildren(root));
 			addPhysicalChildren(getChildren(root));
 		}
-		determineIteratableSourcesAndLeafs(roots);
+		determineIteratableSourcesAndLeafs(newRoots);
 
+	}
+
+	private List<IPhysicalOperator> handleSingleRootPlans(List<IPhysicalOperator> rootsToSet) {
+		// There is a special case, when a root operator is only a source operator
+		// here an additional sink is necessary (else stopping this single
+		// operator query has impact on other queries, that are using this op)
+		// --> create new roots list and replace single source operator root with
+		// sink and single source operator with root
+		List<IPhysicalOperator> newRoots = Lists.newArrayList();
+		for (IPhysicalOperator r: rootsToSet) {
+			if (r.isSource() && !r.isSink()) {
+				SinkPO<IStreamObject<?>> sink = new SinkPO<>();
+				String no = getLogicalQuery()!=null?"#"+getLogicalQuery().getID():"";
+				sink.setName("QueryRoot"+no);
+				sink.subscribeToSource((ISource) r, 0, 0, r.getOutputSchema());
+				newRoots.add(sink);
+			}else {
+				newRoots.add(r);
+			}
+		}
+		return newRoots;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -367,9 +395,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 			visitedOps.add(curOp);
 			if (curOp.isSink()) {
 				@SuppressWarnings("rawtypes")
-				Collection<AbstractPhysicalSubscription<? extends ISource<?>,?>> subsriptions = ((ISink) curOp)
+				Collection<AbstractPhysicalSubscription<? extends ISource<?>, ?>> subsriptions = ((ISink) curOp)
 						.getSubscribedToSource();
-				for (AbstractPhysicalSubscription<? extends ISource<?>,?> subscription : subsriptions) {
+				for (AbstractPhysicalSubscription<? extends ISource<?>, ?> subscription : subsriptions) {
 					ISource<?> target = subscription.getSource();
 					if (!visitedOps.contains(target)) {
 						operators.push(target);
@@ -395,7 +423,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			pos.add(s);
 		} else {
 			if (s instanceof ISource) {
-				for (AbstractPhysicalSubscription<?, ?> father : ((ISource<?>)s).getSubscriptions()) {
+				for (AbstractPhysicalSubscription<?, ?> father : ((ISource<?>) s).getSubscriptions()) {
 					pos.addAll(getNonSharedFathers(father.getSink()));
 				}
 			}
@@ -999,14 +1027,14 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public boolean isACquery() {
 		return this.acQuery;
 	}
-	
+
 	// ----------------------------------------------
 	// Moved from PhysicalRestructHelper
 	// ----------------------------------------------
-	
+
 	/**
-	 * Appends the binaryOp to both childs with input ports 0 -> child1, 1 -> child2.
-	 * Happens via subscribeToSource.
+	 * Appends the binaryOp to both childs with input ports 0 -> child1, 1 ->
+	 * child2. Happens via subscribeToSource.
 	 * 
 	 * @param binaryOp
 	 * @param child1
@@ -1014,10 +1042,10 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void appendBinaryOperator(IPhysicalOperator binaryOp, ISource child1, ISource child2) {
-		((ISink<?>)binaryOp).subscribeToSource(child1, 0, 0, child1.getOutputSchema());
-		((ISink<?>)binaryOp).subscribeToSource(child2, 1, 0, child2.getOutputSchema());
+		((ISink<?>) binaryOp).subscribeToSource(child1, 0, 0, child1.getOutputSchema());
+		((ISink<?>) binaryOp).subscribeToSource(child2, 1, 0, child2.getOutputSchema());
 	}
-	
+
 	/**
 	 * Appends the parent to the child via subscribeToSource.
 	 * 
@@ -1026,9 +1054,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void appendOperator(IPhysicalOperator parent, ISource child) {
-		((ISink<?>)parent).subscribeToSource(child, 0, 0, child.getOutputSchema());		
+		((ISink<?>) parent).subscribeToSource(child, 0, 0, child.getOutputSchema());
 	}
-	
+
 	/**
 	 * Unsubscribes the the parent from the child and returns the subscription.
 	 * 
@@ -1037,10 +1065,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * @return Subscription parent -> child
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static AbstractPhysicalSubscription<?,?> removeSubscription(IPhysicalOperator parent, IPhysicalOperator child) {
-		for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>)parent).getSubscribedToSource()) {
+	public static AbstractPhysicalSubscription<?, ?> removeSubscription(IPhysicalOperator parent,
+			IPhysicalOperator child) {
+		for (AbstractPhysicalSubscription<?, ?> sub : ((ISink<?>) parent).getSubscribedToSource()) {
 			if (sub.getSource().equals(child)) {
-				((ISink<?>)parent).unsubscribeFromSource((AbstractPhysicalSubscription)sub);
+				((ISink<?>) parent).unsubscribeFromSource((AbstractPhysicalSubscription) sub);
 				return sub;
 			}
 		}
@@ -1049,6 +1078,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/**
 	 * Remove the operator which is between source and sinks.
+	 * 
 	 * @param source
 	 * @param sourceOutPort
 	 * @param sinks
@@ -1056,44 +1086,41 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * @param buffer
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T extends IPipe> void removeOperator(ISource source,
-			int sourceOutPort, List<ISink> sinks, List<Integer> sinkInPorts,
-			T buffer) {
+	public static <T extends IPipe> void removeOperator(ISource source, int sourceOutPort, List<ISink> sinks,
+			List<Integer> sinkInPorts, T buffer) {
 		if (sinks.size() != sinkInPorts.size()) {
-			throw new IllegalArgumentException(
-					"Amount of sinks and sinkinports must be equal");
+			throw new IllegalArgumentException("Amount of sinks and sinkinports must be equal");
 		}
 
 		// disconnect old connections
 		for (int i = 0; i < sinks.size(); i++) {
 			buffer.unsubscribeSink(sinks.get(i), sinkInPorts.get(i), 0, buffer.getOutputSchema());
 		}
-		
+
 		for (int i = 0; i < sinks.size(); i++) {
-			source.subscribeSink(sinks.get(i), sinkInPorts.get(i),
-					sourceOutPort, source.getOutputSchema());
+			source.subscribeSink(sinks.get(i), sinkInPorts.get(i), sourceOutPort, source.getOutputSchema());
 		}
-		
-		Set<AbstractPhysicalSubscription<?,?>> toSinks = new HashSet<AbstractPhysicalSubscription<?,?>>();
-		Set<AbstractPhysicalSubscription<?,?>> toBuffer = new HashSet<AbstractPhysicalSubscription<?,?>>();
-		for(AbstractPhysicalSubscription<?,?> sub : ((ISource<?>)source).getSubscriptions()) {
-			if(sub.getSink().equals(buffer)) {
+
+		Set<AbstractPhysicalSubscription<?, ?>> toSinks = new HashSet<AbstractPhysicalSubscription<?, ?>>();
+		Set<AbstractPhysicalSubscription<?, ?>> toBuffer = new HashSet<AbstractPhysicalSubscription<?, ?>>();
+		for (AbstractPhysicalSubscription<?, ?> sub : ((ISource<?>) source).getSubscriptions()) {
+			if (sub.getSink().equals(buffer)) {
 				toBuffer.add(sub);
 				continue;
 			}
-			if(sinks.contains(sub.getSink())) {
+			if (sinks.contains(sub.getSink())) {
 				toSinks.add(sub);
 			}
 		}
 		((AbstractSource) source).replaceActiveSubscriptions(toBuffer, toSinks);
-		
+
 		source.unsubscribeSink(buffer, 0, sourceOutPort, source.getOutputSchema());
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void replaceChild(IPhysicalOperator parent, IPhysicalOperator child, IPhysicalOperator newChild) {
-		AbstractPhysicalSubscription<?,?> sub = removeSubscription(parent, child);
-		((ISink<?>)parent).subscribeToSource((ISource)newChild, sub.getSinkInPort(), sub.getSourceOutPort(),
+		AbstractPhysicalSubscription<?, ?> sub = removeSubscription(parent, child);
+		((ISink<?>) parent).subscribeToSource((ISource) newChild, sub.getSinkInPort(), sub.getSourceOutPort(),
 				newChild.getOutputSchema());
 	}
 }
