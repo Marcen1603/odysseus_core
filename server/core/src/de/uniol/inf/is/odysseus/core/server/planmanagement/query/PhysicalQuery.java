@@ -335,6 +335,22 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void initializePhysicalRoots(List<IPhysicalOperator> rootsToSet) {
 
+		List<IPhysicalOperator> newRoots = handleSingleRootPlans(rootsToSet);
+
+		// set root of this query
+		setRoots(newRoots);
+
+		this.physicalChilds.clear();
+		// Store each child in a list. And set this Query as owner of each child
+		for (IPhysicalOperator root : newRoots) {
+			// addPhysicalChildren(GraphHelper.getChildren(root));
+			addPhysicalChildren(getChildren(root));
+		}
+		determineIteratableSourcesAndLeafs();
+
+	}
+
+	private List<IPhysicalOperator> handleSingleRootPlans(List<IPhysicalOperator> rootsToSet) {
 		// There is a special case, when a root operator is only a source operator
 		// here an additional sink is necessary (else stopping this single
 		// operator query has impact on other queries, that are using this op)
@@ -352,7 +368,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 				newRoots.add(r);
 			}
 		}
-
 		// set root of this query
 		setRoots(newRoots);
 
@@ -363,6 +378,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			addPhysicalChildren(getChildren(root));
 		}
 		determineIteratableSourcesAndLeafs();
+		return newRoots;
 	}
 
 	@SuppressWarnings("unchecked")
