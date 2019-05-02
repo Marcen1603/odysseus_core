@@ -35,9 +35,11 @@ public class TLeftJoinTIPOInsertDataMergeRule
 
 	@Override
 	public void execute(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO,
-			TransformationConfiguration transformConfig) throws RuleException {
-		joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getInputSchema(0),
-				joinPO.getInputSchema(1), joinPO.getOutputSchema()));
+			TransformationConfiguration transformConfig) throws RuleException {		
+		int leftSize = joinPO.getInputSchema(0).size();
+		int rightSize = joinPO.getInputSchema(1).size();
+		joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(leftSize, rightSize, leftSize + rightSize));
+
 		update(joinPO);
 	}
 

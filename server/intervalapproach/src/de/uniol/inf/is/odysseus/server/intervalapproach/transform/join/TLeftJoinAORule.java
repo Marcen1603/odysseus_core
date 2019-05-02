@@ -73,8 +73,7 @@ public class TLeftJoinAORule extends AbstractIntervalTransformationRule<LeftJoin
 		} else {
 			joinPO.setTransferFunction(new DirectTransferArea());
 		}
-		// }
-
+		
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
