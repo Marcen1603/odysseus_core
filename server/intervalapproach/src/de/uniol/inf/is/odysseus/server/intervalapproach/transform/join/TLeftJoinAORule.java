@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.persistentqueries.DirectTransferArea;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
@@ -75,10 +74,6 @@ public class TLeftJoinAORule extends AbstractIntervalTransformationRule<LeftJoin
 			joinPO.setTransferFunction(new DirectTransferArea());
 		}
 		
-		int leftSize = joinAO.getInputSchema(0).size();
-		int rightSize = joinAO.getInputSchema(1).size();
-		joinPO.setDataMerge(new RelationalLeftMergeFunction(leftSize, rightSize, leftSize + rightSize));
-
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
