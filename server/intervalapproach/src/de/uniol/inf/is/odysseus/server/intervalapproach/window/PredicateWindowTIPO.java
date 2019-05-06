@@ -26,10 +26,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 
 /**
  * A window that can be initialized with one or two predicates
@@ -57,6 +57,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final boolean keepEndElement;
 	private final boolean useElementOnlyForStartOrEnd;
 
+	// With this option, a predicate window works like a session window.
+	// A session ends when a heartbeat is received. Than, all stored elements will
+	// be transferred.
+	private boolean closeWindowWithHeartbeat;
+
 	@SuppressWarnings("unchecked")
 	public PredicateWindowTIPO(AbstractWindowAO windowao) {
 		super(windowao);
@@ -80,6 +85,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 		this.keepEndElement = windowao.isKeepEndElement();
 		this.useElementOnlyForStartOrEnd = windowao.isUseElementOnlyForStartOrEnd();
+		
+		if(windowao instanceof PredicateWindowAO) {
+			this.closeWindowWithHeartbeat = ((PredicateWindowAO) windowao).getCloseWindowWithHeartbeat();
+		}
 	}
 
 	@Override
@@ -99,7 +108,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			// Two cases: end is set --> use end predicate
 			// end is not set --> use negated start predicate
 			// maximum window size reached
-			boolean closeWindow = (end != null && (elementForEndUsed = evaluateEndCondition(object, buffer))) || (end == null && !startEval)
+			boolean closeWindow = (end != null && (elementForEndUsed = evaluateEndCondition(object, buffer)))
+					|| (end == null && !startEval)
 					|| (maxWindowTime > 0 && !buffer.isEmpty()
 							&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
 									.afterOrEquals(object.getMetadata().getStart()));
@@ -123,15 +133,34 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (!openedWindow.get(bufferId)) {
 			if (startEval) {
 				if (useElementOnlyForStartOrEnd && elementForEndUsed) {
-					System.out.println("Ignoring"+object);
-				}else {
+					System.out.println("Ignoring" + object);
+				} else {
 					appendData(object, bufferId, buffer);
 				}
 			} else {
 				transferArea.transfer(object, 1);
 			}
 		}
-	
+
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// Session window mode, if closeWindowWithHeartbeat.
+		// A session ends when a heartbeat is received. Than, all stored elements will
+		// be transferred.
+		if (closeWindowWithHeartbeat) {
+			synchronized (buffers) {
+				for (Object bufferId : buffers.keySet()) {
+					List<T> buffer = buffers.get(bufferId);
+					if(!buffer.isEmpty()) {
+						produceData(punctuation.getTime(), bufferId, buffer);
+					}
+				}
+			}
+		}
+
+		super.processPunctuation(punctuation, port);
 	}
 
 	private void initBuffer(Object bufferId) {
