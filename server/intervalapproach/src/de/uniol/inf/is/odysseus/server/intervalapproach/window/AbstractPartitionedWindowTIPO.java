@@ -41,7 +41,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	protected ITransferArea<T, T> transferArea = new TITransferArea<>();
 
-	private Map<Object, List<T>> buffers = new HashMap<>();
+	protected Map<Object, List<T>> buffers = new HashMap<>();
 
 	private PointInTime lastTs = null;
 

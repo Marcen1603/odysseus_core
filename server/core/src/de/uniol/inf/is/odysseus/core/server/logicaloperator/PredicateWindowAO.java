@@ -16,9 +16,18 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
 
 	private static final long serialVersionUID = 8834015972527486443L;
+	
+	// With this option, a predicate window works like a session window.
+	// A session ends when a heartbeat is received. Than, all stored elements will be transferred. 
+	private boolean closeWindowWithHeartbeat = false;
 
 	public PredicateWindowAO(AbstractWindowAO windowPO) {
 		super(windowPO);
+	}
+	
+	public PredicateWindowAO(PredicateWindowAO windowAO) {
+		super(windowAO);
+		closeWindowWithHeartbeat = windowAO.closeWindowWithHeartbeat;
 	}
 
 	public PredicateWindowAO() {
@@ -59,6 +68,15 @@ public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
 	@Parameter(type = BooleanParameter.class, name = "SameStartTime", optional = true)
 	public void setSameStarttime(boolean sameStarttime) {
 		super.setSameStarttime(sameStarttime);
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "CloseWindowWithHeartbeat", optional = true)
+	public void setCloseWindowWithHeartbeat(boolean closeWindowWithHeartbeat) {
+		this.closeWindowWithHeartbeat = closeWindowWithHeartbeat;
+	}
+	
+	public boolean getCloseWindowWithHeartbeat() {
+		return closeWindowWithHeartbeat;
 	}
 
 	@Override
