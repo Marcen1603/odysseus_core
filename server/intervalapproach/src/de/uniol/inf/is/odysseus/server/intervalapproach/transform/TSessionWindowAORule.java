@@ -40,6 +40,7 @@ public class TSessionWindowAORule extends AbstractTransformationRule<SessionWind
 		heartbeat.setSendAlwaysHeartbeat(false);
 		heartbeat.setAllowOutOfOrder(false);
 		heartbeat.setStartAtCurrentTime(sessionWindow.startAtCurrentTime());
+		heartbeat.setSendOnlyOneHeartbeat(true);
 		LogicalPlan.insertOperator(heartbeat, predicateWindow, 0, 0, 0);
 		insert(heartbeat);
 
