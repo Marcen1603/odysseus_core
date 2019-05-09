@@ -41,7 +41,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	protected ITransferArea<T, T> transferArea = new TITransferArea<>();
 
-	protected Map<Object, List<T>> buffers = new HashMap<>();
+	private Map<Object, List<T>> buffers = new HashMap<>();
 
 	private PointInTime lastTs = null;
 
@@ -244,5 +244,9 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		result.put("Last TS:", "" + lastTs);
 		result.put("Implementation:", this.getClass().getSimpleName());
 		return result;
+	}
+	
+	protected Map<Object, List<T>> getBuffers() {
+		return buffers;
 	}
 }

@@ -85,8 +85,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 		this.keepEndElement = windowao.isKeepEndElement();
 		this.useElementOnlyForStartOrEnd = windowao.isUseElementOnlyForStartOrEnd();
-		
-		if(windowao instanceof PredicateWindowAO) {
+
+		if (windowao instanceof PredicateWindowAO) {
 			this.closeWindowWithHeartbeat = ((PredicateWindowAO) windowao).getCloseWindowWithHeartbeat();
 		}
 	}
@@ -150,10 +150,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		// A session ends when a heartbeat is received. Than, all stored elements will
 		// be transferred.
 		if (closeWindowWithHeartbeat) {
-			synchronized (buffers) {
-				for (Object bufferId : buffers.keySet()) {
-					List<T> buffer = buffers.get(bufferId);
-					if(!buffer.isEmpty()) {
+			synchronized (getBuffers()) {
+				for (Object bufferId : getBuffers().keySet()) {
+					List<T> buffer = getBuffers().get(bufferId);
+					if (!buffer.isEmpty()) {
 						produceData(punctuation.getTime(), bufferId, buffer);
 					}
 				}
