@@ -109,11 +109,9 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-//		if (startTimerAfterFirstElement) {
-			if (!generateHeartbeat.isAlive()) {
-				generateHeartbeat.start();
-			}
-//		}
+		if (!generateHeartbeat.isAlive()) {
+			generateHeartbeat.start();
+		}
 
 		PointInTime marker = object.getMetadata().getStart();
 		if (marker.afterOrEquals(getWatermark())) {
@@ -143,7 +141,6 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 				generateHeartbeat.start();
 			}
 			sendPunctuation(punctuation);
-//			restartTimer();
 		} else {
 			LOG.warn("Punctuation removed because out of order " + punctuation);
 		}
