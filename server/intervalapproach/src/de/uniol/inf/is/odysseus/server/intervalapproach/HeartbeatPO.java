@@ -38,6 +38,9 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	private long applicationTimeDelay;
 	private boolean sendAlwaysHeartbeat = false;
 	private boolean restartTimerForEveryInput = false;
+	
+	// Stops the generator after sending a heartbeat. The generator will be started again if a new element is received by this operator.
+	private boolean sendOnlyOneHeartbeat = false;
 
 	private PointInTime _watermark = PointInTime.getZeroTime();
 
@@ -106,11 +109,11 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-		if (startTimerAfterFirstElement) {
+//		if (startTimerAfterFirstElement) {
 			if (!generateHeartbeat.isAlive()) {
 				generateHeartbeat.start();
 			}
-		}
+//		}
 
 		PointInTime marker = object.getMetadata().getStart();
 		if (marker.afterOrEquals(getWatermark())) {
@@ -136,8 +139,11 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		PointInTime marker = punctuation.getTime();
 		if (marker.afterOrEquals(getWatermark())) {
+			if (!generateHeartbeat.isAlive()) {
+				generateHeartbeat.start();
+			}
 			sendPunctuation(punctuation);
-			restartTimer();
+//			restartTimer();
 		} else {
 			LOG.warn("Punctuation removed because out of order " + punctuation);
 		}
@@ -150,7 +156,15 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 			LOG.trace("SEND PUNCTUATION "+punctuation+" oldWatermark="+getWatermark());
 			super.sendPunctuation(punctuation);
 			setWatermark(timestamp);
-			restartTimer();
+			
+			// do not restart the timer but stop the generator if only one heartbeat shall be sent
+			// the generator will be started again if a new element is received by this operator
+			if(sendOnlyOneHeartbeat) {
+				generateHeartbeat.terminate();
+				generateHeartbeat = new Runner();
+			} else {
+				restartTimer();
+			}
 		}
 	}
 
@@ -195,6 +209,14 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 
 	public void setRestartTimerForEveryInput(boolean restartTimerForEveryInput) {
 		this.restartTimerForEveryInput = restartTimerForEveryInput;
+	}
+
+	public boolean isSendOnlyOneHeartbeat() {
+		return sendOnlyOneHeartbeat;
+	}
+
+	public void setSendOnlyOneHeartbeat(boolean sendOnlyOneHeartbeat) {
+		this.sendOnlyOneHeartbeat = sendOnlyOneHeartbeat;
 	}
 
 	@Override
