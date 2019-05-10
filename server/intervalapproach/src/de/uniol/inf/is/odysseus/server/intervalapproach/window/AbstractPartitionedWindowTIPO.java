@@ -181,6 +181,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		transferArea.sendPunctuation(punctuation, port);
+		transferArea.newElement(punctuation, port);
 	}
 
 	public void ping() {
@@ -243,5 +244,9 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		result.put("Last TS:", "" + lastTs);
 		result.put("Implementation:", this.getClass().getSimpleName());
 		return result;
+	}
+	
+	protected Map<Object, List<T>> getBuffers() {
+		return buffers;
 	}
 }

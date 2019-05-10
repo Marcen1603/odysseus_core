@@ -41,6 +41,9 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	private boolean startAtCurrentTime = false;
 	private boolean startTimerAfterFirstElement = false;
 	private boolean restartTimerForEveryInput = false;
+	
+	// Stops the generator after sending a heartbeat. The generator will be started again if a new element is received by this operator.
+	private boolean sendOnlyOneHeartbeat = false;
 
 	public HeartbeatAO() {
 	}
@@ -53,6 +56,7 @@ public class HeartbeatAO extends UnaryLogicalOp {
 		this.sendAlwaysHeartbeat = other.sendAlwaysHeartbeat;
 		this.startAtCurrentTime = other.startAtCurrentTime;
 		this.startTimerAfterFirstElement = other.startTimerAfterFirstElement;
+		this.sendAlwaysHeartbeat = other.sendAlwaysHeartbeat;
 	}
 
 	public long getRealTimeDelay() {
@@ -127,6 +131,15 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	@Parameter(type = BooleanParameter.class, name = "restartTimerForEveryInput", optional = true)
 	public void setRestartTimerForEveryInput(boolean restartTimerForEveryInput) {
 		this.restartTimerForEveryInput = restartTimerForEveryInput;
+	}
+
+	public boolean isSendOnlyOneHeartbeat() {
+		return sendOnlyOneHeartbeat;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "sendOnlyOneHeartbeat", optional = true, doc = "Stops the generator after sending a heartbeat. The generator will be started again if a new element is received by this operator.")
+	public void setSendOnlyOneHeartbeat(boolean sendOnlyOneHeartbeat) {
+		this.sendOnlyOneHeartbeat = sendOnlyOneHeartbeat;
 	}
 
 	@Override
