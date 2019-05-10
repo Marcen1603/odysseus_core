@@ -62,7 +62,8 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 		List<IRule> rules = new ArrayList<>();
 
 		rules.add(new MultiLineRule("'", "'", createToken(SWT.COLOR_BLUE)));
-		rules.add(new EndOfLineRule(OdysseusScriptStructureProvider.SINGLE_LINE_COMMENT_KEY, createToken(SWT.COLOR_DARK_GREEN, false)));
+		rules.add(new EndOfLineRule(OdysseusScriptStructureProvider.SINGLE_LINE_COMMENT_KEY,
+				createToken(SWT.COLOR_DARK_GREEN, false)));
 
 		// if a keyword is found, color it red
 		IToken keywordToken = createToken(SWT.COLOR_RED, false);
@@ -70,22 +71,27 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 
 		// everything else should be undefined (this gets the default color)
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, true);
-		for (String key : OdysseusScriptStructureProvider.getKeywords()) {
-			if (!OdysseusScriptStructureProvider.isDeprecated(key)) {
-				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, keywordToken);
-			} else {
-				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, deprecatedKeywordToken);
+		if (OdysseusScriptStructureProvider.getKeywords() != null) {
+			for (String key : OdysseusScriptStructureProvider.getKeywords()) {
+				if (!OdysseusScriptStructureProvider.isDeprecated(key)) {
+					wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, keywordToken);
+				} else {
+					wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, deprecatedKeywordToken);
+				}
 			}
 		}
 		rules.add(wr);
 
 		IToken variable = createToken(SWT.COLOR_DARK_MAGENTA);
-		rules.add(new SingleLineRule(OdysseusScriptStructureProvider.REPLACEMENT_START_KEY, OdysseusScriptStructureProvider.REPLACEMENT_END_KEY, variable));
+		rules.add(new SingleLineRule(OdysseusScriptStructureProvider.REPLACEMENT_START_KEY,
+				OdysseusScriptStructureProvider.REPLACEMENT_END_KEY, variable));
 		IToken staticKeywords = createToken(SWT.COLOR_DARK_GRAY);
 
-		for (String s : OdysseusScriptStructureProvider.getStaticWords()) {
-			wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + s, staticKeywords);
-			wr.addWord(s, staticKeywords);
+		if (OdysseusScriptStructureProvider.getStaticWords() != null) {
+			for (String s : OdysseusScriptStructureProvider.getStaticWords()) {
+				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + s, staticKeywords);
+				wr.addWord(s, staticKeywords);
+			}
 		}
 		return rules;
 	}
@@ -119,7 +125,8 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 		ignore.add("#IFDEF");
 		ignore.add("#ELSE");
 		ignore.add("#ENDIF");
-		rules.add(new SimpleMultiLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY, end, ignore, getPartitioningToken(), true, true));
+		rules.add(new SimpleMultiLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY, end, ignore,
+				getPartitioningToken(), true, true));
 		rules.add(new EndOfLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY, getPartitioningToken()));
 
 		return rules;

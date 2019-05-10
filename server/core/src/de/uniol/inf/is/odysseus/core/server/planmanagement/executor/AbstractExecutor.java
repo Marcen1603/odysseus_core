@@ -150,7 +150,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/**
 	 * Der aktuell ausgefuehrte physische Plan
 	 */
-	final protected IExecutionPlan executionPlan = new ExecutionPlan();
+	protected final IExecutionPlan executionPlan = new ExecutionPlan();
 
 	/**
 	 * Scheduling-Komponente
@@ -184,39 +184,37 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/**
 	 * Standard Configurationen
 	 */
-	// protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs =
-	// new HashMap<String, List<IQueryBuildSetting<?>>>();
-	protected Map<String, IQueryBuildConfigurationTemplate> queryBuildConfigs = new HashMap<String, IQueryBuildConfigurationTemplate>();
+	protected Map<String, IQueryBuildConfigurationTemplate> queryBuildConfigs = new HashMap<>();
 
 	/**
 	 * Alle Listener f�r Anfragebearbeitungs-Nachrichten
 	 */
-	private List<IPlanModificationListener> planModificationListener = new CopyOnWriteArrayList<IPlanModificationListener>();
+	private List<IPlanModificationListener> planModificationListener = new CopyOnWriteArrayList<>();
 
 	/**
 	 * All Listener for executor command events.
 	 */
-	private List<IExecutorCommandListener> executorCommandListener = new CopyOnWriteArrayList<IExecutorCommandListener>();
+	private List<IExecutorCommandListener> executorCommandListener = new CopyOnWriteArrayList<>();
 
 	/**
 	 * All Listener for query added events.
 	 */
-	private List<IQueryAddedListener> queryAddedListener = new CopyOnWriteArrayList<IQueryAddedListener>();
+	private List<IQueryAddedListener> queryAddedListener = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Alle Listener f�r Ausf�hrungs-Nachrichten
 	 */
-	private List<IPlanExecutionListener> planExecutionListener = new CopyOnWriteArrayList<IPlanExecutionListener>();
+	private List<IPlanExecutionListener> planExecutionListener = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Alle Listener f�r Fehler-Nachrichten
 	 */
-	private List<IErrorEventListener> errorEventListener = new CopyOnWriteArrayList<IErrorEventListener>();
+	private List<IErrorEventListener> errorEventListener = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Compiler Listener
 	 */
-	private List<ICompilerListener> compilerListener = new CopyOnWriteArrayList<ICompilerListener>();
+	private List<ICompilerListener> compilerListener = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Lock for synchronizing execution plan changes.
@@ -251,7 +249,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		try {
 			initialize();
 		} catch (ExecutorInitializeException e) {
-			LOG.error("Error activate executor. Error: " + e.getMessage());
+			LOG.error("Error activate executor. Error: ",e);
 		}
 	}
 
@@ -276,14 +274,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return configuration;
 	}
 
-	private void initialize() throws ExecutorInitializeException {
+	private void initialize() {
 		LOG.debug("Initializing Executor.");
 
 		initializeIntern(configuration);
-
-		if (this.executionPlan == null) {
-			throw new ExecutorInitializeException("Execution plan storage not initialized.");
-		}
 
 		this.configuration.addValueChangeListener(this);
 
@@ -303,7 +297,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public void bindOptimizer(IOptimizer optimizer) {
 		this.optimizer = optimizer;
 		this.optimizer.addErrorEventListener(this);
-		LOG.trace("Optimizer bound " + optimizer);
+		if (LOG.isTraceEnabled()) {
+			LOG.trace(String.format("Optimizer bound %s" ,optimizer));
+		}
 	}
 
 	/**
@@ -315,7 +311,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public void unbindOptimizer(IOptimizer optimizer) {
 		if (this.optimizer == optimizer) {
 			this.optimizer = null;
-			LOG.trace("Optimizer unbound " + optimizer);
+			if (LOG.isTraceEnabled()) {
+				LOG.trace(String.format("Optimizer unbound %s",optimizer));
+			}
 		}
 
 	}
@@ -335,10 +333,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		try {
 			schedulerManager.startScheduling();
 		} catch (OpenFailedException | NoSchedulerLoadedException e) {
-			e.printStackTrace();
+			LOG.error("Error starting scheduler manager", e);
 		}
-
-		LOG.trace("Schedulermanager bound " + schedulerManager);
+		if (LOG.isTraceEnabled()) {
+			LOG.trace(String.format("Schedulermanager bound %s",schedulerManager));
+		}
 	}
 
 	/**
@@ -350,7 +349,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public void unbindSchedulerManager(ISchedulerManager schedulerManager) {
 		if (this.schedulerManager == schedulerManager) {
 			this.schedulerManager = null;
-			LOG.trace("Schedulermanager unbound " + schedulerManager);
+			if (LOG.isTraceEnabled()) {
+				LOG.trace(String.format("Schedulermanager unbound %s", schedulerManager));
+			}
 		}
 	}
 
@@ -368,19 +369,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	public final void unbindQueryDistributor(IQueryDistributor distributor) {
 		if (queryDistributor == distributor) {
-			distributor = null;
+			queryDistributor = null;
 		}
 	}
 
 	// called by OSGi-DS
 	public void bindPreTransformationHandler(IPreTransformationHandler serv) {
-		// Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()),
-			//	"preTransformationHandler's name must not be null or empty!");
-		// Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()),
-			//	"There is already a preTransformationHandler called '%s'", serv.getName().toUpperCase());
-		// Preconditions.checkArgument(canCreateInstance(serv.getClass()),
-			//	"Could not create instance of IPreTransformationHandler-class '%s'", serv.getClass());
-
 		LOG.trace("Bound preTransformationHandler called '{}': {}", serv.getName().toUpperCase(), serv.getClass());
 		preTransformationHandlerMap.put(serv.getName().toUpperCase(), serv.getClass());
 	}
@@ -841,14 +835,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * getExecutionPlan()
 	 */
 	@Override
-	public IExecutionPlan getExecutionPlan(ISession session) {
-		// TODO: CHECK ACCESS RIGHTS
+	final public IExecutionPlan getExecutionPlan(ISession session) {
 		return this.executionPlan;
 	}
 
 	@Override
-	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
-		// TODO: Check access rights
+	public final List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID, session);
 		if (pq != null) {
 			return pq.getRoots();
@@ -858,15 +850,15 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	public ILogicalQuery getLogicalQueryById(int id, ISession session) {
-		// TODO: Check access rights
+	public final ILogicalQuery getLogicalQueryById(int id, ISession session) {
 		IPhysicalQuery pq = executionPlan.getQueryById(id, session);
+		if(pq == null) {
+			return null;
+		}
 		if (pq.getSession().getUser() == session.getUser()) {
 			ILogicalQuery lq = null;
-			if (pq != null) {
-				lq = pq.getLogicalQuery();
-				lq.setParameter("STATE", pq.getState());
-			}
+			lq = pq.getLogicalQuery();
+			lq.setParameter("STATE", pq.getState());
 			return lq;
 		}
 
@@ -874,8 +866,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	public ILogicalQuery getLogicalQueryByName(Resource name, ISession session) {
-		// TODO: Check access rights
+	public final ILogicalQuery getLogicalQueryByName(Resource name, ISession session) {
 		IPhysicalQuery pq = executionPlan.getQueryByName(name, session);
 		ILogicalQuery lq = null;
 		if (pq != null) {
@@ -884,6 +875,36 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return lq;
 	}
 
+	@Override
+	public final ILogicalQuery getLogicalQueryByString(String idOrName, ISession session) {
+		Integer queryID = null;
+		ILogicalQuery query = null;
+		try {
+			queryID = Integer.parseInt(idOrName);
+			query = getLogicalQueryById(queryID, session);
+		}catch(NumberFormatException e) {
+		}
+		if (query == null) {
+			query = getLogicalQueryByName(new Resource(session.getUser(), idOrName), session);
+		}
+		return query;
+	}
+	
+	@Override
+	public final IPhysicalQuery getPhysicalQueryByString(String idOrName, ISession session) {
+		Integer queryID;
+		IPhysicalQuery query = null;
+		try {
+			queryID = Integer.parseInt(idOrName);
+			query = getExecutionPlan(session).getQueryById(queryID.intValue(), session);
+		} catch (NumberFormatException e) {
+		}
+		if (query == null) {
+			query =  getExecutionPlan(session).getQueryByName(new Resource(session.getUser(), idOrName), session);
+		}
+		return query;
+	}
+	
 	@Override
 	public QueryState getQueryState(int queryID, ISession session) {
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID, session);
@@ -1391,6 +1412,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return getDataDictionary(caller).containsViewOrStream(name, caller);
 	}
 
+	@Override
+	public boolean containsSink(String sinkname, ISession caller) {
+		return getDataDictionary(caller).containsSink(sinkname, caller);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 *

@@ -21,6 +21,7 @@
 		<module>de.uniol.inf.is.odysseus.report</module>
 		<module>de.uniol.inf.is.odysseus.report.executor</module>
 		<module>de.uniol.inf.is.odysseus.report.general</module>
+		<module>de.uniol.inf.is.odysseus.rest.dto</module>
 		<module>de.uniol.inf.is.odysseus.slf4j</module>
 		<module>de.uniol.inf.is.odysseus.slf4j.feature</module>
 		<module>de.uniol.inf.is.odysseus.sweeparea</module>
@@ -34,6 +35,7 @@
 		<module>keyvalue.mep</module>
 		<module>mep</module>
 		<module>mep.matrix</module> 
+		<module>rest2.common</module>
 	</modules>
 </project>
 

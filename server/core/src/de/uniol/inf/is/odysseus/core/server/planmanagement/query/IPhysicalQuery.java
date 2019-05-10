@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.query;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
@@ -121,6 +122,8 @@ public interface IPhysicalQuery extends IMonitoringDataProvider,
 	Set<IPhysicalOperator> getAllOperators();
 	
 	IPhysicalOperator getOperator(String name);
+	
+	IPhysicalOperator getOperator(UUID uuid);
 	
 	void start(IQueryStarter queryListener) throws OpenFailedException;
 
