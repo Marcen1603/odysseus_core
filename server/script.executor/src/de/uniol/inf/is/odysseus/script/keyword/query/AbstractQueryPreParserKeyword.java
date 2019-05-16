@@ -54,7 +54,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		try {
 			if (parameter.length() == 0) {
-				throw new OdysseusScriptException("Encountered empty query");
+				throw new OdysseusScriptException("Found no query text after #ADDQUERY/#RUNQUERY/#STARTQUERY!");
 			}
 
 			String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
