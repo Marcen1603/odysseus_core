@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * @param <R>
  */
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<R, R>
-		implements IPhysicalOperatorKeyValueProvider, IStatefulOperator {
+		implements IPhysicalOperatorKeyValueProvider, IStatefulOperator, UncaughtExceptionHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ThreadedBufferPO.class);
 
@@ -204,6 +205,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		// Create new thread and start
 		runner = new Runner("ThreadedBuffer " + getName());
 		runner.setDaemon(true);
+		runner.setUncaughtExceptionHandler(this);
 		runner.start();
 	}
 
@@ -347,6 +349,11 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			lockInput.unlock();
 		}
 		return maxTS;
+	}
+
+	@Override
+	public void uncaughtException(Thread thread, Throwable exception) {
+		LOG.error("Exception in Thread {}", thread, exception);
 	}
 
 }

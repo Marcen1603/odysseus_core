@@ -90,4 +90,9 @@ public interface ISink<T extends IStreamObject<?>>
 	 */
 	int getInputPortCount();
 
+	/**
+	 * Allow to set available input ports
+	 * @param count
+	 */
+	void setInputPortCount(int count);
 }

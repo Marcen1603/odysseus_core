@@ -19,11 +19,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -41,30 +44,24 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class DefaultStreamConnection<In extends IStreamObject<?>> extends
-		ListenerSink<In> implements ITransfer<In>{
+public class DefaultStreamConnection<I extends IStreamObject<?>> extends ListenerSink<I> implements ITransfer<I> {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DefaultStreamConnection.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamConnection.class);
 
 	private final Collection<IPhysicalOperator> operators;
 	private final Map<Integer, IPhysicalOperator> portOperatorMap;
 	private final Map<IPhysicalOperator, Integer> operatorPortMap;
-	private final Collection<IPhysicalOperator> connectedOperators = Lists
-			.newArrayList();
-	private final List<ISubscription<ISource<IStreamObject<?>>,?>> subscriptions;
+	private final Collection<IPhysicalOperator> connectedOperators = Lists.newArrayList();
+	private final List<ISubscription<ISource<IStreamObject<?>>, ?>> subscriptions;
 
-	private final ArrayList<In> collectedObjects = new ArrayList<In>();
-	private final ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
+	private final ArrayList<I> collectedObjects = new ArrayList<>();
+	private final ArrayList<Integer> collectedPorts = new ArrayList<>();
 
-	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
-	private final Map<String, Collection<IStreamElementListener<In>>> specialListener = Maps
-			.newHashMap();
+	private final Collection<IStreamElementListener<I>> listeners = new ArrayList<>();
+	private final Map<String, Collection<IStreamElementListener<I>>> specialListener = Maps.newHashMap();
 
 	private boolean connected = false;
 	private boolean enabled = true;
@@ -74,7 +71,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	private Map<String, String> infos;
 
-	private ITransferArea<In,In> transferHandler = null;
+	private ITransferArea<I, I> transferHandler = null;
 
 	public DefaultStreamConnection(IPhysicalOperator operator) {
 		this(Lists.newArrayList(operator));
@@ -82,13 +79,18 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	public DefaultStreamConnection(Collection<IPhysicalOperator> operators) {
 		this.operators = Objects.requireNonNull(operators, "List of operators must not be null!");
-		// Preconditions.checkArgument(!operators.isEmpty(),
-		//		"List of operators must not be empty!");
+		Preconditions.checkArgument(!operators.isEmpty(), "List of operators must not be empty!");
 
 		portOperatorMap = generatePortMap(operators);
 		operatorPortMap = generateOperatorMap(portOperatorMap);
 		subscriptions = determineSubscriptions(operators);
 
+	}
+
+	private final UUID uuid = UUID.randomUUID();
+
+	public UUID getUUID() {
+		return uuid;
 	}
 	
 	@Override
@@ -106,17 +108,15 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		return operatorPortMap.get(operator);
 	}
 
-	private static Map<IPhysicalOperator, Integer> generateOperatorMap(
-			Map<Integer, IPhysicalOperator> map) {
+	private static Map<IPhysicalOperator, Integer> generateOperatorMap(Map<Integer, IPhysicalOperator> map) {
 		Map<IPhysicalOperator, Integer> m = Maps.newHashMap();
-		for (Integer port : map.keySet()) {
-			m.put(map.get(port), port);
+		for (Entry<Integer, IPhysicalOperator> entry : map.entrySet()) {
+			m.put(entry.getValue(), entry.getKey());
 		}
 		return m;
 	}
 
-	private static Map<Integer, IPhysicalOperator> generatePortMap(
-			Collection<IPhysicalOperator> ops) {
+	private static Map<Integer, IPhysicalOperator> generatePortMap(Collection<IPhysicalOperator> ops) {
 		Map<Integer, IPhysicalOperator> map = Maps.newHashMap();
 		int counter = 0;
 		for (IPhysicalOperator op : ops) {
@@ -135,13 +135,13 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		for (IPhysicalOperator op : operators) {
 			connect(op);
 		}
-		if (transferHandler != null){
+		if (transferHandler != null) {
 			transferHandler.init(this, operators.size());
 		}
 		connected = true;
 	}
 
-	public void setTransferHandler(ITransferArea<In, In> transferHandler) {
+	public void setTransferHandler(ITransferArea<I, I> transferHandler) {
 		this.transferHandler = transferHandler;
 	}
 
@@ -159,7 +159,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public void process(In element, int port) {
+	public void process(I element, int port) {
 		if (transferHandler != null) {
 			transferHandler.transfer(element, port);
 			transferHandler.newElement(element, port);
@@ -169,7 +169,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		}
 	}
 
-	private void process_internal(In element, int port) {
+	private void process_internal(I element, int port) {
 		if (!enabled) {
 			collectElement(element, port);
 
@@ -178,16 +178,14 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		}
 	}
 
-
-
 	@Override
-	public void transfer(In object) {
+	public void transfer(I object) {
 		// Will never be called
 
 	}
 
 	@Override
-	public void transfer(In object, int sourceOutPort) {
+	public void transfer(I object, int sourceOutPort) {
 		process_internal(object, sourceOutPort);
 	}
 
@@ -223,8 +221,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public void addStreamElementListener(IStreamElementListener<In> listener) {
-		Objects.requireNonNull(listener,  "Listener to add to DefaultStreamConnection must not be null!");
+	public void addStreamElementListener(IStreamElementListener<I> listener) {
+		Objects.requireNonNull(listener, "Listener to add to DefaultStreamConnection must not be null!");
 
 		synchronized (listeners) {
 			if (!listeners.contains(listener)) {
@@ -234,15 +232,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public void addStreamElementListener(IStreamElementListener<In> listener,
-			String sinkName) {
+	public void addStreamElementListener(IStreamElementListener<I> listener, String sinkName) {
 		Objects.requireNonNull(listener, "Listener to add to DefaultStreamConnection must not be null!");
-		// Preconditions.checkArgument(!Strings.isNullOrEmpty(sinkName),
-				//"Sinkname must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(sinkName), "Sinkname must not be null or empty!");
 
 		synchronized (specialListener) {
-			Collection<IStreamElementListener<In>> l = specialListener
-					.get(sinkName);
+			Collection<IStreamElementListener<I>> l = specialListener.get(sinkName);
 			if (l == null) {
 				l = Lists.newArrayList();
 				specialListener.put(sinkName, l);
@@ -252,18 +247,16 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public void removeStreamElementListener(IStreamElementListener<In> listener) {
+	public void removeStreamElementListener(IStreamElementListener<I> listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 	}
 
 	@Override
-	public void removeStreamElementListener(
-			IStreamElementListener<In> listener, String sinkName) {
+	public void removeStreamElementListener(IStreamElementListener<I> listener, String sinkName) {
 		synchronized (specialListener) {
-			Collection<IStreamElementListener<In>> l = specialListener
-					.get(sinkName);
+			Collection<IStreamElementListener<I>> l = specialListener.get(sinkName);
 			if (l != null) {
 				l.remove(listener);
 
@@ -276,10 +269,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (transferHandler != null){
+		if (transferHandler != null) {
 			transferHandler.sendPunctuation(punctuation, port);
 			transferHandler.newElement(punctuation, port);
-		}else{
+		} else {
 			sendPunctuation(punctuation, port);
 		}
 	}
@@ -300,7 +293,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	// @Override
-	public void open() throws OpenFailedException {
+	public void open() {
 		LOG.debug("Opening");
 		isOpen = true;
 	}
@@ -316,8 +309,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		LOG.debug("Closing");
 		isOpen = false;
 
-		for (IPhysicalOperator s : connectedOperators
-				.toArray(new IPhysicalOperator[0])) {
+		for (IPhysicalOperator s : connectedOperators.toArray(new IPhysicalOperator[0])) {
 			disconnect(s);
 		}
 	}
@@ -345,10 +337,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	@Override
 	public void addUniqueId(IOperatorOwner owner, Resource id) {
+		// not needed here
 	}
 
 	@Override
 	public void removeUniqueId(IOperatorOwner key) {
+		// not needed here
 	}
 
 	@Override
@@ -356,17 +350,15 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		return null;
 	}
 
-	protected final void notifyListeners(In element, int port) {
+	protected final void notifyListeners(I element, int port) {
 		LOG.trace("Receiving element from port {}: {}", port, element);
 		IPhysicalOperator senderOperator = portOperatorMap.get(port);
 		synchronized (listeners) {
-			for (IStreamElementListener<In> l : listeners) {
+			for (IStreamElementListener<I> l : listeners) {
 				try {
 					l.streamElementReceived(senderOperator, element, port);
-				} catch (Throwable t) {
-					LOG.error(
-							"Exception during invoking listener for DefaultStreamConnection",
-							t);
+				} catch (Exception t) {
+					LOG.error("Exception during invoking listener for DefaultStreamConnection", t);
 				}
 			}
 		}
@@ -374,14 +366,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		String name = getOperatorNameFromPort(port);
 		if (!Strings.isNullOrEmpty(name)) {
 			synchronized (specialListener) {
-				Collection<IStreamElementListener<In>> l = specialListener
-						.get(name);
+				Collection<IStreamElementListener<I>> l = specialListener.get(name);
 				if (l != null) {
-					for (IStreamElementListener<In> ls : l) {
+					for (IStreamElementListener<I> ls : l) {
 						try {
-							ls.streamElementReceived(senderOperator, element,
-									port);
-						} catch (Throwable t) {
+							ls.streamElementReceived(senderOperator, element, port);
+						} catch (Exception t) {
 							LOG.error(
 									"Exception during invoking specialized listener for DefaultStreamConnection for sinkname {}",
 									name, t);
@@ -396,13 +386,11 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		LOG.debug("Receiving punctuation from port {}: {}", port, point);
 		IPhysicalOperator senderOperator = portOperatorMap.get(port);
 		synchronized (listeners) {
-			for (IStreamElementListener<In> l : listeners) {
+			for (IStreamElementListener<I> l : listeners) {
 				try {
 					l.punctuationElementReceived(senderOperator, point, port);
-				} catch (Throwable t) {
-					LOG.error(
-							"Exception during invoking punctuation listener for DefaultStreamConnection",
-							t);
+				} catch (Exception t) {
+					LOG.error("Exception during invoking punctuation listener for DefaultStreamConnection", t);
 				}
 			}
 		}
@@ -410,14 +398,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		String name = getOperatorNameFromPort(port);
 		if (!Strings.isNullOrEmpty(name)) {
 			synchronized (specialListener) {
-				Collection<IStreamElementListener<In>> l = specialListener
-						.get(name);
+				Collection<IStreamElementListener<I>> l = specialListener.get(name);
 				if (l != null) {
-					for (IStreamElementListener<In> ls : l) {
+					for (IStreamElementListener<I> ls : l) {
 						try {
-							ls.punctuationElementReceived(senderOperator,
-									point, port);
-						} catch (Throwable t) {
+							ls.punctuationElementReceived(senderOperator, point, port);
+						} catch (Exception t) {
 							LOG.error(
 									"Exception during invoking specialized punctuation listener for DefaultStreamConnection for sinkname {}",
 									name, t);
@@ -430,37 +416,34 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	private String getOperatorNameFromPort(int port) {
 		IPhysicalOperator operator = portOperatorMap.get(port);
-		String name = operator.getName();
-		return name;
+		return operator.getName();
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	private void connect(IPhysicalOperator operator) {
 		if (operator instanceof ISource) {
-			ISource<In> source = (ISource<In>) operator;
+			ISource<I> source = (ISource<I>) operator;
 			source.connectSink((ISink<IStreamObject<?>>) this, operatorPortMap.get(operator), 0,
 					operator.getOutputSchema());
 		} else {
 			ISink<?> sink = (ISink<?>) operator;
 			Collection<?> subsToSource = sink.getSubscribedToSource();
 			for (Object sourceSub : subsToSource) {
-				AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> physSourceSub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>) sourceSub;
+				AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> physSourceSub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) sourceSub;
 
-				ISource<In> source = (ISource<In>) physSourceSub.getSource();
+				ISource<I> source = (ISource<I>) physSourceSub.getSource();
 				int sourceOutPort = determineSourceOutPort(source, operator);
 
-				physSourceSub.getSource().connectSink((ISink<IStreamObject<?>>) this,
-						operatorPortMap.get(operator), sourceOutPort,
-						physSourceSub.getSource().getOutputSchema());
+				physSourceSub.getSource().connectSink((ISink<IStreamObject<?>>) this, operatorPortMap.get(operator),
+						sourceOutPort, physSourceSub.getSource().getOutputSchema());
 			}
 		}
 
 		connectedOperators.add(operator);
 	}
 
-	private int determineSourceOutPort(ISource<In> sourceOperator,
-			IPhysicalOperator targetOperator) {
-		Collection<AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>> subsToSinks = sourceOperator
+	private int determineSourceOutPort(ISource<I> sourceOperator, IPhysicalOperator targetOperator) {
+		Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> subsToSinks = sourceOperator
 				.getSubscriptions();
 		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sinkSub : subsToSinks) {
 			if (sinkSub.getSource().equals(targetOperator)) {
@@ -473,7 +456,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	@SuppressWarnings("unchecked")
 	private void disconnect(IPhysicalOperator operator) {
 		if (operator instanceof ISource) {
-			ISource<In> source = (ISource<In>) operator;
+			ISource<I> source = (ISource<I>) operator;
 			source.disconnectSink((ISink<IStreamObject<?>>) this, operatorPortMap.get(operator), 0,
 					operator.getOutputSchema());
 		} else {
@@ -481,21 +464,20 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 			Collection<?> subsToSource = sink.getSubscribedToSource();
 
 			for (Object sourceSub : subsToSource) {
-				AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> physSourceSub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>) sourceSub;
+				AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> physSourceSub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) sourceSub;
 
-				ISource<In> source = (ISource<In>) physSourceSub.getSource();
+				ISource<I> source = (ISource<I>) physSourceSub.getSource();
 				int sourceOutPort = determineSourceOutPort(source, operator);
 
-				physSourceSub.getSource().disconnectSink((ISink<IStreamObject<?>>) this,
-						operatorPortMap.get(operator), sourceOutPort,
-						physSourceSub.getSource().getOutputSchema());
+				physSourceSub.getSource().disconnectSink((ISink<IStreamObject<?>>) this, operatorPortMap.get(operator),
+						sourceOutPort, physSourceSub.getSource().getOutputSchema());
 			}
 		}
 
 		connectedOperators.remove(operator);
 	}
 
-	private void collectElement(In element, int port) {
+	private void collectElement(I element, int port) {
 		synchronized (collectedObjects) {
 			collectedObjects.add(element);
 			collectedPorts.add(port);
@@ -503,7 +485,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	private void processCollectedElements() {
-		if (collectedObjects.size() > 0) {
+		if (!collectedObjects.isEmpty()) {
 			synchronized (collectedObjects) {
 				// gesammelte Daten nachträglich verarbeiten lassen
 				for (int i = 0; i < collectedObjects.size(); i++) {
@@ -515,37 +497,35 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		}
 	}
 
-	private List<ISubscription<ISource<IStreamObject<?>>,?>> determineSubscriptions(
+	private List<ISubscription<ISource<IStreamObject<?>>, ?>> determineSubscriptions(
 			Collection<IPhysicalOperator> operators) {
-		List<ISubscription<ISource<IStreamObject<?>>,?>> subscriptions = Lists
-				.newLinkedList();
+		List<ISubscription<ISource<IStreamObject<?>>, ?>> subs = Lists.newLinkedList();
 		for (IPhysicalOperator operator : operators) {
-			subscriptions
-					.addAll(determineSubscriptions(operator));
+			subs.addAll(determineSubscriptions(operator));
 		}
-		return subscriptions;
+		return subs;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ISubscription<ISource<IStreamObject<?>>,?>> determineSubscriptions(
-			IPhysicalOperator operator) {
-		// Preconditions.checkArgument(operator.isSink() || operator.isSource(),
-				//"Operator must be sink and/or source!");
+	private List<ISubscription<ISource<IStreamObject<?>>, ?>> determineSubscriptions(IPhysicalOperator operator) {
+		Preconditions.checkArgument(operator.isSink() || operator.isSource(), "Operator must be sink and/or source!");
 
-		List<ISubscription<ISource<IStreamObject<?>>,?>> subs = Lists.newLinkedList();
+		List<ISubscription<ISource<IStreamObject<?>>, ?>> subs = Lists.newLinkedList();
 
 		if (operator.isSource()) {
-			subs.add((ISubscription<ISource<IStreamObject<?>>,?>) new ControllablePhysicalSubscription<ISource<IStreamObject<?>>,ISink<IStreamObject<?>>>(
-					 (ISource<IStreamObject<?>>)operator, (ISink<IStreamObject<?>>)this, 0, 0, operator.getOutputSchema()));
+			subs.add(
+					(ISubscription<ISource<IStreamObject<?>>, ?>) new ControllablePhysicalSubscription<>(
+							(ISource<IStreamObject<?>>) operator, (ISink<IStreamObject<?>>) this, 0, 0,
+							operator.getOutputSchema()));
 		} else {
-			Collection<?> subscriptions = ((ISink<?>) operator)
-					.getSubscribedToSource();
+			Collection<?> subToSource = ((ISink<?>) operator).getSubscribedToSource();
 
-			for (Object subscription : subscriptions) {
-				AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>) subscription;
-				subs.add((ISubscription<ISource<IStreamObject<?>>,?>) new ControllablePhysicalSubscription<ISource<IStreamObject<?>>,ISink<IStreamObject<?>>>(
-						 sub.getSource(), (ISink<IStreamObject<?>>)this, sub.getSinkInPort(), sub
-								.getSourceOutPort(), sub.getSchema()));
+			for (Object subscription : subToSource) {
+				AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) subscription;
+				subs.add(
+						(ISubscription<ISource<IStreamObject<?>>, ?>) new ControllablePhysicalSubscription<>(
+								sub.getSource(), (ISink<IStreamObject<?>>) this, sub.getSinkInPort(),
+								sub.getSourceOutPort(), sub.getSchema()));
 			}
 		}
 
@@ -559,8 +539,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	@Override
 	public void setDebug(boolean debug) {
-		// TODO Auto-generated method stub
-
+		// no needed here
 	}
 
 	@Override
@@ -570,56 +549,52 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	@Override
 	public void suspend(IOperatorOwner id) {
-		// TODO Auto-generated method stub
-
+		// no needed here
 	}
 
 	@Override
 	public void resume(IOperatorOwner id) {
-		// TODO Auto-generated method stub
-
+		// no needed here
 	}
 
 	@Override
 	public void partial(IOperatorOwner id, int sheddingFactor) {
-		// TODO Auto-generated method stub
-
+		// no needed here
 	}
 
 	@Override
 	public void setLogicalOperator(ILogicalOperator op) {
-		// TODO Auto-generated method stub
-
+		// no needed here
 	}
 
 	@Override
 	public ILogicalOperator getLogicalOperator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int getInputPortCount() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void start(IOperatorOwner id) throws StartFailedException {
-		// TODO Auto-generated method stub
+	public void setInputPortCount(int count) {
+		// no needed here
+	}
 
+	@Override
+	public void start(IOperatorOwner id){
+		// no needed here
 	}
 
 	@Override
 	public boolean isStarted() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void subscribeToSource(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> Subscription) {
-		// TODO Auto-generated method stub
-		
+	public void subscribeToSource(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> subscription) {
+		// no needed here
 	}
 
 	@Override

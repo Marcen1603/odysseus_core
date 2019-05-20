@@ -43,6 +43,14 @@ public interface IStreamObject<M extends IMetaAttribute> extends
      * @return A new instance of the streaming object class.
      */
     IStreamable newInstance();
+    
+    /**
+     * Creates a copy instance of the current streaming object without any content.
+     * 
+     * @return A new instance of the streaming object class.
+     */
+    IStreamable copyAndReturnEmptyInstance();
+    
 
     /**
      * Hash code using metadata too

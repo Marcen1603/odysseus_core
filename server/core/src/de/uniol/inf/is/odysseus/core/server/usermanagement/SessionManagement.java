@@ -30,7 +30,7 @@ public class SessionManagement implements ISessionManagement {
 	private final List<ISessionListener> sessionListener = new CopyOnWriteArrayList<>();
 
 	private UserManagementProvider userManagementProvider;
-	
+
 	public static SessionManagement instance;
 
 	/*
@@ -68,9 +68,11 @@ public class SessionManagement implements ISessionManagement {
 
 	@Override
 	public ISession login(String token) {
-		for (ISession session : this.sessionStore.values()) {
-			if (session.getToken().equals(token)) {
-				return session;
+		if (token != null) {
+			for (ISession session : this.sessionStore.values()) {
+				if (session.getToken().equals(token)) {
+					return session;
+				}
 			}
 		}
 		return null;
@@ -143,7 +145,7 @@ public class SessionManagement implements ISessionManagement {
 	void setInstance() {
 		instance = this;
 	}
-	
+
 	public void setUserManagementProvider(UserManagementProvider userManagementProvider) {
 		this.userManagementProvider = userManagementProvider;
 	}

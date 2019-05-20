@@ -45,10 +45,8 @@ import de.uniol.inf.is.odysseus.rcp.views.ResourceInformationLabelProvider;
 
 public class SourcesView extends ViewPart implements IUpdateEventListener {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SourcesView.class);
-	private static final InfoService INFO = InfoServiceFactory
-			.getInfoService(SourcesView.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
+	private static final InfoService INFO = InfoServiceFactory.getInfoService(SourcesView.class);
 
 	private Composite parent;
 	private TreeViewer viewer;
@@ -66,23 +64,20 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 			stackLayout = new StackLayout();
 			parent.setLayout(stackLayout);
 
-			setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
-					| SWT.MULTI));
-			getTreeViewer().setContentProvider(
-					new ResourceInformationContentProvider());
-			getTreeViewer().setLabelProvider(
-					new ResourceInformationLabelProvider("source"));
+			setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
+			getTreeViewer().setContentProvider(new ResourceInformationContentProvider());
+			getTreeViewer().setLabelProvider(new ResourceInformationLabelProvider("source"));
 
 			int operations = DND.DROP_MOVE;
-			Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
-					.getTransfer() };
+			Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };
 			getTreeViewer().addDragSupport(operations, transferTypes,
 					new OperatorDragListener(getTreeViewer(), "STREAM"));
 
 			refresh();
 			registerForDatadictionaryEvents();
-			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
-					IUpdateEventListener.SESSION, null);
+			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.SESSION, null);
+			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.QUERY,
+					OdysseusRCPPlugIn.getActiveSession());
 			LOG.trace("Registered update event listener for sources View");
 
 			// UserManagement.getInstance().addUserManagementListener(this);
@@ -90,8 +85,7 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 			// Contextmenu
 			MenuManager menuManager = new MenuManager();
-			Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
-					.getControl());
+			Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
 			// Set the MenuManager
 			getTreeViewer().getControl().setMenu(contextMenu);
 			getSite().registerContextMenu(menuManager, getTreeViewer());
@@ -111,19 +105,16 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	private void registerForDatadictionaryEvents() {
 		if (OdysseusRCPPlugIn.getActiveSession() != null) {
-			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
-					IUpdateEventListener.DATADICTIONARY,
+			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY,
 					OdysseusRCPPlugIn.getActiveSession());
 		}
 	}
 
 	@Override
 	public void dispose() {
-		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
-				IUpdateEventListener.DATADICTIONARY,
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY,
 				OdysseusRCPPlugIn.getActiveSession());
-		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
-				IUpdateEventListener.SESSION, null);
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this, IUpdateEventListener.SESSION, null);
 		LOG.trace("Deregistered update event listener for sources View");
 		super.dispose();
 	}
@@ -174,21 +165,15 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 						isRefreshing.set(false);
 
 						if (!getTreeViewer().getTree().isDisposed()) {
-							List<ViewInformation> streamsAndViews = OdysseusRCPPlugIn
-									.getExecutor()
-									.getStreamsAndViewsInformation(
-											OdysseusRCPPlugIn
-													.getActiveSession());
+							List<ViewInformation> streamsAndViews = OdysseusRCPPlugIn.getExecutor()
+									.getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
 							if (streamsAndViews != null) {
-								LOG.trace("Got {} streams and Views.",
-										streamsAndViews.size());
+								LOG.trace("Got {} streams and Views.", streamsAndViews.size());
 								getTreeViewer().setInput(streamsAndViews);
 								if (!streamsAndViews.isEmpty()) {
-									stackLayout.topControl = getTreeViewer()
-											.getTree();
+									stackLayout.topControl = getTreeViewer().getTree();
 								}
-								setPartName("Sources ("
-										+ streamsAndViews.size() + ")");
+								setPartName("Sources (" + streamsAndViews.size() + ")");
 							} else {
 								LOG.trace("Got no streams and views");
 								stackLayout.topControl = label;
@@ -203,12 +188,8 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 						}
 						LOG.trace("Refresh finished");
 					} catch (Exception e) {
-						LOG.error(
-								"Exception during setting input for treeViewer in sourcesView",
-								e);
-						INFO.error(
-								"Exception during setting input for treeViewer in sourcesView",
-								e);
+						LOG.error("Exception during setting input for treeViewer in sourcesView", e);
+						INFO.error("Exception during setting input for treeViewer in sourcesView", e);
 					}
 				}
 
@@ -224,8 +205,8 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	@Override
 	public void eventOccured(String type) {
-		LOG.trace("Got update event "+type);
-		if (type == IUpdateEventListener.SESSION){
+		LOG.trace("Got update event " + type);
+		if (type == IUpdateEventListener.SESSION) {
 			registerForDatadictionaryEvents();
 		}
 		refresh();

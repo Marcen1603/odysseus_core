@@ -245,4 +245,8 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		result.put("Implementation:", this.getClass().getSimpleName());
 		return result;
 	}
+	
+	protected Map<Object, List<T>> getBuffers() {
+		return buffers;
+	}
 }

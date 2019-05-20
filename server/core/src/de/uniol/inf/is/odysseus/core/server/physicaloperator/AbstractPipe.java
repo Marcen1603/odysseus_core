@@ -28,12 +28,10 @@ import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
@@ -64,7 +62,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
-		protected void process_open() throws OpenFailedException {
+		protected void process_open(){
 			AbstractPipe.this.delegatedProcessOpen();
 		}
 
@@ -129,7 +127,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
 	}
 
-	final protected DelegateSink delegateSink = new DelegateSink();
+	protected final DelegateSink delegateSink = new DelegateSink();
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
 	private boolean metadataCalculated = false;
 
@@ -150,13 +148,18 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	@Override
-	final public boolean isSink() {
+	public final boolean isSink() {
 		return true;
 	}
 
 	@Override
-	final public int getInputPortCount() {
+	public final int getInputPortCount() {
 		return this.delegateSink.noInputPorts;
+	}
+	
+	@Override
+	public void setInputPortCount(int count) {
+		this.delegateSink.setInputPortCount(count);
 	}
 
 	public final SDFSchema getInputSchema(int port) {
@@ -165,7 +168,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	// Returns the input mode of input port 0
 	// Deprecated soon, use getInputMode instead
-	abstract public OutputMode getOutputMode();
+	public abstract OutputMode getOutputMode();
 
 	public enum InputMode {
 		SINK, // Elements entering this operator will not leave this operator
@@ -191,27 +194,20 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 	}
 
-	// @Override
-	// public boolean needsClone(int port) {
-	// return getOutputMode() == OutputMode.MODIFIED_INPUT
-	// || super.needsClone(port);
-	// }
-
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
 
 	@Override
-	final synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
+	public final synchronized void open(IOperatorOwner owner){
 		didNotPropagateDoneBefore = true;
 		reconnectSinks();
 		this.delegateSink.open(owner);
 	}
 
 	@Override
-	final synchronized public void open(ISink<? extends W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
-			throws OpenFailedException {
+	public final synchronized void open(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		didNotPropagateDoneBefore = true;
 		// First: Call open for the source part. Activate subscribers and call
 		// process_open
@@ -221,7 +217,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		this.delegateSink.open(callPath, forOwners);
 	}
 
-	public void delegatedProcessOpen() throws OpenFailedException {
+	public void delegatedProcessOpen(){
 		process_open();
 	}
 
@@ -240,7 +236,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	 * this method.
 	 */
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() {
 	}
 
 	// ------------------------------------------------------------------------
@@ -248,20 +244,19 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 
 	@Override
-	final synchronized public void start(IOperatorOwner owner) throws OpenFailedException {
+	public final synchronized void start(IOperatorOwner owner) {
 		this.delegateSink.start(owner);
 	}
 
 	@Override
-	final synchronized public void start(ISink<? extends W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
-			throws OpenFailedException {
+	public final synchronized void start(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		super.start(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.start(callPath, forOwners);
 	}
 
 	@Override
-	protected void process_start() throws StartFailedException {
+	protected void process_start(){
 	}
 
 	@Override
@@ -273,14 +268,14 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// SUSPEND/RESUME
 	// ------------------------------------------------------------------------
 	@Override
-	final public void suspend(ISink<? extends W> caller, int sourcePort, int sinkPort,
+	public final void suspend(ISink<? extends W> caller, int sourcePort, int sinkPort,
 			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		super.suspend(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.suspend(callPath, forOwners);
 	}
 
 	@Override
-	final public void resume(ISink<? extends W> caller, int sourcePort, int sinkPort,
+	public final void resume(ISink<? extends W> caller, int sourcePort, int sinkPort,
 			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		super.resume(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.resume(callPath, forOwners);
@@ -303,30 +298,21 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		processPunctuation(punctuation, port);
 	}
 
-	abstract protected void process_next(R object, int port);
-
-	// MUST BE OVERWRITTEN IN EVERY OPERATOR --> ELSE OUT OF ORDER ELEMENTS COULD
-	// OCCUR TO EASY
-
-	// @Override
-	// public void processPunctuation(IPunctuation punctuation, int port) {
-	// sendPunctuation(punctuation);
-	// }
+	protected abstract void process_next(R object, int port);
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public void close(ISink<? extends W> caller, int sourcePort, int sinkPort,
+	public final void close(ISink<? extends W> caller, int sourcePort, int sinkPort,
 			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
-		// logger.trace("CLOSE "+getName());
 		this.delegateSink.close(callPath, forOwners);
 		super.close(caller, sourcePort, sinkPort, callPath, forOwners);
 	}
 
 	@Override
-	final public void close(IOperatorOwner owner) {
+	public final void close(IOperatorOwner owner) {
 		// Hint: This method can only be called
 		// from a query
 		this.delegateSink.close(owner);
@@ -359,7 +345,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	@Override
-	final public void done(int port) {
+	public final void done(int port) {
 		process_done(port);
 		this.delegateSink.done(port);
 		if (isDone() && didNotPropagateDoneBefore) {
@@ -368,15 +354,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 	}
 
-	// @Override
-	// final protected void propagateDone() {
-	// super.propagateDone();
-	// if (isRoot()) {
-	// for (IOperatorOwner owner : getOwner()) {
-	// owner.done(this);
-	// }
-	// }
-	// }
 
 	/**
 	 * Every ISink can have additional conditions, if it is done (e.g. in a buffer
@@ -446,7 +423,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	@Override
-	final public List<AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>> getSubscribedToSource() {
+	public final List<AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>> getSubscribedToSource() {
 		return Collections.unmodifiableList(delegateSink.getSubscribedToSource());
 	}
 
@@ -532,9 +509,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		for (AbstractPhysicalSubscription<?, ?> s1 : thisSubs) {
 			boolean foundmatch = false;
 			for (AbstractPhysicalSubscription<?, ?> s2 : otherSubs) {
-				// This will not work anymore, as subscriptions now contain sink and source!
-				// if (s1.equals(s2)) {
-
 				if ((s1.getSource() == s2.getSource()) && s1.getSinkInPort() == s2.getSinkInPort()
 						&& s1.getSourceOutPort() == s2.getSourceOutPort()
 						&& ((s1.getSchema() == null && s2.getSchema() == null)

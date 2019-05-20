@@ -170,22 +170,17 @@ public class ClientConnectionContribution implements ILoginContribution {
 		String tenantname = loginContrib.getTenant();
 		
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-		String wsdlLocation = "http://"+host+":"+port+"/"+instance+"?wsdl";
 		ISession session = null;
 		if (executor instanceof IClientExecutor) {
-			String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
-			String service = "WebserviceServerService";
-			String connectString = wsdlLocation + ";" + serviceNamespace + ";" + service;
-			//connected = ((IClientExecutor) executor).connect(connectString);
-			session = ((IClientExecutor) executor).login(username, password.getBytes(), tenantname, connectString);
+			session = ((IClientExecutor) executor).login(username, password.getBytes(), tenantname, host, Integer.parseInt(port), instance);
 		}
 
 		if (session != null) {
-			StatusBarManager.getInstance().setMessage("Automatically connected to " + wsdlLocation);
+			StatusBarManager.getInstance().setMessage("Automatically connected to " + host+":"+port);
 			// TODO Store session for every connection
 			OdysseusRCPPlugIn.setActiveSession(session);
 		}else{
-			LOG.error("Could not connect to server at '" +wsdlLocation+ "'");
+			LOG.error("Could not connect to server at '" +host+":"+port+ "'");
 			return false;
 		}
 

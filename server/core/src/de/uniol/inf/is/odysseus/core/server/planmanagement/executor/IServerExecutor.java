@@ -289,6 +289,8 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	public void subscribeToAllSchedulerEvents(IEventListener listener);
 	public void unsubscribeFromAllSchedulerEvents(IEventListener listener);
 
+	IPhysicalQuery getPhysicalQueryByString(String idOrName, ISession session);
+
 
 
 }
