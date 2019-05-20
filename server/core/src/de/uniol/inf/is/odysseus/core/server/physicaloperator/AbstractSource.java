@@ -233,7 +233,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	protected final boolean isRoot() {
-		return !sinkSubscriptions.isEmpty();
+		return sinkSubscriptions.isEmpty();
 	}
 
 	protected final boolean hasSingleConsumer(int port) {
