@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -11,25 +12,36 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 
 /**
  * Currently, this class is only used for ConvertPO
+ * 
  * @author Marco Grawunder
  *
  */
 
 public class StringTransportHandler extends AbstractTransportHandler {
 
-	final InputStream inputStream;
+	private static final String CHARSET = "charset";
+	private static final String DEFAULT_CHARSET = "utf-8";
 	
+	private static final String NEWLINE = "newline";
+	private static final boolean DEFAULT_NEWLINE = true;
+	
+
+	final InputStream inputStream;
+
 	public StringTransportHandler(List<String> output, OptionMap options) {
+		boolean newline = options.getBoolean(NEWLINE, DEFAULT_NEWLINE);
+		Charset charset = Charset.forName(options.get(CHARSET, DEFAULT_CHARSET));
+		
 		StringBuffer s = new StringBuffer();
-		for (int i=0;i<output.size();i++){
+		for (int i = 0; i < output.size(); i++) {
 			s.append(output.get(i));
-			if (i<s.length()-1){
+			if (i < s.length() - 1 && newline) {
 				s.append("\n");
 			}
 		}
-		
-		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(getCharset()));
-		
+
+		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(charset));
+
 	}
 
 	@Override
@@ -39,8 +51,7 @@ public class StringTransportHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, OptionMap options) {
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -86,17 +97,17 @@ public class StringTransportHandler extends AbstractTransportHandler {
 
 	}
 
-	public static StringTransportHandler getInstance(List<String> output,  OptionMap options ) {
+	public static StringTransportHandler getInstance(List<String> output, OptionMap options) {
 		StringTransportHandler instance = new StringTransportHandler(output, options);
 		return instance;
 	}
-	
-    @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
-    	if(!(o instanceof StringTransportHandler)) {
-    		return false;
-    	}
-    	
-    	return true;
-    }
+
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+		if (!(o instanceof StringTransportHandler)) {
+			return false;
+		}
+
+		return true;
+	}
 }
