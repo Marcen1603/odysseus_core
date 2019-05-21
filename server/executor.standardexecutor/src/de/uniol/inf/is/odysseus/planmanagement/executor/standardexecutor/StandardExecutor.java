@@ -975,10 +975,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE, queryToRemove);
 				LOG.info("Removing Query " + queryToRemove.getID());
 				this.executionPlan.removeQuery(queryToRemove.getID(), caller);
-				
+
 				// Remove subqueries
-				for (IPhysicalQuery p:queryToRemove.getSubqueries()) {
-					removeQuery(caller, p);
+				for (IPhysicalQuery p : queryToRemove.getSubqueries()) {
+					if (p != null) {
+						removeQuery(caller, p);
+					}
 				}
 
 				LOG.debug("Removing Ownership " + queryToRemove.getID());
@@ -1032,7 +1034,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				LOG.info("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(
 						new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
-	
+
 				if (executionPlan.isEmpty()) {
 					schedulerManager.getActiveScheduler().clear();
 				}
@@ -1160,8 +1162,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.info("Stopping query (ID: " + queryID + ")....");
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID, caller);
-		ExecutorPermission.validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
-		stopQuery(queryToStop);
+		if (queryToStop != null) {
+			ExecutorPermission.validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
+			stopQuery(queryToStop);
+		}
 	}
 
 	@Override
