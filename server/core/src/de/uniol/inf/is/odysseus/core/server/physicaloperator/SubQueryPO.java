@@ -14,9 +14,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryStarter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IQueryStarter {
 
@@ -24,9 +26,13 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 	private static final Logger LOG = LoggerFactory.getLogger(SubQueryPO.class);
 	private final IPhysicalQuery query;
 	private final List<ConnectorPO> leafs = new ArrayList<>();
+	private final IServerExecutor executor;
+	private final ISession session;
 
 
-	public SubQueryPO(IPhysicalQuery query) {
+	public SubQueryPO(IPhysicalQuery query, IServerExecutor executor, ISession session) {
+		this.executor = executor;
+		this.session = session;
 		this.query = query;
 		List<IPhysicalOperator> ops = query.getLeafSources();
 		for(IPhysicalOperator o:ops) {
@@ -84,7 +90,8 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
 			s.connectSink((ISink<IStreamObject<?>>) this, sinkInPort++, 0, s.getOutputSchema());
 		}
-		query.start(this);
+		executor.startQuery(query.getID(), session);
+		//query.start(this);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -110,9 +117,14 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
 			s.disconnectSink((ISink<IStreamObject<?>>) this, sinkInPort++, 0, s.getOutputSchema());
 		}
-		query.stop();
+		executor.stopQuery(query.getID(), session);
 	}
 
+	@Override
+	protected void process_done(int port) {
+		LOG.warn("DONE CURRENTLY NOT IMPLEMENTED");
+	}
+	
 	@Override
 	public void done(PhysicalQuery physicalQuery) {
 		propagateDone();

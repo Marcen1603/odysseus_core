@@ -58,7 +58,7 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		
 		SubQueryPO<IStreamObject<?>> po;
 		try {
-			po = new SubQueryPO<>(pquery);
+			po = new SubQueryPO<>(pquery, executor, getCaller());
 		}catch(Exception e) {
 			executor.removeQuery(pquery.getID(), getCaller());
 			throw new TransformationException(e);
