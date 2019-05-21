@@ -69,8 +69,14 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_close() {
+		int sinkInPort = MINSUBQUERYPORT;
+		for (IPhysicalOperator root : query.getRoots()) {
+			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
+			s.disconnectSink((ISink<IStreamObject<?>>) this, sinkInPort++, 0, s.getOutputSchema());
+		}
 		query.stop();
 	}
 
