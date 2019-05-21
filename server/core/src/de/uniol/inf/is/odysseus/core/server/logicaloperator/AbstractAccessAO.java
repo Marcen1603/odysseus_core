@@ -418,7 +418,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		}
 		// For cases where the schema depends on the options, create a real
 		// instance of transport handler
-		if (getOverWrittenSchema() == null) {
+		if (getOverWrittenSchema() == null && transportHandler != null) {
 			ITransportHandler th =  RegistryBinder.getTransportHandlerRegistry().getInstance(transportHandler, ph, options);
 			setOverWrittenSchema(th != null ? th.getSchema() : null);
 		}
