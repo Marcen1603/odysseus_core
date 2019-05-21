@@ -258,5 +258,10 @@ public interface IPhysicalQuery extends IMonitoringDataProvider,
 	 * at creation time. This method forces an update
 	 */
 	void update();
+	
+	// Subqueries
+	void updateSubqueries();
+	
+	List<IPhysicalQuery> getSubqueries();
 
 }

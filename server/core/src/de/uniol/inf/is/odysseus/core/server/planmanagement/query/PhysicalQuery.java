@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SinkPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SubQueryPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -64,6 +65,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * The logical query, this physical query is build from
 	 */
 	private ILogicalQuery query;
+	
+	/**
+	 * Subqueries, connected to this query
+	 */
+	private List<IPhysicalQuery> subqueries = new ArrayList<>();
+	
 
 	/**
 	 * The name of the query
@@ -1131,5 +1138,20 @@ public class PhysicalQuery implements IPhysicalQuery {
 		} else {
 			throw new IllegalArgumentException(String.format("Operatar %s and %s are not connected", parent, child));
 		}
+	}
+	
+	@Override
+	public void updateSubqueries() {
+		update();
+		for(IPhysicalOperator p:physicalChilds) {
+			if (p instanceof SubQueryPO) {
+			 this.subqueries.add(((SubQueryPO)p).getPhysicalQuery());
+			}
+		}
+	}
+	
+	@Override
+	public List<IPhysicalQuery> getSubqueries() {
+		return this.subqueries;
 	}
 }
