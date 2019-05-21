@@ -91,7 +91,6 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 			s.connectSink((ISink<IStreamObject<?>>) this, sinkInPort++, 0, s.getOutputSchema());
 		}
 		executor.startQuery(query.getID(), session);
-		//query.start(this);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -122,7 +121,17 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 
 	@Override
 	protected void process_done(int port) {
-		LOG.warn("DONE CURRENTLY NOT IMPLEMENTED");
+		
+		// Output from connected query
+		if (port >= MINSUBQUERYPORT) {
+			process_done(port-MINSUBQUERYPORT);
+		} else {
+			if (port < leafs.size()) {
+				((ISource<T>) leafs.get(port)).propagateDone();
+			} else {
+				throw new RuntimeException("Input for not connected operator");
+			}
+		}
 	}
 	
 	@Override
