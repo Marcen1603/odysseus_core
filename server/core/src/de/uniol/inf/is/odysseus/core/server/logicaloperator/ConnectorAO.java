@@ -13,7 +13,8 @@ public class ConnectorAO extends AbstractAccessAO{
 
 	public ConnectorAO() {
 		setWrapper("GenericPush");
-		setTransportHandler("String");
+		// Because of AbstractAccessAO
+		setTransportHandler(null);
 	}
 
 	public ConnectorAO(ConnectorAO connectorAO) {
