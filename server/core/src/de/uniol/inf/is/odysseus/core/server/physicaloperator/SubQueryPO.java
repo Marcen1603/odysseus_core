@@ -24,6 +24,10 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 		this.query = query;
 	}
 
+	public IPhysicalQuery getPhysicalQuery() {
+		return query;
+	}
+	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		LOG.warn("Punctuations are currently not handled by subquerypo");
@@ -74,5 +78,6 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 	public void done(PhysicalQuery physicalQuery) {
 		propagateDone();
 	}
+
 
 }
