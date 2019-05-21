@@ -55,8 +55,16 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 				throw new TransformationException("SubqueryPO cannot have sinks at top!");
 			}
 		}
-
-		defaultExecute(operator, new SubQueryPO<IStreamObject<?>>(pquery), config, true, true);
+		
+		SubQueryPO<IStreamObject<?>> po;
+		try {
+			po = new SubQueryPO<>(pquery);
+		}catch(Exception e) {
+			executor.removeQuery(pquery.getID(), getCaller());
+			throw new TransformationException(e);
+		}
+		
+		defaultExecute(operator, po , config, true, true);
 
 	}
 
