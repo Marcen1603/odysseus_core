@@ -46,7 +46,7 @@ public class TConnectorAORule extends AbstractTransformationRule<ConnectorAO> {
 	@Override
 	public void execute(ConnectorAO operator, TransformationConfiguration config) throws RuleException {
 
-		defaultExecute(operator, new ConnectorPO(), config, true, true);
+		defaultExecute(operator, new ConnectorPO(operator.getPort()), config, true, true);
 	}
 
 	@Override

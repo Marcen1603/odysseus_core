@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,9 +23,39 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 	private static final int MINSUBQUERYPORT = 100000;
 	private static final Logger LOG = LoggerFactory.getLogger(SubQueryPO.class);
 	private final IPhysicalQuery query;
+	private final List<ConnectorPO> leafs = new ArrayList<>();
+
 
 	public SubQueryPO(IPhysicalQuery query) {
 		this.query = query;
+		List<IPhysicalOperator> ops = query.getLeafSources();
+		for(IPhysicalOperator o:ops) {
+			if (o instanceof ConnectorPO) {
+				leafs.add((ConnectorPO) o);
+			}
+		}
+		Collections.sort(leafs, new Comparator<ConnectorPO>() {
+
+			@Override
+			public int compare(ConnectorPO o1, ConnectorPO o2) {
+				return Integer.compare(o1.getPort(), o2.getPort());
+			}
+		});
+		
+		// Check if all ports are different and continous
+		Iterator<ConnectorPO> iter = leafs.iterator();
+		int lastPort = iter.next().getPort();
+		if (lastPort != 0) {
+			throw new IllegalArgumentException("Connector ports of SubQuery must start with 0!");
+		}
+		while(iter.hasNext()) {
+			int currentPort = iter.next().getPort();
+			if (lastPort +1 != currentPort) {
+				throw new IllegalArgumentException("Connector ports of SubQuery must be continious!");
+			}
+			lastPort = currentPort;
+		}
+		
 	}
 
 	public IPhysicalQuery getPhysicalQuery() {
@@ -60,7 +94,6 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 		if (port >= MINSUBQUERYPORT) {
 			transfer(object, port-MINSUBQUERYPORT);
 		} else {
-			List<IPhysicalOperator> leafs = query.getLeafSources();
 			if (port < leafs.size()) {
 				((ISource<T>) leafs.get(port)).transfer(object);
 			} else {
