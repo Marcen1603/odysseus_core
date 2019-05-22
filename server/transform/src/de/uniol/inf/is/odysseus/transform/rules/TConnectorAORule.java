@@ -45,7 +45,8 @@ public class TConnectorAORule extends AbstractTransformationRule<ConnectorAO> {
 
 	@Override
 	public void execute(ConnectorAO operator, TransformationConfiguration config) throws RuleException {
-
+		// Remark: There is no need to handle metadata as they will come from the former operator
+		// (this is just a plugin the receive incomming objects). 
 		defaultExecute(operator, new ConnectorPO(operator.getPort()), config, true, true);
 	}
 
