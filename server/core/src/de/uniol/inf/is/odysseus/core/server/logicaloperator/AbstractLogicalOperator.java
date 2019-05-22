@@ -634,6 +634,11 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		// Nothing special in logical Operators
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
+	
+	@Override
+	public void disconnectSink(LogicalSubscription subscription) {
+		unsubscribeSink(subscription);
+	}
 
 //	@Override
 //	public void updateSchemaInfos() {
