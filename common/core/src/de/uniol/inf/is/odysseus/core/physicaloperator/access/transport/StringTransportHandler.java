@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -18,21 +17,19 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  */
 
 public class StringTransportHandler extends AbstractTransportHandler {
-
-	private static final String CHARSET = "charset";
-	private static final String DEFAULT_CHARSET = "utf-8";
 	
-	private static final String NEWLINE = "newline";
+	private static final String NEWLINE_PARAM = "newline";
 	private static final boolean DEFAULT_NEWLINE = true;
 	
 
 	final InputStream inputStream;
 
 	public StringTransportHandler(List<String> output, OptionMap options) {
-		boolean newline = options.getBoolean(NEWLINE, DEFAULT_NEWLINE);
-		Charset charset = Charset.forName(options.get(CHARSET, DEFAULT_CHARSET));
+		boolean newline = options.getBoolean(NEWLINE_PARAM, DEFAULT_NEWLINE);
+
+		initCharset(options);
 		
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < output.size(); i++) {
 			s.append(output.get(i));
 			if (i < s.length() - 1 && newline) {
@@ -40,7 +37,7 @@ public class StringTransportHandler extends AbstractTransportHandler {
 			}
 		}
 
-		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(charset));
+		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(getCharset()));
 
 	}
 
