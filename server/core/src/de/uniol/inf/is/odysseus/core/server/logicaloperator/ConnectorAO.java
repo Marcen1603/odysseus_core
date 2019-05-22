@@ -6,6 +6,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
+/**
+ * A logical operator than can be used to connect other plans. Typically, this operator is used in combination with the
+ * SubQuery operator. A Connector is an access operator (with all its capabilities, e.g. to define schemas, types and metadata)
+ * 
+ * @author Marco Grawunder
+ *
+ */
+
 @LogicalOperator(name = "Connector", minInputPorts = 0, maxInputPorts = Integer.MAX_VALUE, category = {
 		LogicalOperatorCategory.PLAN }, doc = "This operator serves as a representer. Other plans can connect to this Connector")
 public class ConnectorAO extends AbstractAccessAO{
@@ -16,8 +24,6 @@ public class ConnectorAO extends AbstractAccessAO{
 	
 	public ConnectorAO() {
 		setWrapper("GenericPush");
-		// Because of AbstractAccessAO
-		setTransportHandler(null);
 	}
 
 	public ConnectorAO(ConnectorAO connectorAO) {
