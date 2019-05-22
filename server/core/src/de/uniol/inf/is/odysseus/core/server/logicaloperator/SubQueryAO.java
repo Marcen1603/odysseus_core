@@ -30,6 +30,7 @@ public class SubQueryAO extends AbstractLogicalOperator {
 	}
 	
 	public SubQueryAO(SubQueryAO subQueryAO) {
+		super(subQueryAO);
 		this.queryParser = subQueryAO.queryParser;
 		this.queryText = subQueryAO.queryText;
 		this.queryFileName = subQueryAO.queryFileName;
