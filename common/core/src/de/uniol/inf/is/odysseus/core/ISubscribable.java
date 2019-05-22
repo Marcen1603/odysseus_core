@@ -64,6 +64,7 @@ public interface ISubscribable<O, S extends ISubscription<?,O>> {
 	 */
 	void connectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	void disconnectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	void disconnectSink(S subscription);
 	Collection<S> getConnectedSinks();
 	
 }

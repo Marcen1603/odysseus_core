@@ -864,8 +864,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		@SuppressWarnings("unchecked")
 		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<>(
 				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
-		removeActiveSubscription(sub);
-		connectedSinks.remove(sub);
+		disconnectSink(sub);
+	}
+	
+	@Override
+	public void disconnectSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		removeActiveSubscription(subscription);
+		connectedSinks.remove(subscription);
 	}
 
 	protected final void closeAllSinkSubscriptions() {
