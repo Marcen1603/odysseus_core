@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -29,13 +31,12 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 	private final IServerExecutor executor;
 	private final ISession session;
 
-
 	public SubQueryPO(IPhysicalQuery query, IServerExecutor executor, ISession session) {
 		this.executor = executor;
 		this.session = session;
 		this.query = query;
 		List<IPhysicalOperator> ops = query.getLeafSources();
-		for(IPhysicalOperator o:ops) {
+		for (IPhysicalOperator o : ops) {
 			if (o instanceof ConnectorPO) {
 				leafs.add((ConnectorPO) o);
 			}
@@ -47,27 +48,27 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 				return Integer.compare(o1.getPort(), o2.getPort());
 			}
 		});
-		
+
 		// Check if all ports are different and continous
 		Iterator<ConnectorPO> iter = leafs.iterator();
 		int lastPort = iter.next().getPort();
 		if (lastPort != 0) {
 			throw new IllegalArgumentException("Connector ports of SubQuery must start with 0!");
 		}
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			int currentPort = iter.next().getPort();
-			if (lastPort +1 != currentPort) {
+			if (lastPort + 1 != currentPort) {
 				throw new IllegalArgumentException("Connector ports of SubQuery must be continious!");
 			}
 			lastPort = currentPort;
 		}
-		
+
 	}
 
 	public IPhysicalQuery getPhysicalQuery() {
 		return query;
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		LOG.warn("Punctuations are currently not handled by subquerypo");
@@ -98,7 +99,7 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 	protected void process_next(T object, int port) {
 		// Output from connected query
 		if (port >= MINSUBQUERYPORT) {
-			transfer(object, port-MINSUBQUERYPORT);
+			transfer(object, port - MINSUBQUERYPORT);
 		} else {
 			if (port < leafs.size()) {
 				((ISource<T>) leafs.get(port)).transfer(object);
@@ -111,20 +112,30 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_close() {
-		int sinkInPort = MINSUBQUERYPORT;
+		executor.stopQuery(query.getID(), session);
+
 		for (IPhysicalOperator root : query.getRoots()) {
 			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
-			s.disconnectSink((ISink<IStreamObject<?>>) this, sinkInPort++, 0, s.getOutputSchema());
+			// To avoid concurrent modification exception, determine connections to remove
+			// first
+			Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> subs = s.getConnectedSinks();
+			Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> toRemove = new ArrayList<>();
+			subs.forEach(sub -> {
+				if (sub.getSink() == this)
+					toRemove.add(sub);
+			});
+			toRemove.forEach(sub -> s.disconnectSink(sub));
+
 		}
-		executor.stopQuery(query.getID(), session);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_done(int port) {
-		
+
 		// Output from connected query
 		if (port >= MINSUBQUERYPORT) {
-			process_done(port-MINSUBQUERYPORT);
+			process_done(port - MINSUBQUERYPORT);
 		} else {
 			if (port < leafs.size()) {
 				((ISource<T>) leafs.get(port)).propagateDone();
@@ -133,11 +144,10 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 			}
 		}
 	}
-	
+
 	@Override
 	public void done(PhysicalQuery physicalQuery) {
 		propagateDone();
 	}
-
 
 }
