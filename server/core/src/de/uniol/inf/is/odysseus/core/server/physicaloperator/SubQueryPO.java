@@ -18,23 +18,81 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryStarter;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IQueryStarter {
+/**
+ * This physical operator can encapsulate another physical query and can be used
+ * to define some kind of virtual operators.
+ * 
+ * When the operator is started, the contained query will be connected. For
+ * this, the contained physical query must provide some inputs as ConnectorPOs.
+ * The ports must correspond to the inputs of this operator, i.e. inputs on port
+ * 0 with be delivered to the connector of the physical query with the port 0.
+ * The contained query must contain at least one connector with port 0 (Remark,
+ * if there is no input, use views instead) and the port numbers must be
+ * continuous, e.g.: 0, 1, 2, ...
+ * 
+ * The operator currently send all outputs from the contained query to a single
+ * output, even if there are more roots in the contained query.
+ * 
+ * The operator is physically connected to its inputs in the regular plan and
+ * additionally to the outputs (roots) of the contained query.
+ * 
+ * When the operator is stopped, the contained query will also stop and the
+ * connection will be removed.
+ * 
+ * @author Marco Grawunder
+ *
+ * @param <T>
+ */
+
+public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
 	private static final int MINSUBQUERYPORT = 100000;
 	private static final Logger LOG = LoggerFactory.getLogger(SubQueryPO.class);
+	/**
+	 * The internal physical query
+	 */
 	private final IPhysicalQuery query;
+	/**
+	 * The assignment of inputs of the contained query to the ports of this operator
+	 * i.e. the first element in the list is for input port 0, the second for input
+	 * port 1 etc.
+	 */
 	private final List<ConnectorPO> leafs = new ArrayList<>();
+
+	/**
+	 * A reference to the current executor to allow starting and stopping of
+	 * queries.
+	 */
 	private final IServerExecutor executor;
+	/**
+	 * The current user. This is needed for calling methods in the executor.
+	 */
 	private final ISession session;
 
+	/**
+	 * Create a new subquery po.
+	 * 
+	 * @param query
+	 *            The query to execute
+	 * @param executor
+	 *            Reference to the executor is needed, to start and stop contained
+	 *            query
+	 * @param session
+	 *            The user, who created this query. Is needed to call start and stop
+	 *            on the executor
+	 */
 	public SubQueryPO(IPhysicalQuery query, IServerExecutor executor, ISession session) {
 		this.executor = executor;
 		this.session = session;
 		this.query = query;
+
+		determineLeafSources(query);
+		validateLeafSources();
+	}
+
+	private void determineLeafSources(IPhysicalQuery query) {
 		List<IPhysicalOperator> ops = query.getLeafSources();
 		for (IPhysicalOperator o : ops) {
 			if (o instanceof ConnectorPO) {
@@ -42,15 +100,22 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 			}
 		}
 		Collections.sort(leafs, new Comparator<ConnectorPO>() {
-
 			@Override
 			public int compare(ConnectorPO o1, ConnectorPO o2) {
 				return Integer.compare(o1.getPort(), o2.getPort());
 			}
 		});
+	}
 
-		// Check if all ports are different and continous
+	private void validateLeafSources() {
+		// Check if all ports are different and continuous
 		Iterator<ConnectorPO> iter = leafs.iterator();
+
+		if (!iter.hasNext()) {
+			throw new IllegalArgumentException(
+					"SubQuery must contain at least one connector. For the other case use streams or views!");
+		}
+
 		int lastPort = iter.next().getPort();
 		if (lastPort != 0) {
 			throw new IllegalArgumentException("Connector ports of SubQuery must start with 0!");
@@ -62,21 +127,20 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 			}
 			lastPort = currentPort;
 		}
-
 	}
 
+	/**
+	 * Returns the physical query
+	 * 
+	 * @return
+	 */
 	public IPhysicalQuery getPhysicalQuery() {
 		return query;
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-		LOG.warn("Punctuations are currently not handled by subquerypo");
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
-		// use most restrictive mode
+		// use the most restrictive mode (i.e. clone every time)
 		return OutputMode.MODIFIED_INPUT;
 	}
 
@@ -91,49 +155,46 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
 			s.connectSink((ISink<IStreamObject<?>>) this, sinkInPort++, 0, s.getOutputSchema());
 		}
+		// Start query after connection (else there could some elements get lost)
 		executor.startQuery(query.getID(), session);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
-		// Output from connected query
+		// Need to separate Output from connected query (port >= MINSUBQUERYPORT) and
+		// the standard connected input
 		if (port >= MINSUBQUERYPORT) {
 			transfer(object, port - MINSUBQUERYPORT);
 		} else {
+			// send to the connected plan
 			if (port < leafs.size()) {
 				((ISource<T>) leafs.get(port)).transfer(object);
 			} else {
-				throw new RuntimeException("Input for not connected operator");
+				LOG.warn("Input for not connected operator");
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_close() {
-		executor.stopQuery(query.getID(), session);
-
-		for (IPhysicalOperator root : query.getRoots()) {
-			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
-			// To avoid concurrent modification exception, determine connections to remove
-			// first
-			Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> subs = s.getConnectedSinks();
-			Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> toRemove = new ArrayList<>();
-			subs.forEach(sub -> {
-				if (sub.getSink() == this)
-					toRemove.add(sub);
-			});
-			toRemove.forEach(sub -> s.disconnectSink(sub));
-
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// Similar handling as in process_next
+		if (port >= MINSUBQUERYPORT) {
+			sendPunctuation(punctuation, port - MINSUBQUERYPORT);
+		} else {
+			if (port < leafs.size()) {
+				((ISource<T>) leafs.get(port)).sendPunctuation(punctuation);
+			} else {
+				LOG.warn("Punctuation for not connected operator");
+			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_done(int port) {
-
-		// Output from connected query
+		// Similar handling as in process_next
 		if (port >= MINSUBQUERYPORT) {
 			process_done(port - MINSUBQUERYPORT);
 		} else {
@@ -145,9 +206,25 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> i
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void done(PhysicalQuery physicalQuery) {
-		propagateDone();
+	protected void process_close() {
+		// First stop contained query
+		executor.stopQuery(query.getID(), session);
+
+		// Disconnect from query
+		for (IPhysicalOperator root : query.getRoots()) {
+			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
+			// To avoid concurrent modification exception, determine connections to remove
+			// first and then do the removal
+			Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> subs = s.getConnectedSinks();
+			Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> toRemove = new ArrayList<>();
+			subs.forEach(sub -> {
+				if (sub.getSink() == this)
+					toRemove.add(sub);
+			});
+			toRemove.forEach(sub -> s.disconnectSink(sub));
+		}
 	}
 
 }
