@@ -59,6 +59,10 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);
 
+		initCharset(optionsMap);
+	}
+
+	protected void initCharset(OptionMap optionsMap) {
 		if (optionsMap.containsKey(CHARSET)) {
 			String charsetString = optionsMap.get(CHARSET);
 			setCharset(charsetString);

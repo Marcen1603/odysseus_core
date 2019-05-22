@@ -11,25 +11,34 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 
 /**
  * Currently, this class is only used for ConvertPO
+ * 
  * @author Marco Grawunder
  *
  */
 
 public class StringTransportHandler extends AbstractTransportHandler {
+	
+	private static final String NEWLINE_PARAM = "newline";
+	private static final boolean DEFAULT_NEWLINE = true;
+	
 
 	final InputStream inputStream;
-	
+
 	public StringTransportHandler(List<String> output, OptionMap options) {
-		StringBuffer s = new StringBuffer();
-		for (int i=0;i<output.size();i++){
+		boolean newline = options.getBoolean(NEWLINE_PARAM, DEFAULT_NEWLINE);
+
+		initCharset(options);
+		
+		StringBuilder s = new StringBuilder();
+		for (int i = 0; i < output.size(); i++) {
 			s.append(output.get(i));
-			if (i<s.length()-1){
+			if (i < s.length() - 1 && newline) {
 				s.append("\n");
 			}
 		}
-		
+
 		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(getCharset()));
-		
+
 	}
 
 	@Override
@@ -39,8 +48,7 @@ public class StringTransportHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, OptionMap options) {
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -86,17 +94,17 @@ public class StringTransportHandler extends AbstractTransportHandler {
 
 	}
 
-	public static StringTransportHandler getInstance(List<String> output,  OptionMap options ) {
+	public static StringTransportHandler getInstance(List<String> output, OptionMap options) {
 		StringTransportHandler instance = new StringTransportHandler(output, options);
 		return instance;
 	}
-	
-    @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
-    	if(!(o instanceof StringTransportHandler)) {
-    		return false;
-    	}
-    	
-    	return true;
-    }
+
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+		if (!(o instanceof StringTransportHandler)) {
+			return false;
+		}
+
+		return true;
+	}
 }
