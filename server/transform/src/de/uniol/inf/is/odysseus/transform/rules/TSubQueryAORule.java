@@ -27,6 +27,12 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 
 	@Override
+	public int getPriority() {
+		// Must be more than access ao rule
+		return super.getPriority()+10;
+	}
+	
+	@Override
 	public void execute(SubQueryAO operator, TransformationConfiguration config) throws RuleException {
 		IServerExecutor executor = config.getOption(IServerExecutor.class.getName());
 		if (executor == null) {
