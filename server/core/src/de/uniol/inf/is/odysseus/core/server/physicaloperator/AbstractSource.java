@@ -93,7 +93,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		}
 
 	};
-	
+
 	private boolean readdedConnectedSinks = false;
 	private final Map<Integer, Integer> consumerCount = new HashMap<>();
 
@@ -115,9 +115,9 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	 * loaded.
 	 */
 	private boolean operatorStateLoaded = false;
-	
+
 	// --------------------------------------------------------------------
-	// Identification 
+	// Identification
 	// --------------------------------------------------------------------
 
 	private final UUID uuid = UUID.randomUUID();
@@ -245,7 +245,9 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// The element then may not be modified since this source needs it in its
 	// original state
 	public boolean deliversStoredElement(int outputPort) {
-		LOGGER.warn("Operator {} doesn't implement method deliversStoredElement. Cloning performance may suffer! Was called on port {}",getName(), outputPort);
+		LOGGER.warn(
+				"Operator {} doesn't implement method deliversStoredElement. Cloning performance may suffer! Was called on port {}",
+				getName(), outputPort);
 		return true;
 	}
 
@@ -323,7 +325,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	public synchronized void open(IOperatorOwner owner){
+	public synchronized void open(IOperatorOwner owner) {
 		openCloseLock.lock();
 		try {
 			if (!isOpen()) {
@@ -841,11 +843,11 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// running the query translation phase
 		sub.setNeedsClone(true);
 		sink.addOwner(this.getOwner());
-		sink.setInputPortCount(sinkInPort+1);
+		sink.setInputPortCount(sinkInPort + 1);
 		addActiveSubscription(sub);
 		connectedSinks.add(sub);
 	}
-	
+
 	@Override
 	public Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> getConnectedSinks() {
 		return Collections.unmodifiableCollection(connectedSinks);
@@ -864,8 +866,15 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		@SuppressWarnings("unchecked")
 		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<>(
 				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
-		removeActiveSubscription(sub);
-		connectedSinks.remove(sub);
+		disconnectSink(sub);
+	}
+
+	@Override
+	public void disconnectSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		this.getOwner().forEach(owner -> subscription.getSink().removeOwner(owner));
+
+		removeActiveSubscription(subscription);
+		connectedSinks.remove(subscription);
 	}
 
 	protected final void closeAllSinkSubscriptions() {
@@ -1021,7 +1030,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("No implementation for process_isSemanticallyEqual in operator {}. Cannot compare to {}!",this.getName(), ipo.getName());
+			LOGGER.trace("No implementation for process_isSemanticallyEqual in operator {}. Cannot compare to {}!",
+					this.getName(), ipo.getName());
 		}
 		return false;
 	}

@@ -534,9 +534,14 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>>
 		@SuppressWarnings("unchecked")
 		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
 				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
-		removeActiveSubscription(sub);
+		disconnectSink(sub);
 	}
 
+	@Override
+	public void disconnectSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		removeActiveSubscription(subscription);		
+	}
+	
 	private void removeActiveSubscription(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub) {
 		if (activeSinkSubscriptions.contains(sub)) {
 			consumerCount.put(sub.getSourceOutPort(), consumerCount.get(sub.getSourceOutPort()) - 1);

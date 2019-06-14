@@ -657,6 +657,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				fireQueryAddedEvent(query, queryIds, buildConfiguration, parserID, user, context);
 				Collection<Integer> createdQueries = new ArrayList<Integer>();
 				for (IPhysicalQuery p : addedQueries) {
+					p.updateSubqueries();
 					createdQueries.add(p.getID());
 				}
 				LOG.info("Adding textual query using " + parserID + " for user " + user.getUser().getName() + " done.");
@@ -974,6 +975,14 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE, queryToRemove);
 				LOG.info("Removing Query " + queryToRemove.getID());
 				this.executionPlan.removeQuery(queryToRemove.getID(), caller);
+
+				// Remove subqueries
+				for (IPhysicalQuery p : queryToRemove.getSubqueries()) {
+					if (p != null) {
+						removeQuery(caller, p);
+					}
+				}
+
 				LOG.debug("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.removeOwnerschip();
 				// A query can now be without owner, but connected to a source
@@ -1025,7 +1034,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				LOG.info("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(
 						new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
-	
+
 				if (executionPlan.isEmpty()) {
 					schedulerManager.getActiveScheduler().clear();
 				}
@@ -1153,8 +1162,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.info("Stopping query (ID: " + queryID + ")....");
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID, caller);
-		ExecutorPermission.validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
-		stopQuery(queryToStop);
+		if (queryToStop != null) {
+			ExecutorPermission.validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
+			stopQuery(queryToStop);
+		}
 	}
 
 	@Override

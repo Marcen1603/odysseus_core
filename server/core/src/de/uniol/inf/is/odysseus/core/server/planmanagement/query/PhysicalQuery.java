@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SinkPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SubQueryPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -64,6 +65,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * The logical query, this physical query is build from
 	 */
 	private ILogicalQuery query;
+
+	/**
+	 * Subqueries, connected to this query
+	 */
+	private List<IPhysicalQuery> subqueries = new ArrayList<>();
 
 	/**
 	 * The name of the query
@@ -357,14 +363,14 @@ public class PhysicalQuery implements IPhysicalQuery {
 		// --> create new roots list and replace single source operator root with
 		// sink and single source operator with root
 		List<IPhysicalOperator> newRoots = Lists.newArrayList();
-		for (IPhysicalOperator r: rootsToSet) {
+		for (IPhysicalOperator r : rootsToSet) {
 			if (r.isSource() && !r.isSink()) {
 				SinkPO<IStreamObject<?>> sink = new SinkPO<>();
-				String no = getLogicalQuery()!=null?"#"+getLogicalQuery().getID():"";
-				sink.setName("QueryRoot"+no);
+				String no = getLogicalQuery() != null ? "#" + getLogicalQuery().getID() : "";
+				sink.setName("QueryRoot" + no);
 				sink.subscribeToSource((ISource) r, 0, 0, r.getOutputSchema());
 				newRoots.add(sink);
-			}else {
+			} else {
 				newRoots.add(r);
 			}
 		}
@@ -480,7 +486,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public void replaceOperator(IPhysicalOperator oldOp, IPhysicalOperator newOp) {
 		if (removeChild(oldOp)) {
 			addChild(newOp);
-		} 
+		}
 	}
 
 	/**
@@ -587,7 +593,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			setState(nextState);
 			this.isStarting = false;
 		} catch (IllegalStateException e) {
-			_logger.warn("",e);
+			_logger.warn("", e);
 		}
 	}
 
@@ -606,7 +612,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			}
 			setState(nextState);
 		} catch (IllegalStateException e) {
-			_logger.warn("",e);
+			_logger.warn("", e);
 		}
 	}
 
@@ -624,7 +630,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			}
 			setState(nextState);
 		} catch (IllegalStateException e) {
-			_logger.warn("",e);
+			_logger.warn("", e);
 		}
 	}
 
@@ -643,7 +649,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			}
 			setState(nextState);
 		} catch (IllegalStateException e) {
-			_logger.warn("",e);
+			_logger.warn("", e);
 		}
 
 	}
@@ -660,7 +666,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			}
 			setState(nextState);
 		} catch (IllegalStateException e) {
-			_logger.warn("",e);
+			_logger.warn("", e);
 		}
 	}
 
@@ -1131,5 +1137,22 @@ public class PhysicalQuery implements IPhysicalQuery {
 		} else {
 			throw new IllegalArgumentException(String.format("Operatar %s and %s are not connected", parent, child));
 		}
+	}
+
+	@Override
+	public void updateSubqueries() {
+		update();
+		for (IPhysicalOperator p : physicalChilds) {
+			if (p instanceof SubQueryPO) {
+				IPhysicalQuery subquery = ((SubQueryPO) p).getPhysicalQuery();
+				this.subqueries.add(subquery);
+				
+			}
+		}
+	}
+
+	@Override
+	public List<IPhysicalQuery> getSubqueries() {
+		return this.subqueries;
 	}
 }
