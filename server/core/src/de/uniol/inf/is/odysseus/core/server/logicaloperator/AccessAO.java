@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -21,6 +23,13 @@ public class AccessAO extends AbstractAccessAO {
 	public AccessAO(AccessAO other){
 		super(other);
 	}
+	
+	@Deprecated
+	public AccessAO(Resource resource, String wrapper, String transport,
+			String protocol, String datahandler, OptionMap options) {
+		super(resource, wrapper, transport, protocol,datahandler,options);
+	}
+
 
 	@Override
 	public AbstractLogicalOperator clone() {

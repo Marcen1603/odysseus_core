@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.List;
 import java.util.Objects;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOSourceParameter;
@@ -47,6 +48,13 @@ abstract public class AbstractAccessAO extends AbstractSchemaBasedAO implements 
 		this.applicationTimeDelay = ao.applicationTimeDelay;
 	}
 
+	@Deprecated
+	protected AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
+			String dataHandler, OptionMap optionsMap) {
+		super(wrapper, transportHandler, protocolHandler, dataHandler, optionsMap);
+		setAccessAOName(name);
+	}
+	
 	@Parameter(type = AccessAOSourceParameter.class, name = "source", optional = false, doc = "The name of the sourcetype to create.")
 	public void setAccessAOName(Resource name) {
 		super.setName(name.getResourceName());

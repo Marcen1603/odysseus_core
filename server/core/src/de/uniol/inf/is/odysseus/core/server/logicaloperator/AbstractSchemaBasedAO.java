@@ -80,7 +80,18 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 
 	}
 	
-	
+	@Deprecated
+	protected AbstractSchemaBasedAO(String wrapper, String transportHandler, String protocolHandler,
+			String dataHandler, OptionMap optionsMap) {
+		this.wrapper = wrapper;
+		this.transportHandler = transportHandler;
+		this.protocolHandler = protocolHandler;
+		this.dataHandler = dataHandler;
+		if (optionsMap != null) {
+			this.optionsMap.addAll(optionsMap);
+		}
+	}
+
 	public void setWrapper(String wrapper) {
 		this.wrapper = wrapper;
 	}
