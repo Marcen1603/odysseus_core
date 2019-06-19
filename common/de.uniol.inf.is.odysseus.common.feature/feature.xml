@@ -48,6 +48,10 @@ limitations under the License.
          id="org.json.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.apache.commons.compress.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.core"
          download-size="0"
