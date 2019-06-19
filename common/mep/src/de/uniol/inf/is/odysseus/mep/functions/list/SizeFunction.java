@@ -30,7 +30,7 @@ public class SizeFunction extends AbstractFunction<Integer> {
      * 
      */
     private static final long serialVersionUID = 3301023095967505834L;
-    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.LIST } };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.getLists() };
 
     public SizeFunction() {
         super("size", 1, ACC_TYPES, SDFDatatype.INTEGER, false);
