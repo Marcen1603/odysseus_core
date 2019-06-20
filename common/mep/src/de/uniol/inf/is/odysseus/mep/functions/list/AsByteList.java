@@ -1,5 +1,5 @@
 /********************************************************************************** 
- * Copyright 2014 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,24 +21,24 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * @author Christian Kuka <christian@kuka.cc>
+ * @author Michael Brand <michael.brand@uol.de>
  *
  */
-public class SizeFunction extends AbstractFunction<Integer> {
+public class AsByteList extends AbstractFunction<List<Byte>> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 3301023095967505834L;
-    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.getLists() };
+	private static final long serialVersionUID = -1735081230552487386L;
+	
+	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
+			{ SDFDatatype.LIST_BYTE, SDFDatatype.OBJECT } };
 
-    public SizeFunction() {
-        super("size", 1, ACC_TYPES, SDFDatatype.INTEGER, false);
-    }
+	public AsByteList() {
+		super("asByteList", 1, ACC_TYPES, SDFDatatype.LIST_BYTE);
+	}
 
-    @Override
-    public Integer getValue() {
-        List<?> list = (List<?>) getInputValue(0);
-        return new Integer(list.size());
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Byte> getValue() {
+		return (List<Byte>) getInputValue(0);
+	}
+
 }
