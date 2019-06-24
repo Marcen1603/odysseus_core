@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * A map function used to sort all containing content by it default (java) sort order
+ * A map function used to remove all duplicates (using equals)
  * 
  * @author MarcoGrawunder
  *
