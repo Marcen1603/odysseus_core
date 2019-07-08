@@ -22,6 +22,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * Function to transform an input to a list of bytes. The input can either be a
+ * string or a list of integers or bytes.
+ * 
  * @author Michael Brand <michael.brand@uol.de>
  *
  */
@@ -56,22 +59,17 @@ public class ToByteList extends AbstractFunction<List<Byte>> {
 		List<?> list = (List<?>) input;
 		if (list.isEmpty()) {
 			return new ArrayList<>();
-		} else if (!(list.get(0) instanceof Integer || list.get(0) instanceof Byte)) {
-			throw new IllegalArgumentException("Input of toByteList must be a list (Integer or Byte) or String!");
-		}
-
-		List<Byte> retVal = new ArrayList<>(list.size());
-		if (list.get(0) instanceof Byte) {
-			for (byte b : (List<Byte>) list) {
-				retVal.add(b);
-			}
-		} else {
+		} else if (list.get(0) instanceof Byte) {
+			return (List<Byte>) list;
+		} else if (list.get(0) instanceof Integer) {
+			List<Byte> retVal = new ArrayList<>(list.size());
 			for (Integer i : (List<Integer>) list) {
 				retVal.add(i.byteValue());
 			}
+			return retVal;
+		} else {
+			throw new IllegalArgumentException("Input of toByteList must be a list (Integer or Byte) or String!");
 		}
-		
-		return retVal;
 	}
 
 }
