@@ -43,7 +43,10 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 	static {
 		types.add("MULTI_VALUE"); // ??
 		for (SDFDatatype d : SDFDatatype.getLists()) {
-			types.add(d.getURI());
+			if(!d.equals(SDFDatatype.LIST_BYTE_BASE64)) {
+				// there exists a special data handler for that, which handles the base64 encoding
+				types.add(d.getURI());
+			}
 		}
 	}
 
