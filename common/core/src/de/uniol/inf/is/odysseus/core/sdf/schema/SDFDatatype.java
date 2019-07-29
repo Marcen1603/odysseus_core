@@ -108,6 +108,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			SDFDatatype.INTEGER);
 	public static final SDFDatatype LIST_BYTE = new SDFDatatype("List_Byte",
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BYTE);
+	public static final SDFDatatype LIST_BYTE_BASE64 = new SDFDatatype("List_Byte_Base64",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BYTE);
 	public static final SDFDatatype LIST_CHAR = new SDFDatatype("List_Char",
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.CHAR);
 	public static final SDFDatatype LIST_FLOAT = new SDFDatatype("List_Float",
@@ -126,7 +128,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype LIST_LIST = new SDFDatatype("List_List",
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.LIST);
 	private static final SDFDatatype[] LISTS = new SDFDatatype[] { LIST,
-			LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_CHAR,
+			LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_BYTE_BASE64, LIST_CHAR,
 			LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN, LIST_SHORT, LIST_TUPLE, LIST_LIST };
 
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix",

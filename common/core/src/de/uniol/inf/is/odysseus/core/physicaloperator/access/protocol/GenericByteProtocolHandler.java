@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Base64;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
@@ -115,6 +116,10 @@ import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
 public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IMetaAttribute>> {
 
 	private static final String name = "GenericByteProtocol";
+	
+	private static final String base64OptionKey = "base64Decoding";
+	
+	private boolean base64Decoding = false;
 
 	private Map<String, Integer> byteSchema = new HashMap<>();
 
@@ -167,6 +172,8 @@ public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IM
 		} else {
 			byteOrder = ByteOrder.BIG_ENDIAN;
 		}
+		
+		base64Decoding = optionsMap.getBoolean(base64OptionKey, false);
 	}
 
 	@Override
@@ -197,6 +204,9 @@ public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IM
 	 * the amount of elements (e.g., in a list).
 	 */
 	private Tuple<IMetaAttribute> getNext(InputStream inputStream) throws IOException {
+		if(base64Decoding) {
+			inputStream = Base64.getDecoder().wrap(inputStream);
+		}
 		try (BitInputStream bitStream = new BitInputStream(inputStream, byteOrder)) {
 			SDFSchema schema = getDataHandler().getSchema();
 			Tuple<IMetaAttribute> tuple = new Tuple<>(schema.size(), false);
@@ -259,7 +269,7 @@ public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IM
 		if (datatype.isTuple()) {
 			throw new IllegalArgumentException(
 					datatype.getQualName() + " is not supported by GenericByteProtocolHandler");
-		} else if (datatype.isListValue() && !datatype.equals(SDFDatatype.LIST_BYTE)) {
+		} else if (datatype.isListValue() && !(datatype.equals(SDFDatatype.LIST_BYTE) || datatype.equals(SDFDatatype.LIST_BYTE_BASE64))) {
 			throw new IllegalArgumentException(
 					datatype.getQualName() + " is not supported by GenericByteProtocolHandler");
 		}
