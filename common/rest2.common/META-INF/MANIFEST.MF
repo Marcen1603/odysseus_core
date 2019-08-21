@@ -9,4 +9,5 @@ Export-Package: de.uniol.inf.is.odysseus.rest2.common.model,
  de.uniol.inf.is.odysseus.rest2.common.model.events
 Require-Bundle: com.fasterxml.jackson;bundle-version="1.0.0"
 Bundle-ClassPath: lib/swagger-annotations-1.5.15.jar,
- .
+ .,
+ lib/javax.annotation-api-1.2.jar

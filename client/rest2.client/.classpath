@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/javax.annotation-api-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javax.inject-2.5.0-b33.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/aopalliance-repackaged-2.5.0-b32.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hk2-api-2.5.0-b32.jar"/>
