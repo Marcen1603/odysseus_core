@@ -73,7 +73,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		}
 	}
 
-	private static void addExpressionBuilder(IExpressionBuilder<?, ?> builder, String identifier) {
+	private void addExpressionBuilder(IExpressionBuilder<?, ?> builder, String identifier) {
 		identifier = identifier.toUpperCase();
 		if (expressionsBuilders.containsKey(identifier)) {
 			throw new IllegalArgumentException(
@@ -83,7 +83,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	}
 	
 
-	public static void removeExpressionBuilder(IExpressionBuilder<?, ?> builder) {
+	public void removeExpressionBuilder(IExpressionBuilder<?, ?> builder) {
 		String identifier = builder.getName().toUpperCase();
 		expressionsBuilders.remove(identifier);
 	}
