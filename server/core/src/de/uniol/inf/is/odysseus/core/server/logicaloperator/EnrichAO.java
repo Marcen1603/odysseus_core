@@ -82,7 +82,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 		return outerEnrich;
 	}
 	
-	@Parameter(name = "outer", type = BooleanParameter.class, doc = "If no enrichment can be found, use null values. Default is true!")
+	@Parameter(name = "outer", type = BooleanParameter.class, optional = true, doc = "If no enrichment can be found, use null values. Default is true!")
 	public void setOuterEnrich(boolean outerEnrich) {
 		this.outerEnrich = outerEnrich;
 	}
