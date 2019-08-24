@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -73,8 +74,12 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/**
 	 * A map of group keys to a sweep area that holds the elements of each group.
+	 * Sweep area might be zero for groups.
 	 */
-	protected Map<Object, IAggregationSweepArea<M, T>> groups = new HashMap<>();
+//	protected Map<Object, IAggregationSweepArea<M, T>> groups = new HashMap<>();
+	protected Set<Object> groupKeys = new HashSet<>();
+	
+	protected Map<Object, IAggregationSweepArea<M, T>> sweepAreas = new HashMap<>();
 
 	/**
 	 * This flag will be set to true when an element with end TS arrives this
@@ -287,7 +292,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * Clears the state of this operator.
 	 */
 	private void clear() {
-		groups.clear();
+		groupKeys.clear();
+		sweepAreas.clear();
 		incrementalFunctionsForGroup.clear();
 		outdatingGroups.clear();
 		watermark = 0l;
@@ -310,10 +316,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		processOutdatedElements(punctuation.getTime(), null);
 		if (createOutputOnPunctuation) {
 
-			if (groups.isEmpty()) {
+			if (groupKeys.isEmpty()) {
 				evaluateOnPunctuation(punctuation, defaultGroupingKey);
 			} else {
-				for (Object groupKey : groups.keySet()) {
+				for (Object groupKey : groupKeys) {
 					evaluateOnPunctuation(punctuation, groupKey);
 				}
 			}
@@ -342,7 +348,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (result != null) {
-			transferResult(result, null, punctuation.getTime());
+			transferResult(result, groupKey, null, punctuation.getTime());
 		}
 	}
 
@@ -551,7 +557,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				}
 
 				if (result != null) {
-					transferResult(result, pointInTime, sampleOfGroup, outdatedTuples);
+					transferResult(result, pointInTime, groupKey, sampleOfGroup, outdatedTuples);
 				}
 
 			}
@@ -623,7 +629,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (result != null) {
-			transferResult(result, object, object.getMetadata().getStart());
+			transferResult(result, groupKey, object, object.getMetadata().getStart());
 		}
 
 	}
@@ -638,7 +644,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	public Map<String, String> getKeyValues() {
 		final Map<String, String> result = new HashMap<>();
 		result.put("Grouping Attribute Indices", "" + Arrays.toString(groupingAttributesIndices));
-		result.put("Groups", "" + groups.size());
+		result.put("GroupKeys", "" + groupKeys.size());
+		result.put("Groups", "" + sweepAreas.size());
 		result.put("Groups Stateful Functions Map", "" + incrementalFunctionsForGroup.size());
 		result.put("Has Stateful Functions", "" + hasIncrementalFunctions);
 		result.put("No of Stateful Functions", "" + incrementalFunctions.size());
@@ -757,14 +764,14 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @return An existing or a new sweep area for a specific group.
 	 */
 	private IAggregationSweepArea<M, T> getSweepArea(final Object groupKey) {
-		IAggregationSweepArea<M, T> sa = groups.get(groupKey);
+		IAggregationSweepArea<M, T> sa = sweepAreas.get(groupKey);
 		if (sa == null) {
 			if (hasFunctionsThatNeedStartTsOrder) {
 				sa = new StartTsTimeOrderedAggregationSweepArea<>();
 			} else {
 				sa = new IndexedByEndTsAggregationSweepArea<>();
 			}
-			groups.put(groupKey, sa);
+			sweepAreas.put(groupKey, sa);
 		}
 		return sa;
 	}
@@ -773,7 +780,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @param result
 	 */
 	@SuppressWarnings("unchecked")
-	private void transferResult(final T result, final PointInTime startTs, final T sampleOfGroup,
+	private void transferResult(final T result, final PointInTime startTs, final Object groupKey, final T sampleOfGroup,
 			final Collection<T> outdatedTuples) {
 
 		if (onlyNullAttributes(result)) {
@@ -785,9 +792,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		} else {
 			watermarkOut = startTs.getMainPoint();
 		}
-
-		setGroupingAttributes(sampleOfGroup, result);
-		final Object groupKey = getGroupKey(result, groupingAttributesIndicesOutputSchema, defaultGroupingKey);
+		
+		setGroupingAttributes(result, groupKey);
 
 		boolean output = true;
 		if (outputOnlyChanges) {
@@ -868,8 +874,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * @param result
 	 */
-	private void transferResult(final T result, final T trigger, final PointInTime startTs) {
-		transferResult(result, startTs, trigger, null);
+	private void transferResult(final T result, final Object groupKey, final T trigger, final PointInTime startTs) {
+		transferResult(result, startTs, groupKey, trigger, null);
 	}
 
 	/**
@@ -895,7 +901,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 */
 	private void removeGroupIfEmpty(final IAggregationSweepArea<M, T> sa, final Object groupKey) {
 		if (!sa.hasValidTuples()) {
-			groups.remove(groupKey);
+			sweepAreas.remove(groupKey);
 			incrementalFunctionsForGroup.remove(groupKey);
 		}
 	}
@@ -903,18 +909,26 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * @param result
 	 */
-	private void setGroupingAttributes(final T sampleOfGroup, final T result) {
-		if (sampleOfGroup != null) {
-			int i = 0;
-			for (final int x : groupingAttributesIndices) {
-				result.setAttribute(i, sampleOfGroup.getAttribute(x));
-				++i;
+	private void setGroupingAttributes(final T result, final Object group) {
+		if (group != null) {
+			if (groupingAttributesIndices == null || groupingAttributesIndices.length == 0) {
+				return;
+			} else if(groupingAttributesIndices.length == 1) {
+				result.setAttribute(0, group);
+			} else {
+				// list
+				List<?> groupAttrList = (List<?>) group;
+				for (int i = 0; i < groupAttrList.size(); i++) {
+					result.setAttribute(i, groupAttrList.get(i));
+				}
 			}
 		}
 	}
 
 	protected Object getGroupKey(final T object, final int[] groupingAttributeIndices) {
-		return getGroupKey(object, groupingAttributeIndices, defaultGroupingKey);
+		Object groupKey = getGroupKey(object, groupingAttributeIndices, defaultGroupingKey);
+		groupKeys.add(groupKey);
+		return groupKey;
 	}
 
 	/**
@@ -962,10 +976,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected void process_done() {
 		super.process_done();
 		if (evaluateAtDone) {
-
-			for (final Entry<Object, IAggregationSweepArea<M, T>> group : groups.entrySet()) {
-				final Object key = group.getKey();
-				final IAggregationSweepArea<M, T> sa = group.getValue();
+			for (final Object groupKey : groupKeys) {
+				// may be null
+				final IAggregationSweepArea<M, T> sa = sweepAreas.get(groupKey);
 
 				// TODO: Do we need deep copy here? Depends on the values of the
 				// functions, doesn't it?
@@ -973,7 +986,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				final T result = (T) new Tuple<>(outputSchema.size(), true);
 
 				T sampleOfGroup = null;
-				final Collection<T> elements = sa.getValidTuples();
+				final Collection<T> elements = new ArrayList<>();
+				if(sa != null) {
+						elements.addAll(sa.getValidTuples());
+				}
 				if (!elements.isEmpty()) {
 					sampleOfGroup = elements.iterator().next();
 				}
@@ -1005,7 +1021,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				}
 
 				if (hasIncrementalFunctions) {
-					for (final IIncrementalAggregationFunction<M, T> function : getStatefulFunctions(key)) {
+					for (final IIncrementalAggregationFunction<M, T> function : getStatefulFunctions(groupKey)) {
 						Object[] result2 = null;
 						try {
 							result2 = function.evalute(null, null);
@@ -1023,7 +1039,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 					}
 				}
 
-				transferResult(result, sampleOfGroup, new PointInTime(System.currentTimeMillis()));
+				transferResult(result, groupKey, sampleOfGroup, new PointInTime(System.currentTimeMillis()));
 			}
 		}
 	}
@@ -1071,7 +1087,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			@SuppressWarnings("unchecked")
 			final AggregationState<M, T> aggregationState = (AggregationState<M, T>) state;
 			this.outdatingGroups = aggregationState.getOutdatingGroups();
-			this.groups = aggregationState.getGroups();
+			this.groupKeys = aggregationState.getGroupKeys();
+			this.sweepAreas = aggregationState.getGroups();
 			this.hasOutdatingElements = aggregationState.isHasOutdatingElements();
 			this.incrementalFunctionsForGroup = aggregationState.getIncrementalFunctionsForGroup();
 			this.watermark = aggregationState.getWatermark();
