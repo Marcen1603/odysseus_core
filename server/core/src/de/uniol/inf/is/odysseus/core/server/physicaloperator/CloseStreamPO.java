@@ -73,7 +73,12 @@ public class CloseStreamPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		IPunctuation puncToSend = predicate.processPunctuation(punctuation);
+		IPunctuation puncToSend;
+		if(predicate != null) {
+			puncToSend = predicate.processPunctuation(punctuation);
+		} else {
+			puncToSend = punctuation;
+		}
 		sendPunctuation(puncToSend);
 	}
 
