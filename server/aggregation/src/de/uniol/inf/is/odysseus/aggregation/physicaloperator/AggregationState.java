@@ -33,6 +33,7 @@ class AggregationState<M extends ITimeInterval, T extends Tuple<M>> implements I
 	private static final long serialVersionUID = -3151681597160956002L;
 
 	protected final TreeMap<PointInTime, Set<Object>> outdatingGroups;
+	protected final Set<Object> groupKeys;
 	protected final Map<Object, IAggregationSweepArea<M, T>> groups;
 	protected boolean hasOutdatingElements;
 	protected final Map<Object, List<IIncrementalAggregationFunction<M, T>>> incrementalFunctionsForGroup;
@@ -43,7 +44,8 @@ class AggregationState<M extends ITimeInterval, T extends Tuple<M>> implements I
 	public AggregationState(final AggregationPO<M, T> aggregationPo) {
 		this.defaultGroupingKey = aggregationPo.defaultGroupingKey;
 		this.outdatingGroups = aggregationPo.outdatingGroups;
-		this.groups = aggregationPo.groups;
+		this.groupKeys = aggregationPo.groupKeys;
+		this.groups = aggregationPo.sweepAreas;
 		this.hasOutdatingElements = aggregationPo.hasOutdatingElements;
 		this.incrementalFunctionsForGroup = aggregationPo.incrementalFunctionsForGroup;
 		this.watermark = aggregationPo.watermark;
@@ -117,5 +119,9 @@ class AggregationState<M extends ITimeInterval, T extends Tuple<M>> implements I
 
 	public Serializable getDefaultGroupingKey() {
 		return defaultGroupingKey;
+	}
+
+	public Set<Object> getGroupKeys() {
+		return groupKeys;
 	}
 }
