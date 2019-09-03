@@ -94,6 +94,10 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		return getDataHandler().getConversionOptions().getCharset();
 	}
 
+	protected boolean isBase64() {
+		return getDataHandler().getConversionOptions().isBase64();
+	}
+
 	protected ConversionOptions getConversionOptions() {
 		return getDataHandler().getConversionOptions();
 	}

@@ -25,6 +25,7 @@ public class ConversionOptions {
 	public static final String CSV_NUMBER_FORMATTER = "csv.numberformatter";
 	public static final String NULL_VALUE_TEXT = "nullvaluetext";
 	public static final String CHARSET = "charset";
+	private static final String BASE_64 = "base64";
 
 	public static final ConversionOptions defaultOptions = new ConversionOptions(',', (Character)null,
 			(NumberFormat) null, (NumberFormat) null);
@@ -38,6 +39,7 @@ public class ConversionOptions {
 	final private Charset charset;
 	final CharsetDecoder decoder;
 	final CharsetEncoder encoder;
+	private boolean base64 = false;
 
 	public ConversionOptions(char delimiter, Character textSeperator, NumberFormat floatingFormatter,
 			NumberFormat numberFormatter) {
@@ -90,6 +92,8 @@ public class ConversionOptions {
 		this.textSeperator = optionsMap.getCharacter(TEXT_DELIMITER, null);
 		
 		this.nullValueString = optionsMap.get(NULL_VALUE_TEXT, "");
+		
+		this.base64 = optionsMap.getBoolean(BASE_64, false);
 
 	}
 
@@ -147,6 +151,8 @@ public class ConversionOptions {
 		}
 		
 		this.nullValueString = optionsMap.get(NULL_VALUE_TEXT, convOpts.nullValueString);
+		
+		this.base64 = optionsMap.getBoolean(BASE_64, false);
 	}
 
 	public String getNullValueString() {
@@ -191,6 +197,10 @@ public class ConversionOptions {
 
 	public CharsetEncoder getEncoder() {
 		return encoder;
+	}
+	
+	public boolean isBase64() {
+		return base64;
 	}
 
 	static public char determineDelimiter(String v) {

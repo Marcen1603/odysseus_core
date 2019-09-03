@@ -117,10 +117,6 @@ public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IM
 
 	private static final String name = "GenericByteProtocol";
 	
-	private static final String base64OptionKey = "base64Decoding";
-	
-	private boolean base64Decoding = false;
-
 	private Map<String, Integer> byteSchema = new HashMap<>();
 
 	protected ByteOrder byteOrder;
@@ -172,8 +168,6 @@ public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IM
 		} else {
 			byteOrder = ByteOrder.BIG_ENDIAN;
 		}
-		
-		base64Decoding = optionsMap.getBoolean(base64OptionKey, false);
 	}
 
 	@Override
@@ -204,7 +198,7 @@ public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IM
 	 * the amount of elements (e.g., in a list).
 	 */
 	private Tuple<IMetaAttribute> getNext(InputStream inputStream) throws IOException {
-		if(base64Decoding) {
+		if (isBase64()) {
 			inputStream = Base64.getDecoder().wrap(inputStream);
 		}
 		try (BitInputStream bitStream = new BitInputStream(inputStream, byteOrder)) {
@@ -243,7 +237,7 @@ public class GenericByteProtocolHandler extends AbstractProtocolHandler<Tuple<IM
 	}
 
 	private ByteBuffer transformBytesToByteBuffer(byte[] bytes, SDFDatatype datatype) {
-		if (datatype.equals(SDFDatatype.LIST_BYTE)) {
+		if (datatype.equals(SDFDatatype.LIST_BYTE) || datatype.equals(SDFDatatype.LIST_BYTE_BASE64)) {
 			// the number of list elements must be puts as an integer to the beginning of
 			// bytebuffer when calling the datahandler.
 			ByteBuffer buffer = ByteBuffer.allocate(bytes.length + Integer.BYTES);
