@@ -151,9 +151,23 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		List<IPhysicalOperator> roots = query.getRoots();
 		// To separate from real input use higher Ports
 		int sinkInPort = MINSUBQUERYPORT;
+		boolean connectorsUsed = false;
 		for (IPhysicalOperator root : roots) {
 			ISource<IStreamObject<?>> s = ((ISource<IStreamObject<?>>) root);
-			s.connectSink((ISink<IStreamObject<?>>) this, sinkInPort++, 0, s.getOutputSchema());
+			final int port;
+			if (s instanceof OutputConnectorPO ) {
+				OutputConnectorPO<IStreamObject<?>> outConnectorPO = (OutputConnectorPO<IStreamObject<?>>)s;
+				connectorsUsed = true;
+				port = outConnectorPO.getPort()+MINSUBQUERYPORT;
+			}else{
+				if (connectorsUsed) {
+					throw new RuntimeException("When using output connectors, each root needs a connector! Found "+root);
+				}
+				port = sinkInPort++;
+			}
+			s.connectSink((ISink<IStreamObject<?>>) this, port, 0, s.getOutputSchema());
+
+			
 		}
 		// Start query after connection (else there could some elements get lost)
 		executor.startQuery(query.getID(), session);
