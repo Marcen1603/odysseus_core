@@ -59,22 +59,6 @@ limitations under the License.
          id="org.eclipse.emf.common"
          version="0.0.0"/>
 
-   <requires>
-      <import plugin="com.google.guava" version="18.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
-      <import plugin="org.eclipse.equinox.common"/>
-      <import plugin="org.eclipse.equinox.registry"/>
-      <import plugin="org.eclipse.ecf" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ecf.filetransfer" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ecf.provider.filetransfer" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.p2.core" version="2.0.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.p2.repository" version="2.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.common" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.jobs" version="3.5.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.common" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.osgi" version="3.2.0" match="compatible"/>
-   </requires>
-
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.config"
          download-size="0"
