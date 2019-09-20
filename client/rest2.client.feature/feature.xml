@@ -20,6 +20,14 @@
          id="org.java.websocket.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.slf4j_0.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.slf4j.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.rest2.client"
          download-size="0"
