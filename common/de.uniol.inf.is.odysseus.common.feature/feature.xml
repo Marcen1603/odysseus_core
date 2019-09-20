@@ -33,10 +33,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="com.google.guava.feature"
-         version="0.0.0"/>
-
-   <includes
          id="com.google.guava20.feature"
          version="0.0.0"/>
 
