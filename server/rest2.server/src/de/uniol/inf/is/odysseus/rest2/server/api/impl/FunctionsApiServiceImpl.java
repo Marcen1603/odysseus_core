@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.rest2.server.api.FunctionsApiService;
  * 
  * @author Cornelius A. Ludmann
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class FunctionsApiServiceImpl extends FunctionsApiService {
 
 	@Override

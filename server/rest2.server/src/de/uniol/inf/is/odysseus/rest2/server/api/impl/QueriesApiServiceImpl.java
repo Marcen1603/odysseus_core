@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.rest2.server.api.QueriesApiService;
 import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class QueriesApiServiceImpl extends QueriesApiService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueriesApiServiceImpl.class);

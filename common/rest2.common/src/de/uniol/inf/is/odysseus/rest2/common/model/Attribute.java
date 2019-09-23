@@ -2,10 +2,8 @@ package de.uniol.inf.is.odysseus.rest2.common.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import de.uniol.inf.is.odysseus.rest2.common.model.Datatype;
 import de.uniol.inf.is.odysseus.rest2.common.model.Schema;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

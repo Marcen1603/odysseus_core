@@ -1,37 +1,31 @@
 package de.uniol.inf.is.odysseus.rest2.server.api;
 
-import de.uniol.inf.is.odysseus.rest2.common.model.*;
-import de.uniol.inf.is.odysseus.rest2.server.api.UsersApiService;
-import de.uniol.inf.is.odysseus.rest2.server.api.factories.UsersApiServiceFactory;
-
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
-
-import de.uniol.inf.is.odysseus.rest2.common.model.User;
-
-import java.util.List;
 import java.util.Optional;
 
-import java.io.InputStream;
-
-import org.wso2.msf4j.Request;
-import org.wso2.msf4j.formparam.FormDataParam;
-import org.wso2.msf4j.formparam.FileInfo;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
+
+import org.wso2.msf4j.Request;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rest2.common.model.User;
 import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
+import de.uniol.inf.is.odysseus.rest2.server.api.factories.UsersApiServiceFactory;
+import io.swagger.annotations.ApiParam;
+import io.swagger.jaxrs.PATCH;
 
 @Path("/users")
 
 
 @io.swagger.annotations.Api(description = "the users API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-03-27T10:38:43.789+01:00[Europe/Berlin]")
 public class UsersApi  {
    private final UsersApiService delegate = UsersApiServiceFactory.getUsersApi();
 

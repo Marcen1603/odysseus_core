@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.rest2.common.model.LogicalOperatorTypeInfoParame
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.OperatorsApiService;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class OperatorsApiServiceImpl extends OperatorsApiService {
 
 	@Override

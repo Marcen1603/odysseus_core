@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.rest2.common.model.Query;
 import de.uniol.inf.is.odysseus.rest2.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest2.server.api.ParsersApiService;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaMSF4JServerCodegen", date = "2019-02-07T16:12:00.919Z[GMT]")
 public class ParsersApiServiceImpl extends ParsersApiService {
 
 	@Override
