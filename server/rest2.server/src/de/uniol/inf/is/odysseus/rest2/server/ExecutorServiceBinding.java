@@ -30,6 +30,10 @@
 
 package de.uniol.inf.is.odysseus.rest2.server;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
@@ -40,6 +44,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Dennis Geesen Created at: 09.08.2011
  */
 public class ExecutorServiceBinding {
+	
+	Logger LOG = LoggerFactory.getLogger(ExecutorServiceBinding.class);
 
 	private static IServerExecutor executor = null;
 	private static ISession superUser;
@@ -49,6 +55,7 @@ public class ExecutorServiceBinding {
 	}
 
 	public void bindExecutor(IExecutor ex) {
+		LOG.debug("Executor bound "+ex);
 		if (ex instanceof IServerExecutor) {
 			executor = (IServerExecutor) ex;
 			superUser = SessionManagement.instance.loginSuperUser(null);
@@ -60,6 +67,7 @@ public class ExecutorServiceBinding {
 	}
 
 	public void unbindExecutor(IExecutor ex) {
+		LOG.debug("Executor unbound "+ex);
 		executor.stopExecution(superUser);
 		executor = null;
 	}

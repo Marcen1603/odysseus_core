@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rest2.server;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -26,7 +28,7 @@ import de.uniol.inf.is.odysseus.rest2.server.events.ServerEventsWebsocketEndpoin
 import de.uniol.inf.is.odysseus.rest2.server.exception.PlanManagementExceptionMapper;
 import de.uniol.inf.is.odysseus.rest2.server.query.QueryResultWebsocketEndpoint;
 
-public class Application implements BundleActivator {
+public class Application implements BundleActivator, UncaughtExceptionHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 	
@@ -38,7 +40,7 @@ public class Application implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		
+		LOGGER.info("Trying to start Rest 2 Server");
 		Application.context = context;
 		
 		Thread runner = new Thread() {
@@ -75,12 +77,18 @@ public class Application implements BundleActivator {
 						).start();				
 			}
 		};
+		runner.setUncaughtExceptionHandler(this);
 		runner.start();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		Application.context = null;
+	}
+
+	@Override
+	public void uncaughtException(Thread t, Throwable e) {
+		LOGGER.error("Error in thread "+t, e);
 	}
 
 }
