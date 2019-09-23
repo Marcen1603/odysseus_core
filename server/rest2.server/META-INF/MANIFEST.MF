@@ -4,8 +4,7 @@ Bundle-Name: Rest 2 Server
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rest2.server
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.uniol.inf.is.odysseus.rest2.server
-Bundle-RequiredExecutionEnvironment: JavaSE-9,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework
 Require-Bundle: org.wso2.msf4j,
  de.uniol.inf.is.odysseus.core,
@@ -15,7 +14,8 @@ Require-Bundle: org.wso2.msf4j,
  de.uniol.inf.is.odysseus.rest2.common,
  de.uniol.inf.is.odysseus.server.keyvalue,
  de.uniol.inf.is.odysseus.keyvalue.datatype,
- de.uniol.inf.is.odysseus.script.parser
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
 Service-Component: OSGI-INF/*
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.rest2.server.Application
