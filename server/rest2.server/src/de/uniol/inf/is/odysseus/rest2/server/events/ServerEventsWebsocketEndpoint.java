@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rest2.server.events;
 
 import java.io.IOException;
-import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,13 +13,13 @@ import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
-import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.websocket.WebSocketEndpoint;
+import org.wso2.transport.http.netty.contract.websocket.WebSocketConnection;
 
 import com.google.gson.Gson;
 
@@ -63,11 +62,11 @@ public class ServerEventsWebsocketEndpoint
 	public static final String SERVER_ENDPOINT_URI = "/services/events/{type}/{securityToken}";
 
 	// type to sessions
-	private Map<ServerEventType, List<Session>> typeListeners = new HashMap<>();
+	private Map<ServerEventType, List<WebSocketConnection>> typeListeners = new HashMap<>();
 
 	@OnOpen
 	public void onOpen(@PathParam("type") String type, @PathParam("securityToken") String securityToken,
-			Session session) {
+			WebSocketConnection session) {
 		try {
 			ISession odysseusSession = SessionManagement.instance.login(securityToken);
 			if (odysseusSession != null) {
@@ -83,7 +82,7 @@ public class ServerEventsWebsocketEndpoint
 		}
 	}
 
-	private void subscribeToEvents(String type, Session session, ISession odysseusSession) {
+	private void subscribeToEvents(String type, WebSocketConnection session, ISession odysseusSession) {
 		IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 		ServerEventType enumType = ServerEventType.valueOf(type);
 		switch (enumType) {
@@ -122,9 +121,9 @@ public class ServerEventsWebsocketEndpoint
 	/**
 	 * This session is interested in this type of updates
 	 */
-	private void addToListeners(ServerEventType type, Session session) {
+	private void addToListeners(ServerEventType type, WebSocketConnection session) {
 		if (this.typeListeners.get(type) == null) {
-			List<Session> sessions = new ArrayList<Session>();
+			List<WebSocketConnection> sessions = new ArrayList<>();
 			this.typeListeners.put(type, sessions);
 		}
 
@@ -133,22 +132,17 @@ public class ServerEventsWebsocketEndpoint
 		}
 	}
 
-	private void closeConnection(Session session, CloseReason reason) {
-		try {
-			session.close(reason);
-			onClose(reason, session);
-		} catch (IOException e) {
-			LOGGER.error("Error closing connection", e);
-		}
+	private void closeConnection(WebSocketConnection session, CloseReason reason) {
+		session.terminateConnection();
 	}
 
 	@OnMessage
-	public void onTextMessage(String text, Session session) throws IOException {
-		LOGGER.info("Received Text : " + text + " from  " + session.getId());
+	public void onTextMessage(String text, WebSocketConnection session) throws IOException {
+		LOGGER.info("Received Text : " + text + " from  " + session.getChannelId());
 	}
 
 	@OnError
-	public void onError(Throwable throwable, Session session) {
+	public void onError(Throwable throwable, WebSocketConnection session) {
 		LOGGER.error("Error found in method : " + throwable.toString());
 	}
 
@@ -158,30 +152,18 @@ public class ServerEventsWebsocketEndpoint
 	 * @param sessions Sessions that should receive the text
 	 * @param toSend   The text (JSON) to send to the receivers
 	 */
-	private void sendText(List<Session> sessions, String toSend) {
+	private void sendText(List<WebSocketConnection> sessions, String toSend) {
 		// Prevent a ConcurrentModificationException when onClose modifies the
 		// session-list
-		List<Session> sessionsCopy = new ArrayList<>(sessions);
-		sessionsCopy.forEach(session -> {
-			try {
-				session.getBasicRemote().sendText(toSend);
-			} catch (IOException e) {
-				LOGGER.error("Problems sending value " + toSend, e);
-				if (e instanceof ClosedChannelException) {
-					LOGGER.debug("Channel closed", e);
-				} else {
-					LOGGER.error("Problems sending value " + toSend, e);
-				}
-				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
-			}
-		});
+		List<WebSocketConnection> sessionsCopy = new ArrayList<>(sessions);
+		sessionsCopy.forEach(session -> session.pushText(toSend));
 	}
 
-	public void onClose(CloseReason closeReason, Session session) {
+	public void onClose(CloseReason closeReason, WebSocketConnection session) {
 		// Remove all subscriptions from this session
 		List<ServerEventType> keysToRemove = new ArrayList<>();
 		for (ServerEventType key : this.typeListeners.keySet()) {
-			List<Session> sessions = this.typeListeners.get(key);
+			List<WebSocketConnection> sessions = this.typeListeners.get(key);
 			if (sessions.contains(session)) {
 				sessions.remove(session);
 			}
@@ -236,7 +218,7 @@ public class ServerEventsWebsocketEndpoint
 
 	@Override
 	public void eventOccured(String type) {
-		List<Session> sessions = this.typeListeners.get(ServerEventType.valueOf(type));
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.valueOf(type));
 		if (sessions == null) {
 			// No one is interested in this event (should not occur)
 			return;
@@ -251,7 +233,7 @@ public class ServerEventsWebsocketEndpoint
 			String parserID, ISession user, Context context) {
 		QueryAddedEvent event = new QueryAddedEvent(query, queryIds, parserID);
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.QUERY_ADDED);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.QUERY_ADDED);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -260,7 +242,7 @@ public class ServerEventsWebsocketEndpoint
 		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(),
 				eventArgs.getMessage());
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.ERROR_EVENT);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.ERROR_EVENT);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -268,7 +250,7 @@ public class ServerEventsWebsocketEndpoint
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(), "");
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.PLAN_MODIFICATION);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.PLAN_MODIFICATION);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -276,7 +258,7 @@ public class ServerEventsWebsocketEndpoint
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
 		ServerEvent event = new ServerEvent(eventArgs.getEventType().toString(), eventArgs.getValue().toString(), "");
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.SCHEDULER_MANAGER);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.SCHEDULER_MANAGER);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -286,7 +268,7 @@ public class ServerEventsWebsocketEndpoint
 		ExecutorCommandEvent event = new ExecutorCommandEvent(ServerEventType.EXECUTOR_COMMAND.toString(),
 				createdQueryIds);
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.EXECUTOR_COMMAND);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.EXECUTOR_COMMAND);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -294,7 +276,7 @@ public class ServerEventsWebsocketEndpoint
 	public void parserBound(String parserID) {
 		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "parserBound", parserID);
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.COMPILER);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -302,7 +284,7 @@ public class ServerEventsWebsocketEndpoint
 	public void rewriteBound() {
 		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "rewriteBound", "");
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.COMPILER);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -310,7 +292,7 @@ public class ServerEventsWebsocketEndpoint
 	public void transformationBound() {
 		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "transformationBound", "");
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.COMPILER);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 
@@ -318,7 +300,7 @@ public class ServerEventsWebsocketEndpoint
 	public void planGeneratorBound() {
 		CompilerEvent event = new CompilerEvent(ServerEventType.COMPILER.toString(), "planGeneratorBound", "");
 		String asJson = gson.toJson(event);
-		List<Session> sessions = this.typeListeners.get(ServerEventType.COMPILER);
+		List<WebSocketConnection> sessions = this.typeListeners.get(ServerEventType.COMPILER);
 		CompletableFuture.runAsync(() -> sendText(sessions, asJson));
 	}
 }

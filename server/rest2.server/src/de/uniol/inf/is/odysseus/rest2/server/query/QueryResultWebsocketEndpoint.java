@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rest2.server.query;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,13 +15,13 @@ import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
-import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.msf4j.websocket.WebSocketEndpoint;
+import org.wso2.transport.http.netty.contract.websocket.WebSocketConnection;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -62,7 +61,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	// TODO: Config!
 	private static final int BUFFER_LIMIT = 1000;
 	private Map<Integer, QueryResultReceiver> receiver = new HashMap<>();
-	private Map<Session, Integer> sessionToInputPortMapping = new HashMap<>();
+	private Map<WebSocketConnection , Integer> sessionToInputPortMapping = new HashMap<>();
 	// protocol, port, outputport, inputport
 	private Map<String, Map<IPhysicalOperator, Map<Integer, Integer>>> connectedOperators = new HashMap<>();
 
@@ -117,43 +116,24 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		}
 	}
 
-	private void sendText(List<Session> sessions, String toSend) {
+	private void sendText(List<WebSocketConnection> sessions, String toSend) {
 		// Sessions are now CopyOnWriteArrayLists
 		sessions.forEach(session -> {
-			try {
-				session.getBasicRemote().sendText(toSend);
-			} catch (IOException e) {
-				if (e instanceof ClosedChannelException) {
-					LOGGER.debug("Channel closed", e);
-				} else {
-					LOGGER.error("Problems sending value " + toSend, e);
-				}
-				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
-			}
+				session.pushText(toSend);
 		});
 	}
 
-	private void sendBinary(List<Session> sessions, ByteBuffer toSend) {
+	private void sendBinary(List<WebSocketConnection > sessions, ByteBuffer toSend) {
 		// Sessions are now CopyOnWriteArrayLists
-		sessions.forEach(session -> {
-			try {
-				session.getBasicRemote().sendBinary(toSend);
-			} catch (IOException e) {
-				if (e instanceof ClosedChannelException) {
-					LOGGER.debug("Channel closed", e);
-				} else {
-					LOGGER.error("Problems sending value", e);
-				}
-				onClose(new CloseReason(CloseCodes.GOING_AWAY, ""), session);
-			}
-		});
+		sessions.forEach(session -> session.pushBinary(toSend)
+		);
 	}
 
 	@SuppressWarnings("unchecked")
 	@OnOpen
 	public void onOpen(@PathParam("id") String id, @PathParam("operator") String operatorName,
 			@PathParam("port") String port, @PathParam("protocol") String protocol,
-			@PathParam("securityToken") String securityToken, Session session) {
+			@PathParam("securityToken") String securityToken, WebSocketConnection session) {
 		try {
 			ISession odysseusSession = SessionManagement.instance.login(securityToken);
 			//ISession odysseusSession = SessionManagement.instance.loginSuperUser("");
@@ -211,16 +191,12 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		return query;
 	}
 
-	private void closeConnection(Session session, CloseReason reason) {
-		try {
-			session.close(reason);
-		} catch (IOException e) {
-			LOGGER.error("Error closing connection", e);
-		}
+	private void closeConnection(WebSocketConnection session, CloseReason reason) {
+		session.terminateConnection();
 	}
 
 	private void addQueryResultReceiver(String protocol, IPhysicalOperator operator, Integer connectionPort,
-			Session session, ISession odysseusSession) {
+			WebSocketConnection session, ISession odysseusSession) {
 		Integer inputPort = connectedOperators.get(protocol).get(operator).get(connectionPort);
 		QueryResultReceiver qrr = receiver.get(inputPort);
 		if (qrr == null) {
@@ -237,7 +213,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 
 	}
 
-	private synchronized void removeQueryResultReceiver(Integer inputPort, Session session) {
+	private synchronized void removeQueryResultReceiver(Integer inputPort, WebSocketConnection session) {
 		QueryResultReceiver qrr = receiver.get(inputPort);
 		if (qrr != null) {
 			qrr.removeSession(session);
@@ -310,7 +286,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 		qrr.source.disconnectSink(qrr.buffer, 0, qrr.connectionPort, qrr.source.getOutputSchema(qrr.connectionPort));			
 	}
 
-	public void onClose(CloseReason closeReason, Session session) {
+	public void onClose(CloseReason closeReason, WebSocketConnection session) {
 		Integer inputPort = sessionToInputPortMapping.get(session);
 		if (inputPort != null) {
 			removeQueryResultReceiver(inputPort, session);
@@ -318,12 +294,12 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	}
 
 	@OnMessage
-	public void onTextMessage(String text, Session session) throws IOException {
-		LOGGER.info("Received Text : {} from  {}", text, session.getId()+"");
+	public void onTextMessage(String text, WebSocketConnection session) throws IOException {
+		LOGGER.info("Received Text : {} from  {}", text, session.getChannelId()+"");
 	}
 
 	@OnError
-	public void onError(Throwable throwable, Session session) {
+	public void onError(Throwable throwable, WebSocketConnection session) {
 		LOGGER.error("Error found in method : {}", throwable);
 	}
 
@@ -370,7 +346,7 @@ class QueryResultReceiver {
 	final boolean useSendText;
 	final boolean convertToCSV;
 	final String protocol;
-	final List<Session> sessions = new CopyOnWriteArrayList<>();
+	final List<WebSocketConnection> sessions = new CopyOnWriteArrayList<>();
 	final IStreamObjectDataHandler<?> dataHandler;
 	final ISource<?> source;
 	final int connectionPort; 
@@ -388,17 +364,17 @@ class QueryResultReceiver {
 		return sessions.isEmpty();
 	}
 
-	public void removeSession(Session session) {
+	public void removeSession(WebSocketConnection session) {
 		this.sessions.remove(session);
 		LOGGER.debug("Session {} removed",session);
 	}
 
-	void addSession(Session session) {
+	void addSession(WebSocketConnection session) {
 		this.sessions.add(session);
 		LOGGER.debug("Session {} added",session);
 	}
 
-	List<Session> getSessions() {
+	List<WebSocketConnection> getSessions() {
 		return sessions;
 	}
 	

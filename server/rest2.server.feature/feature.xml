@@ -17,10 +17,6 @@
    </license>
 
    <includes
-         id="org.wso2.msf4j.feature"
-         version="0.0.0"/>
-
-   <includes
          id="com.fasterxml.jackson.feature"
          version="0.0.0"/>
 
@@ -37,5 +33,11 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.wso2.msf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
