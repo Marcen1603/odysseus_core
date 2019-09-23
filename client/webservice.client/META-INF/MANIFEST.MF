@@ -8,5 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.webservice.client
-Require-Bundle: de.uniol.inf.is.odysseus.core
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ javax.jws;bundle-version="2.0.0",
+ javax.xml.bind;bundle-version="2.2.0",
+ javax.xml.ws;bundle-version="2.1.0"
 Automatic-Module-Name: de.uniol.inf.is.odysseus.webservice.client
