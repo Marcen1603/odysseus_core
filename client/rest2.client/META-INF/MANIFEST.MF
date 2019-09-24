@@ -34,7 +34,10 @@ Bundle-ClassPath: lib/jackson-annotations-2.6.4.jar,
  lib/jersey-guava-2.25.1.jar,
  lib/mimepull-1.9.6.jar,
  lib/osgi-resource-locator-1.0.1.jar,
- lib/javax.inject-2.5.0-b33.jar
+ lib/javax.inject-2.5.0-b33.jar,
+ lib/jaxb-core-2.3.0.1.jar,
+ lib/jaxb-impl-2.4.0-b180830.0438.jar,
+ lib/activation-1.1.1.jar
 Export-Package: de.uniol.inf.is.odysseus.rest2.client,
  de.uniol.inf.is.odysseus.rest2.client.api,
  de.uniol.inf.is.odysseus.rest2.client.auth,

@@ -15,7 +15,11 @@ Require-Bundle: org.wso2.msf4j,
  de.uniol.inf.is.odysseus.server.keyvalue,
  de.uniol.inf.is.odysseus.keyvalue.datatype,
  de.uniol.inf.is.odysseus.script.parser,
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25"
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.25",
+ javax.xml.bind;bundle-version="2.2.0",
+ com.sun.xml.bind;bundle-version="2.2.0",
+ com.jaxb;bundle-version="2.3.0"
 Service-Component: OSGI-INF/*
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.rest2.server.Application
+Bundle-ClassPath: .
