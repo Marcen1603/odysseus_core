@@ -95,25 +95,25 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 	private Map<ClientReceiver, Integer> opReceivers = new HashMap<>();
 
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<>();
-	// final long UPDATEINTERVAL = 60000;
-	//
-	// // Fire update events --> TODO: Get Events from Server and fire
-	// private class Runner extends Thread {
-	//
-	// @Override
-	// public void run() {
-	// while (true) {
-	// try {
-	// synchronized (this) {
-	// wait(UPDATEINTERVAL);
-	// }
-	// fireAllUpdateEvents();
-	// } catch (InterruptedException e) {
-	// // e.printStackTrace();
-	// }
-	// }
-	// }
-	// };
+	final long UPDATEINTERVAL = 10000;
+
+	// Fire update events --> TODO: Get Events from Server and fire
+	private class Runner extends Thread {
+
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					synchronized (this) {
+						wait(UPDATEINTERVAL);
+					}
+					fireAllUpdateEvents();
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+				}
+			}
+		}
+	};
 
 	class EventWebSocketClient extends WebSocketClient {
 
@@ -152,15 +152,15 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 	}
 
-	// private void fireAllUpdateEvents() {
-	// RESTClient.this.//fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-	// RESTClient.this.//fireUpdateEvent(IUpdateEventListener.QUERY);
-	// RESTClient.this.//fireUpdateEvent(IUpdateEventListener.SCHEDULING);
-	// RESTClient.this.//fireUpdateEvent(IUpdateEventListener.SESSION);
-	// RESTClient.this.//fireUpdateEvent(IUpdateEventListener.USER);
-	// }
+	private void fireAllUpdateEvents() {
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.SESSION);
+		RESTClient.this.fireUpdateEvent(IUpdateEventListener.USER);
+	}
 
-	// private Runner generateEvents = new Runner();
+	private Runner generateEvents = new Runner();
 
 	@Override
 	public synchronized void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
@@ -189,19 +189,17 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		List<IUpdateEventListener> list = updateEventListener.get(type);
 		if (list != null) {
 			for (IUpdateEventListener l : list) {
-				System.err.println(type);
 				l.eventOccured(type);
 			}
 		}
 	}
 
-	
 	@Override
-	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {		
+	public ISession login(String username, byte[] password, String tenantname, String host, int port, String instance) {
 		String connectString = host + ":" + port;
 		return login(username, new String(password), tenantname, connectString);
 	}
-	
+
 	private ISession login(String username, String password, String tenantname, String connectString) {
 
 		RestService restService = new RestService();
@@ -247,9 +245,10 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 
 		return session;
 	}
-	
+
 	private void reconnect(ISession session) {
-		login(session.getUser().getName(), new String(((ClientUser)session.getUser()).getPassword()), ((ClientSession)session).getTenantName(), session.getConnectionName());
+		login(session.getUser().getName(), new String(((ClientUser) session.getUser()).getPassword()),
+				((ClientSession) session).getTenantName(), session.getConnectionName());
 	}
 
 	private void addServerEventListner(ISession session) throws URISyntaxException, ApiException {
@@ -330,8 +329,8 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 						((ClientSession) session).setToken(token.getToken());
 					} catch (Exception e) {
 						// Connection could be broken, try to reconnect
-						reconnect(session);	
-						api = (DefaultApi) ClientSessionStore.getSessionContext(session); 
+						reconnect(session);
+						api = (DefaultApi) ClientSessionStore.getSessionContext(session);
 					}
 				}
 				return api;
@@ -884,7 +883,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.sinksNameDelete(name);
-			// fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
@@ -901,7 +900,7 @@ public class RESTClient implements IClientExecutor, IExecutor, IOperatorOwner {
 		DefaultApi api = getAPI(caller);
 		try {
 			api.datastreamsNameDelete(name);
-			// fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 		} catch (ApiException e) {
 			throw new PlanManagementException(e);
 		}
