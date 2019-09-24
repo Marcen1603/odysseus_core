@@ -26,18 +26,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
-   <includes
-         id="com.jayway.jsonpath.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.codehaus.woodstox.stax2.api.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="com.fasterxml.jackson.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.keyvalue.datatype"
          download-size="0"
@@ -47,6 +35,27 @@ limitations under the License.
 
    <plugin
          id="de.uniol.inf.is.odysseus.keyvalue.mep"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.fasterxml.jackson"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.jayway.jsonpath"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.codehaus.woodstox.stax2-api"
          download-size="0"
          install-size="0"
          version="0.0.0"
