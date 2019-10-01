@@ -39,7 +39,13 @@ public class SecurityAuthInterceptor implements RequestInterceptor {
 
 	@Override
 	public boolean interceptRequest(Request request, Response response) throws Exception {
-
+		
+		if (request.getHttpMethod()=="OPTIONS") {
+			return true;
+		}
+		
+		response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+		
 		// Check if the resource is public
 		if (checkPublicUri(request, response)) {
 			return true;

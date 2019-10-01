@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rest2.server.api;
 
 import de.uniol.inf.is.odysseus.rest2.server.api.AggregateFunctionsApiService;
+import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
 import de.uniol.inf.is.odysseus.rest2.server.api.factories.AggregateFunctionsApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the aggregate_functions API")
-public class AggregateFunctionsApi  {
+public class AggregateFunctionsApi extends AbstractApi {
    private final AggregateFunctionsApiService delegate = AggregateFunctionsApiServiceFactory.getAggregateFunctionsApi();
 
     @GET
@@ -37,4 +38,5 @@ public class AggregateFunctionsApi  {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.aggregateFunctionsGet(session, datamodel);
     }
+    
 }

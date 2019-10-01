@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiParam;
 
 
 @io.swagger.annotations.Api(description = "the services API")
-public class ServicesApi  {
+public class ServicesApi  extends AbstractApi {
    private final ServicesApiService delegate = ServicesApiServiceFactory.getServicesApi();
 
     @GET

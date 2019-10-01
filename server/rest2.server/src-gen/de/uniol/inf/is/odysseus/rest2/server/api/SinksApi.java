@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiParam;
 
 
 @io.swagger.annotations.Api(description = "the sinks API")
-public class SinksApi  {
+public class SinksApi  extends AbstractApi {
    private final SinksApiService delegate = SinksApiServiceFactory.getSinksApi();
 
     @GET

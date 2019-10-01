@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.rest2.server.api.factories.OperatorsApiServiceFa
 
 
 @io.swagger.annotations.Api(description = "the operators API")
-public class OperatorsApi  {
+public class OperatorsApi  extends AbstractApi {
    private final OperatorsApiService delegate = OperatorsApiServiceFactory.getOperatorsApi();
 
     @GET

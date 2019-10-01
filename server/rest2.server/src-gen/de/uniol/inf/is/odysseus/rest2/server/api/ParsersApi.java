@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiParam;
 
 
 @io.swagger.annotations.Api(description = "the parsers API")
-public class ParsersApi  {
+public class ParsersApi  extends AbstractApi {
    private final ParsersApiService delegate = ParsersApiServiceFactory.getParsersApi();
 
     @GET

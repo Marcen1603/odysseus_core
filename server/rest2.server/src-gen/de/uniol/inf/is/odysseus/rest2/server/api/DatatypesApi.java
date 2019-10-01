@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the datatypes API")
-public class DatatypesApi  {
+public class DatatypesApi  extends AbstractApi  {
    private final DatatypesApiService delegate = DatatypesApiServiceFactory.getDatatypesApi();
 
     @GET

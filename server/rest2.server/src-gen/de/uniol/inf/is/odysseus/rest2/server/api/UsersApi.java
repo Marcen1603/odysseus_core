@@ -26,7 +26,7 @@ import io.swagger.jaxrs.PATCH;
 
 
 @io.swagger.annotations.Api(description = "the users API")
-public class UsersApi  {
+public class UsersApi  extends AbstractApi {
    private final UsersApiService delegate = UsersApiServiceFactory.getUsersApi();
 
     @GET

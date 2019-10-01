@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the functions API")
-public class FunctionsApi  {
+public class FunctionsApi  extends AbstractApi {
    private final FunctionsApiService delegate = FunctionsApiServiceFactory.getFunctionsApi();
 
     @GET

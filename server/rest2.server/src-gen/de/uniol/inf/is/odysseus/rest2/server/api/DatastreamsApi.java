@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.rest2.server.SecurityAuthInterceptor;
 
 
 @io.swagger.annotations.Api(description = "the datastreams API")
-public class DatastreamsApi  {
+public class DatastreamsApi extends AbstractApi{
    private final DatastreamsApiService delegate = DatastreamsApiServiceFactory.getDatastreamsApi();
 
     @GET
