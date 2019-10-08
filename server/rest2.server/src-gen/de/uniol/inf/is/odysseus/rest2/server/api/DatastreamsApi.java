@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rest2.server.api;
 
 import de.uniol.inf.is.odysseus.rest2.server.api.DatastreamsApiService;
+import de.uniol.inf.is.odysseus.rest2.server.api.NotFoundException;
 import de.uniol.inf.is.odysseus.rest2.server.api.factories.DatastreamsApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
@@ -65,4 +66,10 @@ public class DatastreamsApi extends AbstractApi{
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.datastreamsNameGet(session, name);
     }
+    
+	@OPTIONS
+    @Path("/{name}")
+	public Response queriesOptions(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
 }

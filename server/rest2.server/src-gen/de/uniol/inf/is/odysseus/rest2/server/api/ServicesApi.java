@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -47,9 +48,14 @@ public class ServicesApi  extends AbstractApi {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.servicesBundlesGet(session, filter);
     }
+	@OPTIONS
+    @Path("/bundles")
+	public Response queriesOptions0(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
+
     @GET
     @Path("/events")
-    
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Returns a list of websockets that provides server events.", notes = "", response = EventWebSocket.class, responseContainer = "List", tags={  })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -60,6 +66,11 @@ public class ServicesApi  extends AbstractApi {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.servicesEventsGet(session);
     }
+	@OPTIONS
+    @Path("/events")
+	public Response queriesOptions1(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
     @POST
     @Path("/login")
     @Consumes({ "application/json" })
@@ -74,6 +85,13 @@ public class ServicesApi  extends AbstractApi {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.servicesLoginPost(session, user);
     }
+	@OPTIONS
+    @Path("/login")
+	public Response queriesOptions2(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
+    
+
     @POST
     @Path("/outputschema")
     @Consumes({ "application/json" })
@@ -89,6 +107,12 @@ public class ServicesApi  extends AbstractApi {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.servicesOutputschemaPost(session, query,port);
     }
+	@OPTIONS
+    @Path("/outputschema")
+	public Response queriesOptions3(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
+
     @GET
     @Path("/session")
     
@@ -102,4 +126,10 @@ public class ServicesApi  extends AbstractApi {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.servicesSessionGet(session);
     }
+	@OPTIONS
+    @Path("/session")
+	public Response queriesOptions4(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
+
 }

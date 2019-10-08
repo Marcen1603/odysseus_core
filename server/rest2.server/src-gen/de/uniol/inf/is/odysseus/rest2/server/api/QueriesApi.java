@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -85,6 +86,12 @@ public class QueriesApi extends AbstractApi{
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
 		return delegate.queriesIdPut(session, id, query);
 	}
+	
+	@OPTIONS
+    @Path("/{id}")
+	public Response queriesOptions0(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
 
 	@DELETE
 	@Path("/{name}")
@@ -145,5 +152,10 @@ public class QueriesApi extends AbstractApi{
 		return delegate.queriesPost(session, query);
 	}
 
+	@OPTIONS
+    @Path("/{name}")
+	public Response queriesOptions(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
 
 }

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -100,4 +101,9 @@ public class UsersApi  extends AbstractApi {
 		final Optional<ISession> session = Optional.ofNullable(SessionManagement.instance.login(securityToken));
         return delegate.usersPost(session, user);
     }
+	@OPTIONS
+    @Path("/{name}")
+	public Response queriesOptions(@Context Request request) throws NotFoundException {
+		return super.queriesOptions(request);
+	}
 }
