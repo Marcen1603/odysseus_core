@@ -40,7 +40,7 @@ public class MilliSecondFunction extends AbstractUnaryDateFunction<Long> {
 	public Long getValue() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime((Date) getInputValue(0));
-		long mills = calendar.getTimeInMillis();
+		long mills = calendar.get(Calendar.MILLISECOND);
 		return mills;
 	}
 
