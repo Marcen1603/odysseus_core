@@ -27,10 +27,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
-   <url>
-      
-   </url>
-
    <includes
          id="de.uniol.inf.is.odysseus.server.feature"
          version="0.0.0"/>
@@ -50,5 +46,12 @@ limitations under the License.
    <includes
          id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"
          version="0.0.0"/>
+
+   <plugin
+         id="org.slf4j_0"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
