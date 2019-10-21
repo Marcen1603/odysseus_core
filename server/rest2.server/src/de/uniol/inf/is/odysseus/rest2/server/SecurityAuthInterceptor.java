@@ -44,7 +44,9 @@ public class SecurityAuthInterceptor implements RequestInterceptor {
 			return true;
 		}
 		
-		response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+		if (request.getHeader("Origin")!= null) {
+			response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+		}
 		
 		// Check if the resource is public
 		if (checkPublicUri(request, response)) {
