@@ -36,6 +36,7 @@ public final class QueryView extends ViewPart {
 	private QueryTableViewer tableViewer;
 	private boolean refreshing;
 	private IQueryViewDataProvider dataProvider;
+	private int refreshCount = 0;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -128,7 +129,10 @@ public final class QueryView extends ViewPart {
 	}
 
 	public void refreshTable() {
+		// Could be cases, where the last refresh call gets suppressed,
+		// so remember, refresh calls and repeat refreshing
 		if( refreshing ) {
+			refreshCount++;
 			return;
 		}
 		
@@ -139,8 +143,11 @@ public final class QueryView extends ViewPart {
 
 				@Override
 				public void run() {
-					if (!tableViewer.getControl().isDisposed()) {
-						tableViewer.refresh();
+					while (refreshCount>0) {
+						if (!tableViewer.getControl().isDisposed()) {
+							tableViewer.refresh();
+						}
+						refreshCount--;
 					}
 					refreshing = false;
 				}
