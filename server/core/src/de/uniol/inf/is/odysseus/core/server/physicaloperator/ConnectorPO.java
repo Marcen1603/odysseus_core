@@ -18,5 +18,4 @@ public class ConnectorPO extends MergePO {
 	public int getPort() {
 		return port;
 	}
-
 }

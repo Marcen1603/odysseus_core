@@ -41,7 +41,7 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		}
 		final String queryText = getQueryText(operator);
 		// TODO: initialize further vars? Context?
-		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(), Context.empty());
+		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(), config.getContext());
 		if (q.size() != 1) {
 			for (Integer queryId : q) {
 				executor.removeQuery(queryId, getCaller());
