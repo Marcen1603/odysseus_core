@@ -26,12 +26,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandlerRegistry;
@@ -98,14 +98,14 @@ public abstract class AbstractDataDictionary implements IDataDictionary, IDataDi
 	private IStore<Resource, IStore<String, Object>> stores;
 	private IStore<Resource, IUser> storesFromUser;
 
-	private final Map<Resource, ISource<?>> accessPlans = Maps.newHashMap();
-	private final Map<Resource, ISink<?>> sinks = Maps.newHashMap();
-	private final Map<Resource, ISource<?>> accessPOs = Maps.newHashMap();
-	private final Map<Resource, IAccessAO> accessAOs = Maps.newHashMap();
-	private final Map<Resource, Resource> accessAOViewMapping = Maps.newHashMap();
+	private final Map<Resource, ISource<?>> accessPlans = new ConcurrentHashMap<>();
+	private final Map<Resource, ISink<?>> sinks = new ConcurrentHashMap<>();
+	private final Map<Resource, ISource<?>> accessPOs = new ConcurrentHashMap<>();
+	private final Map<Resource, IAccessAO> accessAOs = new ConcurrentHashMap<>();
+	private final Map<Resource, Resource> accessAOViewMapping = new ConcurrentHashMap<>();
 
-	private final Map<Resource, IPhysicalOperator> operators = Maps.newHashMap();
-	private final Map<Resource, List<IStreamObject<?>>> listStores = Maps.newHashMap();
+	private final Map<Resource, IPhysicalOperator> operators = new ConcurrentHashMap<>();
+	private final Map<Resource, List<IStreamObject<?>>> listStores =new ConcurrentHashMap<>();
 	private final UserManagementProvider userManagementProvider;
 
 	protected ITenant tenant;
