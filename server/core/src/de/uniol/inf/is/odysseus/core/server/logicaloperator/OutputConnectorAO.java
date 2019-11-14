@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 
 @LogicalOperator(name = "OutputConnector", minInputPorts = 1, maxInputPorts = 1, category = {
 		LogicalOperatorCategory.PLAN }, doc = "This operator serves as a representer and defines a port for an outgoing connection")
-
 public class OutputConnectorAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -3669762368140655617L;
@@ -17,6 +16,7 @@ public class OutputConnectorAO extends AbstractLogicalOperator {
 	}
 	
 	public OutputConnectorAO(OutputConnectorAO other) {
+		super(other);
 		this.port = other.port;
 	}
 
