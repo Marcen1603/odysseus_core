@@ -55,6 +55,10 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 
 		String editorTypeID = event.getParameter(OdysseusRCPViewerPlugIn.STREAM_EDITOR_TYPE_PARAMETER_ID);
 
+		return execute(event, editorTypeID);
+	}
+
+	protected Object execute(ExecutionEvent event, String editorTypeID) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
 
@@ -86,54 +90,59 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 				}
 
 				
-				if (optionalOpForStream != null && !optionalOpForStream.isEmpty()) {
+				showStreams(editorTypeID, page, optionalOpForStream);
+			}
+		}
+		return null;
+	}
 
-					nextOperator: for( IPhysicalOperator opForStream : optionalOpForStream ) {
-						
-						for (IEditorReference editorRef : page.getEditorReferences()) {
-							try {
-								IEditorInput i = editorRef.getEditorInput();
-								if (i instanceof StreamEditorInput) {
-									StreamEditorInput gInput = (StreamEditorInput) i;
-									if (gInput.getPhysicalOperator() == opForStream && gInput.getEditorTypeID().equals(editorTypeID)) {
-										page.activate(editorRef.getPart(false));
-										continue nextOperator;
-									}
-								}
-							} catch (PartInitException ex) {
-								ex.printStackTrace();
+	private void showStreams(String editorTypeID, IWorkbenchPage page,
+			Collection<IPhysicalOperator> optionalOpForStream) {
+		if (optionalOpForStream != null && !optionalOpForStream.isEmpty()) {
+
+			nextOperator: for( IPhysicalOperator opForStream : optionalOpForStream ) {
+				
+				for (IEditorReference editorRef : page.getEditorReferences()) {
+					try {
+						IEditorInput i = editorRef.getEditorInput();
+						if (i instanceof StreamEditorInput) {
+							StreamEditorInput gInput = (StreamEditorInput) i;
+							if (gInput.getPhysicalOperator() == opForStream && gInput.getEditorTypeID().equals(editorTypeID)) {
+								page.activate(editorRef.getPart(false));
 								continue nextOperator;
 							}
 						}
-	
-						// Ediortyp holen und anzeigen
-						for (StreamExtensionDefinition def : StreamEditorRegistry.getInstance().getStreamExtensionDefinitions()) {
-							if (def.getID().equals(editorTypeID)) {
+					} catch (PartInitException ex) {
+						ex.printStackTrace();
+						continue nextOperator;
+					}
+				}
+
+				// Ediortyp holen und anzeigen
+				for (StreamExtensionDefinition def : StreamEditorRegistry.getInstance().getStreamExtensionDefinitions()) {
+					if (def.getID().equals(editorTypeID)) {
+						try {
+							final Object editorType = def.getConfigElement().createExecutableExtension("class");
+							if (editorType instanceof IStreamEditorType) {
+								IStreamEditorType editor = (IStreamEditorType) editorType;
+
+								// ViewModell erzeugen
+								StreamEditorInput input = new StreamEditorInput(opForStream, editor, editorTypeID, def.getLabel());
+
 								try {
-									final Object editorType = def.getConfigElement().createExecutableExtension("class");
-									if (editorType instanceof IStreamEditorType) {
-										IStreamEditorType editor = (IStreamEditorType) editorType;
-	
-										// ViewModell erzeugen
-										StreamEditorInput input = new StreamEditorInput(opForStream, editor, editorTypeID, def.getLabel());
-	
-										try {
-											page.openEditor(input, OdysseusRCPViewerPlugIn.STREAM_EDITOR_ID);
-											continue nextOperator;
-										} catch (PartInitException ex) {
-											ex.printStackTrace();
-										}
-									}
-								} catch (CoreException ex) {
+									page.openEditor(input, OdysseusRCPViewerPlugIn.STREAM_EDITOR_ID);
+									continue nextOperator;
+								} catch (PartInitException ex) {
 									ex.printStackTrace();
 								}
 							}
+						} catch (CoreException ex) {
+							ex.printStackTrace();
 						}
 					}
 				}
 			}
 		}
-		return null;
 	}
 	
 	private static Collection<IPhysicalOperator> chooseOperator( List<IPhysicalOperator> operators ) {
