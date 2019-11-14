@@ -100,7 +100,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 //		for (IPredicate<?> pred : op.predicates) {
 //			this.predicates.add(pred.clone());
 //		}
-		setName(op.getName());
+		this.name = op.getName();
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = new HashMap<>(op.outputSchema);
 		// this.outputSchema = op.outputSchema;
@@ -303,7 +303,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 */
 	@Override
 	@Parameter(name = "Name", type = StringParameter.class, optional = true, doc = "Name of the operator (e.g. for visulization).")
-	public void setName(String name) {
+	final public void setName(String name) {
 		this.name = name;
 	}
 
