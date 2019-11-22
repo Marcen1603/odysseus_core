@@ -40,14 +40,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.planmanagement.executor.rest.client.feature"
          version="0.0.0"/>
 

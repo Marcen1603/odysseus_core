@@ -17,13 +17,9 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="com.fasterxml.jackson.feature"
-         version="0.0.0"/>
+   <requires>
+      <import feature="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
+   </requires>
 
    <plugin
          id="de.uniol.inf.is.odysseus.wrapper.json"
