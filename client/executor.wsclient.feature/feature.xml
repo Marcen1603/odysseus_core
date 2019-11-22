@@ -26,14 +26,6 @@ Unless required by applicable law or agreed to in writing, software
  limitations under the License.
    </license>
 
-   <url>
-
-   </url>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.slf4j.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.webservice.client"
          download-size="0"
@@ -47,5 +39,11 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

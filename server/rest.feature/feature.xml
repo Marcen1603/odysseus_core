@@ -26,10 +26,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.rest"
          download-size="0"
@@ -46,6 +42,34 @@ limitations under the License.
 
    <plugin
          id="org.restlet-osgi-2.3.12"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.keyvalue.datahandler"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.keyvalue.datatype"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.keyvalue.mep"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.server.keyvalue"
          download-size="0"
          install-size="0"
          version="0.0.0"
