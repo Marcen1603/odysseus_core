@@ -23,7 +23,11 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractObjectHandlerByteBufferHandler.class);
 
+	public static final String OBJECT_SIZE="objectsize";
+	
 	protected ByteBufferHandler<T> objectHandler;
+	
+	private int objectSize;
 
 	public AbstractObjectHandlerByteBufferHandler() {
 		super();
@@ -33,6 +37,11 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 			IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		objectHandler = new ByteBufferHandler<T>(dataHandler);
+		initOptions(optionsMap);
+	}
+
+	private void initOptions(OptionMap optionsMap) {
+		this.objectSize = optionsMap.getInt(OBJECT_SIZE, 1024);
 	}
 
 	@Override
@@ -70,11 +79,11 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 	}
 
 	protected ByteBuffer prepareObject(T object) {
-		return convertObject(object, getDataHandler());
+		return convertObject(object, getDataHandler(), objectSize);
 	}
 
-	public static ByteBuffer convertObject(Object object, IDataHandler dataHandler) {
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
+	public static ByteBuffer convertObject(Object object, IDataHandler<?> dataHandler, int objectSize) {
+		ByteBuffer buffer = ByteBuffer.allocate(objectSize);
 		dataHandler.writeData(buffer, object);
 		buffer.flip();
 		return buffer;
