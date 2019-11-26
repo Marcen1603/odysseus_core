@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class TransformationConfiguration {
@@ -31,6 +32,7 @@ public class TransformationConfiguration {
 	final private Map<String, Object> options = new HashMap<String, Object>();
 	final private ITransformationHelper transformHelper = new StandardTransformationHelper();;
 	private boolean virtualTransformation;
+	private Context context = Context.empty();
 	
 
 	public TransformationConfiguration(){
@@ -85,6 +87,14 @@ public class TransformationConfiguration {
 		return virtualTransformation;
 	}
 
+	public void setContext(Context context) {
+		this.context = context;
+	}
+	
+	public Context getContext() {
+		return context;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

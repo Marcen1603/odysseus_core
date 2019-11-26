@@ -918,7 +918,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		QueryBuildConfiguration config = new QueryBuildConfiguration(newSettings.toArray(new IQueryBuildSetting<?>[0]),
 				buildConfigurationName);
 		config.setExecutor(this);
+		config.setContext(context);
 		config.getTransformationConfiguration().setOption(IServerExecutor.class.getName(), this);
+		config.getTransformationConfiguration().setContext(context);
 
 		if (context.containsKey("NO_METADATA")) {
 			config.getTransformationConfiguration().setOption("NO_METADATA", "true");

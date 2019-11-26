@@ -10,10 +10,10 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SubQueryAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.OutputConnectorPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SubQueryPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -41,7 +41,7 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		}
 		final String queryText = getQueryText(operator);
 		// TODO: initialize further vars? Context?
-		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(), Context.empty());
+		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(), config.getContext());
 		if (q.size() != 1) {
 			for (Integer queryId : q) {
 				executor.removeQuery(queryId, getCaller());
@@ -68,6 +68,14 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		}catch(Exception e) {
 			executor.removeQuery(pquery.getID(), getCaller());
 			throw new TransformationException(e);
+		}
+				
+		// Output schema of subquery can be calculated from participating roots
+		for (IPhysicalOperator root: roots) {
+			if (root instanceof OutputConnectorPO<?>) {
+				OutputConnectorPO<?> outConn = (OutputConnectorPO<?>)root;
+				operator.setOutputSchema(outConn.getPort(), outConn.getOutputSchema());
+			}
 		}
 		
 		defaultExecute(operator, po , config, true, true);
