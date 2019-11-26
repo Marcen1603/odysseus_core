@@ -28,6 +28,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
    </license>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.core"
          download-size="0"
@@ -306,6 +310,13 @@ limitations under the License.
 
    <plugin
          id="de.uniol.inf.is.odysseus.latency_relational"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.datarate"
          download-size="0"
          install-size="0"
          version="0.0.0"
