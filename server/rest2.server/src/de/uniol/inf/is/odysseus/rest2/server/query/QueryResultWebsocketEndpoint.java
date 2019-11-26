@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractOb
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.OdysseusProtocolHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
@@ -58,8 +59,8 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 	public static final String PROTOCOL_BINARY = "Binary";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryResultWebsocketEndpoint.class);
-	// TODO: Config!
-	private static final int BUFFER_LIMIT = 1000;
+	private static final int BUFFER_LIMIT = OdysseusConfiguration.instance.getInt("websocketEndpoint.objectbuffersize", 1000);
+	private static final int OBJECT_SIZE = OdysseusConfiguration.instance.getInt("websocketEndpoint.objectsize",4096);
 	private Map<Integer, QueryResultReceiver> receiver = new HashMap<>();
 	private Map<WebSocketConnection , Integer> sessionToInputPortMapping = new HashMap<>();
 	// protocol, port, outputport, inputport
@@ -108,7 +109,7 @@ public class QueryResultWebsocketEndpoint extends AbstractSink<IStreamObject<IMe
 				}
 			} else {
 				ByteBuffer toSend0 = AbstractObjectHandlerByteBufferHandler.convertObject(object,
-						resultReceiver.dataHandler);
+						resultReceiver.dataHandler, OBJECT_SIZE);
 				ByteBuffer toSend = ByteBuffer
 						.wrap(OdysseusProtocolHandler.addTypeInfo(toSend0, OdysseusProtocolHandler.OBJECT));
 				sendBinary(resultReceiver.sessions, toSend);

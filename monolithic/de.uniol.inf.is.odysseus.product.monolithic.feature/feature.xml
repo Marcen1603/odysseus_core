@@ -28,23 +28,15 @@ limitations under the License.
    </license>
 
    <includes
-         id="de.uniol.inf.is.odysseus.server.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.monolithic.studio.feature"
          version="0.0.0"/>
 
    <includes
+         id="de.uniol.inf.is.odysseus.server.feature"
+         version="0.0.0"/>
+
+   <includes
          id="de.uniol.inf.is.odysseus.studio.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.latency.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"
          version="0.0.0"/>
 
    <plugin
