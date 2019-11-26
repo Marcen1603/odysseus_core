@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -40,7 +41,7 @@ public class ConnectorAO extends AbstractAccessAO{
 	public void setPort(int port) {
 		this.port = port;
 	}
-
+		
 	public int getPort() {
 		return port;
 	}

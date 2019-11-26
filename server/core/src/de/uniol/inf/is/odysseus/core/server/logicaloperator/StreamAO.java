@@ -58,11 +58,6 @@ public class StreamAO extends AbstractLogicalOperator {
 		this.type = streamAO.type;
 	}
 
-	@Override
-	@Parameter(name = "Name", type = StringParameter.class, optional = true, doc = "Name of the operator (e.g. for visulization).")
-	public void setName(String name) {
-		super.setName(name);
-	}
 
 	@Override
 	public StreamAO clone() {
