@@ -260,6 +260,10 @@ public class OdysseusConfiguration {
 		props.setProperty("crypt.symKeyVault.user", "odysseus");
 		props.setProperty("crypt.symKeyVault.password", "suessydo");
 		props.setProperty("crypt.symKeyVault.keyTableName", "SYMKEYS");
+		
+		props.setProperty("websocketEndpoint.objectsize", "4096");
+		props.setProperty("websocketEndpoint.objectbuffersize", "1000");
+		
 	}
 
 	private void savePropertyFile(String odysseusHome) {
