@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -41,8 +39,10 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
-		ImageDescriptor mainIcon = OdysseusRCPViewerPlugIn.getImageDescriptor("icons/application-text.png");
-		MenuManager manager = new MenuManager("Show Stream Elements", mainIcon, null);		
+		// Problem, when adding menu, working when adding contributions directly
+		//		ImageDescriptor mainIcon = OdysseusRCPViewerPlugIn.getImageDescriptor("icons/application-text.png");
+//		MenuManager manager = new MenuManager("Show Stream Elements", mainIcon, "de.uniol.inf.is.odysseus.rcp.viewer.extension.showstreamelements");	
+			
 		for( StreamExtensionDefinition def : definitions ) {
 			CommandContributionItemParameter p = new CommandContributionItemParameter(serviceLocator, "", OdysseusRCPViewerPlugIn.SHOW_STREAM_COMMAND_ID, SWT.PUSH);
 			p.label = def.getLabel();
@@ -53,10 +53,11 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 			}
 			IContributionItem item = new CommandContributionItem(p);
 			item.setVisible(true);
-			manager.add(item);
+			additions.addContributionItem(item, null);
+//			manager.add(item);
 		}
 		
-		additions.addContributionItem(manager, null);
+//		additions.addContributionItem(manager, null);
 	}
 
 }
