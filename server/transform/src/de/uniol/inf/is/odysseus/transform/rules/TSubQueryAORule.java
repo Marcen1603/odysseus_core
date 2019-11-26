@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SubQueryAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.OutputConnectorPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SubQueryPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -68,6 +69,14 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		}catch(Exception e) {
 			executor.removeQuery(pquery.getID(), getCaller());
 			throw new TransformationException(e);
+		}
+				
+		// Output schema of subquery can be calculated from participating roots
+		for (IPhysicalOperator root: roots) {
+			if (root instanceof OutputConnectorPO<?>) {
+				OutputConnectorPO<?> outConn = (OutputConnectorPO<?>)root;
+				operator.setOutputSchema(outConn.getPort(), outConn.getOutputSchema());
+			}
 		}
 		
 		defaultExecute(operator, po , config, true, true);
