@@ -139,7 +139,17 @@ public class LogicalPlan implements ILogicalPlan {
 	 * @param toInsert
 	 */
 	public static void recalcOutputSchemas(ILogicalOperator startAt) {
-		startAt.recalcOutputSchema();
+		recalcOutputSchemas(startAt,true);
+	}
+	
+	/**
+	 * Update all output schema the reads input from startAt logical operator
+	 * @param toInsert
+	 */
+	public static void recalcOutputSchemas(ILogicalOperator startAt, boolean includingStart) {
+		if (includingStart) {
+			startAt.recalcOutputSchema();
+		}
 		Collection<LogicalSubscription> targets = startAt.getSubscriptions();
 		for (LogicalSubscription sub: targets) {
 			recalcOutputSchemas(sub.getSink());

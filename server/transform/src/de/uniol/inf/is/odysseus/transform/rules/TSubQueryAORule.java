@@ -12,6 +12,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SubQueryAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.OutputConnectorPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SubQueryPO;
@@ -79,7 +80,8 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		}
 		
 		defaultExecute(operator, po , config, true, true);
-
+		
+		LogicalPlan.recalcOutputSchemas(operator, false);
 	}
 
 	private String getQueryText(SubQueryAO operator) {
