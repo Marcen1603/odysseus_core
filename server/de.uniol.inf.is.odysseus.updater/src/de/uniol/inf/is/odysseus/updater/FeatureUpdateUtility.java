@@ -237,6 +237,9 @@ public class FeatureUpdateUtility {
 		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
+			if (units == null) {
+				doesNotWorkFromInsideEclipseError();
+			}
 			for (IInstallableUnit unit : units) {
 				if (unit.getId().startsWith(id)) {
 					return true;
@@ -399,8 +402,7 @@ public class FeatureUpdateUtility {
 					final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
 					// updates cannot run from within Eclipse IDE!!!
 					if (provisioningJob == null) {
-						LOG.error("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
-						throw new NullPointerException();
+						doesNotWorkFromInsideEclipseError();
 					}
 
 					// register a job change listener to track
@@ -436,6 +438,11 @@ public class FeatureUpdateUtility {
 			return Status.OK_STATUS;
 		}
 		throw new PermissionException("User is not allowed to update the system!");
+	}
+
+	private static void doesNotWorkFromInsideEclipseError() {
+		LOG.error("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
+		throw new NullPointerException();
 	}
 
 	public static String getVersionNumberFromFeatures(ISession caller) {
