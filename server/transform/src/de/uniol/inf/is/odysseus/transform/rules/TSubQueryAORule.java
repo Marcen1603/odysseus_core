@@ -40,18 +40,17 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 			throw new TransformationException(
 					"Cannot create SubQueryPO. Executor not set in Transformation Configuration!");
 		}
-		final String queryText = getQueryText(operator);
-		// TODO: initialize further vars? Context?
-		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(),
-				config.getContext());
-		if (q.size() != 1) {
-			for (Integer queryId : q) {
-				executor.removeQuery(queryId, getCaller());
-			}
-			throw new TransformationException("SubQueryPO can only handle a single query!");
+		
+		IPhysicalQuery pquery;
+		
+		if (operator.getQueryID() != null) {
+			pquery = executor.getPhysicalQueryByString(operator.getQueryID()+ "", getCaller());
+		}else if (operator.getQueryName() != null) {
+			pquery = executor.getPhysicalQueryByString(operator.getQueryName(), getCaller());
+		}else {
+			pquery = compileQuery(operator, config, executor);
 		}
 
-		IPhysicalQuery pquery = executor.getPhysicalQueryByString(q.iterator().next() + "", getCaller());
 		if (pquery == null) {
 			throw new TransformationException("Could not create query for SubqueryAO!");
 		}
@@ -87,6 +86,23 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 
 		defaultExecute(operator, po, config, true, true);
 
+	}
+
+	private IPhysicalQuery compileQuery(SubQueryAO operator, TransformationConfiguration config,
+			IServerExecutor executor) {
+		IPhysicalQuery pquery;
+		final String queryText = getQueryText(operator);
+		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(),
+				config.getContext());
+		if (q.size() != 1) {
+			for (Integer queryId : q) {
+				executor.removeQuery(queryId, getCaller());
+			}
+			throw new TransformationException("SubQueryPO can only handle a single query!");
+		}
+
+		pquery = executor.getPhysicalQueryByString(q.iterator().next() + "", getCaller());
+		return pquery;
 	}
 
 	private String getQueryText(SubQueryAO operator) {
