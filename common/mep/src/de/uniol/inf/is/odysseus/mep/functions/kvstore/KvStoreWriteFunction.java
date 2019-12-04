@@ -8,7 +8,7 @@ public class KvStoreWriteFunction extends AbstractFunction<Boolean> {
 	private static final long serialVersionUID = -3263090969225261507L;
 
 	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
-		{SDFDatatype.STRING}, {SDFDatatype.OBJECT, SDFDatatype.TUPLE, SDFDatatype.LIST}};
+		{SDFDatatype.STRING}, (SDFDatatype[]) SDFDatatype.getTypes().toArray(new SDFDatatype[] {})};
 
 	public KvStoreWriteFunction(){
 		super("kvwrite",2,accTypes, SDFDatatype.BOOLEAN, false);
