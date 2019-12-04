@@ -30,9 +30,9 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 	@Override
 	public int getPriority() {
 		// Must be more than access ao rule
-		return super.getPriority()+10;
+		return super.getPriority() + 10;
 	}
-	
+
 	@Override
 	public void execute(SubQueryAO operator, TransformationConfiguration config) throws RuleException {
 		IServerExecutor executor = config.getOption(IServerExecutor.class.getName());
@@ -42,7 +42,8 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		}
 		final String queryText = getQueryText(operator);
 		// TODO: initialize further vars? Context?
-		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(), config.getContext());
+		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(),
+				config.getContext());
 		if (q.size() != 1) {
 			for (Integer queryId : q) {
 				executor.removeQuery(queryId, getCaller());
@@ -62,26 +63,30 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 				throw new TransformationException("SubqueryPO cannot have sinks at top!");
 			}
 		}
-		
+
 		SubQueryPO<IStreamObject<?>> po;
 		try {
 			po = new SubQueryPO<>(pquery, executor, getCaller());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			executor.removeQuery(pquery.getID(), getCaller());
 			throw new TransformationException(e);
 		}
-				
-		// Output schema of subquery can be calculated from participating roots
-		for (IPhysicalOperator root: roots) {
-			if (root instanceof OutputConnectorPO<?>) {
-				OutputConnectorPO<?> outConn = (OutputConnectorPO<?>)root;
-				operator.setOutputSchema(outConn.getPort(), outConn.getOutputSchema());
+
+		if (operator.getAttributes() == null) {
+
+			// Output schema of subquery can be calculated from participating roots
+			for (IPhysicalOperator root : roots) {
+				if (root instanceof OutputConnectorPO<?>) {
+					OutputConnectorPO<?> outConn = (OutputConnectorPO<?>) root;
+					operator.setOutputSchema(outConn.getPort(), outConn.getOutputSchema());
+				}
 			}
+			LogicalPlan.recalcOutputSchemas(operator, false);
+
 		}
-		
-		defaultExecute(operator, po , config, true, true);
-		
-		LogicalPlan.recalcOutputSchemas(operator, false);
+
+		defaultExecute(operator, po, config, true, true);
+
 	}
 
 	private String getQueryText(SubQueryAO operator) {
