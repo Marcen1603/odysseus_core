@@ -153,8 +153,7 @@ public class LogicalPlan implements ILogicalPlan {
 		Collection<LogicalSubscription> targets = startAt.getSubscriptions();
 		for (LogicalSubscription sub: targets) {
 			recalcOutputSchemas(sub.getSink());
-		}
-		
+		}	
 	}
 	
 	public static List<ILogicalOperator> getAllOperators(ILogicalOperator operator) {
