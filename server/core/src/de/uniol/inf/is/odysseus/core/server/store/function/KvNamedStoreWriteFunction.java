@@ -8,7 +8,7 @@ public class KvNamedStoreWriteFunction extends AbstractNamedStoreFunction<Boolea
 	private static final long serialVersionUID = -3263090969225261507L;
 
 	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
-		{SDFDatatype.STRING},{SDFDatatype.STRING}, SDFDatatype.SIMPLE_TYPES};
+		{SDFDatatype.STRING},{SDFDatatype.STRING}, (SDFDatatype[]) SDFDatatype.getTypes().toArray()};
 
 	public KvNamedStoreWriteFunction(){
 		super("kvwrite",3,accTypes, SDFDatatype.OBJECT, false);
