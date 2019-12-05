@@ -28,7 +28,7 @@
 			</activation>
 			<modules>
 				<module>odysseus_dev</module>
-				<module>releng/de.uniol.inf.is.odysseus.update</module>
+				<module>releng</module>
 			</modules>
 		</profile>
 		<profile>
