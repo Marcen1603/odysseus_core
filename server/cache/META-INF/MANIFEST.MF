@@ -3,12 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Cache
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.cache
 Bundle-Version: 1.0.0.qualifier
-Import-Package: com.google.common.collect,
- org.osgi.framework
+Import-Package: org.osgi.framework
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.slf4j
+ de.uniol.inf.is.odysseus.slf4j,
+ com.google.guava;bundle-version="27.1.0"
 Service-Component: OSGI-INF/RemovalStrategyRegistryService.xml, OSGI-INF/FIFOService.xml, OSGI-INF/LFUService.xml, OSGI-INF/LRUService.xml, OSGI-INF/RANDOMService.xml
 Export-Package: de.uniol.inf.is.odysseus.cache,
  de.uniol.inf.is.odysseus.cache.removalstrategy
