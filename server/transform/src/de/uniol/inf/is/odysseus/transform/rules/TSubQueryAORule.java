@@ -12,6 +12,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SubQueryAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.OutputConnectorPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SubQueryPO;
@@ -29,9 +30,9 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 	@Override
 	public int getPriority() {
 		// Must be more than access ao rule
-		return super.getPriority()+10;
+		return super.getPriority() + 10;
 	}
-	
+
 	@Override
 	public void execute(SubQueryAO operator, TransformationConfiguration config) throws RuleException {
 		IServerExecutor executor = config.getOption(IServerExecutor.class.getName());
@@ -39,17 +40,17 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 			throw new TransformationException(
 					"Cannot create SubQueryPO. Executor not set in Transformation Configuration!");
 		}
-		final String queryText = getQueryText(operator);
-		// TODO: initialize further vars? Context?
-		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(), config.getContext());
-		if (q.size() != 1) {
-			for (Integer queryId : q) {
-				executor.removeQuery(queryId, getCaller());
-			}
-			throw new TransformationException("SubQueryPO can only handle a single query!");
+		
+		IPhysicalQuery pquery;
+		
+		if (operator.getQueryID() != null) {
+			pquery = executor.getPhysicalQueryByString(operator.getQueryID()+ "", getCaller());
+		}else if (operator.getQueryName() != null) {
+			pquery = executor.getPhysicalQueryByString(operator.getQueryName(), getCaller());
+		}else {
+			pquery = compileQuery(operator, config, executor);
 		}
 
-		IPhysicalQuery pquery = executor.getPhysicalQueryByString(q.iterator().next() + "", getCaller());
 		if (pquery == null) {
 			throw new TransformationException("Could not create query for SubqueryAO!");
 		}
@@ -61,25 +62,47 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 				throw new TransformationException("SubqueryPO cannot have sinks at top!");
 			}
 		}
-		
+
 		SubQueryPO<IStreamObject<?>> po;
 		try {
 			po = new SubQueryPO<>(pquery, executor, getCaller());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			executor.removeQuery(pquery.getID(), getCaller());
 			throw new TransformationException(e);
 		}
-				
-		// Output schema of subquery can be calculated from participating roots
-		for (IPhysicalOperator root: roots) {
-			if (root instanceof OutputConnectorPO<?>) {
-				OutputConnectorPO<?> outConn = (OutputConnectorPO<?>)root;
-				operator.setOutputSchema(outConn.getPort(), outConn.getOutputSchema());
-			}
-		}
-		
-		defaultExecute(operator, po , config, true, true);
 
+		if (operator.getAttributes() == null) {
+
+			// Output schema of subquery can be calculated from participating roots
+			for (IPhysicalOperator root : roots) {
+				if (root instanceof OutputConnectorPO<?>) {
+					OutputConnectorPO<?> outConn = (OutputConnectorPO<?>) root;
+					operator.setOutputSchema(outConn.getPort(), outConn.getOutputSchema());
+				}
+			}
+			LogicalPlan.recalcOutputSchemas(operator, false);
+
+		}
+
+		defaultExecute(operator, po, config, true, true);
+
+	}
+
+	private IPhysicalQuery compileQuery(SubQueryAO operator, TransformationConfiguration config,
+			IServerExecutor executor) {
+		IPhysicalQuery pquery;
+		final String queryText = getQueryText(operator);
+		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(),
+				config.getContext());
+		if (q.size() != 1) {
+			for (Integer queryId : q) {
+				executor.removeQuery(queryId, getCaller());
+			}
+			throw new TransformationException("SubQueryPO can only handle a single query!");
+		}
+
+		pquery = executor.getPhysicalQueryByString(q.iterator().next() + "", getCaller());
+		return pquery;
 	}
 
 	private String getQueryText(SubQueryAO operator) {
