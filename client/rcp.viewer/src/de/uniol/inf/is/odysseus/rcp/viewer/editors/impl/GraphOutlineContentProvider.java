@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
@@ -181,16 +182,24 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 		if (parentElement instanceof SDFAttribute) {
 			Collection<Object> children = new ArrayList<Object>();
-			if (((SDFAttribute) parentElement).getDatatype().hasSchema()) {
-				children.addAll(((SDFAttribute) parentElement).getDatatype()
+			SDFAttribute sdfAttribute = (SDFAttribute) parentElement;
+			SDFDatatype datatype = sdfAttribute.getDatatype();
+			if (datatype.hasSubType()) {
+				children.add(datatype.getSubType().getURI());
+				if (datatype.getSubType().hasSchema()) {
+					children.add(datatype.getSubType().getSchema());
+				}
+			}
+			if (datatype.hasSchema()) {
+				children.addAll(datatype
 						.getSchema().getAttributes());
 			}
-			if (((SDFAttribute) parentElement).getDtConstraints().size() > 0) {
-				children.addAll(((SDFAttribute) parentElement)
+			if (sdfAttribute.getDtConstraints().size() > 0) {
+				children.addAll(sdfAttribute
 						.getDtConstraints());
 			}
-			if (((SDFAttribute) parentElement).getUnit() != null) {
-				children.add(((SDFAttribute) parentElement).getUnit());
+			if (sdfAttribute.getUnit() != null) {
+				children.add(sdfAttribute.getUnit());
 			}
 			return children.toArray();
 		}
