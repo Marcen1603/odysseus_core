@@ -168,7 +168,7 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	private void restartTimer() {
 		// Restart timer only if heartbeats should be suppressed in
 		// case of receiving elements
-		if (!sendAlwaysHeartbeat) {
+		if (!sendAlwaysHeartbeat && generateHeartbeat != null) {
 			generateHeartbeat.restart();
 		}
 	}
