@@ -19,6 +19,7 @@ public class FunctionProvider implements IFunctionProvider {
 		funcs.add(new AsKeyValueFunction());
 		funcs.add(new ToKeyValueFromMapFunction());
 		funcs.add(new KVAddElementFunction());
+		funcs.add(new KVToStringFunction());
 		return funcs;
 	}
 
