@@ -30,9 +30,6 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -352,78 +349,6 @@ public class LogicalQuery implements ILogicalQuery {
 			return 1;
 		}
 		return 0;
-	}
-
-	@Override
-	public SerializeNode serialize() {
-		SerializeNode node = new SerializeNode(LogicalQuery.class);
-		List<ILogicalOperator> visitedOperators = new ArrayList<ILogicalOperator>();
-		ILogicalOperator operator = getLogicalPlan().getRoot();
-		serializeWalker(operator, visitedOperators, node);
-		node.addPropertyValue("rootOperator", operator.hashCode());
-		return node;
-	}
-
-	private void serializeWalker(ILogicalOperator op, List<ILogicalOperator> visitedOperators, SerializeNode list) {
-		if (visitedOperators.contains(op)) {
-			return;
-		}
-		visitedOperators.add(op);
-		SerializeNode node = op.serialize();
-		node.addPropertyValue("id", op.hashCode());
-		list.addChild(node);
-		for (LogicalSubscription sub : op.getSubscribedToSource()) {
-			SerializeNode subNode = new SerializeNode(LogicalSubscription.class);
-			subNode.addPropertyValue("sinkInPort", sub.getSinkInPort());
-			subNode.addPropertyValue("sourceOutPort", sub.getSourceOutPort());
-			subNode.addPropertyValue("from", op.hashCode());
-			subNode.addPropertyValue("to", sub.getSource().hashCode());
-			list.addChild(subNode);
-			serializeWalker(sub.getSource(), visitedOperators, list);
-		}
-	}
-
-	@Override
-	public void deserialize(SerializeNode rootNode) {
-		try {
-			Map<String, ILogicalOperator> ops = new HashMap<String, ILogicalOperator>();
-			for (SerializeNode node : rootNode.getChilds()) {
-				if (ILogicalOperator.class.isAssignableFrom(node.getRepresentingClass())) {
-
-					// create instance
-					ISerializable s = (ISerializable) node.getRepresentingClass().newInstance();
-					// reload properties
-					s.deserialize(node);
-					// memorize for subscriptions
-					ops.put(node.getProperty("id").toString(), (ILogicalOperator) s);
-
-				}
-			}
-			// strict serial, so that the operators are all available and
-			// loaded!
-			for (SerializeNode node : rootNode.getChilds()) {
-				if (LogicalSubscription.class.isAssignableFrom(node.getRepresentingClass())) {
-					String from = node.getProperty("from").toString();
-					String to = node.getProperty("to").toString();
-					int sinkInPort = Integer.parseInt(node.getProperty("sinkInPort").toString());
-					int sourceOutPort = Integer.parseInt(node.getProperty("sourceOutPort").toString());
-					// TODO: schema speichern
-					ops.get(to).subscribeToSource(ops.get(from), sinkInPort, sourceOutPort,
-							ops.get(from).getOutputSchema());
-				}
-			}
-
-			// String hashCode =
-			// rootNode.getProperty("rootOperator").toString();
-			// ILogicalOperator rootOperator = ops.get(hashCode);
-			// this.setLogicalPlan(rootOperator, getUser());
-			System.out.println("ready");
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
