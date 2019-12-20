@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.List;
 import java.util.Objects;
 
-import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOSourceParameter;
@@ -48,13 +47,6 @@ abstract public class AbstractAccessAO extends AbstractSchemaBasedAO implements 
 		this.applicationTimeDelay = ao.applicationTimeDelay;
 	}
 
-	@Deprecated
-	protected AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
-			String dataHandler, OptionMap optionsMap) {
-		super(wrapper, transportHandler, protocolHandler, dataHandler, optionsMap);
-		setAccessAOName(name);
-	}
-	
 	@Parameter(type = AccessAOSourceParameter.class, name = "source", optional = false, doc = "The name of the sourcetype to create.")
 	public void setAccessAOName(Resource name) {
 		super.setName(name.getResourceName());
@@ -66,8 +58,6 @@ abstract public class AbstractAccessAO extends AbstractSchemaBasedAO implements 
 		return accessAOResource;
 	}
 
-
-
 	@Parameter(type = LongParameter.class, name = "MaxTimeToWaitForNewEventMS", optional = true, isList = false, doc = "For access. Max time to wait for a new element before calling done. Typically used when the input stream has an end")
 	public void setMaxTimeToWaitForNewEventMS(long maxTimeToWaitForNewEventMS) {
 		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
@@ -76,9 +66,6 @@ abstract public class AbstractAccessAO extends AbstractSchemaBasedAO implements 
 	public long getMaxTimeToWaitForNewEventMS() {
 		return maxTimeToWaitForNewEventMS;
 	}
-
-
-
 
 	public long getRealTimeDelay() {
 		return realTimeDelay;
