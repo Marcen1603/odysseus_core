@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.collection.AnyTypeAdapter;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -41,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * 
  */
 @XmlJavaTypeAdapter(AnyTypeAdapter.class)
-public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator, LogicalSubscription>, IClone, Serializable, ISerializable, IOperatorState {
+public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator, LogicalSubscription>, IClone, Serializable, IOperatorState {
 
 	/**
 	 * For debugging purposes and for visualization, each operator can have a

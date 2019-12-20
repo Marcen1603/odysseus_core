@@ -20,7 +20,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -34,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  *
  */
 public interface ILogicalQuery extends IOperatorOwner, Serializable,
-		ISerializable, Comparable<IOperatorOwner>, IQuery {
+		Comparable<IOperatorOwner>, IQuery {
 
 	/**
 	 * ID of this query. Should be unique.

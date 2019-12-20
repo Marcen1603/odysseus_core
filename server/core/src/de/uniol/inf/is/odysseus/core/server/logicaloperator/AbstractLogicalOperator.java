@@ -35,13 +35,11 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializeProperty;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializePropertyItem;
-import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializePropertyList;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -53,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
@@ -95,6 +94,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * Contains a value, if {@link #determineBaseTimeUnit()} has been called once; null else.
 	 */
 	private IMetaAttribute metaattribute = null;
+
+	private final OptionMap optionsMap = new OptionMap();
+
+	private List<Option> optionsList;
 	
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 //		for (IPredicate<?> pred : op.predicates) {
@@ -110,6 +113,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.debug = op.debug;
 		this.suppressPunctuation = op.suppressPunctuation;
 		this.baseTimeUnit = op.baseTimeUnit;
+		optionsMap.addAll(op.optionsMap);
+		if (op.optionsList != null) {
+			this.optionsList = new ArrayList<>(op.optionsList);
+		}
 
 	}
 
@@ -640,31 +647,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		unsubscribeSink(subscription);
 	}
 
-//	@Override
-//	public void updateSchemaInfos() {
-//		updateSchemaInfos(this);
-//	}
-//
-//	static private void updateSchemaInfos(ILogicalOperator sink) {
-//		for (int i = 0; i < sink.getNumberOfInputs(); i++) {
-//			LogicalSubscription sub = sink.getSubscribedToSource(i);
-//			ILogicalOperator source = sub.getTarget();
-//			if (sub.getSchema() == null) {
-//				if (source.getOutputSchema() == null) {
-//					updateSchemaInfos(source);
-//				} else {
-//					// Set Schema for both directions (sink to source and source
-//					// to sink)!
-//					sub.setSchema(source.getOutputSchema());
-//					for (LogicalSubscription sourceSub : source.getSubscriptions()) {
-//						if (sourceSub.getTarget() == sink) {
-//							sourceSub.setSchema(source.getOutputSchema());
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
+
 
 	@Override
 	public String toString() {
@@ -722,57 +705,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
         return !this.errors.isEmpty();
     }
 
-	// ---------------------------------------------------------------------------------------
-	// Serialization
-	// ---------------------------------------------------------------------------------------
-
-	@Override
-	public SerializeNode serialize() {
-		SerializeNode node = new SerializeNode(getClass());
-		Map<String, ISerializeProperty<?>> values = new HashMap<String, ISerializeProperty<?>>();
-		for (Method method : getClass().getMethods()) {
-			Annotation[] annotations = method.getAnnotations();
-			for (Annotation a : annotations) {
-				if (a instanceof Parameter) {
-					Parameter p = (Parameter) a;
-					String name = method.getName();
-					if (p.name() != null && !p.name().isEmpty()) {
-						name = p.name();
-					}
-					Method otherMethod = getRelatedMethodByName(name);
-					if (otherMethod == null) {
-						otherMethod = getRelatedMethod(method);
-					}
-					try {
-						if (otherMethod != null) {
-							Object value = otherMethod.invoke(this);
-							// it is e.g. a List<String>
-							if (p.isList()) {
-								SerializePropertyList prop = new SerializePropertyList();
-								if (value != null) {
-									for (Object o : (Collection<?>) value) {
-										prop.addItemValue(o);
-									}
-								}
-								values.put(name, prop);
-							} else {
-								// it is just a plain value
-								values.put(name, new SerializePropertyItem(value));
-							}
-						} else {
-							System.err.println("WARN: could not serialize setting " + name + " for " + getClass().getName());
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-				}
-			}
-		}
-		node.setProperties(values);
-		return node;
-	}
-
 	private Method getRelatedMethod(Method other) {
 		String setterName = other.getName();
 		if (setterName.toUpperCase().startsWith("SET")) {
@@ -803,44 +735,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void deserialize(SerializeNode node) {
-		// for (Entry<String, ISerializeProperty<?>> prop :
-		// node.getProperties().entrySet()) {
-		// String name = prop.getKey();
-		// Object value = prop.getValue().getValue();
-		//
-		// for (Method m : getClass().getDeclaredMethods()) {
-		// if (m.getName().equalsIgnoreCase(name)) {
-		// try {
-		// Class<?> propertyClass = prop.getValue().getType();
-		// boolean isList = prop.getValue().isList();
-		// Object propertyContent = propertyClass.newInstance();
-		// if (propertyContent instanceof IParameter) {
-		// IParameter<?> para = (IParameter<?>) propertyContent;
-		// para.setRequirement(REQUIREMENT.MANDATORY);
-		// para.setInputValue(value);
-		// para.validate();
-		// Object val = para.getValue();
-		// if (val != null) {
-		// m.invoke(this, val);
-		// }
-		// } else if (propertyContent instanceof List) {
-		// List<?> liste = new ArrayList<Object>();
-		// }
-		//
-		// // Object op = parameter.newInstance();
-		// // if (op instanceof IParameter) {
-		// //
-		// // }
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// }
-		// }
 	}
 
 	@Override
@@ -898,6 +792,44 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
 		return InputOrderRequirement.STRICT;
+	}
+
+	
+	// ---------------------------------------------------------------------------------------------------
+	// Option-Handling
+	// ---------------------------------------------------------------------------------------------------
+	
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
+	public void setOptions(List<Option> value) {
+		for (Option option : value) {
+			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
+		}
+		optionsList = value;
+	}
+
+	public List<Option> getOptions() {
+		return optionsList;
+	}
+
+	protected void setOption(String key, Object value) {
+		optionsMap.setOption(key, value);
+	}
+	
+	protected void addOption(String key, String value) {
+		optionsMap.overwriteOption(key, value);
+	}
+
+	protected String getOption(String key) {
+		return optionsMap.get(key);
+	}
+
+	public void setOptionMap(OptionMap options) {
+		this.optionsMap.clear();
+		this.optionsMap.addAll(options);
+	}
+
+	public OptionMap getOptionsMap() {
+		return optionsMap;
 	}
 	
 }
