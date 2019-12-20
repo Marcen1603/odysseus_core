@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -27,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
@@ -41,9 +39,6 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 	private String protocolHandler = "none";
 	private String transportHandler;
 
-	private final OptionMap optionsMap = new OptionMap();
-	private List<Option> optionsList;
-
 	private Map<Integer, List<SDFAttribute>> outputSchema = new HashMap<Integer, List<SDFAttribute>>();
 	private String dateFormat;
 	private List<String> inputSchema = null;
@@ -54,8 +49,6 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 	private boolean overWriteSchemaSourceName = true;
 	private SDFSchema overWrittenSchema = null;
 
-
-	
 	public AbstractSchemaBasedAO() {
 		super();
 	}
@@ -63,10 +56,6 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 	public AbstractSchemaBasedAO(AbstractSchemaBasedAO ao) {
 		super(ao);
 		wrapper = ao.wrapper;
-		optionsMap.addAll(ao.optionsMap);
-		if (ao.optionsList != null) {
-			this.optionsList = new ArrayList<>(ao.optionsList);
-		}
 		dataHandler = ao.dataHandler;
 		protocolHandler = ao.protocolHandler;
 		transportHandler = ao.transportHandler;
@@ -77,19 +66,6 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 		this.readMetaData = ao.readMetaData;
 		this.overWriteSchemaSourceName = ao.overWriteSchemaSourceName;
 		this.overWrittenSchema = ao.overWrittenSchema;
-
-	}
-	
-	@Deprecated
-	protected AbstractSchemaBasedAO(String wrapper, String transportHandler, String protocolHandler,
-			String dataHandler, OptionMap optionsMap) {
-		this.wrapper = wrapper;
-		this.transportHandler = transportHandler;
-		this.protocolHandler = protocolHandler;
-		this.dataHandler = dataHandler;
-		if (optionsMap != null) {
-			this.optionsMap.addAll(optionsMap);
-		}
 	}
 
 	public void setWrapper(String wrapper) {
@@ -135,35 +111,6 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 	@Parameter(type = BooleanParameter.class, optional = true, isList = false, doc = "Output schema typically contains source name in attributes. Sometime this is not wanted. Set to false to avoid overwriting.")
 	public void setOverWriteSchemaSourceName(boolean overWriteSchemaSourceName) {
 		this.overWriteSchemaSourceName = overWriteSchemaSourceName;
-	}
-
-	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
-	public void setOptions(List<Option> value) {
-		for (Option option : value) {
-			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
-		}
-		optionsList = value;
-	}
-
-	public List<Option> getOptions() {
-		return optionsList;
-	}
-
-	protected void addOption(String key, String value) {
-		optionsMap.overwriteOption(key, value);
-	}
-
-	protected String getOption(String key) {
-		return optionsMap.get(key);
-	}
-
-	public void setOptionMap(OptionMap options) {
-		this.optionsMap.clear();
-		this.optionsMap.addAll(options);
-	}
-
-	public OptionMap getOptionsMap() {
-		return optionsMap;
 	}
 
 	@Parameter(type = StringParameter.class, name = "inputSchema", isList = true, optional = true, possibleValues = "__DD_DATATYPES", possibleValuesAreDynamic = true, doc = "A list of data types describing the input format. Must be compatible with output schema!")
@@ -245,7 +192,7 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 	
 	@Parameter(type = BooleanParameter.class, name = "outOfOrder", optional = true, isList = false, doc = "The system needs to know if the input is ordered by timestamps. Set to true if this is not the case!")
 	public void setOutOfOrder(boolean outOfOrder){
-		optionsMap.setOption(SDFConstraint.STRICT_ORDER, !outOfOrder);
+		setOption(SDFConstraint.STRICT_ORDER, !outOfOrder);
 	}
 	
 	/**
@@ -278,7 +225,7 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 
 		// TODO: Move more things from TAccessAORule here ... if possible
 
-		OptionMap options = new OptionMap(optionsMap);
+		OptionMap options = new OptionMap(getOptionsMap());
 
 		@SuppressWarnings("rawtypes")
 		IProtocolHandler ph = RegistryBinder.getProtocolHandlerRegistry().getIProtocolHandlerClass(protocolHandler);
@@ -298,8 +245,8 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 		}
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 
-		if (optionsMap.containsKey(SDFConstraint.BASE_TIME_UNIT)) {
-			String unit = optionsMap.get(SDFConstraint.BASE_TIME_UNIT);
+		if (options.containsKey(SDFConstraint.BASE_TIME_UNIT)) {
+			String unit = options.get(SDFConstraint.BASE_TIME_UNIT);
 			TimeUnit btu = TimeUnit.valueOf(unit);
 			if (btu != null) {
 				timeUnit = btu;
@@ -314,8 +261,8 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 		}
 
 		boolean strictOrder = true;
-		if (optionsMap.containsKey(SDFConstraint.STRICT_ORDER)) {
-			String sorder = optionsMap.get(SDFConstraint.STRICT_ORDER);
+		if (options.containsKey(SDFConstraint.STRICT_ORDER)) {
+			String sorder = options.get(SDFConstraint.STRICT_ORDER);
 			strictOrder = Boolean.parseBoolean(sorder);
 		}
 
