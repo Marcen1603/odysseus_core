@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -81,6 +82,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	protected Cardinalities card = null;
 
 	protected String[] sweepAreaName;
+	private OptionMap options;
 
 	// For the element join (internal element window)
 	protected int[] elementSize;
@@ -165,6 +167,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.useInstanceInseadOfName = true;
 	}
 
+	public void setOptions(OptionMap options) {
+		this.options = options;
+	}
+	
+	public OptionMap getOptions() {
+		return options;
+	}
+	
 	public IPredicate<T> getJoinPredicate() {
 		return joinPredicate;
 	}
@@ -431,7 +441,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 								"Cannot use a SweepArea from a different type than ITimeIntervalSweepArea.");
 					}
 				} else {
-					sa = (ITimeIntervalSweepArea<T>) SweepAreaRegistry.getSweepArea(this.sweepAreaName[port]);
+					sa = (ITimeIntervalSweepArea<T>) SweepAreaRegistry.getSweepArea(this.sweepAreaName[port], getOptions());
 				}
 				sa.setQueryPredicate(this.joinPredicate.clone());
 				sa.setAreaName(this.sweepAreaName[port]);

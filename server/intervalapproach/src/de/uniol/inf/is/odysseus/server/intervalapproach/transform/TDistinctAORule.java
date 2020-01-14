@@ -38,7 +38,7 @@ public class TDistinctAORule extends AbstractIntervalTransformationRule<Distinct
     public void execute(DistinctAO operator, TransformationConfiguration configuration) throws RuleException {
 		ITimeIntervalSweepArea sa;
 		try {
-			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, operator.getOptionsMap());
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuleException(e);
 		}
