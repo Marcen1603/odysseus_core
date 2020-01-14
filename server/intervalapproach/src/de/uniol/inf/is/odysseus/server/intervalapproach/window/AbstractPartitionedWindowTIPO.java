@@ -75,6 +75,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	@Override
 	protected void process_next(T object, int port) {
+		transferArea.newElement(object, port);
 		synchronized (buffers) {
 			lastTs = object.getMetadata().getStart();
 			Object bufferId = groupProcessor.getGroupID(object);
