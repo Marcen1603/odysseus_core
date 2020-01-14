@@ -39,6 +39,6 @@ public class SizeFunction extends AbstractFunction<Integer> {
     @Override
     public Integer getValue() {
         List<?> list = (List<?>) getInputValue(0);
-        return new Integer(list.size());
+        return Integer.valueOf(list.size());
     }
 }

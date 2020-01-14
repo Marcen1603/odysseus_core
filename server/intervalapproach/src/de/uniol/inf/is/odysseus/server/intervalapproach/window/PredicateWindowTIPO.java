@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Objects;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -48,6 +51,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
  */
 
 public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends AbstractPartitionedWindowTIPO<T> {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(PredicateWindowTIPO.class);
 
 	private final IPredicate<? super T> start;
 	private final IPredicate<? super T> end;
@@ -101,6 +106,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	@Override
 	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {
 		initBuffer(bufferId);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("New Object "+object);
+			LOG.debug("Current buffer "+buffer);
+		}
 		// Test if elements need to be written
 		boolean startEval = evaluateStartCondition(object, buffer);
 		boolean elementForEndUsed = false;
@@ -115,6 +124,9 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 									.afterOrEquals(object.getMetadata().getStart()));
 
 			if (closeWindow) {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Found end element "+ object);
+				}
 				if (keepEndElement) {
 					// if element is used for start and for end, is must be cloned
 					if (startEval) {
@@ -133,7 +145,9 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (!openedWindow.get(bufferId)) {
 			if (startEval) {
 				if (useElementOnlyForStartOrEnd && elementForEndUsed) {
-					System.out.println("Ignoring" + object);
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Ignoring for start " + object);
+					}
 				} else {
 					appendData(object, bufferId, buffer);
 				}
@@ -205,6 +219,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		ping();
 	}
 
+	@Override
+	protected void process_done() {
+		// ignore done!
+		transferArea.done(0);
+	}
+	
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof PredicateWindowTIPO)) {
