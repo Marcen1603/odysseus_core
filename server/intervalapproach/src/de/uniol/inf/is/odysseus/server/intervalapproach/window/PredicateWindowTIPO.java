@@ -220,6 +220,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	}
 
 	@Override
+	protected void process_done() {
+		// ignore done!
+		transferArea.done(0);
+	}
+	
+	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof PredicateWindowTIPO)) {
 			return false;
