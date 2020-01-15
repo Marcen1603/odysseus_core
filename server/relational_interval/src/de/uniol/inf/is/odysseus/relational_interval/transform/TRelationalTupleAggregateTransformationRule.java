@@ -36,7 +36,7 @@ public class TRelationalTupleAggregateTransformationRule extends
 		}
 		ITimeIntervalSweepArea sa;
 		try {
-			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, operator.getOptionsMap());
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuleException(e);
 		}

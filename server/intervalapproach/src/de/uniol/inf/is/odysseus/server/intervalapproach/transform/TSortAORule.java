@@ -16,6 +16,7 @@
  *******************************************************************************/
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SortAO;
@@ -38,7 +39,7 @@ public class TSortAORule extends AbstractIntervalTransformationRule<SortAO> {
     public void execute(SortAO operator, TransformationConfiguration configuration) throws RuleException {
 		ITimeIntervalSweepArea sa;
 		try {
-			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, operator.getOptionsMap());
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuleException(e);
 		}

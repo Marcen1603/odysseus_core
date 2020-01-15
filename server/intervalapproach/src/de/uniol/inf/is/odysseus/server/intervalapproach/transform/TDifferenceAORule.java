@@ -38,8 +38,8 @@ public class TDifferenceAORule extends AbstractIntervalTransformationRule<Differ
 		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> left;
 		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> right;
 		try {
-			left = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
-			right = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			left = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, null);
+			right = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, null);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuleException(e);
 		}

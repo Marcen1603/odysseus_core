@@ -237,7 +237,7 @@ public class JoinTransformationHelper {
 						emptyElement.setMetadata(new TimeInterval(PointInTime.ZERO));
 						areas[port] = new UnaryOuterJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), outputArbitraryIfNoMatch, emptyElement);
 					} else {
-						areas[port] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea("TIJoinSA");
+						areas[port] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea("TIJoinSA", null);
 					}
 				}
 			}

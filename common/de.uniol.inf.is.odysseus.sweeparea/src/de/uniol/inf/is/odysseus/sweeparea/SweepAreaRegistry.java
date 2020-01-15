@@ -39,6 +39,8 @@ public class SweepAreaRegistry {
 		areas.remove(area.getName().toLowerCase());
 	}
 
+	@Deprecated
+	// use getSweepArea(String name, OptionMap options)
 	public static ISweepArea<?> getSweepArea(String name)
 			throws InstantiationException, IllegalAccessException {
 		return getSweepArea(name, null);
