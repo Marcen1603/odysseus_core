@@ -42,6 +42,7 @@ public class MetadataPO<R extends IStreamObject<IMetaAttribute>> extends
 		synchronized (inputMeta) {
 			// 1. Get input metadata values
 			inputMeta.clear();
+			currentValues.clear();
 			object.getMetadata().retrieveValues(inputMeta);
 
 			// 2. Create new metadata field
