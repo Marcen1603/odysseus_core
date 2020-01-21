@@ -87,8 +87,10 @@ public class SortTIPO<T extends IStreamObject<? extends ITimeInterval>> extends 
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+        Iterator<T> iter = this.area.extractElementsBefore(punctuation.getTime());
+        sendElements(iter);
 
-		//	sendPunctuation(punctuation);
+		sendPunctuation(punctuation);
 	}
 
     /**
