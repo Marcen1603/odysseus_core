@@ -155,7 +155,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 				transferArea.transfer(object, 1);
 			}
 		}
-
+		ping();
 	}
 
 	@Override
