@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "PREDICATEWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is a predicated based window, set start and end condition with predicates.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/PredicateWindow", hidden = true)
 public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
@@ -73,6 +75,11 @@ public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
 	@Parameter(type = BooleanParameter.class, name = "CloseWindowWithHeartbeat", optional = true)
 	public void setCloseWindowWithHeartbeat(boolean closeWindowWithHeartbeat) {
 		this.closeWindowWithHeartbeat = closeWindowWithHeartbeat;
+	}
+	
+	@Parameter(type = TimeParameter.class, name = "maxWindowTime", optional = true)
+	public void setMaxWindowTime(TimeValueItem size) {
+		super.setWindowSizeString(size);
 	}
 	
 	public boolean getCloseWindowWithHeartbeat() {
