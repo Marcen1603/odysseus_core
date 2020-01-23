@@ -106,9 +106,9 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	@Override
 	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {
 		initBuffer(bufferId);
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("New Object "+object);
-			LOG.debug("Current buffer "+buffer);
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("New Object "+object);
+			LOG.trace("Current buffer "+buffer);
 		}
 		// Test if elements need to be written
 		boolean startEval = evaluateStartCondition(object, buffer);
@@ -124,8 +124,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 									.afterOrEquals(object.getMetadata().getStart()));
 
 			if (closeWindow) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Found end element "+ object);
+				if (LOG.isTraceEnabled()) {
+					LOG.trace("Found end element "+ object);
 				}
 				if (keepEndElement) {
 					// if element is used for start and for end, is must be cloned
@@ -145,8 +145,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (!openedWindow.get(bufferId)) {
 			if (startEval) {
 				if (useElementOnlyForStartOrEnd && elementForEndUsed) {
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Ignoring for start " + object);
+					if (LOG.isTraceEnabled()) {
+						LOG.trace("Ignoring for start " + object);
 					}
 				} else {
 					appendData(object, bufferId, buffer);
