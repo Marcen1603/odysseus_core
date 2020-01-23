@@ -20,7 +20,7 @@ public class TRelationalDistinctAORule extends AbstractRelationalIntervalTransfo
 	public void execute(DistinctAO operator, TransformationConfiguration config) throws RuleException {
 		ITimeIntervalSweepArea sa;
 		try {
-			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, operator.getOptionsMap());
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuleException(e);
 		}

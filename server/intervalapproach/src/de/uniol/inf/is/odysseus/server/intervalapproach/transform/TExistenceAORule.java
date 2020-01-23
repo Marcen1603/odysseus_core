@@ -40,8 +40,8 @@ public class TExistenceAORule extends AbstractIntervalTransformationRule<Existen
 		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> leftSA;
 		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> rightSA;
 		try {
-			leftSA = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
-			rightSA = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			leftSA = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, existenceAO.getOptionsMap());
+			rightSA = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME, existenceAO.getOptionsMap());
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuleException(e);
 		}
