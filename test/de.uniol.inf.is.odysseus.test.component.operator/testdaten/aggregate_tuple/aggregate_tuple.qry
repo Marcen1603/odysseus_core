@@ -16,5 +16,5 @@ percentage = ACCESS({
 		['timestamp', 'STARTTIMESTAMP'], 
 		['percentage', 'INTEGER']
 ]})
-window0 = window({size = 5, advance = 1, type = 'tuple'}, percentage)
+window0 = window({size = 5, advance = 1, type = 'tuple', drainAtDone=true}, percentage)
 aggregate0 = aggregate({aggregations=[['AVG', 'percentage', 'avgPerc', 'double']]}, window0)
