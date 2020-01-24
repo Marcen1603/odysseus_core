@@ -292,7 +292,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			SDFAttribute attr = findAttribute(attributeNameToFind
 					.substring(attributeNameToFind.indexOf('.') + 1));
 			return attr.clone(0);
-		} 
+		}else if (attributeNameToFind.equalsIgnoreCase("__all")) {
+			return new SDFAttribute("", attributeNameToFind, SDFDatatype.LIST);
+		}
 
 		for (SDFAttribute attribute : this.elements) {
 

@@ -19,7 +19,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-abstract public class AbstractRelationalExpression<T extends IMetaAttribute> implements IRelationalExpression<T>, IPredicate<Tuple<T>> {
+abstract public class AbstractRelationalExpression<T extends IMetaAttribute>
+		implements IRelationalExpression<T>, IPredicate<Tuple<T>> {
 
 	private static final long serialVersionUID = -3373856682130638058L;
 	protected SDFExpression expression;
@@ -27,12 +28,11 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 
 	final private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<>();
 
-
-	protected AbstractRelationalExpression(SDFExpression expression){
+	protected AbstractRelationalExpression(SDFExpression expression) {
 		this.expression = expression.clone();
 	}
-	
-	protected AbstractRelationalExpression(AbstractRelationalExpression<T> other){
+
+	protected AbstractRelationalExpression(AbstractRelationalExpression<T> other) {
 		this.expression = other.expression.clone();
 		if (other.variables != null) {
 			this.variables = new VarHelper[other.variables.length];
@@ -42,11 +42,11 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 			}
 		}
 	}
-	
+
 	public SDFExpression getExpression() {
 		return expression;
 	}
-	
+
 	public IAttributeResolver getAttributeResolver() {
 		return expression.getAttributeResolver();
 	}
@@ -58,19 +58,18 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	public IMepExpression<?> getMEPExpression() {
 		return expression.getMEPExpression();
 	}
-	
+
 	@Override
 	public List<SDFAttribute> getAttributes() {
 		return expression.getAllAttributes();
 	}
-	
+
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
 		if (!curAttr.equals(newAttr)) {
 			replacementMap.put(curAttr, newAttr);
 		}
 	}
 
-	
 	protected SDFAttribute getReplacement(SDFAttribute a) {
 		SDFAttribute ret = a;
 		SDFAttribute tmp = null;
@@ -79,7 +78,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 		}
 		return ret;
 	}
-	
+
 	protected VarHelper initAttribute(List<SDFSchema> schemata, SDFAttribute attribute) {
 		// Maybe the attribute is not given totally, use another way to find
 		// attribute
@@ -105,8 +104,14 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 				vh.setThis(true);
 				return vh;
 			}
+			if (curAttribute.getAttributeName().equalsIgnoreCase("__all")) {
+				VarHelper vh = new VarHelper(-1, -1);
+				vh.setAll(true);
+				return vh;				
+			}
 		}
-		throw new RuntimeException("Cannot find attribute " + curAttribute + " in input stream! Schemata are "+schemata);
+		throw new RuntimeException(
+				"Cannot find attribute " + curAttribute + " in input stream! Schemata are " + schemata);
 	}
 
 	@Override
@@ -119,15 +124,15 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 		}
 		// Call once to init all type calculations
 		this.expression.getType();
-		
+
 		// if everything goes right (no wrong schema should destroy the right values)
 		// could happen e.g. in rewrite phase
-		this.variables = tmp; 
+		this.variables = tmp;
 	}
 
 	@Override
 	public void initVars(SDFSchema schema) {
-		if (schema == null){
+		if (schema == null) {
 			throw new IllegalArgumentException("Schema is not allowed to be null");
 		}
 		List<SDFSchema> schemata = new ArrayList<>();
@@ -138,7 +143,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	@Override
 	public void initVars(SDFSchema left, SDFSchema right) {
 		List<SDFSchema> schemata = new ArrayList<>();
-		if (left == null){
+		if (left == null) {
 			throw new IllegalArgumentException("Schema is not allowed to be null");
 		}
 		schemata.add(left);
@@ -147,7 +152,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 		}
 		initVars(schemata);
 	}
-	
+
 	@Override
 	public boolean isAlwaysTrue() {
 		return expression.isAlwaysTrue();
@@ -157,7 +162,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	public boolean isAlwaysFalse() {
 		return expression.isAlwaysFalse();
 	}
-	
+
 	@Override
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history) {
 
@@ -185,16 +190,20 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	public SDFDatatype getType() {
 		return expression.getType();
 	}
-	
+
 	private void processObject(Tuple<T> object, List<Tuple<T>> history, Object[] values, int j) {
-		Tuple<T> obj = determineObjectForExpression(object, history, j);
-		if (obj != null) {
-			if (this.variables[j].isThis()) {
-				values[j] = obj;
-			} else if (this.variables[j].getSchema() < 0) {
-				values[j] = obj.getAttribute(this.variables[j].getPos());
-			} else {
-				values[j] = obj.getMetadata().getValue(variables[j].getSchema(), variables[j].getPos());
+		if (this.variables[j].isAll()) {
+			values[j] = history;
+		} else {
+			Tuple<T> obj = determineObjectForExpression(object, history, j);
+			if (obj != null) {
+				if (this.variables[j].isThis()) {
+					values[j] = obj;
+				} else if (this.variables[j].getSchema() < 0) {
+					values[j] = obj.getAttribute(this.variables[j].getPos());
+				} else {
+					values[j] = obj.getMetadata().getValue(variables[j].getSchema(), variables[j].getPos());
+				}
 			}
 		}
 	}
@@ -238,7 +247,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 			Tuple<T> object = input.get((-1) * variables[j].getSchema());
 			processObject(object, history, values, j);
 		}
-	
+
 		expression.setSessions(sessions);
 		expression.bindVariables(values);
 
@@ -249,43 +258,39 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	protected Tuple<T> determineObjectForExpression(Tuple<T> object, List<Tuple<T>> history, int j) {
 		return object;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isContainedIn(IPredicate<?> predicate) {
 		if (predicate instanceof AbstractRelationalExpression) {
 			if (this.expression instanceof IMepFunction) {
-				return ((IMepFunction<T>) this.expression).isContainedIn(((AbstractRelationalExpression<T>) predicate).expression.getMEPExpression());
+				return ((IMepFunction<T>) this.expression)
+						.isContainedIn(((AbstractRelationalExpression<T>) predicate).expression.getMEPExpression());
 			}
 		}
 		return false;
 	}
 
 	public boolean isAndPredicate() {
-		return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction().isAndPredicate();
+		return expression.getMEPExpression().isFunction()
+				&& expression.getMEPExpression().toFunction().isAndPredicate();
 	}
-
-
 
 	public boolean isOrPredicate() {
 		return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction().isOrPredicate();
 	}
 
-
-	
-	public boolean isNotPredicate(){
-		return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction().isNotPredicate();
+	public boolean isNotPredicate() {
+		return expression.getMEPExpression().isFunction()
+				&& expression.getMEPExpression().toFunction().isNotPredicate();
 	}
-	
+
 	@Override
 	public String toString() {
-		return expression.toString() + " initialized = "+(variables != null);
+		return expression.toString() + " initialized = " + (variables != null);
 	}
-	
+
 	@Override
 	abstract public AbstractRelationalExpression<T> clone();
 
-
-	
-	
 }
