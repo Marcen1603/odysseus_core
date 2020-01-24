@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +21,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.state.SlidingElementWindowTIPOState;
@@ -34,8 +29,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.state.SlidingElem
 abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractWindowTIPO<T> implements IStatefulPO, IPhysicalOperatorKeyValueProvider {
 
-	static final Logger LOG = LoggerFactory
-			.getLogger(AbstractPartitionedWindowTIPO.class);
+	static final Logger LOG = LoggerFactory.getLogger(AbstractPartitionedWindowTIPO.class);
 
 	private IGroupProcessor<T, T> groupProcessor = new NoGroupProcessor<T, T>();
 
@@ -45,16 +39,19 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	private PointInTime lastTs = null;
 
+	private final boolean drainAtDone;
+
 	public AbstractPartitionedWindowTIPO(AbstractWindowAO ao) {
 		super(ao);
+		drainAtDone = ao.isDrainAtDone();
 	}
 
-	protected AbstractPartitionedWindowTIPO(WindowType windowType, TimeUnit baseTimeUnit,
-			TimeValueItem windowSize, TimeValueItem windowAdvance,
-			TimeValueItem windowSlide,
-			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
-		super(windowType, baseTimeUnit, windowSize, windowAdvance, windowSlide, true, partitionedBy, inputSchema);
-	}
+//	protected AbstractPartitionedWindowTIPO(WindowType windowType, TimeUnit baseTimeUnit,
+//			TimeValueItem windowSize, TimeValueItem windowAdvance,
+//			TimeValueItem windowSlide,
+//			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
+//		super(windowType, baseTimeUnit, windowSize, windowAdvance, windowSlide, true, partitionedBy, inputSchema);
+//	}
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -83,7 +80,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 				buffer = new LinkedList<T>();
 				buffers.put(bufferId, buffer);
 			}
-			//buffer.add(object);
+			// buffer.add(object);
 			process(object, buffer, bufferId, lastTs);
 
 			if (buffer.size() == 0) {
@@ -96,8 +93,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		// Determine min element in transferBuffer and send hearbeat
 	}
 
-	abstract protected void process(T object, List<T> buffer, Object bufferId,
-			PointInTime ts);
+	abstract protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts);
 
 	protected PointInTime getMinTs() {
 		// MinTs is the oldest element of all buffers
@@ -121,16 +117,18 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	@Override
 	protected void process_done() {
-		synchronized (buffers) {
-			for (List<T> b : buffers.values()) {
-				if (b.size() > 0) {
-					// Transfer elements in buffers
-					// use lastTs+1 as timestamp for the last element (else the
-					// last element
-					// will be removed)
-					transferBuffer(b, b.size(), lastTs.plus(1));
-					for (T t : b) {
-						transferArea.transfer(t);
+		if (drainAtDone) {
+			synchronized (buffers) {
+				for (List<T> b : buffers.values()) {
+					if (b.size() > 0) {
+						// Transfer elements in buffers
+						// use lastTs+1 as timestamp for the last element (else the
+						// last element
+						// will be removed)
+						transferBuffer(b, b.size(), lastTs.plus(1));
+						for (T t : b) {
+							transferArea.transfer(t);
+						}
 					}
 				}
 			}
@@ -138,8 +136,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		transferArea.newHeartbeat(lastTs, 0);
 	}
 
-	protected void transferBuffer(List<T> buffer, long numberofelements,
-			PointInTime ts) {
+	protected void transferBuffer(List<T> buffer, long numberofelements, PointInTime ts) {
 		synchronized (buffer) {
 			Iterator<T> bufferIter = buffer.iterator();
 
@@ -229,12 +226,16 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 				transferArea.setTransfer(this);
 			}
 		} catch (Throwable T) {
-			LOG.error("The serializable state to set for the SlidingElementWindowTIPO is not a valid SlidingElementWindowTIPOState!");
+			LOG.error(
+					"The serializable state to set for the SlidingElementWindowTIPO is not a valid SlidingElementWindowTIPOState!");
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider#getKeyValues()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.
+	 * IPhysicalOperatorKeyValueProvider#getKeyValues()
 	 */
 	@Override
 	public Map<String, String> getKeyValues() {
@@ -245,7 +246,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		result.put("Implementation:", this.getClass().getSimpleName());
 		return result;
 	}
-	
+
 	protected Map<Object, List<T>> getBuffers() {
 		return buffers;
 	}

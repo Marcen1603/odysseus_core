@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractPartitionedWindowTIPO<T> implements IStatefulPO {
@@ -49,28 +44,28 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	}
 
 
-	public SlidingElementWindowTIPO(TimeUnit baseTimeUnit,TimeValueItem windowSize, TimeValueItem windowAdvance,
-			TimeValueItem windowSlide,
-			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
-		super(WindowType.TUPLE, baseTimeUnit, windowSize, windowAdvance, windowSlide, partitionedBy, inputSchema);
-		advance = this.windowAdvance > 0 ? this.windowAdvance : 1;
-		if (this.windowSize < this.advance) {
-			throw new IllegalArgumentException(
-					"Sorry. Size < Advance currently not implemented!");
-		}
-	}
-
-	protected SlidingElementWindowTIPO(WindowType windowType,
-			TimeValueItem windowSize, TimeValueItem windowAdvance,
-			TimeValueItem windowSlide,
-			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
-		super(WindowType.TUPLE, null, windowSize, windowAdvance, windowSlide, partitionedBy, inputSchema);
-		advance = this.windowAdvance > 0 ? this.windowAdvance : 1;
-		if (this.windowSize < this.advance) {
-			throw new IllegalArgumentException(
-					"Sorry. Size < Advance currently not implemented!");
-		}
-	}
+//	public SlidingElementWindowTIPO(TimeUnit baseTimeUnit,TimeValueItem windowSize, TimeValueItem windowAdvance,
+//			TimeValueItem windowSlide,
+//			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
+//		super(WindowType.TUPLE, baseTimeUnit, windowSize, windowAdvance, windowSlide, partitionedBy, inputSchema);
+//		advance = this.windowAdvance > 0 ? this.windowAdvance : 1;
+//		if (this.windowSize < this.advance) {
+//			throw new IllegalArgumentException(
+//					"Sorry. Size < Advance currently not implemented!");
+//		}
+//	}
+//
+//	protected SlidingElementWindowTIPO(WindowType windowType,
+//			TimeValueItem windowSize, TimeValueItem windowAdvance,
+//			TimeValueItem windowSlide,
+//			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
+//		super(WindowType.TUPLE, null, windowSize, windowAdvance, windowSlide, partitionedBy, inputSchema);
+//		advance = this.windowAdvance > 0 ? this.windowAdvance : 1;
+//		if (this.windowSize < this.advance) {
+//			throw new IllegalArgumentException(
+//					"Sorry. Size < Advance currently not implemented!");
+//		}
+//	}
 
 	@Override
 	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {

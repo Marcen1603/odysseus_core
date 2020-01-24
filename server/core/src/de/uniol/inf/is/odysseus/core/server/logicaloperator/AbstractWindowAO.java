@@ -43,6 +43,8 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private IPredicate<?> endCondition;
 	private boolean sameStarttime;
 	private boolean keepEndElement;
+	
+	private boolean drainAtDone;
 
 	private List<SDFAttribute> partitionedBy;
 
@@ -74,6 +76,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.sameStarttime = windowAO.sameStarttime;
 		this.keepEndElement = windowAO.keepEndElement;
 		this.useElementOnlyForStartOrEnd = windowAO.useElementOnlyForStartOrEnd;
+		this.drainAtDone = windowAO.drainAtDone;
 	}
 
 	public AbstractWindowAO() {
@@ -192,6 +195,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	 */
 	public boolean isSameStarttime() {
 		return sameStarttime;
+	}
+	
+	public boolean isDrainAtDone() {
+		return drainAtDone;
+	}
+	
+	public void setDrainAtDone(boolean drainAtDone) {
+		this.drainAtDone = drainAtDone;
 	}
 
 	/*
