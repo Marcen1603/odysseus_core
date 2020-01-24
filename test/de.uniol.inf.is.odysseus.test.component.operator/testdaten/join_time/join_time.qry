@@ -38,5 +38,5 @@ temperature = ACCESS({
 		['location', 'INTEGER']
 ]})
 window_wind = window({size = [5, 'SECONDS'], advance = [1, 'SECONDS'], type = 'time'}, wind)
-window_temperature = window({size = [5, 'SECONDS'], advance = [1, 'SECONDS'], type = 'time', drainAtDone=true}, temperature)
+window_temperature = window({size = [5, 'SECONDS'], advance = [1, 'SECONDS'], type = 'time'}, temperature)
 cross = join({predicate = RelationalPredicate('wind.speed > 25 AND temperature.temperature > 12')}, window_wind, window_temperature)
