@@ -42,4 +42,4 @@ input0 = ACCESS({
         ],
     schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double']]})
 
-output = AGGREGATE({AGGREGATIONS=[['cov',['x','y'],'cov_x_y']]}, ELEMENTWINDOW({SIZE = 3}, input0))
+output = AGGREGATE({AGGREGATIONS=[['cov',['x','y'],'cov_x_y']]}, ELEMENTWINDOW({SIZE = 3, drainAtDone=true}, input0))

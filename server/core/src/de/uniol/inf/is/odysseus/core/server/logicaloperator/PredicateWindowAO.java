@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "PREDICATEWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is a predicated based window, set start and end condition with predicates.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/PredicateWindow", hidden = true)
-public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
+public class PredicateWindowAO extends AbstractPartionedWindowAO implements IStatefulAO{
 
 	private static final long serialVersionUID = 8834015972527486443L;
 	

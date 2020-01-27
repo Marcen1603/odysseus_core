@@ -54,4 +54,4 @@ input1 = ACCESS({
         ],
     schema=[['timestamp', 'STARTTIMESTAMP'], ['y', 'Double']]})
 
-output = JOIN(ELEMENTWINDOW({SIZE = 2}, input0), ELEMENTWINDOW({SIZE = 2}, input1))
+output = JOIN(ELEMENTWINDOW({SIZE = 2, drainAtDone=true}, input0), ELEMENTWINDOW({SIZE = 2, drainAtDone=true}, input1))

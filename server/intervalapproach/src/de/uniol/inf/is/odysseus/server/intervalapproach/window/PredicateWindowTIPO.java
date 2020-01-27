@@ -61,7 +61,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final Map<Object, Boolean> openedWindow = new HashMap<>();
 	private final boolean keepEndElement;
 	private final boolean useElementOnlyForStartOrEnd;
-
+	
 	// With this option, a predicate window works like a session window.
 	// A session ends when a heartbeat is received. Than, all stored elements will
 	// be transferred.
