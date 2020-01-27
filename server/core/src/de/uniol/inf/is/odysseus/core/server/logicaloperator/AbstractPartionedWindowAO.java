@@ -33,5 +33,5 @@ public abstract class AbstractPartionedWindowAO extends AbstractWindowAO {
 	public void setDrainAtDone(boolean drainAtDone) {
 		super.setDrainAtDone(drainAtDone);
 	}
-
+	
 }

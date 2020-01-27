@@ -40,4 +40,19 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 		return (Boolean) end.evaluate(object, (List<ISession>) null, buffer);
 	}
 
+	@Override
+	protected void transferNested(List<Tuple<ITimeInterval>> nestedElements, boolean keepTimeOrder) {
+		Tuple<ITimeInterval> out = new Tuple<ITimeInterval>(1, true);
+		// get the meta data from the last element, that is part of the collection
+		out.setMetadata((ITimeInterval) nestedElements.get(nestedElements.size()-1).getMetadata().clone());
+		// get the start timestamp from the first element
+		out.getMetadata().setStart(nestedElements.get(0).getMetadata().getStart());
+		out.setAttribute(0, nestedElements);
+		if (keepTimeOrder) {
+			transferArea.transfer(out);			
+		}else {
+			transfer(out);
+		}
+	}
+	
 }

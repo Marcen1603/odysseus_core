@@ -43,6 +43,8 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private IPredicate<?> endCondition;
 	private boolean sameStarttime;
 	private boolean keepEndElement;
+	private boolean nesting;
+	private boolean keepTimeOrder = true;
 	
 	private boolean drainAtDone;
 
@@ -76,6 +78,8 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.sameStarttime = windowAO.sameStarttime;
 		this.keepEndElement = windowAO.keepEndElement;
 		this.useElementOnlyForStartOrEnd = windowAO.useElementOnlyForStartOrEnd;
+		this.nesting = windowAO.nesting;
+		this.keepTimeOrder = windowAO.keepTimeOrder;
 		this.drainAtDone = windowAO.drainAtDone;
 	}
 
@@ -195,6 +199,22 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	 */
 	public boolean isSameStarttime() {
 		return sameStarttime;
+	}
+	
+	public void setNesting(boolean nesting) {
+		this.nesting = nesting;
+	}
+	
+	public boolean isNesting() {
+		return nesting;
+	}
+	
+	public void setKeepTimeOrder(boolean keepTimeOrder) {
+		this.keepTimeOrder = keepTimeOrder;
+	}
+	
+	public boolean isKeepTimeOrder() {
+		return keepTimeOrder;
 	}
 	
 	public boolean isDrainAtDone() {
