@@ -5,6 +5,7 @@ public class VarHelper {
 	private final int schema;
 	private final int objectPosToUse;
 	private boolean isThis = false;
+	private boolean isAll = false;
 
 	public VarHelper(int pos, int objectPosToUse) {
 		super();
@@ -33,6 +34,14 @@ public class VarHelper {
 	
 	public boolean isThis() {
 		return isThis;
+	}
+	
+	public void setAll(boolean isAll) {
+		this.isAll = isAll;
+	}
+	
+	public boolean isAll() {
+		return isAll;
 	}
 
 	@Override
