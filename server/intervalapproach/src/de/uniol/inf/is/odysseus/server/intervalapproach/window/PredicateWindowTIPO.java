@@ -63,6 +63,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final boolean keepEndElement;
 	private final boolean useElementOnlyForStartOrEnd;
 	private final boolean nesting;
+	private final boolean keepTimeOrder;
 
 	// With this option, a predicate window works like a session window.
 	// A session ends when a heartbeat is received. Than, all stored elements will
@@ -96,8 +97,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (windowao instanceof PredicateWindowAO) {
 			this.closeWindowWithHeartbeat = ((PredicateWindowAO) windowao).getCloseWindowWithHeartbeat();
 		}
-		// FIXME!
-		nesting = true;
+		nesting = windowao.isNesting();
+		keepTimeOrder = windowao.isKeepTimeOrder();
 	}
 
 	@Override
@@ -222,12 +223,16 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 				if (nesting) {
 					nestedElements.add(toTransfer);
 				}else {
-					transferArea.transfer(toTransfer);
+					if (keepTimeOrder) {
+						transferArea.transfer(toTransfer);
+					}else {
+						transfer(toTransfer);
+					}
 				}
 			}
 		}
 		if (nesting && !nestedElements.isEmpty()) {
-			transferNested(nestedElements);
+			transferNested(nestedElements, keepTimeOrder);
 		}
 		openedWindow.put(bufferId, false);
 		// We need to determine the oldest element in all buffers and
@@ -235,7 +240,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		ping();
 	}
 
-	protected void transferNested(List<T> nestedElements) {
+	protected void transferNested(List<T> nestedElements, boolean keepTimeOrder) {
 		throw new RuntimeException("Sorry. Nesting is not supported for this kind of data.");
 	}
 

@@ -1,11 +1,17 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -14,19 +20,21 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "PREDICATEWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is a predicated based window, set start and end condition with predicates.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/PredicateWindow", hidden = true)
-public class PredicateWindowAO extends AbstractPartionedWindowAO implements IStatefulAO{
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "PREDICATEWINDOW", category = {
+		LogicalOperatorCategory.BASE }, doc = "This is a predicated based window, set start and end condition with predicates.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/PredicateWindow", hidden = true)
+public class PredicateWindowAO extends AbstractPartionedWindowAO implements IStatefulAO {
 
 	private static final long serialVersionUID = 8834015972527486443L;
-	
+
 	// With this option, a predicate window works like a session window.
-	// A session ends when a heartbeat is received. Than, all stored elements will be transferred. 
+	// A session ends when a heartbeat is received. Than, all stored elements will
+	// be transferred.
 	private boolean closeWindowWithHeartbeat = false;
 
 	public PredicateWindowAO(AbstractWindowAO windowPO) {
 		super(windowPO);
 	}
-	
+
 	public PredicateWindowAO(PredicateWindowAO windowAO) {
 		super(windowAO);
 		closeWindowWithHeartbeat = windowAO.closeWindowWithHeartbeat;
@@ -59,7 +67,7 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 	public void setKeepEndingElement(boolean keepEndElement) {
 		super.setKeepEndingElement(keepEndElement);
 	}
-	
+
 	@Override
 	@Parameter(name = "useElementOnlyForStartOrEnd", type = BooleanParameter.class, optional = true)
 	public void setUseElementOnlyForStartOrEnd(boolean useElementOnlyForStartOrEnd) {
@@ -76,12 +84,23 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 	public void setCloseWindowWithHeartbeat(boolean closeWindowWithHeartbeat) {
 		this.closeWindowWithHeartbeat = closeWindowWithHeartbeat;
 	}
+
+	@Parameter(type = BooleanParameter.class, name = "nesting", optional = true, doc = "If set to true, the output will contain a single nested element for alle buffer elements. Default is false.")
+	public void setNesting(boolean nesting) {
+		super.setNesting(nesting);
+	}
 	
+	@Parameter(type = BooleanParameter.class, name = "keepTimeOrder", optional = true, doc = "Set to false to allow out of order processing of results. Default is true")
+	@Override
+	public void setKeepTimeOrder(boolean keepTimeOrder) {
+		super.setKeepTimeOrder(keepTimeOrder);
+	}
+
 	@Parameter(type = TimeParameter.class, name = "maxWindowTime", optional = true)
 	public void setMaxWindowTime(TimeValueItem size) {
 		super.setWindowSizeString(size);
 	}
-	
+
 	public boolean getCloseWindowWithHeartbeat() {
 		return closeWindowWithHeartbeat;
 	}
@@ -90,6 +109,32 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 	public PredicateWindowAO clone() {
 		return new PredicateWindowAO(this);
 	}
-
+	
+	@Override
+	final public SDFSchema getOutputSchemaIntern(int pos) {
+		SDFSchema outputSchema;
+		if (isNesting()) {
+			// TODO: This cannot be done generic ... FIXME! --> RelationalPredicateWindowAO
+			SDFSchema inputSchema = getInputSchema();
+			if (inputSchema.getType().isAssignableFrom(Tuple.class)) {
+				SDFAttribute firstAttribute = inputSchema.getAttribute(0);
+				SDFDatatype outputType = SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, inputSchema);
+				SDFAttribute out = new SDFAttribute(firstAttribute.getSourceName(), "nested", outputType);
+				Collection<SDFAttribute> attributes = new ArrayList<>();
+				attributes.add(out);
+				outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
+			}else {
+				throw new IllegalArgumentException("Nesting can currently only be done with tuples!");
+			}
+		} else {
+			outputSchema = super.getOutputSchema(pos);
+		}
+		
+		if (isKeepTimeOrder()) {			
+			return  outputSchema;
+		}else {
+			return SDFSchemaFactory.createNewWithOutOfOrder(true, outputSchema);
+		}
+	}
 
 }
