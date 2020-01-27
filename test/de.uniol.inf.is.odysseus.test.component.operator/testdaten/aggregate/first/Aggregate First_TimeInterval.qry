@@ -42,4 +42,4 @@ input0 = ACCESS({
         ],
     schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double']]})
 
-output = AGGREGATE({AGGREGATIONS=[['first','x','first_x']]}, ELEMENTWINDOW({SIZE = 3}, input0))
+output = AGGREGATE({AGGREGATIONS=[['first','x','first_x']]}, ELEMENTWINDOW({SIZE = 3, drainAtDone=true}, input0))
