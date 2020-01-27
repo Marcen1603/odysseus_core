@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
  */
 
 public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends AbstractPartitionedWindowTIPO<T> {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(PredicateWindowTIPO.class);
 
 	private final IPredicate<? super T> start;
@@ -61,6 +62,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final Map<Object, Boolean> openedWindow = new HashMap<>();
 	private final boolean keepEndElement;
 	private final boolean useElementOnlyForStartOrEnd;
+	private final boolean nesting;
 
 	// With this option, a predicate window works like a session window.
 	// A session ends when a heartbeat is received. Than, all stored elements will
@@ -94,6 +96,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (windowao instanceof PredicateWindowAO) {
 			this.closeWindowWithHeartbeat = ((PredicateWindowAO) windowao).getCloseWindowWithHeartbeat();
 		}
+		// FIXME!
+		nesting = true;
 	}
 
 	@Override
@@ -107,8 +111,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {
 		initBuffer(bufferId);
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("New Object "+object);
-			LOG.trace("Current buffer "+buffer);
+			LOG.trace("New Object " + object);
+			LOG.trace("Current buffer " + buffer);
 		}
 		// Test if elements need to be written
 		boolean startEval = evaluateStartCondition(object, buffer);
@@ -125,7 +129,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 			if (closeWindow) {
 				if (LOG.isTraceEnabled()) {
-					LOG.trace("Found end element "+ object);
+					LOG.trace("Found end element " + object);
 				}
 				if (keepEndElement) {
 					// if element is used for start and for end, is must be cloned
@@ -202,6 +206,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (sameStarttime && !buffer.isEmpty()) {
 			startTS = buffer.get(0).getMetadata().getStart();
 		}
+		List<T> nestedElements = null;
+		if (nesting) {
+			nestedElements = new ArrayList<>();
+		}
+
 		while (!buffer.isEmpty()) {
 			T toTransfer = buffer.remove(0);
 			if (startTS != null) {
@@ -210,8 +219,15 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			// We can produce tuple with no validity --> Do not send them
 			if (endTimestamp.after(toTransfer.getMetadata().getStart())) {
 				toTransfer.getMetadata().setEnd(endTimestamp);
-				transferArea.transfer(toTransfer);
+				if (nesting) {
+					nestedElements.add(toTransfer);
+				}else {
+					transferArea.transfer(toTransfer);
+				}
 			}
+		}
+		if (nesting && !nestedElements.isEmpty()) {
+			transferNested(nestedElements);
 		}
 		openedWindow.put(bufferId, false);
 		// We need to determine the oldest element in all buffers and
@@ -219,12 +235,16 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		ping();
 	}
 
+	protected void transferNested(List<T> nestedElements) {
+		throw new RuntimeException("Sorry. Nesting is not supported for this kind of data.");
+	}
+
 	@Override
 	protected void process_done() {
 		// ignore done!
 		transferArea.done(0);
 	}
-	
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof PredicateWindowTIPO)) {
