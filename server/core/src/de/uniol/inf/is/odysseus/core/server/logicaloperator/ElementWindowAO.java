@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ELEMENTWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is an element based window.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/ElementWindow", hidden = true)
-public class ElementWindowAO extends AbstractElementWindowAO implements IStatefulAO{
+public class ElementWindowAO extends AbstractPartionedWindowAO implements IStatefulAO{
 
 	private static final long serialVersionUID = -1206019698493473257L;
 

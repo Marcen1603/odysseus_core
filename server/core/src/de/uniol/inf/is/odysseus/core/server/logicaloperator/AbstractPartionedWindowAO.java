@@ -7,19 +7,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
-public abstract class AbstractElementWindowAO extends AbstractWindowAO {
+public abstract class AbstractPartionedWindowAO extends AbstractWindowAO {
 
 	private static final long serialVersionUID = -2661905171333286810L;
 
-	public AbstractElementWindowAO(WindowType windowType) {
+	public AbstractPartionedWindowAO(WindowType windowType) {
 		super(windowType);
 	}
 
-	public AbstractElementWindowAO(AbstractWindowAO windowAO) {
+	public AbstractPartionedWindowAO(AbstractWindowAO windowAO) {
 		super(windowAO);
 	}
 
-	public AbstractElementWindowAO() {
+	public AbstractPartionedWindowAO() {
 	}
 	
 	@Override
