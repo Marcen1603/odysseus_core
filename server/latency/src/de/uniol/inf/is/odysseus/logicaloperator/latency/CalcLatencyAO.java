@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.latency;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -33,6 +34,11 @@ public class CalcLatencyAO extends UnaryLogicalOp {
 		super(ao);
 	}
 
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
+	}
+	
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new CalcLatencyAO(this);
