@@ -557,7 +557,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				}
 
 				if (result != null) {
-					transferResult(result, pointInTime, groupKey, sampleOfGroup, outdatedTuples);
+					//PointInTime startTS = pointInTime;
+					PointInTime startTS = getMaxStartTS(outdatedTuples);
+					transferResult(result, startTS , groupKey, sampleOfGroup, outdatedTuples);
 				}
 
 			}
@@ -577,6 +579,16 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			 */
 			sweepArea.getOutdatedTuples(pointInTime, true);
 		}
+	}
+
+	private PointInTime getMaxStartTS(Collection<T> outdatedTuples) {
+		PointInTime maxStartTS = PointInTime.ZERO;
+		for (T t:outdatedTuples) {
+			if (t.getMetadata().getStart().before(maxStartTS)) {
+				maxStartTS = t.getMetadata().getStart();
+			}
+		}
+		return null;
 	}
 
 	/**
