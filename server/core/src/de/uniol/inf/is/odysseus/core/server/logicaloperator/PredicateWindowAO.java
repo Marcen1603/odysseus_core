@@ -113,6 +113,12 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 	public void setMaxWindowTime(TimeValueItem size) {
 		super.setWindowSizeString(size);
 	}
+	
+	@Parameter(type = BooleanParameter.class, name = "outputIfMaxWindowTime", optional = true, doc = "A window can close by condition or when maxWindowTime is reached. Set to false to avoid writing in case of maxWindowTime (default is true)")
+	@Override
+	public void setOutputIfMaxWindowTime(boolean outputIfMaxWindowTime) {
+		super.setOutputIfMaxWindowTime(outputIfMaxWindowTime);
+	}
 
 	public boolean getCloseWindowWithHeartbeat() {
 		return closeWindowWithHeartbeat;

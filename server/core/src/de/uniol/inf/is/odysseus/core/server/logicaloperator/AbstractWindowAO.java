@@ -47,6 +47,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private boolean keepEndElement;
 	private boolean nesting;
 	private boolean keepTimeOrder = true;
+	private boolean outputIfMaxWindowTime = true;
 	
 	private boolean drainAtDone;
 
@@ -88,6 +89,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.nesting = windowAO.nesting;
 		this.keepTimeOrder = windowAO.keepTimeOrder;
 		this.drainAtDone = windowAO.drainAtDone;
+		this.outputIfMaxWindowTime = windowAO.outputIfMaxWindowTime;
 	}
 
 	public AbstractWindowAO() {
@@ -248,6 +250,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.drainAtDone = drainAtDone;
 	}
 
+	public boolean isOutputIfMaxWindowTime() {
+		return outputIfMaxWindowTime;
+	}
+	
+	public void setOutputIfMaxWindowTime(boolean outputIfMaxWindowTime) {
+		this.outputIfMaxWindowTime = outputIfMaxWindowTime;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 *
