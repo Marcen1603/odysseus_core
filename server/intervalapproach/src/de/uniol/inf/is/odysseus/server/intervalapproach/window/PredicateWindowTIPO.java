@@ -57,6 +57,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 	private final IPredicate<? super T> start;
 	private final IPredicate<? super T> end;
+	private final IPredicate<? super T> advance;
+	private final int advanceSize;
 	private final long maxWindowTime;
 	private final boolean sameStarttime;
 	private final Map<Object, Boolean> openedWindow = new HashMap<>();
@@ -80,6 +82,13 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		} else {
 			this.end = null;
 		}
+		if (windowao.getAdvanceCondition() != null) {
+			this.advance = (IPredicate<? super T>) windowao.getAdvanceCondition().clone();
+		}else {
+			this.advance = null;
+		}
+		this.advanceSize = windowao.getAdvanceSize();
+		
 		if (windowao.getWindowSize() != null) {
 			this.maxWindowTime = windowao.getBaseTimeUnit().convert(windowao.getWindowSize().getTime(),
 					windowao.getWindowSize().getUnit());

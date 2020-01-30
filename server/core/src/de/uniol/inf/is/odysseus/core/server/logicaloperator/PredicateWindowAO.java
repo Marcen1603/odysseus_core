@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
@@ -56,6 +57,18 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 		super.setEndCondition(endCondition);
 	}
 
+	@Override
+	@Parameter(type = PredicateParameter.class, name = "ADVANCEWHEN", optional = true)
+	public void setAdvanceCondition(IPredicate<?> advanceCondition) {
+		super.setAdvanceCondition(advanceCondition);
+	}
+	
+	@Override
+	@Parameter(type = IntegerParameter.class, name="AdvanceSize", optional = true, doc="If AdvanceWhen is set and evaluates to true, remove AdvanceSize elements from the beginning of current window. Remove no element for 0. If value if below 0, all elements are removed.")
+	public void setAdvanceSize(int advanceSize) {
+		super.setAdvanceSize(advanceSize);
+	}
+	
 	@Override
 	@Parameter(name = "PARTITION", type = ResolvedSDFAttributeParameter.class, optional = true, isList = true)
 	public void setPartitionBy(List<SDFAttribute> partitionedBy) {

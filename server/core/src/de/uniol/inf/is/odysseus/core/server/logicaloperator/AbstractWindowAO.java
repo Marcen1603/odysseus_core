@@ -41,6 +41,8 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	// For predicate based windows
 	private IPredicate<?> startCondition;
 	private IPredicate<?> endCondition;
+	private IPredicate<?> advanceCondition;
+	private int advanceSize;
 	private boolean sameStarttime;
 	private boolean keepEndElement;
 	private boolean nesting;
@@ -75,6 +77,11 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		if (windowAO.endCondition != null) {
 			this.endCondition = windowAO.endCondition.clone();
 		}
+		if (windowAO.advanceCondition != null) {
+			this.advanceCondition = windowAO.advanceCondition.clone();
+		}
+		// TODO: Maybe this is the same as windowAdvance?
+		this.advanceSize = windowAO.advanceSize;
 		this.sameStarttime = windowAO.sameStarttime;
 		this.keepEndElement = windowAO.keepEndElement;
 		this.useElementOnlyForStartOrEnd = windowAO.useElementOnlyForStartOrEnd;
@@ -167,6 +174,22 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	public IPredicate<?> getEndCondition() {
 		return endCondition;
 	}
+	
+	public void setAdvanceCondition(IPredicate<?> advanceCondition) {
+		this.advanceCondition = advanceCondition;
+	}
+	
+	public IPredicate<?> getAdvanceCondition() {
+		return advanceCondition;
+	}
+	
+	public void setAdvanceSize(int advanceSize) {
+		this.advanceSize = advanceSize;
+	}
+	
+	public int getAdvanceSize() {
+		return advanceSize;
+	}
 
 	public void setKeepEndingElement(boolean keepEndElement) {
 		this.keepEndElement = keepEndElement;
@@ -241,6 +264,9 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		if (endCondition != null) {
 			pred.add(endCondition);
 		}
+		if (advanceCondition != null) {
+			pred.add(advanceCondition);
+		}
 		return pred;
 	}
 	
@@ -248,6 +274,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	public void setPredicates(List<IPredicate<?>> predicates) {
 		this.startCondition = predicates.get(0);
 		this.endCondition = predicates.get(1);
+		this.advanceCondition = predicates.get(2);
 	}
 
 	/*
