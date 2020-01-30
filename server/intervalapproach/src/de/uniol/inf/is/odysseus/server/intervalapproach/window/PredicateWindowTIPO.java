@@ -58,6 +58,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final IPredicate<? super T> start;
 	private final IPredicate<? super T> end;
 	private final IPredicate<? super T> advance;
+	private final IPredicate<? super T> clear;
 	private final int advanceSize;
 	private final long maxWindowTime;
 	private final boolean sameStarttime;
@@ -82,6 +83,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			this.end = (IPredicate<? super T>) windowao.getEndCondition().clone();
 		} else {
 			this.end = null;
+		}
+		if (windowao.getClearCondition() != null) {
+			this.clear = (IPredicate<? super T>) windowao.getClearCondition().clone();
+		} else {
+			this.clear = null;
 		}
 		if (windowao.getAdvanceCondition() != null) {
 			this.advance = (IPredicate<? super T>) windowao.getAdvanceCondition().clone();
@@ -126,19 +132,27 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			LOG.trace("New Object " + object);
 			LOG.trace("Current buffer " + buffer);
 		}
+		// First check, if buffer needs to be cleared
+		if (clear != null && evaluateClearCondition(object, buffer)) {
+			buffer.clear();
+		}
+		
 		// Test if elements need to be written
 		boolean startEval = evaluateStartCondition(object, buffer);
-		boolean elementForEndUsed = false;
-		if (openedWindow.get(bufferId)) {
-			// Two cases: end is set --> use end predicate
-			// end is not set --> use negated start predicate
-			// maximum window size reached
-			boolean closeWindow = (end != null && (elementForEndUsed = evaluateEndCondition(object, buffer)))
-					|| (end == null && !startEval);
+		
+		// Two cases: end is set --> use end predicate
+		// end is not set --> use negated start predicate
+		// maximum window size reached
+		boolean closeWindow = (end != null && evaluateEndCondition(object, buffer))
+				|| (end == null && !startEval);
 
-			boolean maxWindowTimeReached = (maxWindowTime > 0 && !buffer.isEmpty()
-					&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
-							.afterOrEquals(object.getMetadata().getStart()));
+		boolean maxWindowTimeReached = (maxWindowTime > 0 && !buffer.isEmpty()
+				&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
+						.afterOrEquals(object.getMetadata().getStart()));
+
+		boolean closeHandled = false;
+		if (openedWindow.get(bufferId)) {
+			closeHandled = true;
 			if (closeWindow || maxWindowTimeReached) {
 				if (LOG.isTraceEnabled()) {
 					LOG.trace("Found end element " + object);
@@ -151,11 +165,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 						appendData(object, bufferId, buffer);
 					}
 				}
-				openedWindow.put(bufferId, false);
 				if (closeWindow || (maxWindowTimeReached && outputIfMaxWindowTime)) {
 					produceData(object.getMetadata().getStart(), bufferId, buffer, object);
 				} else {
 					buffer.clear();
+					openedWindow.put(bufferId, false);
 					// We need to determine the oldest element in all buffers and
 					// send a punctuation to the transfer area
 					ping();
@@ -167,7 +181,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		// the same tuple could be start and end, so do not use else
 		if (!openedWindow.get(bufferId)) {
 			if (startEval) {
-				if (useElementOnlyForStartOrEnd && elementForEndUsed) {
+				if (useElementOnlyForStartOrEnd && closeHandled) {
 					if (LOG.isTraceEnabled()) {
 						LOG.trace("Ignoring for start " + object);
 					}
@@ -177,6 +191,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			} else {
 				transferArea.transfer(object, 1);
 			}
+		}
+		
+		// There are cases, when the windows should only contain one element, i.e. start and end are
+		// true at the same time
+		if (closeWindow && startEval && !closeHandled) {
+			produceData(object.getMetadata().getStart(), bufferId, buffer, object);
 		}
 		ping();
 	}
@@ -215,11 +235,13 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		return end.evaluate(object);
 	}
 	
+	protected Boolean evaluateClearCondition(T object, List<T> buffer) {
+		return clear.evaluate(object);
+	}
+	
 	protected Boolean evaluateAdvanceCondition(T object, List<T> buffer) {
 		return advance.evaluate(object);
 	}
-	
-	
 
 	private void appendData(T object, Object bufferId, List<T> buffer) {
 		openedWindow.put(bufferId, true);
@@ -258,7 +280,6 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			buffer.clear();
 		}else {
 			boolean useAdvance = evaluateAdvanceCondition(trigger, buffer);
-			System.out.println(useAdvance);
 			if (trigger != null && useAdvance) {
 				if (advanceSize < 0 || buffer.size() < advanceSize) {
 					buffer.clear();

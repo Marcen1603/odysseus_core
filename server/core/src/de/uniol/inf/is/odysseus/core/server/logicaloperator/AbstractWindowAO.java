@@ -42,6 +42,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private IPredicate<?> startCondition;
 	private IPredicate<?> endCondition;
 	private IPredicate<?> advanceCondition;
+	private IPredicate<?> clearCondition;
 	private int advanceSize;
 	private boolean sameStarttime;
 	private boolean keepEndElement;
@@ -77,6 +78,9 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		}
 		if (windowAO.endCondition != null) {
 			this.endCondition = windowAO.endCondition.clone();
+		}
+		if (windowAO.clearCondition != null) {
+			this.clearCondition = windowAO.clearCondition.clone();
 		}
 		if (windowAO.advanceCondition != null) {
 			this.advanceCondition = windowAO.advanceCondition.clone();
@@ -175,6 +179,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 
 	public IPredicate<?> getEndCondition() {
 		return endCondition;
+	}
+	
+	public void setClearCondition(IPredicate<?> clearCondition) {
+		this.clearCondition = clearCondition;
+	}
+	
+	public IPredicate<?> getClearCondition() {
+		return clearCondition;
 	}
 	
 	public void setAdvanceCondition(IPredicate<?> advanceCondition) {

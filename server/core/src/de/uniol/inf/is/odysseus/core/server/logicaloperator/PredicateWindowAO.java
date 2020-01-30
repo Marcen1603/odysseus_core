@@ -58,6 +58,12 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 	}
 
 	@Override
+	@Parameter(type = PredicateParameter.class, name = "CLEAR", optional = true)
+	public void setClearCondition(IPredicate<?> clearCondition) {
+		super.setClearCondition(clearCondition);
+	}
+
+	@Override
 	@Parameter(type = PredicateParameter.class, name = "ADVANCEWHEN", optional = true)
 	public void setAdvanceCondition(IPredicate<?> advanceCondition) {
 		super.setAdvanceCondition(advanceCondition);
