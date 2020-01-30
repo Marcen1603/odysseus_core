@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.mep.commons.math.BinomialTestFunction;
+import de.uniol.inf.is.odysseus.mep.commons.math.DBSCANFunction;
 
 public class MathFunctionProvider implements IFunctionProvider {
 
@@ -13,6 +14,7 @@ public class MathFunctionProvider implements IFunctionProvider {
 	public List<IMepFunction<?>> getFunctions() {
 		final List<IMepFunction<?>> functions = new ArrayList<>();
 		functions.add(new BinomialTestFunction());
+		functions.add(new DBSCANFunction());
 		return functions;
 	}
 
