@@ -37,6 +37,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 	
 	private static final long serialVersionUID = -4221371391163499952L;
 	private int minimumSize = 0;
+	private int maximumSize = 0;
 	private IPredicate<?> predicate;
 	private boolean outerEnrich = true;
 
@@ -47,6 +48,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 	public EnrichAO(EnrichAO enrichAO) {
 		super(enrichAO);
 		this.minimumSize = enrichAO.minimumSize;
+		this.maximumSize = enrichAO.maximumSize;
 		if (enrichAO.predicate != null){
 			this.predicate = enrichAO.predicate.clone();
 		}
@@ -66,6 +68,15 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 	
 	public int getMinimumSize(){
 		return this.minimumSize;
+	}
+	
+	@Parameter(name = "maximumSize", type = IntegerParameter.class, optional = true, doc = "Limit the number of elements that should be used to enrich. Default 0: Do not limit the number.")
+	public void setMaximumSize(int maximumSize) {
+		this.maximumSize = maximumSize;
+	}
+	
+	public int getMaximumSize() {
+		return maximumSize;
 	}
 	
 	@Parameter(name = "predicate", type = PredicateParameter.class, doc = "Predicate to filter combinations")

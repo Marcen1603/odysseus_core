@@ -31,26 +31,17 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TEnrichAORule extends AbstractTransformationRule<EnrichAO> {
 
-	@Override
-	public int getPriority() {
-		return 0;
-	}
 
 	@Override
 	public void execute(EnrichAO operator, TransformationConfiguration config) throws RuleException {
 		EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute>(
-				operator.getPredicate(), operator.getMinimumSize(), operator.isOuterEnrich());
+				operator.getPredicate(), operator.getMinimumSize(), operator.getMaximumSize(), operator.isOuterEnrich());
 		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override
 	public boolean isExecutable(EnrichAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
-	}
-
-	@Override
-	public String getName() {
-		return "EnrichAO -> EnrichPO";
 	}
 
 	@Override
