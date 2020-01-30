@@ -64,6 +64,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final boolean useElementOnlyForStartOrEnd;
 	private final boolean nesting;
 	private final boolean keepTimeOrder;
+	private final boolean outputIfMaxWindowTime;
 
 	// With this option, a predicate window works like a session window.
 	// A session ends when a heartbeat is received. Than, all stored elements will
@@ -99,6 +100,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		}
 		nesting = windowao.isNesting();
 		keepTimeOrder = windowao.isKeepTimeOrder();
+		outputIfMaxWindowTime = windowao.isOutputIfMaxWindowTime();
 	}
 
 	@Override
@@ -123,12 +125,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			// end is not set --> use negated start predicate
 			// maximum window size reached
 			boolean closeWindow = (end != null && (elementForEndUsed = evaluateEndCondition(object, buffer)))
-					|| (end == null && !startEval)
-					|| (maxWindowTime > 0 && !buffer.isEmpty()
-							&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
-									.afterOrEquals(object.getMetadata().getStart()));
-
-			if (closeWindow) {
+					|| (end == null && !startEval);
+			
+			boolean maxWindowTimeReached = (maxWindowTime > 0 && !buffer.isEmpty()
+					&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
+					.afterOrEquals(object.getMetadata().getStart()));
+			if (closeWindow  || maxWindowTimeReached) {
 				if (LOG.isTraceEnabled()) {
 					LOG.trace("Found end element " + object);
 				}
@@ -141,7 +143,14 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 					}
 				}
 				openedWindow.put(bufferId, false);
-				produceData(object.getMetadata().getStart(), bufferId, buffer);
+				if (closeWindow || (maxWindowTimeReached && outputIfMaxWindowTime)) {
+					produceData(object.getMetadata().getStart(), bufferId, buffer);
+				}else {
+					buffer.clear();
+					// We need to determine the oldest element in all buffers and
+					// send a punctuation to the transfer area
+					ping();
+				}
 			} else {
 				appendData(object, bufferId, buffer);
 			}
