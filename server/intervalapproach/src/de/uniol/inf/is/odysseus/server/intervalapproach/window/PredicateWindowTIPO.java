@@ -324,6 +324,27 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (!Objects.equal(this.end, other.end)) {
 			return false;
 		}
+		if (!Objects.equal(this.advance, other.advance)){
+			return false;
+		}
+		if (!Objects.equal(this.clear, other.clear)) {
+			return false;
+		}
+		if (this.advanceSize != other.advanceSize) {
+			return false;
+		}
+		if (this.useElementOnlyForStartOrEnd != other.useElementOnlyForStartOrEnd) {
+			return false;
+		}
+		if (this.nesting != other.nesting) {
+			return false;
+		}
+		if (this.keepTimeOrder != other.keepTimeOrder) {
+			return false;
+		}
+		if (this.outputIfMaxWindowTime != other.outputIfMaxWindowTime) {
+			return false;
+		}
 		if (this.maxWindowTime != other.maxWindowTime) {
 			return false;
 		}
