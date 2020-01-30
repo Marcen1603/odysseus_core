@@ -14,6 +14,8 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 
 	private RelationalStateExpression<ITimeInterval> start;
 	private RelationalStateExpression<ITimeInterval> end;
+	private RelationalStateExpression<ITimeInterval> advance;
+	
 
 	@SuppressWarnings("unchecked")
 	public RelationalPredicateWindowTIPO(AbstractWindowAO windowao) {
@@ -28,6 +30,11 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 					((RelationalExpression<ITimeInterval>) windowao.getEndCondition()).getExpression().clone());
 			this.end.initVars(windowao.getInputSchema());
 		}
+		if (windowao.getAdvanceCondition() != null) {
+			this.advance = new RelationalStateExpression<>(
+					((RelationalExpression<ITimeInterval>) windowao.getAdvanceCondition()).getExpression().clone());
+			this.advance.initVars(windowao.getInputSchema());			
+		}
 	}
 
 	@Override
@@ -38,6 +45,11 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 	@Override
 	protected Boolean evaluateEndCondition(Tuple<ITimeInterval> object, List<Tuple<ITimeInterval>> buffer) {
 		return (Boolean) end.evaluate(object, (List<ISession>) null, buffer);
+	}
+	
+	@Override
+	protected Boolean evaluateAdvanceCondition(Tuple<ITimeInterval> object, List<Tuple<ITimeInterval>> buffer) {
+		return (Boolean) advance.evaluate(object, (List<ISession>) null, buffer);
 	}
 
 	@Override
