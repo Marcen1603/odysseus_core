@@ -16,7 +16,7 @@ public class DBSCANFunction extends AbstractFunction<List<?>> {
 
 	private static final long serialVersionUID = -2637140703772179352L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists(),
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.LIST_TUPLE},
 			{ SDFDatatype.DOUBLE }, SDFDatatype.DISCRETE_NUMBERS };
 
 	public DBSCANFunction() {
@@ -24,7 +24,7 @@ public class DBSCANFunction extends AbstractFunction<List<?>> {
 	}
 
 	@Override
-	public List<?> getValue() {
+	public List<List<Tuple<?>>> getValue() {
 		List<Tuple<?>> input = getInputValue(0);
 		double eps = getInputValue(1);
 		Long minPts = getInputValue(2);
