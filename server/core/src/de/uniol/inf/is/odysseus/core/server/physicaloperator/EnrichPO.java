@@ -15,7 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -24,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -34,27 +39,67 @@ import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
  * @author Marco Grawunder
  *
  */
-public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
-		extends AbstractPipe<T, T> implements IHasPredicate {
+public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractPipe<T, T>
+		implements IHasPredicate, IPhysicalOperatorKeyValueProvider {
 
+	/**
+	 * Predicate to check, which elements to enrich
+	 */
 	private IPredicate<T> predicate;
 	// TODO: check, if it can be merged with caching strategies form DB-Enrich
-	private List<T> cache = new CopyOnWriteArrayList<>();
+	/**
+	 * The elements that are used to enrich
+	 */
+	private List<T> cache = new ArrayList<>();
+	/**
+	 * Buffer is needed to collect elements to enrich as long as minSize of cache is
+	 * not reached
+	 */
 	private List<T> buffer = new CopyOnWriteArrayList<>();
-	private UseRightInputMetadata<M> metaMergeFunction = new UseRightInputMetadata<>();
+
+	/**
+	 * Data merge Function
+	 */
 	private IDataMergeFunction<T, M> dataMergeFunction;
 
-	private int minSize = 0;
-	private T emptyObject;
-	private final boolean outer;
+	/**
+	 * Meta data merge function (use always the input from the elements to enrich
+	 */
+	private UseRightInputMetadata<M> metaMergeFunction = new UseRightInputMetadata<>();
+	
+	/**
+	 * Should there be at least minSize elements before starting to enrich
+	 */
+	private final int minSize;
+	/**
+	 * Limit the number of elements that are used to enrich
+	 */
+	private final int maxSize;
 
+	/**
+	 * Allow outer enrich, i.e. if no element in cache can be found, enrich with
+	 * emptyObject
+	 */
+	private final boolean outer;
+	/**
+	 * This object is used to enrich, when no element in cache in found
+	 */
+	private T emptyObject;
+
+	/**
+	 * Creates a new EnrichPO
+	 * @param predicate Predicate to check, which elements to enrich
+	 * @param minimumSize Should there be at least minSize elements before starting to enrich, set 0 to disable
+	 * @param maxSize Limit the number of elements that are used to enrich, set 0 to disable
+	 * @param outer Allow outer enrich, i.e. if no element can be found, enrich with an emptyObject
+	 */
 	@SuppressWarnings("unchecked")
-	public EnrichPO(IPredicate<?> predicate, int minimumSize, boolean outer) {
+	public EnrichPO(IPredicate<?> predicate, int minimumSize, int maxSize, boolean outer) {
 		this.predicate = (IPredicate<T>) predicate;
 		this.minSize = minimumSize;
 		this.outer = outer;
+		this.maxSize = maxSize;
 	}
-
 
 	@Override
 	public IPredicate<?> getPredicate() {
@@ -81,6 +126,13 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		// if port == 0, it is a cached-object
 		if (port == 0) {
 			this.cache.add(object);
+			if (maxSize > 0) {
+				Iterator<T> iter = cache.iterator();
+				while (cache.size() > maxSize) {
+					iter.next();
+					iter.remove();
+				}
+			}
 			if (emptyObject == null) {
 				this.emptyObject = (T) object.copyAndReturnEmptyInstance();
 			}
@@ -110,19 +162,18 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	private void processEnrich(T object) {
-			boolean foundMatch = false;
-			for (T cached : this.cache) {
-				if (this.predicate.evaluate(cached, object)) {
-					T enriched = this.dataMergeFunction.merge(cached, object,
-							metaMergeFunction, Order.LeftRight);
-					transfer(enriched);
-					foundMatch=true;
-				}
+		boolean foundMatch = false;
+		for (T cached : this.cache) {
+			if (this.predicate.evaluate(cached, object)) {
+				T enriched = this.dataMergeFunction.merge(cached, object, metaMergeFunction, Order.LeftRight);
+				transfer(enriched);
+				foundMatch = true;
 			}
-			if (!foundMatch && outer) {
-				T obj = this.dataMergeFunction.merge(emptyObject, object, metaMergeFunction, Order.LeftRight);
-				transfer(obj);
-			}
+		}
+		if (!foundMatch && outer) {
+			T obj = this.dataMergeFunction.merge(emptyObject, object, metaMergeFunction, Order.LeftRight);
+			transfer(obj);
+		}
 	}
 
 	@Override
@@ -159,7 +210,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
-		this.predicate = (IPredicate<T>)predicate;
+		this.predicate = (IPredicate<T>) predicate;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -169,10 +220,17 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 			return false;
 		}
 		EnrichPO other = (EnrichPO) ipo;
-		return Objects.equals(this.predicate, other.predicate) &&
-				this.minSize == other.minSize &&
-				this.outer == other.outer;
-		
+		return Objects.equals(this.predicate, other.predicate) && this.minSize == other.minSize
+				&& this.outer == other.outer;
+
 	}
-	
+
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.put("Buffer", String.valueOf(buffer.size()));
+		map.put("Cache", String.valueOf(cache.size()));
+		return map;
+	}
+
 }
