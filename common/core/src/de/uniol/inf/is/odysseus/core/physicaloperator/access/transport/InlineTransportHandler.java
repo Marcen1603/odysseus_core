@@ -12,6 +12,7 @@ public class InlineTransportHandler extends AbstractPushTransportHandler {
 	public static final String NAME = "Inline";
 	public static final String PERIOD = NAME + ".period";
 	public static final String CONTENT = NAME + ".Content";
+	public static final String SPLITTER = "&&";
 	private Timer timer;
 	private long period;
 	private String content;
@@ -49,7 +50,7 @@ public class InlineTransportHandler extends AbstractPushTransportHandler {
 
 	private void startTimer() {
 		current = 0;
-		final String lines[] = content.split("&&");
+		final String lines[] = content.split(SPLITTER);
 		if (lines.length > 0) {
 			timer = new Timer();
 			final TimerTask task = new TimerTask() {
