@@ -584,7 +584,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	private PointInTime getMaxStartTS(Collection<T> outdatedTuples) {
 		PointInTime maxStartTS = PointInTime.ZERO;
 		for (T t:outdatedTuples) {
-			if (t.getMetadata().getStart().before(maxStartTS)) {
+			if (t.getMetadata().getStart().after(maxStartTS)) {
 				maxStartTS = t.getMetadata().getStart();
 			}
 		}
