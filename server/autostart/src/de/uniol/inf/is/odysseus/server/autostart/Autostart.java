@@ -20,7 +20,7 @@ public class Autostart implements BundleActivator {
 	private static boolean autostartExecuted = false;
 
 	private static String[] PATHES = { "/autostart/autostart.qry",
-			OdysseusConfiguration.instance.getHomeDir() + "autostart" + File.separator + "autostart.qry" };
+			OdysseusConfiguration.instance.getHomeDir() + "/autostart" + File.separator + "autostart.qry" };
 
 	// called by OSGi-DS
 	public void unbindExecutor(IExecutor exec) {
