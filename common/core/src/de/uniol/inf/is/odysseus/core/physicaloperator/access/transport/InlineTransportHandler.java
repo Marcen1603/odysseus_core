@@ -78,9 +78,11 @@ public class InlineTransportHandler extends AbstractPushTransportHandler {
 	}
 
 	private void stopTimer() {
-		timer.cancel();
-		timer.purge();
-		timer = null;
+		if (timer != null) {
+			timer.cancel();
+			timer.purge();
+			timer = null;
+		}
 	}
 
 	@Override
