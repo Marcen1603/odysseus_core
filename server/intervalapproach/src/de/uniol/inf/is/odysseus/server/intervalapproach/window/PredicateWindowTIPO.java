@@ -147,14 +147,14 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 		boolean maxWindowTimeReached = (maxWindowTime > 0 && !buffer.isEmpty()
 				&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
-						.afterOrEquals(object.getMetadata().getStart()));
+						.beforeOrEquals(object.getMetadata().getStart()));		
 
 		boolean closeHandled = false;
 		if (openedWindow.get(bufferId)) {
 			if (closeWindow || maxWindowTimeReached) {
 				closeHandled = true;
 				if (LOG.isTraceEnabled()) {
-					LOG.trace("Found end element " + object);
+					LOG.trace("Found end element " + object +" closeWindow="+closeWindow+" maxWindowTimeReached="+maxWindowTimeReached);
 				}
 				if (keepEndElement) {
 					// if element is used for start and for end, is must be cloned
