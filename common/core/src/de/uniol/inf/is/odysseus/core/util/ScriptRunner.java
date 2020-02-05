@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Paths;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -34,10 +35,15 @@ public class ScriptRunner {
 				if (url == null) {
 					try {
 						if (!path.startsWith("http")) {
-							url = new URL("file:///"+path);
+							// Distinguish relative and absolute paths
+							if (Paths.get(path).isAbsolute()) {
+							    url = new URL("file:///"+path);                               
+							} else {
+							    url = new URL(new URL("file:"), path);                                
+							}
 						}
 					} catch (MalformedURLException e) {
-						LOG.error("Error loading script from "+path,e);
+						LOG.error("Error loading script from " + path, e);
 					}
 				}
 
@@ -45,9 +51,9 @@ public class ScriptRunner {
 					runScript(user, url, executor);
 				} catch (IOException e) {
 					// Could be ignored
-					LOG.error("Error running script ",e);
+					LOG.error("Error running script ", e);
 				}
-				
+
 			}
 
 		}
