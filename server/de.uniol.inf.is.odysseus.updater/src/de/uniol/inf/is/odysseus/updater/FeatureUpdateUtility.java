@@ -186,6 +186,11 @@ public class FeatureUpdateUtility {
 						}
 					}else {
 						LOG.error(event.getResult().getMessage(), event.getResult().getException());
+						for (IStatus s: event.getResult().getChildren()) {
+							if (!s.isOK()) {
+								LOG.error(s.getMessage(), s.getException());
+							}
+						}
 					}
 					super.done(event);
 				}
