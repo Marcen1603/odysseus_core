@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDifferenceFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDivisionOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalIntersectionFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalIsNaNFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalMinusOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalMultiplicationOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPlusOperator;
@@ -63,6 +64,7 @@ public class IntervalFunctionProvider implements IFunctionProvider {
         functions.add(new IntervalDifferenceFunction());
 
         functions.add(new ToIntervalFunction());
+        functions.add(new IntervalIsNaNFunction());
         // ProbabilisticFunctionProvider.LOG.info(String.format(
         // "Register functions: %s", functions));
 
