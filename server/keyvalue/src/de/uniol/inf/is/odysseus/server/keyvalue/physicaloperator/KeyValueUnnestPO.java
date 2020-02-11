@@ -61,6 +61,11 @@ public class KeyValueUnnestPO<T extends KeyValueObject<IMetaAttribute>> extends 
 			@SuppressWarnings("unchecked")
 			T kv = (T) object.newInstance();
 			kv.setMetadata(object.getMetadata().clone());
+			// Copy content into new kv stream object
+			for (String key : e.getValue().keySet()) {
+				  String unnestedKey = key.substring(attribute.length() + 1, key.length());
+				  kv.setAttribute(unnestedKey, e.getValue().get(key));
+				}
 			transfer((T) kv);
 		}
 
