@@ -215,6 +215,8 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		} else {
 			if (port < leafs.size()) {
 				((ISource<T>) leafs.get(port)).propagateDone();
+			} else if(port == 0 && leafs.isEmpty()) {
+				return;
 			} else {
 				throw new RuntimeException("Input for not connected operator");
 			}
