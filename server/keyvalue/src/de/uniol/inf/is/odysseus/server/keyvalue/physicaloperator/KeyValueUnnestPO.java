@@ -56,19 +56,35 @@ public class KeyValueUnnestPO<T extends KeyValueObject<IMetaAttribute>> extends 
 			}
 		}
 
-		for (Entry<Integer, Map<String, Object>> e : sepObjects.entrySet()) {
-			e.getValue().putAll(remaing);
-			@SuppressWarnings("unchecked")
-			T kv = (T) object.newInstance();
-			kv.setMetadata(object.getMetadata().clone());
-			// Copy content into new kv stream object
-			for (String key : e.getValue().keySet()) {
-				  String unnestedKey = key.substring(attribute.length() + 1, key.length());
-				  kv.setAttribute(unnestedKey, e.getValue().get(key));
-				}
-			transfer((T) kv);
-		}
-
+		createAndSendSeparatedObjects(object, sepObjects, remaing);
 	}
+
+	private void createAndSendSeparatedObjects(T originalKeyValueObject, Map<Integer, Map<String, Object>> seperatedObjects,
+			Map<String, Object> remainingObjects) {
+		for (Entry<Integer, Map<String, Object>> entry : seperatedObjects.entrySet()) {
+			entry.getValue().putAll(remainingObjects);
+			Map<String, Object> contentForKeyValueObject = entry.getValue();
+			T keyValueObject = createAndFillKeyValueObject(contentForKeyValueObject, originalKeyValueObject);
+			transfer((T) keyValueObject);
+		}
+	}
+	
+	private T createAndFillKeyValueObject(Map<String, Object> contentForKeyValueObject, T originalKeyValueObject) {
+		@SuppressWarnings("unchecked")
+		T keyValueObject = (T) originalKeyValueObject.newInstance();
+		keyValueObject.setMetadata(originalKeyValueObject.getMetadata().clone());
+		// Copy content into new keyValue stream object
+		copyContentIntoKeyValueObject(contentForKeyValueObject, keyValueObject);
+		return keyValueObject;
+	}
+
+	private void copyContentIntoKeyValueObject(Map<String, Object> contentForkeyValueObject, T keyValueObject) {
+		for (String key : contentForkeyValueObject.keySet()) {
+			  String unnestedKey = key.substring(attribute.length() + 1, key.length());
+			  keyValueObject.setAttribute(unnestedKey, contentForkeyValueObject.get(key));
+		}
+	}
+	
+	
 
 }
