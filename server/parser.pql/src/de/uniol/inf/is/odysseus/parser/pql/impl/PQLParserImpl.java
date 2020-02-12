@@ -14,37 +14,36 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AppendToPhysicalAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.InputOperatorItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateItem;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
-import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
-import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
-import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
+import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 
 @SuppressWarnings("all")
 public class PQLParserImpl implements PQLParserImplConstants {
@@ -242,10 +241,26 @@ public class PQLParserImpl implements PQLParserImplConstants {
     List < ILogicalQuery > queries = new ArrayList < ILogicalQuery > ();
     if (roots.size() > 0)
     {
+
       ILogicalOperator topOperator = new TopAO();
       int inputPort = 0;
       for (ILogicalOperator root : roots)
       {
+    	  
+      	// replace PlaceHolderAO:
+     	 GenericGraphWalker walker = new GenericGraphWalker();
+     	 CollectOperatorLogicalGraphVisitor<PlaceHolderAO> collVisitor = new CollectOperatorLogicalGraphVisitor(PlaceHolderAO.class);
+     	 walker.prefixWalk(root, collVisitor);
+     	 for (PlaceHolderAO placeHolder: collVisitor.getResult()) {
+     		 ILogicalOperator toReplace = namedOps.get(placeHolder.getNamedOP().toUpperCase());
+     		 if (toReplace != null) {
+     			 placeHolder.setLogicalOperator(toReplace);
+     		 }else {
+     			throw new QueryParseException("The input source \u005c"" + placeHolder.getNamedOP() +"\u005c" is not registered.");
+     		 }
+     	 }
+     	 
+    	  
         root.subscribeSink(topOperator, inputPort++, 0, root.getOutputSchema());
       }
       // create real query (with new id)
@@ -417,7 +432,9 @@ public class PQLParserImpl implements PQLParserImplConstants {
         }
         catch (DataDictionaryException e)
         {
-          {if (true) throw new QueryParseException("The input source \u005c"" + identifier.image +"\u005c" is not registered.");}
+        	op = new PlaceHolderAO();
+        	((PlaceHolderAO)op).setNamedOP(identifier.image);
+         /// {if (true) throw new QueryParseException("The input source \u005c"" + identifier.image +"\u005c" is not registered.");}
         }
       }
       {if (true) return op;}

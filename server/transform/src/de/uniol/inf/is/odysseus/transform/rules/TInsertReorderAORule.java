@@ -50,7 +50,7 @@ public class TInsertReorderAORule extends AbstractTransformationRule<ILogicalOpe
 	@Override
 	public boolean isExecutable(ILogicalOperator operator, TransformationConfiguration config) {
 		for (int port = 0; port < operator.getNumberOfInputs(); port++) {
-			if (operator.getInputOrderRequirement(port) == InputOrderRequirement.STRICT
+			if (operator.getInputSchema(port) != null && operator.getInputOrderRequirement(port) == InputOrderRequirement.STRICT
 					&& !operator.getInputSchema(port).isInOrder()) {
 				return true;
 			}
