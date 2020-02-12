@@ -49,6 +49,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private boolean nesting;
 	private boolean keepTimeOrder = true;
 	private boolean outputIfMaxWindowTime = true;
+	private int maxWindowTimeOutputPort = 0;
 	
 	private boolean drainAtDone;
 
@@ -94,6 +95,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.keepTimeOrder = windowAO.keepTimeOrder;
 		this.drainAtDone = windowAO.drainAtDone;
 		this.outputIfMaxWindowTime = windowAO.outputIfMaxWindowTime;
+		this.maxWindowTimeOutputPort = windowAO.maxWindowTimeOutputPort;
 	}
 
 	public AbstractWindowAO() {
@@ -270,6 +272,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.outputIfMaxWindowTime = outputIfMaxWindowTime;
 	}
 	
+	public void setMaxWindowTimeOutputPort(int maxWindowTimeOutputPort) {
+		this.maxWindowTimeOutputPort = maxWindowTimeOutputPort;
+	}
+	
+	public int getMaxWindowTimeOutputPort() {
+		return maxWindowTimeOutputPort;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -353,6 +363,13 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 			isValid = true;
 			// Todo check validity
 			// esp. check predicates!
+			if (maxWindowTimeOutputPort != 0) {
+				outputIfMaxWindowTime = true;
+			}
+			if (maxWindowTimeOutputPort == 1) {
+				isValid = false;
+				addError("port 1 cannot be used for maxWindowTimeOutputPort");
+			}
 			return isValid;
 		default:
 			break;

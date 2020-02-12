@@ -74,7 +74,7 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 	}
 
 	@Override
-	protected void transferNested(List<Tuple<ITimeInterval>> nestedElements, boolean keepTimeOrder) {
+	protected void transferNested(List<Tuple<ITimeInterval>> nestedElements, boolean keepTimeOrder, int outputPort) {
 		Tuple<ITimeInterval> out = new Tuple<ITimeInterval>(1, true);
 		// get the meta data from the last element, that is part of the collection
 		out.setMetadata((ITimeInterval) nestedElements.get(nestedElements.size()-1).getMetadata().clone());
@@ -82,9 +82,9 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 		out.getMetadata().setStart(nestedElements.get(0).getMetadata().getStart());
 		out.setAttribute(0, nestedElements);
 		if (keepTimeOrder) {
-			transferArea.transfer(out);			
+			transferArea.transfer(out, outputPort);			
 		}else {
-			transfer(out);
+			transfer(out, outputPort);
 		}
 	}
 	
