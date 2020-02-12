@@ -27,6 +27,7 @@ public enum TransformRuleFlowGroup implements IRuleFlowGroup{
 	ACCESS,
 	CREATE_METADATA,
 	TRANSFORMATION,
+	PLACEHOLDER,
 	SENDER,
 	SECURITY,
 	METAOBJECTS,

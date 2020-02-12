@@ -192,17 +192,19 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 		transformationConfig.getTransformationHelper().replace(oldOperator, newOperator);
 	}
 
-	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator,
+	protected void replace(ILogicalOperator logicalOperator, IPhysicalOperator physicalOperator,
 			TransformationConfiguration transformationConfig, boolean ignoreSinkInput) {
 
+		this.getCurrentWorkingMemory().addTranslation(logicalOperator, physicalOperator);
+		
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>();
-		if (newOperator.isPipe()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (IPipe<?, ?>) newOperator,
+		if (physicalOperator.isPipe()) {
+			toUpdate = transformationConfig.getTransformationHelper().replace(logicalOperator, (IPipe<?, ?>) physicalOperator,
 					ignoreSinkInput);
-		} else if (newOperator.isSource()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISource<?>) newOperator);
-		} else if (newOperator.isSink()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISink<?>) newOperator,
+		} else if (physicalOperator.isSource()) {
+			toUpdate = transformationConfig.getTransformationHelper().replace(logicalOperator, (ISource<?>) physicalOperator);
+		} else if (physicalOperator.isSink()) {
+			toUpdate = transformationConfig.getTransformationHelper().replace(logicalOperator, (ISink<?>) physicalOperator,
 					ignoreSinkInput);
 		} else {
 			throw new RuntimeException(new TransformationException("replace in rule \"" + getName()

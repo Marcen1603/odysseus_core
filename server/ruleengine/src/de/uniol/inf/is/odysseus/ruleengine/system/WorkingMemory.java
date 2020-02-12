@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -29,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -48,6 +51,8 @@ public class WorkingMemory {
     private Map<String, Object> keyValueMap = new HashMap<String, Object>(); 
 
     private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
+    
+    private Map<String, IPhysicalOperator> translations = new HashMap<>();
 
     public WorkingMemory(IWorkingEnvironment<?> env) {
         this.env = env;
@@ -224,4 +229,16 @@ public class WorkingMemory {
     	return this.keyValueMap.get(key);
     }
     
+    public Optional<IPhysicalOperator> getTranslationFor(ILogicalOperator logicalOperator){
+    	IPhysicalOperator op = translations.get(logicalOperator.getName());
+    	if (op != null) {
+    		return Optional.of(op);
+    	}
+    	return Optional.empty();		
+    }
+    
+    public void addTranslation(ILogicalOperator logical, IPhysicalOperator physical) {
+    	// TODO: should be check, if the logical to physical translation is already set?
+    	translations.put(logical.getName(), physical);
+    }
 }
