@@ -311,11 +311,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 		for (IPhysicalOperator p : roots) {
 			// there are sometimes cases where root operators are not really root operators
 			// (e.g. when using append_to in PQL)
-			// TODO: COULD THIS BE TESTED IN ANOTHER WAY?
-//			if (p instanceof ISource
-//					&& (((ISource) p).getSubscriptions() != null && !((ISource) p).getSubscriptions().isEmpty())) {
-//				continue;
-//			}
 			if (p instanceof ISource && !((ISource) p).isRoot()) {
 				continue;
 			}
