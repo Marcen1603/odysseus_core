@@ -150,6 +150,11 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>>
 	public boolean isPipe() {
 		return isSink() && isSource();
 	}
+	
+	@Override
+	public boolean isRoot() {
+		return true;
+	}
 
 	protected boolean hasSingleConsumer() {
 		return this.sinkSubscriptions.size() == 1;

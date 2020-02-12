@@ -265,6 +265,8 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	public boolean isSinkOperator();
 	public boolean isSourceOperator();
 	public boolean isPipeOperator();
+	
+	boolean isRoot();
 
 	public boolean isDebug();
 

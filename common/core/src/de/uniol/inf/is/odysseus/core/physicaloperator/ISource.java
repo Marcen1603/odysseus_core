@@ -67,6 +67,12 @@ public interface ISource<T extends IStreamObject<?>> extends IPhysicalOperator,
 	void block();
 
 	boolean isBlocked();
+	
+	/**
+	 * Returns true, if this operator has no subscription on output port 0
+	 * @return
+	 */
+	boolean isRoot();
 
 	/**
 	 * Suspending a source, when called from all owners the operator will be

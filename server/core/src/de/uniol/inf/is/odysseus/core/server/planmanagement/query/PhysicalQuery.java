@@ -316,6 +316,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 //					&& (((ISource) p).getSubscriptions() != null && !((ISource) p).getSubscriptions().isEmpty())) {
 //				continue;
 //			}
+			if (p instanceof ISource && !((ISource) p).isRoot()) {
+				continue;
+			}
 
 			newRoots.add(p);
 		}
