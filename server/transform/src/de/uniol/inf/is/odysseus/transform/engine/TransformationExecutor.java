@@ -53,7 +53,7 @@ public class TransformationExecutor implements ITransformation {
 
 	static ITransportHandlerRegistry transportHandlerRegistry; 
 	
-	public static final Logger LOGGER = LoggerFactory.getLogger("transform");
+	public static final Logger LOGGER = LoggerFactory.getLogger(TransformationExecutor.class);
 
 	public TransformationExecutor() {
 	}
