@@ -5,11 +5,11 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
-public class ListForeachFunction extends AbstractLambdaListFunction {
+public class ListForeachFunction3 extends AbstractLambdaListFunction3 {
 
 	private static final long serialVersionUID = -8269748747594828192L;
 	
-	public ListForeachFunction() {
+	public ListForeachFunction3() {
 		super("foreach");
 	}
 

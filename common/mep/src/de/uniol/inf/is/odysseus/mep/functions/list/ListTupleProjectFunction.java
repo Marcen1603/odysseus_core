@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
-public class ListTupleProjectFunction extends AbstractLambdaListFunction {
+public class ListTupleProjectFunction extends AbstractLambdaListFunction2 {
 
 	private static final long serialVersionUID = 482155249187485954L;
 	int[] posList = null;
