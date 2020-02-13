@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -88,6 +89,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 	private TimeUnit baseTimeUnit = null;
+	
+	private final Optional<ILogicalOperator> clonedFrom;
 
 	/**
 	 * Contains a value, if {@link #determineBaseTimeUnit()} has been called once;
@@ -103,6 +106,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 //		for (IPredicate<?> pred : op.predicates) {
 //			this.predicates.add(pred.clone());
 //		}
+		this.clonedFrom = Optional.of(op);
 		this.name = op.getName();
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = new HashMap<>(op.outputSchema);
@@ -122,8 +126,13 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	public AbstractLogicalOperator() {
 		ownerHandler = new OwnerHandler();
+		clonedFrom = Optional.empty();
 	}
 
+	final public Optional<ILogicalOperator> getClonedFrom(){
+		return clonedFrom;
+	}
+	
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		oos.defaultWriteObject();
 	}
