@@ -40,6 +40,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 	private int maximumSize = 0;
 	private IPredicate<?> predicate;
 	private boolean outerEnrich = true;
+	private boolean appendAttributes = false;
 
 	public EnrichAO(){
 		
@@ -53,6 +54,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 			this.predicate = enrichAO.predicate.clone();
 		}
 		this.outerEnrich = enrichAO.outerEnrich;
+		this.appendAttributes = enrichAO.appendAttributes;
 	}
 
 	@Override
@@ -84,6 +86,16 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 		this.predicate = joinPredicate;
 	}
 	
+	public boolean isAppendAttributes() {
+		return appendAttributes;
+	}
+	
+	@Parameter(name = "appendRight", type = BooleanParameter.class, optional = true, doc = "By default the output element starts with the attributes from enrichment. Set this falg to true and the output starts with the element that is enriched")
+	public void setAppendAttributes(boolean appendAttributes) {
+		this.appendAttributes = appendAttributes;
+	}
+	
+	
 	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
@@ -104,10 +116,12 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 		Iterator<LogicalSubscription> iter = getSubscribedToSource().iterator();
 		SDFSchema left = iter.next().getSchema();
 		SDFSchema right = iter.next().getSchema();
-		SDFSchema outputSchema = SDFSchema.join(left,right);
+		if (this.appendAttributes) {
+			return SDFSchema.join(right, left);
+		}else {
+			return SDFSchema.join(left,right);
+		}
 		
-		setOutputSchema(outputSchema);
-		return outputSchema;
 	}
 
 }

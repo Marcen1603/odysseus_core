@@ -35,7 +35,7 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO> {
 	@Override
 	public void execute(EnrichAO operator, TransformationConfiguration config) throws RuleException {
 		EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new EnrichPO<IStreamObject<IMetaAttribute>, IMetaAttribute>(
-				operator.getPredicate(), operator.getMinimumSize(), operator.getMaximumSize(), operator.isOuterEnrich());
+				operator.getPredicate(), operator.getMinimumSize(), operator.getMaximumSize(), operator.isOuterEnrich(), operator.isAppendAttributes());
 		defaultExecute(operator, po, config, true, true);
 	}
 

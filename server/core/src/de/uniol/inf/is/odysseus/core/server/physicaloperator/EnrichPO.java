@@ -81,6 +81,9 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	 * emptyObject
 	 */
 	private final boolean outer;
+
+	private final Order mergeOrder;
+
 	/**
 	 * This object is used to enrich, when no element in cache in found
 	 */
@@ -94,11 +97,16 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	 * @param outer Allow outer enrich, i.e. if no element can be found, enrich with an emptyObject
 	 */
 	@SuppressWarnings("unchecked")
-	public EnrichPO(IPredicate<?> predicate, int minimumSize, int maxSize, boolean outer) {
+	public EnrichPO(IPredicate<?> predicate, int minimumSize, int maxSize, boolean outer, boolean appendRight) {
 		this.predicate = (IPredicate<T>) predicate;
 		this.minSize = minimumSize;
 		this.outer = outer;
 		this.maxSize = maxSize;
+		if (appendRight) {
+			mergeOrder = Order.RightLeft;
+		}else {
+			mergeOrder = Order.LeftRight;
+		}
 	}
 
 	@Override
@@ -165,13 +173,13 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		boolean foundMatch = false;
 		for (T cached : this.cache) {
 			if (this.predicate.evaluate(cached, object)) {
-				T enriched = this.dataMergeFunction.merge(cached, object, metaMergeFunction, Order.LeftRight);
+				T enriched = this.dataMergeFunction.merge(cached, object, metaMergeFunction, mergeOrder);
 				transfer(enriched);
 				foundMatch = true;
 			}
 		}
 		if (!foundMatch && outer) {
-			T obj = this.dataMergeFunction.merge(emptyObject, object, metaMergeFunction, Order.LeftRight);
+			T obj = this.dataMergeFunction.merge(emptyObject, object, metaMergeFunction, mergeOrder);
 			transfer(obj);
 		}
 	}
