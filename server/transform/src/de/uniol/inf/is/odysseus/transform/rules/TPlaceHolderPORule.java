@@ -22,7 +22,6 @@ public class TPlaceHolderPORule extends AbstractTransformationRule<PlaceHolderPO
 	@Override
 	public void execute(PlaceHolderPO<IStreamObject<?>, IStreamObject<?>> placeholder, TransformationConfiguration config)
 			throws RuleException {
-		// TODO Auto-generated method stub
 		ILogicalOperator replacement = placeholder.getPlaceHolder().getReplacement();
 		if (replacement == null) {
 			throw new TransformationException("Found placeholder with no logical operator!");
@@ -31,19 +30,23 @@ public class TPlaceHolderPORule extends AbstractTransformationRule<PlaceHolderPO
 		if (newSource.isPresent() && newSource.get() instanceof ISource) {
 			@SuppressWarnings("unchecked")
 			ISource<IStreamObject<?>> realTargetSource = (ISource<IStreamObject<?>>) newSource.get();
-			for(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub:placeholder.getSubscriptions()) {
-				// placeholder remove subscription
-				sub.getSource().unsubscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(),sub.getSchema());
-				
-				// Does this work?
-				sub.getSink().subscribeToSource(realTargetSource, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-			}
-			
+			replaceOperator(placeholder, realTargetSource);	
 		}else {
 			throw new TransformationException("Did not find a matching translation for logical operator "+replacement);
 		}
 		
 		retract(placeholder);
+	}
+
+	private void replaceOperator(PlaceHolderPO<IStreamObject<?>, IStreamObject<?>> placeholder,
+			ISource<IStreamObject<?>> realTargetSource) {
+		for(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub:placeholder.getSubscriptions()) {
+			// placeholder remove subscription
+			sub.getSource().unsubscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(),sub.getSchema());
+			
+			// subscribe new source
+			sub.getSink().subscribeToSource(realTargetSource, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+		}
 	}
 
 	@Override

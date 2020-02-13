@@ -233,16 +233,17 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	public final boolean isRoot() {
-		if (sinkSubscriptions.isEmpty()) {
-			return true;
-		}
+		return sinkSubscriptions.isEmpty() || !isOutputPortBound(0);
+	}
+
+	private boolean isOutputPortBound(int port) {
 		boolean output0Bound = false;
 		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub:sinkSubscriptions) {
-			if (sub.getSourceOutPort() == 0) {
+			if (sub.getSourceOutPort() == port) {
 				output0Bound = true;
 			}
 		}
-		return !output0Bound;
+		return output0Bound;
 	}
 
 	protected final boolean hasSingleConsumer(int port) {

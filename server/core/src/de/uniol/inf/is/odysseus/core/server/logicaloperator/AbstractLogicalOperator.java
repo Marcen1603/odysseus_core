@@ -773,16 +773,17 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public boolean isRoot() {
-		if (subscriptions.isEmpty()) {
-			return true;
-		}
+		return subscriptions.isEmpty() || !isOutputPortBound(0);
+	}
+
+	private boolean isOutputPortBound(int port) {
 		boolean output0Bound = false;
 		for (LogicalSubscription sub : subscriptions) {
-			if (sub.getSourceOutPort() == 0) {
+			if (sub.getSourceOutPort() == port) {
 				output0Bound = true;
 			}
 		}
-		return !output0Bound;
+		return output0Bound;
 	}
 
 	@Override
