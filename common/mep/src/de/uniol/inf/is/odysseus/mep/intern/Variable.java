@@ -296,6 +296,10 @@ public class Variable extends AbstractExpression<Object> implements IMepVariable
 		return ret;
 	}
 	
+	@Override
+	public int compareTo(Object o) {
+		return (this.getIdentifier()).compareTo(((Variable)o).getIdentifier());
+	}
 	
 	
 	

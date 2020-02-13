@@ -125,6 +125,12 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 	public void setOutputIfMaxWindowTime(boolean outputIfMaxWindowTime) {
 		super.setOutputIfMaxWindowTime(outputIfMaxWindowTime);
 	}
+	
+	@Parameter(type = IntegerParameter.class, name="maxWindowTimeOutputPort", optional = true, doc="A special output port can be defined to allow to write in cases where maxWindowTime is reached to this port. Default is 0, i.e. the default output port.")
+	@Override
+	public void setMaxWindowTimeOutputPort(int maxWindowTimeOutputPort) {
+		super.setMaxWindowTimeOutputPort(maxWindowTimeOutputPort);
+	}
 
 	public boolean getCloseWindowWithHeartbeat() {
 		return closeWindowWithHeartbeat;

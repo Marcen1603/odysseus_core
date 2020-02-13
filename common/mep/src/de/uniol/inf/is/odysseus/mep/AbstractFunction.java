@@ -20,10 +20,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -275,7 +275,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 
 	@Override
 	public Set<IMepVariable> getVariables() {
-		Set<IMepVariable> variables = new HashSet<IMepVariable>();
+		Set<IMepVariable> variables = new TreeSet<IMepVariable>();
 		for (int i = 0; i < getArity(); ++i) {
 			variables.addAll(getArguments()[i].getVariables());
 		}
@@ -397,7 +397,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 			}
 			// Fallback when calling copy constructor fails
 			if (newFunction == null) {
-				newFunction = getClass().newInstance();
+				newFunction = getClass().getConstructor().newInstance();
 				newFunction.baseTimeUnit = this.baseTimeUnit;
 				if (this.sessions != null) {
 					newFunction.sessions = new ArrayList<>(this.sessions);
@@ -412,7 +412,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 			}
 
 			return newFunction;
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}

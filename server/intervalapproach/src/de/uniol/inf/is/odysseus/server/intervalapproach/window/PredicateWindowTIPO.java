@@ -55,6 +55,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 	private static final Logger LOG = LoggerFactory.getLogger(PredicateWindowTIPO.class);
 
+	private static final int DEFAULT_OUTPUT_PORT = 0;
+
 	private final IPredicate<? super T> start;
 	private final IPredicate<? super T> end;
 	private final IPredicate<? super T> advance;
@@ -68,6 +70,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final boolean nesting;
 	private final boolean keepTimeOrder;
 	private final boolean outputIfMaxWindowTime;
+	private final int maxWindowTimeOutputPort;
 
 	// With this option, a predicate window works like a session window.
 	// A session ends when a heartbeat is received. Than, all stored elements will
@@ -116,6 +119,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		nesting = windowao.isNesting();
 		keepTimeOrder = windowao.isKeepTimeOrder();
 		outputIfMaxWindowTime = windowao.isOutputIfMaxWindowTime();
+		this.maxWindowTimeOutputPort = windowao.getMaxWindowTimeOutputPort();
 	}
 
 	@Override
@@ -132,7 +136,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			LOG.trace("New Object " + object);
 			LOG.trace("Current buffer " + buffer);
 		}
-		// First check, if buffer needs to be cleared
+		// Check for _all_ buffers, if maxWindowTime is reached
+		processMaxWindowTime(object.getMetadata().getStart());
+
+		// check, if buffer needs to be cleared
 		if (clear != null && evaluateClearCondition(object, buffer)) {
 			buffer.clear();
 		}
@@ -145,16 +152,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		// maximum window size reached
 		boolean closeWindow = (end != null && evaluateEndCondition(object, buffer)) || (end == null && !startEval);
 
-		boolean maxWindowTimeReached = (maxWindowTime > 0 && !buffer.isEmpty()
-				&& PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
-						.beforeOrEquals(object.getMetadata().getStart()));		
-
 		boolean closeHandled = false;
 		if (openedWindow.get(bufferId)) {
-			if (closeWindow || maxWindowTimeReached) {
+			if (closeWindow) {
 				closeHandled = true;
 				if (LOG.isTraceEnabled()) {
-					LOG.trace("Found end element " + object +" closeWindow="+closeWindow+" maxWindowTimeReached="+maxWindowTimeReached);
+					LOG.trace("Found end element " + object);
 				}
 				if (keepEndElement) {
 					// if element is used for start and for end, is must be cloned
@@ -164,11 +167,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 						appendData(object, bufferId, buffer);
 					}
 				}
-				if (closeWindow || (maxWindowTimeReached && outputIfMaxWindowTime)) {
-					produceData(object.getMetadata().getStart(), bufferId, buffer, object);
-				} else {
-					clearBuffer(buffer, bufferId);
-				}
+				produceData(object.getMetadata().getStart(), bufferId, buffer, object, DEFAULT_OUTPUT_PORT);
 			} else {
 				appendData(object, bufferId, buffer);
 			}
@@ -191,6 +190,31 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		ping();
 	}
 
+	private void processMaxWindowTime(PointInTime now) {
+		
+		synchronized (getBuffers()) {
+			for (Object bufferId : getBuffers().keySet()) {
+				List<T> buffer = getBuffers().get(bufferId);
+
+				boolean maxWindowTimeReached = maxWindowTime > 0 && !buffer.isEmpty() && PointInTime
+						.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).beforeOrEquals(now);
+
+				if (maxWindowTimeReached) {
+					if (LOG.isTraceEnabled()) {
+						LOG.trace("MaxWindowTimeReached for buffer " + bufferId);
+					}
+
+					if (outputIfMaxWindowTime) {
+						produceData(now, bufferId, buffer, null, maxWindowTimeOutputPort);
+					} else {
+						clearBuffer(buffer, bufferId);
+					}
+				}
+			}
+		}
+
+	}
+
 	private void clearBuffer(List<T> buffer, Object bufferId) {
 		buffer.clear();
 		openedWindow.put(bufferId, false);
@@ -202,14 +226,15 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// Session window mode, if closeWindowWithHeartbeat.
-		// A session ends when a heartbeat is received. Than, all stored elements will
+		// A session ends when a heartbeat is received. Then, all stored elements will
 		// be transferred.
 		if (closeWindowWithHeartbeat) {
 			synchronized (getBuffers()) {
 				for (Object bufferId : getBuffers().keySet()) {
 					List<T> buffer = getBuffers().get(bufferId);
 					if (!buffer.isEmpty()) {
-						produceData(punctuation.getTime(), bufferId, buffer, null);
+						// TODO: Maybe this data could also be send to another output port by config (see maxWindowTimeOutputPport)
+						produceData(punctuation.getTime(), bufferId, buffer, null, DEFAULT_OUTPUT_PORT);
 					}
 				}
 			}
@@ -247,7 +272,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private void produceData(PointInTime endTimestamp, Object bufferId, List<T> buffer, T trigger) {
+	private void produceData(PointInTime endTimestamp, Object bufferId, List<T> buffer, T trigger, int outputPort) {
 		PointInTime startTS = null;
 		if (sameStarttime && !buffer.isEmpty()) {
 			startTS = buffer.get(0).getMetadata().getStart();
@@ -256,7 +281,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		if (nesting) {
 			nestedElements = new ArrayList<>();
 		}
-		
+
 		for (T fromBuffer : buffer) {
 
 			T toTransfer = fromBuffer;
@@ -267,7 +292,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			if (advance != null || clear != null) {
 				toTransfer = (T) fromBuffer.clone();
 			}
-			
+
 			if (startTS != null) {
 				toTransfer.getMetadata().setStart(new PointInTime(startTS));
 			}
@@ -278,9 +303,9 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 					nestedElements.add(toTransfer);
 				} else {
 					if (keepTimeOrder) {
-						transferArea.transfer(toTransfer);
+						transferArea.transfer(toTransfer, outputPort);
 					} else {
-						transfer(toTransfer);
+						transfer(toTransfer, outputPort);
 					}
 				}
 			}
@@ -302,9 +327,9 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			}
 		}
 		if (nesting && !nestedElements.isEmpty()) {
-			transferNested(nestedElements, keepTimeOrder);
+			transferNested(nestedElements, keepTimeOrder, outputPort);
 		}
-		if ( buffer.size() == 0) {
+		if (buffer.size() == 0) {
 			openedWindow.put(bufferId, false);
 		}
 		// We need to determine the oldest element in all buffers and
@@ -312,7 +337,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		ping();
 	}
 
-	protected void transferNested(List<T> nestedElements, boolean keepTimeOrder) {
+	protected void transferNested(List<T> nestedElements, boolean keepTimeOrder, int outputPort) {
 		throw new RuntimeException("Sorry. Nesting is not supported for this kind of data.");
 	}
 

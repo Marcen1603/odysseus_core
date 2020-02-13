@@ -112,8 +112,9 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		Iterator<ConnectorPO> iter = leafs.iterator();
 
 		if (!iter.hasNext()) {
-			throw new IllegalArgumentException(
-					"SubQuery must contain at least one connector. For the other case use streams or views!");
+			return;
+//			throw new IllegalArgumentException(
+//					"SubQuery must contain at least one connector. For the other case use streams or views!");
 		}
 
 		int lastPort = iter.next().getPort();
@@ -214,6 +215,8 @@ public class SubQueryPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		} else {
 			if (port < leafs.size()) {
 				((ISource<T>) leafs.get(port)).propagateDone();
+			} else if(port == 0 && leafs.isEmpty()) {
+				return;
 			} else {
 				throw new RuntimeException("Input for not connected operator");
 			}
