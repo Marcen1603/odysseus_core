@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +47,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
@@ -703,38 +700,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	public boolean hasErrors() {
 		return !this.errors.isEmpty();
-	}
-
-	private Method getRelatedMethod(Method other) {
-		String setterName = other.getName();
-		if (setterName.toUpperCase().startsWith("SET")) {
-			// try with getXYZ for setXYZ
-			String otherName = "g" + setterName.substring(1);
-			Method m;
-			try {
-				m = getClass().getMethod(otherName);
-				return m;
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-
-	private Method getRelatedMethodByName(String name) {
-		for (Method method : getClass().getMethods()) {
-			for (Annotation a : method.getAnnotations()) {
-				if (a instanceof GetParameter) {
-					GetParameter gp = (GetParameter) a;
-					if (gp.name().equals(name)) {
-						return method;
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
