@@ -52,7 +52,7 @@ public class WorkingMemory {
 
     private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
     
-    private Map<String, IPhysicalOperator> translations = new HashMap<>();
+    private Map<ILogicalOperator, IPhysicalOperator> translations = new HashMap<>();
 
     public WorkingMemory(IWorkingEnvironment<?> env) {
         this.env = env;
@@ -230,7 +230,7 @@ public class WorkingMemory {
     }
     
     public Optional<IPhysicalOperator> getTranslationFor(ILogicalOperator logicalOperator){
-    	IPhysicalOperator op = translations.get(logicalOperator.getName());
+    	IPhysicalOperator op = translations.get(logicalOperator);
     	if (op != null) {
     		return Optional.of(op);
     	}
@@ -238,7 +238,13 @@ public class WorkingMemory {
     }
     
     public void addTranslation(ILogicalOperator logical, IPhysicalOperator physical) {
-    	// TODO: should be check, if the logical to physical translation is already set?
-    	translations.put(logical.getName(), physical);
+    	if (translations.containsKey(logical)) {
+    		LOGGER.warn("Logical operator "+logical+" is already found!");
+    	}
+    	translations.put(logical, physical);
+    }
+    
+    public Set<ILogicalOperator> getAllKeysForTranslations() {
+    	return translations.keySet();
     }
 }

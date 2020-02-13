@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 
 import java.util.Optional;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -23,10 +24,7 @@ public class TPlaceHolderPORule extends AbstractTransformationRule<PlaceHolderPO
 	public void execute(PlaceHolderPO<IStreamObject<?>, IStreamObject<?>> placeholder, TransformationConfiguration config)
 			throws RuleException {
 		ILogicalOperator replacement = placeholder.getPlaceHolder().getReplacement();
-		if (replacement == null) {
-			throw new TransformationException("Found placeholder with no logical operator!");
-		}
-		Optional<IPhysicalOperator> newSource = this.getCurrentWorkingMemory().getTranslationFor(replacement);
+		Optional<IPhysicalOperator> newSource = determineSource(replacement);
 		if (newSource.isPresent() && newSource.get() instanceof ISource) {
 			@SuppressWarnings("unchecked")
 			ISource<IStreamObject<?>> realTargetSource = (ISource<IStreamObject<?>>) newSource.get();
@@ -36,6 +34,40 @@ public class TPlaceHolderPORule extends AbstractTransformationRule<PlaceHolderPO
 		}
 		
 		retract(placeholder);
+	}
+
+	private Optional<IPhysicalOperator> determineSource(ILogicalOperator replacement) {
+		if (replacement == null) {
+			throw new TransformationException("Found placeholder with no logical operator!");
+		}
+		// This logical operator is not found in the current plan, because it gets cloned (maybe many times)
+		// First try to find the logical operator that is the final target of the clone operation 
+		Set<ILogicalOperator> currentLogOps = getCurrentWorkingMemory().getAllKeysForTranslations();
+		ILogicalOperator clonedReplacement = null;
+		for (ILogicalOperator op: currentLogOps) {
+			if (isClonedFrom(op, replacement)) {
+				clonedReplacement = op;
+				break;
+			}
+		}
+		if (clonedReplacement == null) {
+			throw new TransformationException("Cannot create rekursive query. Operator not found!");
+		}
+		
+		Optional<IPhysicalOperator> newSource = this.getCurrentWorkingMemory().getTranslationFor(clonedReplacement);
+		return newSource;
+	}
+	
+	private boolean isClonedFrom(ILogicalOperator target, ILogicalOperator origin) {
+		ILogicalOperator op = target;
+		while(op.getClonedFrom().isPresent()) {
+			if (op.getClonedFrom().get() == origin) {
+				return true;
+			}else {
+				op = op.getClonedFrom().get();
+			}
+		}
+		return false;
 	}
 
 	private void replaceOperator(PlaceHolderPO<IStreamObject<?>, IStreamObject<?>> placeholder,

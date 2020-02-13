@@ -126,6 +126,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		clonedFrom = Optional.empty();
 	}
 
+	@Override
 	final public Optional<ILogicalOperator> getClonedFrom(){
 		return clonedFrom;
 	}

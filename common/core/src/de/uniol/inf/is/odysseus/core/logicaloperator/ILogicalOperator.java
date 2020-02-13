@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.logicaloperator;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -284,6 +285,15 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	InputOrderRequirement getInputOrderRequirement(int inputPort);
 
 	public void recalcOutputSchema();
+	
+	
+	/**
+	 * A logical operator typically gets cloned a lot while translation 
+	 * process. This method return the logical operator that was the
+	 * origin of this operator
+	 * @return
+	 */
+	Optional<ILogicalOperator> getClonedFrom();
 
 
 	
