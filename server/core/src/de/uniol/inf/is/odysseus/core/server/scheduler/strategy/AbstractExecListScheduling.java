@@ -132,6 +132,18 @@ public abstract class AbstractExecListScheduling extends AbstractScheduling {
 	 */
 	public static void getPathToRoot(ISource<?> s, List<IIterableSource<?>> schedulableOps, List<ISource<?>> allOps,
 			Map<IIterableSource<?>, List<ISource<?>>> virtualOps) {
+		getPathToRoot(s, schedulableOps, allOps, virtualOps, new ArrayList<>());		
+	}	
+	
+	private static void getPathToRoot(ISource<?> s, List<IIterableSource<?>> schedulableOps, List<ISource<?>> allOps,
+			Map<IIterableSource<?>, List<ISource<?>>> virtualOps, List<ISource<?>> visited) {
+		// Plans could be recursive. Each operator only needs to be visited one time
+		if (visited.contains(s)) {
+			return;
+		}else {
+			visited.add(s);
+		}
+		
 		if (s instanceof IIterableSource<?>) {
 			IIterableSource<?> is = (IIterableSource<?>) s;
 			if (!schedulableOps.contains(is)) {
@@ -156,8 +168,8 @@ public abstract class AbstractExecListScheduling extends AbstractScheduling {
 			}
 		}
 		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : s.getSubscriptions()) {
-			if (sub.getSink().isSource()) {
-				getPathToRoot((ISource)sub.getSink(), schedulableOps, allOps, virtualOps);
+			if (sub.getSink().isSource() && !visited.contains((ISource)sub.getSink())) {
+				getPathToRoot((ISource)sub.getSink(), schedulableOps, allOps, virtualOps, visited);
 			}
 		}
 	}
