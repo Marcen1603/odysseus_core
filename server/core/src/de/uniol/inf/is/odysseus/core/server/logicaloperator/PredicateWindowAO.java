@@ -131,6 +131,12 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 	public void setMaxWindowTimeOutputPort(int maxWindowTimeOutputPort) {
 		super.setMaxWindowTimeOutputPort(maxWindowTimeOutputPort);
 	}
+	
+	@Parameter(type = TimeParameter.class, name="CloseWindowAfterNoUpdatesFor", optional = true, doc="A window can be closed if it get no updates for a distinct time.")
+	@Override
+	public void setCloseWindowAfterNoUpdateTime(TimeValueItem closeWindowAfterNoUpdateTime) {
+		super.setCloseWindowAfterNoUpdateTime(closeWindowAfterNoUpdateTime);
+	}
 
 	public boolean getCloseWindowWithHeartbeat() {
 		return closeWindowWithHeartbeat;

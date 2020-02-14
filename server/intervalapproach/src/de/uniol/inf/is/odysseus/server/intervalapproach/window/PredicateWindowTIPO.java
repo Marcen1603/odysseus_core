@@ -71,6 +71,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final boolean keepTimeOrder;
 	private final boolean outputIfMaxWindowTime;
 	private final int maxWindowTimeOutputPort;
+	private final long closeWindowAfterNoUpateTime;
 
 	// With this option, a predicate window works like a session window.
 	// A session ends when a heartbeat is received. Than, all stored elements will
@@ -120,6 +121,14 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		keepTimeOrder = windowao.isKeepTimeOrder();
 		outputIfMaxWindowTime = windowao.isOutputIfMaxWindowTime();
 		this.maxWindowTimeOutputPort = windowao.getMaxWindowTimeOutputPort();
+
+		if (windowao.getCloseWindowAfterNoUpdateTime() != null) {
+			this.closeWindowAfterNoUpateTime = windowao.getBaseTimeUnit().convert(
+					windowao.getCloseWindowAfterNoUpdateTime().getTime(),
+					windowao.getCloseWindowAfterNoUpdateTime().getUnit());
+		} else {
+			this.closeWindowAfterNoUpateTime = 0;
+		}
 	}
 
 	@Override
@@ -138,6 +147,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		}
 		// Check for _all_ buffers, if maxWindowTime is reached
 		processMaxWindowTime(object.getMetadata().getStart());
+
+		processCloseNotUpdatedWindows(object.getMetadata().getStart());
 
 		// check, if buffer needs to be cleared
 		if (clear != null && evaluateClearCondition(object, buffer)) {
@@ -191,28 +202,48 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	}
 
 	private void processMaxWindowTime(PointInTime now) {
-		
-		synchronized (getBuffers()) {
-			for (Object bufferId : getBuffers().keySet()) {
-				List<T> buffer = getBuffers().get(bufferId);
 
-				boolean maxWindowTimeReached = maxWindowTime > 0 && !buffer.isEmpty() && PointInTime
-						.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).beforeOrEquals(now);
+		if (maxWindowTime > 0) {
+			synchronized (getBuffers()) {
+				for (Object bufferId : getBuffers().keySet()) {
+					List<T> buffer = getBuffers().get(bufferId);
 
-				if (maxWindowTimeReached) {
-					if (LOG.isTraceEnabled()) {
-						LOG.trace("MaxWindowTimeReached for buffer " + bufferId);
-					}
+					boolean maxWindowTimeReached = !buffer.isEmpty() && PointInTime
+							.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).beforeOrEquals(now);
 
-					if (outputIfMaxWindowTime) {
-						produceData(now, bufferId, buffer, null, maxWindowTimeOutputPort);
-					} else {
-						clearBuffer(buffer, bufferId);
+					if (maxWindowTimeReached) {
+						if (LOG.isTraceEnabled()) {
+							LOG.trace("MaxWindowTimeReached for buffer " + bufferId);
+						}
+
+						if (outputIfMaxWindowTime) {
+							produceData(now, bufferId, buffer, null, maxWindowTimeOutputPort);
+						} else {
+							clearBuffer(buffer, bufferId);
+						}
 					}
 				}
 			}
 		}
 
+	}
+
+	private void processCloseNotUpdatedWindows(PointInTime now) {
+		if (closeWindowAfterNoUpateTime > 0) {
+
+			synchronized (getBuffers()) {
+				for (Object bufferId : getBuffers().keySet()) {
+					List<T> buffer = getBuffers().get(bufferId);
+					
+					boolean closeWindow = !buffer.isEmpty() && PointInTime
+							.plus(buffer.get(buffer.size()-1).getMetadata().getStart(), closeWindowAfterNoUpateTime).beforeOrEquals(now);
+					
+					if (closeWindow) {
+						produceData(now, bufferId, buffer, null, DEFAULT_OUTPUT_PORT);
+					}
+				}
+			}
+		}
 	}
 
 	private void clearBuffer(List<T> buffer, Object bufferId) {
@@ -233,13 +264,16 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 				for (Object bufferId : getBuffers().keySet()) {
 					List<T> buffer = getBuffers().get(bufferId);
 					if (!buffer.isEmpty()) {
-						// TODO: Maybe this data could also be send to another output port by config (see maxWindowTimeOutputPport)
+						// TODO: Maybe this data could also be send to another output port by config
+						// (see maxWindowTimeOutputPport)
 						produceData(punctuation.getTime(), bufferId, buffer, null, DEFAULT_OUTPUT_PORT);
 					}
 				}
 			}
 		}
-
+		
+		processCloseNotUpdatedWindows(punctuation.getTime());
+		
 		super.processPunctuation(punctuation, port);
 	}
 
