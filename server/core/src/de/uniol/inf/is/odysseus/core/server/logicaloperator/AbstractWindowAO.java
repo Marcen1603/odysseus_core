@@ -51,6 +51,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private boolean outputIfMaxWindowTime = true;
 	private int maxWindowTimeOutputPort = 0;
 	private TimeValueItem closeWindowAfterNoUpdateTime;
+	private int closeWindowAfterNoUpdateTimePort = 0;
 	
 	private boolean drainAtDone;
 
@@ -98,6 +99,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.outputIfMaxWindowTime = windowAO.outputIfMaxWindowTime;
 		this.maxWindowTimeOutputPort = windowAO.maxWindowTimeOutputPort;
 		this.closeWindowAfterNoUpdateTime = windowAO.closeWindowAfterNoUpdateTime;
+		this.closeWindowAfterNoUpdateTimePort = windowAO.closeWindowAfterNoUpdateTimePort;
 	}
 
 	public AbstractWindowAO() {
@@ -290,6 +292,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		return closeWindowAfterNoUpdateTime;
 	}
 	
+	public void setCloseWindowAfterNoUpdateTimePort(int closeWindowAfterNoUpdateTimePort) {
+		this.closeWindowAfterNoUpdateTimePort = closeWindowAfterNoUpdateTimePort;
+	}
+	
+	public int getCloseWindowAfterNoUpdateTimePort() {
+		return closeWindowAfterNoUpdateTimePort;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -376,9 +386,9 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 			if (maxWindowTimeOutputPort != 0) {
 				outputIfMaxWindowTime = true;
 			}
-			if (maxWindowTimeOutputPort == 1) {
+			if (maxWindowTimeOutputPort == 1 || closeWindowAfterNoUpdateTimePort == 1) {
 				isValid = false;
-				addError("port 1 cannot be used for maxWindowTimeOutputPort");
+				addError("port 1 cannot be used for maxWindowTimeOutputPort or closeWindowAfterNoUpdateTimePort");
 			}
 			return isValid;
 		default:

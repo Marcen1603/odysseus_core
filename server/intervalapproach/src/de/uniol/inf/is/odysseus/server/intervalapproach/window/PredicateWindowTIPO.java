@@ -72,11 +72,14 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final boolean outputIfMaxWindowTime;
 	private final int maxWindowTimeOutputPort;
 	private final long closeWindowAfterNoUpateTime;
+	private final int closeWindowAfterNoUpateTimePort;
+
 
 	// With this option, a predicate window works like a session window.
 	// A session ends when a heartbeat is received. Than, all stored elements will
 	// be transferred.
 	private boolean closeWindowWithHeartbeat;
+
 
 	@SuppressWarnings("unchecked")
 	public PredicateWindowTIPO(AbstractWindowAO windowao) {
@@ -129,6 +132,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		} else {
 			this.closeWindowAfterNoUpateTime = 0;
 		}
+		this.closeWindowAfterNoUpateTimePort = windowao.getCloseWindowAfterNoUpdateTimePort();
 	}
 
 	@Override
@@ -239,7 +243,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 							.plus(buffer.get(buffer.size()-1).getMetadata().getStart(), closeWindowAfterNoUpateTime).beforeOrEquals(now);
 					
 					if (closeWindow) {
-						produceData(now, bufferId, buffer, null, DEFAULT_OUTPUT_PORT);
+						produceData(now, bufferId, buffer, null, closeWindowAfterNoUpateTimePort);
 					}
 				}
 			}
