@@ -172,7 +172,7 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 				throw new IllegalArgumentException("Nesting can currently only be done with tuples!");
 			}
 		} else {
-			outputSchema = super.getOutputSchemaIntern(pos);
+			outputSchema = getInputSchema();
 		}
 		
 		if (isKeepTimeOrder()) {			
