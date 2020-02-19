@@ -131,15 +131,15 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 		return dateFormat;
 	}
 
-	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", aliasname = "Schema0", isList = true, optional = true, doc = "The output schema.")
 	public void setAttributes(List<SDFAttribute> attributes) {
 		this.outputSchema.put(0, attributes);
 	}
 
-	public List<SDFAttribute> getAttributes() {
+	public List<SDFAttribute> getAttributes0() {
 		return outputSchema.get(0);
 	}
-
+	
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema1", isList = true, optional = true, doc = "The output schema for port 1.")
 	public void setAttributes1(List<SDFAttribute> attributes) {
 		this.outputSchema.put(1, attributes);
