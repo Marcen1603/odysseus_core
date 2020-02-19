@@ -12,7 +12,7 @@ public class ListElementAtFunction extends AbstractFunction<Object> implements I
 
 	private static final long serialVersionUID = -3282877303737235603L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getListsWithObject(), SDFDatatype.NUMBERS};
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists(), SDFDatatype.NUMBERS};
 
 	public ListElementAtFunction() {
 		super("elementAt", 2, accTypes, SDFDatatype.OBJECT, false);
