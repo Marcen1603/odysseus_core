@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -27,5 +28,12 @@ public class MergeAO extends AbstractLogicalOperator {
 	public AbstractLogicalOperator clone() {
 		return new MergeAO(this);
 	}
+	
+	@Override
+		public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+			return InputOrderRequirement.NONE;
+		}
 
+	
+	
 }
