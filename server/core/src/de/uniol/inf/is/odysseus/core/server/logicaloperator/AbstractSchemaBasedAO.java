@@ -136,7 +136,7 @@ abstract public class AbstractSchemaBasedAO extends AbstractLogicalOperator {
 		this.outputSchema.put(0, attributes);
 	}
 
-	public List<SDFAttribute> getAttributes0() {
+	public List<SDFAttribute> getAttributes() {
 		return outputSchema.get(0);
 	}
 	
