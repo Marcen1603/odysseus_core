@@ -5,6 +5,8 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
@@ -29,18 +31,8 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 	@Override
 	public List<Object> getValue() {
 		List<Object> out = new ArrayList<Object>();
-		final String expr;
 		final List<Object> in = getInputValue(0);
 	
-		if (getArity() == 2) {
-			 expr = getInputValue(1);
-		}else {
-			expr = getInputValue(2);
-		}
-		
-		if (expression == null) {
-			init(expr);
-		}
 		for (Object o : in) {
 			Object[] objects = new Object[positions.length];
 
@@ -73,16 +65,21 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 
 	abstract protected void fillReturnList(List<Object> out, Object o);
 
-	private void init(String expr) {
-		// TODO: Attribute resolver?
-		expression = new SDFExpression(expr, null, MEP.getInstance());
+	private void init(String expr, IMepExpression<?> inputExpression) {
+		IAttributeResolver attributeResolver = null;
+		// Check for subtypes
+		if (inputExpression.getReturnType().getSubType().isTuple()) {
+			attributeResolver = new DirectAttributeResolver(inputExpression.getReturnType().getSchema());
+		}
+		
+		expression = new SDFExpression(expr, attributeResolver, MEP.getInstance());
 	}
 
 	@Override
 	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		if (args != null && (args.length == 2 || args.length == 3)) {
 			String expr = args.length == 2 ? getInputValue(1) : getInputValue(2);
-			init(expr);
+			init(expr, args[0]);
 
 			// Test if input is Tuple with schema
 			SDFDatatype inputType = args[0].getReturnType();
