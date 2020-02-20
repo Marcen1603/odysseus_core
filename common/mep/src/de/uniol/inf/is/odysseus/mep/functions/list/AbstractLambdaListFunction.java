@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.ParseException;
 
 abstract public class AbstractLambdaListFunction extends AbstractFunction<List<Object>> {
 
@@ -68,11 +69,14 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 	private void init(String expr, IMepExpression<?> inputExpression) {
 		IAttributeResolver attributeResolver = null;
 		// Check for subtypes
-		if (inputExpression.getReturnType().getSubType().isTuple()) {
+		if (inputExpression.getReturnType().getSubType() != null && inputExpression.getReturnType().getSubType().isTuple()) {
 			attributeResolver = new DirectAttributeResolver(inputExpression.getReturnType().getSchema());
 		}
-		
-		expression = new SDFExpression(expr, attributeResolver, MEP.getInstance());
+		try {
+			expression = new SDFExpression(expr, attributeResolver, MEP.getInstance());
+		}catch(Exception e) {
+			throw new ParseException("Error parsing "+expr);
+		}
 	}
 
 	@Override
@@ -115,21 +119,31 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 
 			SDFDatatype subtype = expression.getType();
 
-			if (subtype == SDFDatatype.TUPLE) {
-				List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-				for (int i = 0; i < getArity(); i++) {
-					attrs.add(new SDFAttribute("_gen", "_gen_" + i, SDFDatatype.OBJECT));
+			if (subtype.isTuple()) {
+				SDFSchema subSchema = null;
+				if (expression.getSchema() == null || expression.getSchema().isEmpty()) {
+					List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+					for (int i = 0; i < getArity(); i++) {
+						attrs.add(new SDFAttribute("_gen", "_gen_" + i, SDFDatatype.OBJECT));
+					}
+					subSchema = SDFSchemaFactory.createNewTupleSchema("_gen", attrs);
+				}else {
+					subSchema = expression.getSchema().get(0);
 				}
-				SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("_gen", attrs);
 				SDFDatatype tuple_dt = new SDFDatatype(SDFDatatype.TUPLE + "_" + subtype, KindOfDatatype.TUPLE,
 						subSchema, false);
+
 				SDFDatatype dt = new SDFDatatype("LIST_TUPLE", KindOfDatatype.LIST, tuple_dt);
 				return dt;
-			} else {
-				for (SDFDatatype d : SDFDatatype.getLists()) {
-					if (d.getSubType() == subtype) {
-						return d;
-					}
+			} 
+				
+			if (subtype.hasSubType() && subtype.getSubType().isTuple()) {
+					return  new SDFDatatype("LIST_TUPLE", KindOfDatatype.LIST,subtype.getSubType(), subtype.getSchema());					
+			}
+				
+			for (SDFDatatype d : SDFDatatype.getLists()) {
+				if (d.getSubType() == subtype) {
+					return d;
 				}
 			}
 
