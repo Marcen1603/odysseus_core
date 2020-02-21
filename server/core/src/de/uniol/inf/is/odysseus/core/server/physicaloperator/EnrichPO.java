@@ -66,7 +66,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	 * Meta data merge function (use always the input from the elements to enrich
 	 */
 	private UseRightInputMetadata<M> metaMergeFunction = new UseRightInputMetadata<>();
-	
+
 	/**
 	 * Should there be at least minSize elements before starting to enrich
 	 */
@@ -91,10 +91,14 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 
 	/**
 	 * Creates a new EnrichPO
-	 * @param predicate Predicate to check, which elements to enrich
-	 * @param minimumSize Should there be at least minSize elements before starting to enrich, set 0 to disable
-	 * @param maxSize Limit the number of elements that are used to enrich, set 0 to disable
-	 * @param outer Allow outer enrich, i.e. if no element can be found, enrich with an emptyObject
+	 * 
+	 * @param predicate   Predicate to check, which elements to enrich
+	 * @param minimumSize Should there be at least minSize elements before starting
+	 *                    to enrich, set 0 to disable
+	 * @param maxSize     Limit the number of elements that are used to enrich, set
+	 *                    0 to disable
+	 * @param outer       Allow outer enrich, i.e. if no element can be found,
+	 *                    enrich with an emptyObject
 	 */
 	@SuppressWarnings("unchecked")
 	public EnrichPO(IPredicate<?> predicate, int minimumSize, int maxSize, boolean outer, boolean appendRight) {
@@ -104,7 +108,7 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		this.maxSize = maxSize;
 		if (appendRight) {
 			mergeOrder = Order.RightLeft;
-		}else {
+		} else {
 			mergeOrder = Order.LeftRight;
 		}
 	}
@@ -133,12 +137,14 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	protected void process_next(T object, int port) {
 		// if port == 0, it is a cached-object
 		if (port == 0) {
-			this.cache.add(object);
-			if (maxSize > 0) {
-				Iterator<T> iter = cache.iterator();
-				while (cache.size() > maxSize) {
-					iter.next();
-					iter.remove();
+			synchronized (cache) {
+				this.cache.add(object);
+				if (maxSize > 0) {
+					Iterator<T> iter = cache.iterator();
+					while (cache.size() > maxSize) {
+						iter.next();
+						iter.remove();
+					}
 				}
 			}
 			if (emptyObject == null) {
@@ -171,11 +177,13 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 
 	private void processEnrich(T object) {
 		boolean foundMatch = false;
-		for (T cached : this.cache) {
-			if (this.predicate.evaluate(cached, object)) {
-				T enriched = this.dataMergeFunction.merge(cached, object, metaMergeFunction, mergeOrder);
-				transfer(enriched);
-				foundMatch = true;
+		synchronized (cache) {
+			for (T cached : this.cache) {
+				if (this.predicate.evaluate(cached, object)) {
+					T enriched = this.dataMergeFunction.merge(cached, object, metaMergeFunction, mergeOrder);
+					transfer(enriched);
+					foundMatch = true;
+				}
 			}
 		}
 		if (!foundMatch && outer) {
@@ -184,7 +192,6 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		}
 	}
 
-	
 	@Override
 	protected void process_done(int port) {
 		// Only the port where the data to enrich comes from
@@ -192,11 +199,10 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		// be still open, does not matter)
 		if (port == 1) {
 			propagateDone();
-		}else {
+		} else {
 			super.process_done(port);
 		}
 	}
-
 
 	@Override
 	protected void process_close() {
