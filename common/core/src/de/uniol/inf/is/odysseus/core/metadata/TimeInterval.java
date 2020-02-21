@@ -382,7 +382,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 
 	@Override
 	public void setStart(PointInTime start) {
-		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
+		if (!start.beforeOrEquals(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
 					"start point is not before end point in time interval [" + start + "," + end + ")");
 		}
