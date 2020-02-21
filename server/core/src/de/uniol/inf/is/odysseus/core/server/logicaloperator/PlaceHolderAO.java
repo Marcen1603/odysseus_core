@@ -1,7 +1,12 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public class PlaceHolderAO extends AbstractLogicalOperator {
 
@@ -45,7 +50,8 @@ public class PlaceHolderAO extends AbstractLogicalOperator {
 		if (replacemenrt != null) {
 			return replacemenrt.getOutputSchema(pos);
 		}else {
-			return null;
+			Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+			return SDFSchemaFactory.createNewTupleSchema("empty", attributes);
 		}
 	}
 
