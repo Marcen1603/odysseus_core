@@ -204,7 +204,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			}
 			
 			// allow one element sized windows
-			if (closeWindow) {
+			if (closeWindow && !closeHandled) {
 				produceData(object.getMetadata().getStart(), bufferId, buffer, object, DEFAULT_OUTPUT_PORT);
 			}
 		}
