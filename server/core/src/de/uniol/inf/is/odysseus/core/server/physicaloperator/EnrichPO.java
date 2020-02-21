@@ -184,6 +184,20 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		}
 	}
 
+	
+	@Override
+	protected void process_done(int port) {
+		// Only the port where the data to enrich comes from
+		// needs to be checked for done (other input port could
+		// be still open, does not matter)
+		if (port == 1) {
+			propagateDone();
+		}else {
+			super.process_done(port);
+		}
+	}
+
+
 	@Override
 	protected void process_close() {
 		super.process_close();
