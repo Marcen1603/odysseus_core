@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.mep.commons.math;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -100,6 +101,6 @@ class TuplePoint implements Clusterable {
 
 	@Override
 	public String toString() {
-		return tuple.toString();
+		return Arrays.toString(points);
 	}
 }
