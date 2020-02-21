@@ -129,7 +129,9 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 		this.metaMergeFunction.init();
 		this.dataMergeFunction.init();
 		this.buffer.clear();
-		this.cache.clear();
+		synchronized(cache) {
+			this.cache.clear();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -208,7 +210,9 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	protected void process_close() {
 		super.process_close();
 		this.buffer.clear();
-		this.cache.clear();
+		synchronized(cache) {
+			this.cache.clear();
+		}
 	}
 
 	@Override
