@@ -52,6 +52,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private int maxWindowTimeOutputPort = 0;
 	private TimeValueItem closeWindowAfterNoUpdateTime;
 	private int closeWindowAfterNoUpdateTimePort = 0;
+	private boolean allowSameStartAndEndTS = false;
 	
 	private boolean drainAtDone;
 
@@ -100,6 +101,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.maxWindowTimeOutputPort = windowAO.maxWindowTimeOutputPort;
 		this.closeWindowAfterNoUpdateTime = windowAO.closeWindowAfterNoUpdateTime;
 		this.closeWindowAfterNoUpdateTimePort = windowAO.closeWindowAfterNoUpdateTimePort;
+		this.allowSameStartAndEndTS = windowAO.allowSameStartAndEndTS;
 	}
 
 	public AbstractWindowAO() {
@@ -242,6 +244,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	 */
 	public boolean isSameStarttime() {
 		return sameStarttime;
+	}
+	
+	public void setAllowSameStartAndEndTS(boolean allowSameStartAndEndTS) {
+		this.allowSameStartAndEndTS = allowSameStartAndEndTS;
+	}
+	
+	public boolean isAllowSameStartAndEndTS() {
+		return allowSameStartAndEndTS;
 	}
 	
 	public void setNesting(boolean nesting) {

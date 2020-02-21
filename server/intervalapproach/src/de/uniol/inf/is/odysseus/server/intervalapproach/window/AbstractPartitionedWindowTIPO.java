@@ -37,7 +37,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	private Map<Object, List<T>> buffers = new HashMap<>();
 
-	private PointInTime lastTs = null;
+	protected PointInTime lastTs = null;
 
 	private final boolean drainAtDone;
 
@@ -117,7 +117,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	@Override
 	protected void process_done() {
-		if (drainAtDone) {
+		if (isDrainAtDone()) {
 			synchronized (buffers) {
 				for (List<T> b : buffers.values()) {
 					if (b.size() > 0) {
@@ -249,5 +249,9 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	protected Map<Object, List<T>> getBuffers() {
 		return buffers;
+	}
+
+	public boolean isDrainAtDone() {
+		return drainAtDone;
 	}
 }

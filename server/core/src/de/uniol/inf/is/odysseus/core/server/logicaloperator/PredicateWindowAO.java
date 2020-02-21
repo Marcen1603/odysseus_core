@@ -99,6 +99,12 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 		super.setSameStarttime(sameStarttime);
 	}
 
+	@Override
+	@Parameter(type = BooleanParameter.class, optional = true)
+	public void setAllowSameStartAndEndTS(boolean allowSameStartAndEndTS) {
+		super.setAllowSameStartAndEndTS(allowSameStartAndEndTS);
+	}
+	
 	@Parameter(type = BooleanParameter.class, name = "CloseWindowWithHeartbeat", optional = true)
 	public void setCloseWindowWithHeartbeat(boolean closeWindowWithHeartbeat) {
 		this.closeWindowWithHeartbeat = closeWindowWithHeartbeat;

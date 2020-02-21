@@ -73,6 +73,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final int maxWindowTimeOutputPort;
 	private final long closeWindowAfterNoUpateTime;
 	private final int closeWindowAfterNoUpateTimePort;
+	private final boolean allowSameStartAndEndTS;
 
 
 	// With this option, a predicate window works like a session window.
@@ -110,6 +111,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			this.maxWindowTime = 0;
 		}
 		this.sameStarttime = windowao.isSameStarttime();
+		this.allowSameStartAndEndTS = windowao.isAllowSameStartAndEndTS();
 		// needed, so all elements in the process_done phase get the same start
 		// timestamp
 		this.usesSlideParam = this.sameStarttime;
@@ -199,6 +201,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 				}
 			} else {
 				transferArea.transfer(object, 1);
+			}
+			
+			// allow one element sized windows
+			if (closeWindow) {
+				produceData(object.getMetadata().getStart(), bufferId, buffer, object, DEFAULT_OUTPUT_PORT);
 			}
 		}
 
@@ -312,6 +319,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	@SuppressWarnings("unchecked")
 	private void produceData(PointInTime endTimestamp, Object bufferId, List<T> buffer, T trigger, int outputPort) {
 		PointInTime startTS = null;
+		PointInTime endTS = endTimestamp;
 		if (sameStarttime && !buffer.isEmpty()) {
 			startTS = buffer.get(0).getMetadata().getStart();
 		}
@@ -334,9 +342,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			if (startTS != null) {
 				toTransfer.getMetadata().setStart(new PointInTime(startTS));
 			}
+			
 			// We can produce tuple with no validity --> Do not send them
-			if (endTimestamp.after(toTransfer.getMetadata().getStart())) {
-				toTransfer.getMetadata().setEnd(endTimestamp);
+			if (endTS.after(toTransfer.getMetadata().getStart()) || allowSameStartAndEndTS) {
+				toTransfer.getMetadata().setEnd(endTS);
 				if (nesting) {
 					nestedElements.add(toTransfer);
 				} else {
@@ -381,10 +390,20 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 	@Override
 	protected void process_done() {
-		// ignore done!
-		transferArea.done(0);
+		if (isDrainAtDone()) {
+			synchronized (getBuffers()) {
+				for (Object bufferId : getBuffers().keySet()) {
+					List<T> buffer = getBuffers().get(bufferId);
+					if (!buffer.isEmpty()) {
+						produceData(lastTs.plus(1), bufferId, buffer, null, DEFAULT_OUTPUT_PORT);					
+						buffer.clear();
+					}
+				}
+			}
+		}
+		transferArea.newHeartbeat(lastTs, 0);
 	}
-
+	
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof PredicateWindowTIPO)) {
