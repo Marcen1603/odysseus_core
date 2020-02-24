@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -21,7 +22,7 @@ public class ListSort extends AbstractFunction<List> {
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.getLists() };
 
 	public ListSort() {
-		super("sort", 1, ACC_TYPES, SDFDatatype.OBJECT, false);
+		super("sort", 1, ACC_TYPES, SDFDatatype.LIST, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -35,4 +36,13 @@ public class ListSort extends AbstractFunction<List> {
 		return l;
 	}
 
+	@Override
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
+		return args[0].getReturnType();
+	}
+	
+	@Override
+	public boolean determineTypeFromInput() {
+		return true;
+	}
 }

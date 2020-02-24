@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.mep.functions.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -25,6 +26,16 @@ public class ListSubListFunction2 extends AbstractFunction<List<?>> {
 			out.add(in.get(i));
 		}
 		return out;
+	}
+	
+	@Override
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
+		return args[0].getReturnType();
+	}
+	
+	@Override
+	public boolean determineTypeFromInput() {
+		return true;
 	}
 
 }
