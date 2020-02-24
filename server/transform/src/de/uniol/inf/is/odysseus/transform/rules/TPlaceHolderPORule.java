@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.PlaceHolderPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterRecursionConnectSink;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -28,7 +29,7 @@ public class TPlaceHolderPORule extends AbstractTransformationRule<PlaceHolderPO
 		if (newSource.isPresent() && newSource.get() instanceof ISource) {
 			@SuppressWarnings("unchecked")
 			ISource<IStreamObject<?>> realTargetSource = (ISource<IStreamObject<?>>) newSource.get();
-			replaceOperator(placeholder, realTargetSource);	
+			replaceOperator(placeholder, realTargetSource, config);	
 		}else {
 			throw new TransformationException("Did not find a matching translation for logical operator "+replacement);
 		}
@@ -71,13 +72,19 @@ public class TPlaceHolderPORule extends AbstractTransformationRule<PlaceHolderPO
 	}
 
 	private void replaceOperator(PlaceHolderPO<IStreamObject<?>, IStreamObject<?>> placeholder,
-			ISource<IStreamObject<?>> realTargetSource) {
+			ISource<IStreamObject<?>> realTargetSource, TransformationConfiguration config) {
 		for(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub:placeholder.getSubscriptions()) {
 			// placeholder remove subscription
 			sub.getSource().unsubscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(),sub.getSchema());
 			
-			// subscribe new source
-			sub.getSink().subscribeToSource(realTargetSource, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+			ParameterRecursionConnectSink option = config.getOption(ParameterRecursionConnectSink.class.getName());
+			if (option == ParameterRecursionConnectSink.TRUE) {
+				// or use connect sink
+				realTargetSource.connectSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+			}else {
+				// subscribe new source
+				sub.getSink().subscribeToSource(realTargetSource, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+			}
 		}
 	}
 

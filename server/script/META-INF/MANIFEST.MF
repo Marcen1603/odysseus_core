@@ -23,6 +23,6 @@ Export-Package: de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.script.parser.keyword,
  de.uniol.inf.is.odysseus.script.parser.parameter
 Service-Component: OSGI-INF/PreParserKeywordProvider.xml, OSGI-INF/OdysseusScriptParser.xml,OSGI-INF/Executor.xml,OSGI-INF/odysseusScriptConfig.xml,OSGI-INF/querySharingConfigSetting.xml,OSGI-INF/distributeConfigSetting.xml,OSGI-INF/ReplacementProviderManager.xml,OSGI-INF/SystemPropertyReplacementProvider.xml,OSGI-INF/OdysseusScriptConsole.xml,
- OSGI-INF/RecoveryConfigKeyword.xml
+ OSGI-INF/RecoveryConfigKeyword.xml, OSGI-INF/RecursionSinkConnectSetting.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.script.parser
 Bundle-ActivationPolicy: lazy

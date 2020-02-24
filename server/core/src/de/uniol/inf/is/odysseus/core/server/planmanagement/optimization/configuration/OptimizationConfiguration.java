@@ -129,6 +129,10 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 	public ParameterShareSimilarOperators getParameterShareSimilarOperators() {
 		return this.get(ParameterShareSimilarOperators.class);
 	}
+	
+	public ParameterRecursionConnectSink getParameterRecursionConnectSink() {
+		return this.get(ParameterRecursionConnectSink.class);
+	}
 
 
 }
