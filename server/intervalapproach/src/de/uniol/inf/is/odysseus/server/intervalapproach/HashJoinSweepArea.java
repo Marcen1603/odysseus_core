@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.persistentqueries;
+package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +55,8 @@ import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
  */
 public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> {
 
+	public static final String NAME = "HashJoinSA";
+	
 	private static final long serialVersionUID = -8331551296317426445L;
 
 	/**
@@ -146,6 +148,11 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 				throw new IllegalArgumentException("Restrictlist cannot not contain -1");
 			}
 		}
+	}
+	
+	public HashJoinSweepArea() {
+		startTimeIndex = null;
+		endTimeIndex = null;
 	}
 
 	public HashJoinSweepArea(HashJoinSweepArea original) {
@@ -500,7 +507,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public String getName() {
-		return "HashJoinSA";
+		return NAME;
 	}
 
 	@Override

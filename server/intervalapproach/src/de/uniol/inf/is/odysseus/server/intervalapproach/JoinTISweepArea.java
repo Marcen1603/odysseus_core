@@ -31,6 +31,8 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractTISweepArea<T> {
 
+	public static final String NAME = "TIJoinSA";
+	
 	private static final long serialVersionUID = -2596467130143190355L;
 
 	public JoinTISweepArea() {
@@ -138,6 +140,6 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>> e
 
 	@Override
 	public String getName() {
-		return "TIJoinSA";
+		return NAME;
 	}
 }
