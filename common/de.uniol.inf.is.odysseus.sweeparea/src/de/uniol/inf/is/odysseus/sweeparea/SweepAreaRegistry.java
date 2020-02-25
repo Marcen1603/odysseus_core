@@ -15,9 +15,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class SweepAreaRegistry {
 	static Logger logger = LoggerFactory.getLogger(SweepAreaRegistry.class);
 
-	public static final String OWNINPUTSCHEMA = "SweepAreaRegistry.OWNSCHEMA";
-	public static final String OTHERINPUTSCHEMA = "SweepAreaRegistry.OTHERSCHEMA";
-	public static final String PREDICATE = "SweepAreaRegistry.PREDICATE";
+	public static final String OWNINPUTSCHEMA = "__SweepAreaRegistry.OWNSCHEMA";
+	public static final String OTHERINPUTSCHEMA = "__SweepAreaRegistry.OTHERSCHEMA";
+	public static final String PREDICATE = "__SweepAreaRegistry.PREDICATE";
 	
 	static private Map<String, ISweepArea<?>> areas = new HashMap<String, ISweepArea<?>>();
 
