@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -37,8 +38,6 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
-	private static final String HASH_JOIN_SA = "HashJoinSA";
-
 	@Override
 	public int getPriority() {
 		return 0;
@@ -46,7 +45,6 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	@Override
 	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) throws RuleException {
-		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 
 		SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
 		SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
@@ -55,21 +53,24 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		String leftAreaName = joinPO.getSweepAreaName(0);
 		String rightAreaName= joinPO.getSweepAreaName(1);
 		
-		// Attention: side effect, areas are filled!
-		leftAreaName = handleSpecialCased(joinPO, areas, leftAreaName, leftSchema, rightSchema, predicate);
+		ITimeIntervalSweepArea[] areas = null;
 
+		if (!Strings.isNullOrEmpty(leftAreaName)) {
+			// Attention: side effect, areas are filled!
+			areas = handleSpecialCased(joinPO, leftAreaName, leftSchema, rightSchema, predicate);
+		}
 		// if special cases did not find a solution, use the generic one
-		if (areas[0] == null || areas[1] == null) {
+		if (areas == null) {
 
-			
 			// First try, if a hash join can be used
 			if (Strings.isNullOrEmpty(leftAreaName)) {
 				leftAreaName = HashJoinSweepArea.NAME;
-				areas = createSweepAreas(leftAreaName, leftAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate);
+				areas = createSweepAreas(leftAreaName, leftAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
 			}
 				
 			// When creation of HASH_JOIN_SA does not work, the areas are empty
-			if (areas[0] == null) {
+			// In case of not given areaName try JoinArea
+			if (areas[0] == null && Strings.isNullOrEmpty(leftAreaName)) {
 				leftAreaName = JoinTISweepArea.NAME;
 			}
 			
@@ -77,11 +78,11 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 				rightAreaName = leftAreaName;
 			}
 			
-			areas = createSweepAreas(leftAreaName, rightAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate);
+			areas = createSweepAreas(leftAreaName, rightAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
 			
 		}
 
-		if (areas[0] == null || areas[1] == null) {
+		if (areas == null || areas[0] == null || areas[1] == null) {
 			throw new TransformationException("Cannot find sweep area of types " + leftAreaName+"/"+rightAreaName);
 		}
 
@@ -102,26 +103,21 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	}
 
 	private ITimeIntervalSweepArea[] createSweepAreas(String leftAreaName, String rightAreaName, OptionMap options, SDFSchema leftSchema,
-			SDFSchema rightSchema, IPredicate predicate) {
+			SDFSchema rightSchema, IPredicate predicate, Cardinalities cardinalities) {
 		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 		try {
-			areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(leftAreaName, options, leftSchema, rightSchema, predicate);
-			areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(rightAreaName, options, rightSchema, leftSchema, predicate);
+			areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(leftAreaName, options, leftSchema, rightSchema, predicate, cardinalities);
+			areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(rightAreaName, options, rightSchema, leftSchema, predicate, cardinalities);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace(); // TODO: Ignore later
 		}
 		return areas;
 	}
 
-	private String handleSpecialCased(JoinTIPO joinPO, ITimeIntervalSweepArea[] areas, String areaName, SDFSchema leftSchema,
+	private ITimeIntervalSweepArea[] handleSpecialCased(JoinTIPO joinPO, String areaName, SDFSchema leftSchema,
 			SDFSchema rightSchema, IPredicate predicate) {
-		
-		if (Strings.isNullOrEmpty(areaName)) {
-			return null;
-		}
-		
-		// TODO: Move to newInstance
-		
+		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+		// TODO: Can this be moved somewhere else to be used in SweepAreaRegistry?
 		if(areaName.equalsIgnoreCase("UnaryOuterJoinSA")) {
 			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, false, joinPO.getCardinalities());
 		} else if (areaName.equalsIgnoreCase("UnaryOuterJoinSA2")) {
@@ -129,7 +125,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		} else if(areaName.equals("UnaryOuterJoinRndSA")) {
 			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, true, joinPO.getCardinalities());
 		}
-		return areaName;
+		return areas;
 	}
 
 	@Override
