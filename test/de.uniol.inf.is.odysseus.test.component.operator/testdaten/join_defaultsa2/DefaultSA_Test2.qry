@@ -20,4 +20,4 @@ random2_ = CSVFILESOURCE({SCHEMA = [
 	], SOURCE = 'random2', FILENAME = '${BUNDLE-ROOT}/testdaten/join_defaultsa2/random2.csv'})
 random2 = PROJECT({ATTRIBUTES = ['key2', 'value2']}, random2_)
 
-joined = JOIN({PREDICATE = 'key1 = key2'}, random1, random2)
+joined = JOIN({PREDICATE = 'key1 = key2', SWEEPAREANAME = 'TIJoinSA'}, random1, random2)
