@@ -65,7 +65,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			
 			try {
 				areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions(), leftSchema, rightSchema, predicate);
-				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions(), leftSchema, rightSchema, predicate);
+				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions(), rightSchema, leftSchema, predicate);
 			} catch (InstantiationException | IllegalAccessException e) {
 				// ignore, is handled below
 			}

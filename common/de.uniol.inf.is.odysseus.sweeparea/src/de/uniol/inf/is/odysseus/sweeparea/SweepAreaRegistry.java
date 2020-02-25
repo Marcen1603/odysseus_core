@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class SweepAreaRegistry {
 	static Logger logger = LoggerFactory.getLogger(SweepAreaRegistry.class);
 
-	public static final String LEFTINPUTSCHEMA = "SweepAreaRegistry.LEFTSCHEMA";
-	public static final String RIGHTINPUTSCHEMA = "SweepAreaRegistry.RIGHTSCHEMA";
+	public static final String OWNINPUTSCHEMA = "SweepAreaRegistry.OWNSCHEMA";
+	public static final String OTHERINPUTSCHEMA = "SweepAreaRegistry.OTHERSCHEMA";
 	public static final String PREDICATE = "SweepAreaRegistry.PREDICATE";
 	
 	static private Map<String, ISweepArea<?>> areas = new HashMap<String, ISweepArea<?>>();
@@ -52,11 +52,11 @@ public class SweepAreaRegistry {
 		return getSweepArea(name, null);
 	}
 	
-	public static ISweepArea<?> getSweepArea(String name, OptionMap options, SDFSchema leftSchema, SDFSchema rightSchema, IPredicate<?> predicate)
+	public static ISweepArea<?> getSweepArea(String name, OptionMap options, SDFSchema ownSchema, SDFSchema otherSchema, IPredicate<?> predicate)
 			throws InstantiationException, IllegalAccessException {
 		OptionMap clonedOptions = new OptionMap(options);
-		clonedOptions.setOption(LEFTINPUTSCHEMA, leftSchema);
-		clonedOptions.setOption(RIGHTINPUTSCHEMA, rightSchema);
+		clonedOptions.setOption(OWNINPUTSCHEMA, ownSchema);
+		clonedOptions.setOption(OTHERINPUTSCHEMA, otherSchema);
 		clonedOptions.setOption(PREDICATE, predicate);
 		return getSweepArea(name, clonedOptions);
 	}
