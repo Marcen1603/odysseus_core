@@ -60,11 +60,11 @@ public class TJoinAONoIntervalRule extends AbstractTransformationRule<JoinAO> {
 			joinPO.setJoinPredicate(pred.clone());
 		}
 		joinPO.setCardinalities(joinAO.getCard());
-		if (joinAO.getSweepAreaName() == null){
-			joinAO.setSweepAreaName("HashJoinSA");
+		if (joinAO.getLeftSweepAreaName() == null){
+			joinAO.setLeftSweepAreaName("HashJoinSA");
 		}
 		
-		joinPO.setSweepAreaName(joinAO.getSweepAreaName());		
+		joinPO.setSweepAreaName(joinAO.getLeftSweepAreaName());		
 		joinPO.setTransferFunction(new DirectTransferArea());
 		
 

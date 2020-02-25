@@ -52,11 +52,8 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
 		IPredicate predicate = joinPO.getPredicate();
 		
-		String leftAreaName = "";
-		if (joinPO.getSweepAreaName() != null) {
-			leftAreaName = joinPO.getSweepAreaName();
-		}
-		String rightAreaName = "";
+		String leftAreaName = joinPO.getSweepAreaName(0);
+		String rightAreaName= joinPO.getSweepAreaName(1);
 		
 		// Attention: side effect, areas are filled!
 		leftAreaName = handleSpecialCased(joinPO, areas, leftAreaName, leftSchema, rightSchema, predicate);
@@ -89,7 +86,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		}
 
 		joinPO.setAreas(areas);
-		joinPO.setSweepAreaName(leftAreaName);
+		joinPO.setSweepAreaName(leftAreaName, rightAreaName);
 		
 		/*
 		 * # no update, because otherwise # other rules may overwrite this rule #
@@ -118,6 +115,12 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	private String handleSpecialCased(JoinTIPO joinPO, ITimeIntervalSweepArea[] areas, String areaName, SDFSchema leftSchema,
 			SDFSchema rightSchema, IPredicate predicate) {
+		
+		if (Strings.isNullOrEmpty(areaName)) {
+			return null;
+		}
+		
+		// TODO: Move to newInstance
 		
 		if(areaName.equalsIgnoreCase("UnaryOuterJoinSA")) {
 			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, false, joinPO.getCardinalities());
