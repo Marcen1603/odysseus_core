@@ -9,10 +9,16 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class SweepAreaRegistry {
 	static Logger logger = LoggerFactory.getLogger(SweepAreaRegistry.class);
 
+	public static final String LEFTINPUTSCHEMA = "SweepAreaRegistry.LEFTSCHEMA";
+	public static final String RIGHTINPUTSCHEMA = "SweepAreaRegistry.RIGHTSCHEMA";
+	public static final String PREDICATE = "SweepAreaRegistry.PREDICATE";
+	
 	static private Map<String, ISweepArea<?>> areas = new HashMap<String, ISweepArea<?>>();
 
 	public SweepAreaRegistry(){
@@ -44,6 +50,15 @@ public class SweepAreaRegistry {
 	public static ISweepArea<?> getSweepArea(String name)
 			throws InstantiationException, IllegalAccessException {
 		return getSweepArea(name, null);
+	}
+	
+	public static ISweepArea<?> getSweepArea(String name, OptionMap options, SDFSchema leftSchema, SDFSchema rightSchema, IPredicate<?> predicate)
+			throws InstantiationException, IllegalAccessException {
+		OptionMap clonedOptions = new OptionMap(options);
+		clonedOptions.setOption(LEFTINPUTSCHEMA, leftSchema);
+		clonedOptions.setOption(RIGHTINPUTSCHEMA, rightSchema);
+		clonedOptions.setOption(PREDICATE, predicate);
+		return getSweepArea(name, clonedOptions);
 	}
 	
 	public static ISweepArea<?> getSweepArea(String name, OptionMap options)

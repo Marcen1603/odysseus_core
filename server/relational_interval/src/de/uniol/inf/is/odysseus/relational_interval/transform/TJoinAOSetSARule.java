@@ -43,64 +43,32 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) throws RuleException {
 		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 
-		// check, which sweep area to use
-		// if the join is an equi join
-		// and there is not window in one
-		// path to the source, use
-		// a hash sweep area
-		// otherwise use a JoinTISweepArea
-		// IPredicate pred = joinPO.getJoinPredicate();
-
 		String areaName = "";
 
 		if (joinPO.getSweepAreaName() != null) {
 			areaName = joinPO.getSweepAreaName();
 		}
 
-		SDFSchema ownSchema = joinPO.getSubscribedToSource(0).getSchema();
-		SDFSchema otherSchema = joinPO.getSubscribedToSource(1).getSchema();
+		SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
+		SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
 		IPredicate predicate = joinPO.getPredicate();
-
-		// Attention: side effect, areas are filled!
-		boolean check = JoinTransformationHelper.canBeUsedWithHashJoin(predicate, ownSchema, otherSchema, areas);
-
-		// Automatically set HashJoinSA if predicate is pure equals predicate
-		if (areaName.isEmpty() && check) {
-			areaName = HASH_JOIN_SA;
-		}
-
-		// TMP-Hack
-		if (areaName.equalsIgnoreCase(HASH_JOIN_SA)) {
-			if (check == false) {
-				throw new TransformationException("Cannot use " + areaName + " with this predicate "
-						+ joinPO.getPredicate() + ". Only equals predicates are possible!");
-			}
-		} else {
-			// The user does not want to use a HashSweepArea but something else. As the
-			// areas are already created, we will remove them here
-			areas[0] = null;
-			areas[1] = null;
-		}
 		
-		if(areaName.equalsIgnoreCase("UnaryOuterJoinSA")) {
-			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, ownSchema, otherSchema, areas, false, joinPO.getCardinalities());
-		} else if (areaName.equalsIgnoreCase("UnaryOuterJoinSA2")) {
-			JoinTransformationHelper.useUnaryOuterJoinSA2(predicate, ownSchema, otherSchema, areas);
-		} else if(areaName.equals("UnaryOuterJoinRndSA")) {
-			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, ownSchema, otherSchema, areas, true, joinPO.getCardinalities());
-		}
+		// Attention: side effect, areas are filled!
+		areaName = handleSpecialCased(joinPO, areas, areaName, leftSchema, rightSchema, predicate);
 
+		// if special cases did not find a solution, use the generic one
 		if (areas[0] == null || areas[1] == null) {
+			// When no area name is set, use TIJoinSA as default
 			if (areaName == null || areaName.isEmpty()) {
 				areaName = "TIJoinSA";
 			}
+			
 			try {
-				areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions());
-				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions());
+				areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions(), leftSchema, rightSchema, predicate);
+				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions(), leftSchema, rightSchema, predicate);
 			} catch (InstantiationException | IllegalAccessException e) {
-				throw new TransformationException("Cannot find sweep area of type " + areaName);
+				// ignore, is handled below
 			}
-			;
 		}
 
 		if (areas[0] == null || areas[1] == null) {
@@ -126,6 +94,38 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		 * also, because # other fields of the object should still be modified
 		 */
 
+	}
+
+	private String handleSpecialCased(JoinTIPO joinPO, ITimeIntervalSweepArea[] areas, String areaName, SDFSchema leftSchema,
+			SDFSchema rightSchema, IPredicate predicate) {
+		boolean check = JoinTransformationHelper.canBeUsedWithHashJoin(predicate, leftSchema, rightSchema, areas);
+
+		// Automatically set HashJoinSA if predicate is pure equals predicate
+		if (areaName.isEmpty() && check) {
+			areaName = HASH_JOIN_SA;
+		}
+
+		// TMP-Hack
+		if (areaName.equalsIgnoreCase(HASH_JOIN_SA)) {
+			if (check == false) {
+				throw new TransformationException("Cannot use " + areaName + " with this predicate "
+						+ joinPO.getPredicate() + ". Only equals predicates are possible!");
+			}
+		} else {
+			// The user does not want to use a HashSweepArea but something else. As the
+			// areas are already created, we will remove them here
+			areas[0] = null;
+			areas[1] = null;
+		}
+		
+		if(areaName.equalsIgnoreCase("UnaryOuterJoinSA")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, false, joinPO.getCardinalities());
+		} else if (areaName.equalsIgnoreCase("UnaryOuterJoinSA2")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA2(predicate, leftSchema, rightSchema, areas);
+		} else if(areaName.equals("UnaryOuterJoinRndSA")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, true, joinPO.getCardinalities());
+		}
+		return areaName;
 	}
 
 	@Override
