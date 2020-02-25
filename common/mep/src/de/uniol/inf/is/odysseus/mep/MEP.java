@@ -16,13 +16,12 @@
 package de.uniol.inf.is.odysseus.mep;
 
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -117,233 +116,7 @@ public class MEP implements IMepExpressionParser {
 		return ExpressionOptimizer.simplifyExpression(expression);
 	}
 
-	private static Map<FunctionSignature, IMepFunction<?>> functions = new HashMap<FunctionSignature, IMepFunction<?>>();
 	private static FunctionStore functionStore = FunctionStore.getInstance();
-	// MG: Now done by Activator
-	//	static {
-//
-//		getLogger().debug("Register Base Function");
-//		
-//		
-//		/** BitVector Functions */
-//		registerFunction(new BitAccessFunction());
-//		registerFunction(new BitVectorToLong());
-//		registerFunction(new BitSubsetFunction());
-//
-//		/** Boolean Functions */
-//		registerFunction(new AndOperator());
-//		registerFunction(new OrOperator());
-//		registerFunction(new XorOperator());
-//
-//		registerFunction(new EqualsOperator());
-//		registerFunction(new BooleanEqualsOperator());
-//		registerFunction(new StringEqualsOperator());
-//		registerFunction(new NotEqualsOperator());
-//		registerFunction(new StringNotEqualsOperator());
-//		
-//		/** Bit functions */
-//		registerFunction(new LeftShiftOperator());
-//		registerFunction(new RightShiftOperator());
-//		registerFunction(new BitInvertOperator());
-//		registerFunction(new BitAndOperator());
-//		registerFunction(new BitOrOperator());
-//
-//		/** Math Functions */
-//		registerFunction(new GreaterThanOperator());
-//		registerFunction(new SmallerThanOperator());
-//		registerFunction(new GreaterEqualsOperator());
-//		registerFunction(new SmallerEqualsOperator());
-//
-//		registerFunction(new PlusOperator());
-//		registerFunction(new MinusOperator());
-//
-//		registerFunction(new MultiplicationOperator());
-//		registerFunction(new DivisionOperator());
-//		registerFunction(new ModuloOperator());
-//
-//		registerFunction(new PowerOperator());
-//		registerFunction(new SqrtFunction());
-//
-//		registerFunction(new NotOperator());
-//		registerFunction(new UnaryMinusOperator());
-//
-//		registerFunction(new AbsoluteFunction());
-//		registerFunction(new CeilFunction());
-//		registerFunction(new DoubleToLongFunction());
-//		registerFunction(new DoubleToIntegerFunction());
-//		registerFunction(new DoubleToFloatFunction());
-//		registerFunction(new DoubleToShortFunction());
-//		registerFunction(new DoubleToByteFunction());
-//		registerFunction(new DoubleToBooleanFunction());
-//		registerFunction(new DoubleToCharFunction());
-//		registerFunction(new FloorFunction());
-//		registerFunction(new IfFunction());
-//		registerFunction(new SinusFunction());
-//		registerFunction(new HyperbolicSinusFunction());
-//		registerFunction(new ArcSinusFunction());
-//		registerFunction(new CosinusFunction());
-//		registerFunction(new HyperbolicCosinusFunction());
-//		registerFunction(new ArcCosinusFunction());
-//		registerFunction(new TangensFunction());
-//		registerFunction(new HyperbolicTangensFunction());
-//		registerFunction(new ArcTangensFunction());
-//		registerFunction(new ArcTangens2Function());
-//		registerFunction(new ToNumberFunction());
-//		registerFunction(new ToBooleanFunction());
-//		registerFunction(new ToByteFunction());
-//		registerFunction(new ToShortFunction());
-//		registerFunction(new ToFloatFunction());
-//		registerFunction(new ToFloatIEEE754());
-//		registerFunction(new ToFloatIEEE754_2());
-//		registerFunction(new ToDoubleFunction());
-//		registerFunction(new ToLongFunction());
-//		registerFunction(new ToListFunction());
-//		registerFunction(new ToIntegerFromNumberFunction());
-//		registerFunction(new ToUnsignedInt16Function());
-//		registerFunction(new ToCharFunction());
-//		registerFunction(new ToStringFunction());
-//		registerFunction(new ToHexFromStringFunction());
-//		registerFunction(new ToHexFromDiscreteFunction());
-//		registerFunction(new ToHexFromFloatingNumberFunction());
-//		registerFunction(new ToBinaryFromStringFunction());
-//		registerFunction(new ToBinaryFromNumberFunction());
-//		registerFunction(new ToBinaryFromUnsignedInt16Function());
-//		registerFunction(new ToBinaryFromFloatingNumberFunction());
-//		registerFunction(new RandomFunction());
-//		registerFunction(new RandomFunction2());
-//		registerFunction(new RoundFunction());
-//		registerFunction(new SignFunction());
-//
-//		registerFunction(new PIFunction());
-//		registerFunction(new EFunction());
-//		registerFunction(new NaNFunction());
-//		registerFunction(new InfFunction());
-//
-//		registerFunction(new ExpFunction());
-//		registerFunction(new LogFunction());
-//		registerFunction(new Log10Function());
-//
-//		registerFunction(new ToRadians());
-//		registerFunction(new ToDegrees());
-//
-//		registerFunction(new IsNullFunction());
-//		registerFunction(new IsNaNFunction());
-//		registerFunction(new AssureNumber());
-//
-//		/** String Functions */
-//		registerFunction(new LikeFunction());
-//		registerFunction(new StringContainsFunction());
-//		registerFunction(new StringPlusOperator());
-//		registerFunction(new StringMinusOperator());
-//		registerFunction(new StringMultiplicationOperator());
-//		registerFunction(new StringDivisionOperator());
-//		registerFunction(new ConcatFunction());
-//		registerFunction(new SubStringFunction());
-//		registerFunction(new SubStringFunction2());
-//		registerFunction(new StartsWithFunction());
-//		registerFunction(new LengthFunction());
-//		registerFunction(new UpperFunction());
-//		registerFunction(new LowerFunction());
-//
-//		/** Date Functions */
-//		registerFunction(new ToDateFromStringFunction());
-//		registerFunction(new ToDateFromNumberFunction());
-//		registerFunction(new DateToStringFunction());
-//		registerFunction(new DateToLongFunction());
-//
-//		registerFunction(new DatePlusOperator());
-//		registerFunction(new DatePlusNumberOperator());
-//		registerFunction(new DateMinusOperator());
-//		registerFunction(new DateMinusNumberOperator());
-//
-//        registerFunction(new MilliSecondFunction());
-//		registerFunction(new SecondFunction());
-//		registerFunction(new MinuteFunction());
-//		registerFunction(new MinuteOfDayFunction());
-//		registerFunction(new HourFunction());
-//		registerFunction(new DayFunction());
-//		registerFunction(new DayOfMonthFunction());
-//		registerFunction(new WeekdayFunction());
-//		registerFunction(new WeekFunction());
-//		registerFunction(new MonthFunction());
-//		registerFunction(new YearFunction());
-//
-//        registerFunction(new MilliSecondStringFunction());
-//		registerFunction(new SecondStringFunction());
-//		registerFunction(new MinuteStringFunction());
-//		registerFunction(new HourStringFunction());
-//		registerFunction(new DayStringFunction());
-//		registerFunction(new DayOfMonthStringFunction());
-//		registerFunction(new WeekdayStringFunction());
-//		registerFunction(new WeekStringFunction());
-//		registerFunction(new MonthStringFunction());
-//		registerFunction(new YearStringFunction());
-//
-//        registerFunction(new MilliSecondsFunction());
-//		registerFunction(new SecondsFunction());
-//		registerFunction(new MinutesFunction());
-//		registerFunction(new HoursFunction());
-//		registerFunction(new DaysFunction());
-//		registerFunction(new MonthsFunction());
-//		registerFunction(new YearsFunction());
-//		registerFunction(new BusinessDaysFunction());
-//
-//		registerFunction(new MilliTimeFunction());
-//		registerFunction(new CurDateFunction());
-//		registerFunction(new NanoTimeFunction());
-//		registerFunction(new DateInMillis());
-//
-//		registerFunction(new SysDateFunction());
-//		registerFunction(new StreamDateFunction());
-//		registerFunction(new StreamDateFunction2());
-//		registerFunction(new StreamTimeFunction());
-//		registerFunction(new TimestampFunction());
-//
-//		registerFunction(new MD5Function());
-//		registerFunction(new SHA1Function());
-//		registerFunction(new SHA256Function());
-//		registerFunction(new SHA244Function());
-//		registerFunction(new SHA384Function());
-//		registerFunction(new SHA512Function());
-//		registerFunction(new DSAFunction());
-//		registerFunction(new DSASignFunction());
-//		registerFunction(new DSAVerifyFunction());
-//		registerFunction(new RSAFunction());
-//		registerFunction(new RSASignFunction());
-//		registerFunction(new RSAVerifyFunction());
-//
-//		registerFunction(new UUIDFunction());
-//		registerFunction(new CPULoadFunction());
-//		registerFunction(new UptimeFunction());
-//		registerFunction(new MemoryFunction());
-//		registerFunction(new ReadFunction());
-//		registerFunction(new EvalFunction());
-//		registerFunction(new SMinFunction());
-//		registerFunction(new SMaxFunction());
-//
-//		registerFunction(new SleepFunction());
-//		registerFunction(new BurnFunction());
-//
-//		registerFunction(new StoredValueFunction());
-//		registerFunction(new StoredLineFunction());
-//
-//		registerFunction(new SplitFunction());
-//		registerFunction(new SplitFunctionOld());
-//
-//		// Array Functions
-//		registerFunction(new ListElementAtFunction());
-//
-//		// List Functions
-//		registerFunction(new ListContainsFunction());
-//        registerFunction(new IsEmptyFunction());
-//        registerFunction(new SizeFunction());
-//        registerFunction(new IndexOfFunction());
-//
-//		registerFunction(new TupleAccessFunction());
-//
-//		registerFunction(new MatrixFunction());
-//		registerFunction(new MatrixLine());
-//	}
 
 	/**
 	 * Register a MEP function instance
@@ -391,15 +164,6 @@ public class MEP implements IMepExpressionParser {
 	}
 
 	/**
-	 * @deprecated Use unregisterFunction with parameter {@link IMepFunction}
-	 * @param symbol
-	 */
-	@Deprecated
-	public static void unregisterFunction(String symbol) {
-		functions.remove(symbol.toUpperCase());
-	}
-
-	/**
 	 * Unregister a MEP function instance
 	 * 
 	 * @param function
@@ -418,36 +182,15 @@ public class MEP implements IMepExpressionParser {
 		if (functionStore.containsSignature(signature)) {
 			functionStore.remove(signature);
 		} 
-		// can be ignored
-		//		else {
-//			getLogger()
-//					.warn("Tried to unregister function {}, which was not registered before",
-//							symbol);
-//		}
 	}
 
 	public static boolean containsFunction(String symbol) {
 		return functionStore.containsSymbol(symbol);
 	}
 
-	/**
-	 * @deprecated Use getFunction with SDFDatatype parameter
-	 * @param symbol
-	 * @return
-	 */
-	@Deprecated
-	public static IMepFunction<?> getFunction(String symbol) {
-		try {
-			return functionStore.getFunctions(symbol).get(0).getClass()
-					.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static IMepFunction<?> getFunction(FunctionSignature signature) {
 		try {
-			return functionStore.getFunction(signature).getClass()
+			return functionStore.getFunction(signature).getClass().getDeclaredConstructor()
 					.newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -470,7 +213,7 @@ public class MEP implements IMepExpressionParser {
 			IMepFunction<?> function = functionStore
 					.getFunction(symbol, parameter);
 			if (function != null) {
-				return function.getClass().newInstance();
+				return function.getClass().getDeclaredConstructor().newInstance();
 			}
 
 			getLogger().debug(
@@ -486,7 +229,7 @@ public class MEP implements IMepExpressionParser {
 		List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 		try {
 			for (IMepFunction<?> function : functionStore.getFunctions(symbol)) {
-				functions.add(function.getClass().newInstance());
+				functions.add(function.getClass().getDeclaredConstructor().newInstance());
 			}
 			return functions;
 		} catch (Exception e) {
@@ -531,9 +274,9 @@ public class MEP implements IMepExpressionParser {
 			if (IMepFunction.class.isAssignableFrom(classObject)
 					&& !Modifier.isAbstract(classObject.getModifiers())) {
 				try {
-					MEP.registerFunction((IMepFunction<?>) classObject
+					MEP.registerFunction((IMepFunction<?>) classObject.getDeclaredConstructor()
 							.newInstance());
-				} catch (InstantiationException | IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
 			}
