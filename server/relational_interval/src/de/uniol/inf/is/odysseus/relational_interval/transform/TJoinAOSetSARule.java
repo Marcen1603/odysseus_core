@@ -67,19 +67,20 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 				leftAreaName = HashJoinSweepArea.NAME;
 				areas = createSweepAreas(leftAreaName, leftAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
 			}
-				
-			// When creation of HASH_JOIN_SA does not work, the areas are empty
-			// In case of not given areaName try JoinArea
-			if (areas[0] == null && Strings.isNullOrEmpty(leftAreaName)) {
-				leftAreaName = JoinTISweepArea.NAME;
+	
+			// When creation of HASH_JOIN_SA does not work (e.g. the predicate is no equals predicate), the areas are empty
+			if (areas == null) {
+				// In case of not given areaName try JoinArea
+				if (Strings.isNullOrEmpty(leftAreaName)) {
+					leftAreaName = JoinTISweepArea.NAME;
+				}
+
+				if (Strings.isNullOrEmpty(rightAreaName)) {
+					rightAreaName = leftAreaName;
+				}
+
+				areas = createSweepAreas(leftAreaName, rightAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
 			}
-			
-			if (Strings.isNullOrEmpty(rightAreaName)) {
-				rightAreaName = leftAreaName;
-			}
-			
-			areas = createSweepAreas(leftAreaName, rightAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
-			
 		}
 
 		if (areas == null || areas[0] == null || areas[1] == null) {
