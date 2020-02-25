@@ -24,20 +24,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.predicate.PredicateHelper;
 import de.uniol.inf.is.odysseus.server.intervalapproach.comparator.EndTsComparator;
 import de.uniol.inf.is.odysseus.server.intervalapproach.comparator.StartTsComparator;
+import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 /**
  * This sweep area is used for equi joins over non-windowed streams. Instead of
@@ -91,7 +98,32 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public ISweepArea<Tuple<? extends ITimeInterval>> newInstance(OptionMap options) {
-		return new HashJoinSweepArea(this.insertRestrictList, this.queryRestrictList, this.inputOrderedByTime);
+		
+		SDFSchema ownSchema = options.getValue(SweepAreaRegistry.OWNINPUTSCHEMA);
+		SDFSchema otherSchema = options.getValue(SweepAreaRegistry.OTHERINPUTSCHEMA);
+		IPredicate<?> predicate = options.getValue(SweepAreaRegistry.PREDICATE);
+		// check the predicate and calculate
+		// the restrictList
+		Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+
+		if (PredicateHelper.checkEqualsPredicate(predicate, neededAttrs, ownSchema, otherSchema)) {
+
+			// transform the set into a list to guarantee the
+			// same order of attributes for both restrict lists
+			List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+			for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+				neededAttrsList.add(pair);
+			}
+
+			Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(ownSchema, otherSchema,
+					neededAttrsList);
+			// TODO: Flag to set if input is sorted
+			// currently, default is false --> to be sure
+			boolean inputOrderedByTime = options.getBoolean("inputOrderedByTime", false);
+			return new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), inputOrderedByTime);
+		}
+		
+		return null;
 	}
 
 	public HashJoinSweepArea(int[] insertRestrictList, int[] queryRestrictList, boolean inputOrderedByTime) {
