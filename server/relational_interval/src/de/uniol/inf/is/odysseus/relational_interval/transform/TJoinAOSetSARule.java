@@ -60,16 +60,19 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			areas = handleSpecialCased(joinPO, leftAreaName, leftSchema, rightSchema, predicate);
 		}
 		// if special cases did not find a solution, use the generic one
-		if (areas == null) {
+		if (isEmpty(areas)) {
 
 			// First try, if a hash join can be used
 			if (Strings.isNullOrEmpty(leftAreaName)) {
-				leftAreaName = HashJoinSweepArea.NAME;
-				areas = createSweepAreas(leftAreaName, leftAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
+				areas = createSweepAreas(HashJoinSweepArea.NAME, HashJoinSweepArea.NAME, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
+				if (!isEmpty(areas)) {
+					leftAreaName = HashJoinSweepArea.NAME;
+					rightAreaName = HashJoinSweepArea.NAME;
+				}
 			}
 	
 			// When creation of HASH_JOIN_SA does not work (e.g. the predicate is no equals predicate), the areas are empty
-			if (areas == null) {
+			if (isEmpty(areas)) {
 				// In case of not given areaName try JoinArea
 				if (Strings.isNullOrEmpty(leftAreaName)) {
 					leftAreaName = JoinTISweepArea.NAME;
@@ -83,7 +86,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			}
 		}
 
-		if (areas == null || areas[0] == null || areas[1] == null) {
+		if (isEmpty(areas)) {
 			throw new TransformationException("Cannot find sweep area of types " + leftAreaName+"/"+rightAreaName);
 		}
 
@@ -101,6 +104,10 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		 * also, because # other fields of the object should still be modified
 		 */
 
+	}
+
+	private boolean isEmpty(ITimeIntervalSweepArea[] areas) {
+		return areas == null || areas[0] == null || areas[1] == null;
 	}
 
 	private ITimeIntervalSweepArea[] createSweepAreas(String leftAreaName, String rightAreaName, OptionMap options, SDFSchema leftSchema,
@@ -126,11 +133,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		} else if(areaName.equals("UnaryOuterJoinRndSA")) {
 			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, true, joinPO.getCardinalities());
 		}
-		if (areas[0] == null || areas[1] == null) {
-			return null;
-		}else {	
-			return areas;
-		}
+		return areas;
 	}
 
 	@Override
