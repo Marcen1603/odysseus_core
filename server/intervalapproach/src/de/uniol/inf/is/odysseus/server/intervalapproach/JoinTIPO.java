@@ -434,7 +434,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 					 * We need to copy it by ourself as we did not get the name but the instance we
 					 * shall use or the type of SweepArea cannot be created using the registry.
 					 */
-					ISweepArea<T> newInstance = groups.get(port).get(DEFAULT_GROUPING_KEY).newInstance(null);
+					ISweepArea<T> newInstance = groups.get(port).get(DEFAULT_GROUPING_KEY).clone();
 					if (newInstance instanceof ITimeIntervalSweepArea) {
 						sa = (ITimeIntervalSweepArea<T>) newInstance;
 					} else {
