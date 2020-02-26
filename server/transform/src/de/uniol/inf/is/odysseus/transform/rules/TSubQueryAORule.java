@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
@@ -102,6 +103,7 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 		}
 
 		pquery = executor.getPhysicalQueryByString(q.iterator().next() + "", getCaller());
+		pquery.getLogicalQuery().setName(new Resource(getCaller().getUser().getName(),operator.getName()));
 		return pquery;
 	}
 
