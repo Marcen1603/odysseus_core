@@ -79,15 +79,23 @@ TOKEN :
     "null" >
 | < #DIGIT : [ "0"-"9" ] >
 | < CHAR_LITERAL :
+ 	(
+	  "\"" 
     (
-      "'" (~[ "'" ])* "'"
+         "\\" ~[]     //any escaped character
+    |                 //or
+        ~["\"","\\"]  //any character except quote or backslash
+    )* 
+    "\"")
+  | 
+	(
+	  "\'" 
     (
-      "'" (~[ "'" ])* "'"
-    )*)
-  |  ("\"" (~[ "\"" ])* "\""
-    (
-      "\"" (~[ "\"" ])* "\""
-    )*)>
+         "\\" ~[]     //any escaped character
+    |                 //or
+        ~["\'","\\"]  //any character except quote or backslash
+    )* 
+    "\'")>
 | < IDENTIFIER :
     (< LETTER > | < SPECIAL_CHARS >)
     (

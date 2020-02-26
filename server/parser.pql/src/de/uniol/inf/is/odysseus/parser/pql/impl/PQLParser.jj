@@ -95,7 +95,24 @@ import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
   }
 
 }PARSER_END(PQLParserImpl)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN :{   < BOOLEAN : ("TRUE" | "FALSE" )>
-|  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":" >| < CHAR_LITERAL :    "'" ("\\" ~[] |~[ "'" ])* "'"  | "\"" ("\\" ~[] | ~[ "\"" ])* "\"" >| < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >
+|  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":" >| < CHAR_LITERAL :
+	(	  "\"" 
+    (
+         "\\" ~[]     //any escaped character
+    |                 //or
+        ~["\"","\\"]  //any character except quote or backslash
+    )* 
+    "\"")
+  | 
+	(
+	  "\'" 
+    (
+         "\\" ~[]     //any escaped character
+    |                 //or
+        ~["\'","\\"]  //any character except quote or backslash
+    )* 
+    "\'")
+   >| < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >
 }TOKEN : /* Numeric Constants */
 {
   < FLOAT :

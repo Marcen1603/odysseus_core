@@ -45,7 +45,6 @@ import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 
-@SuppressWarnings("all")
 /** Token Manager. */
 public class PQLParserImplTokenManager implements PQLParserImplConstants
 {
@@ -197,9 +196,9 @@ static private int jjMoveNfa_0(int startState, int curPos)
                      jjCheckNAddStates(4, 6);
                   else if (curChar == 46)
                      jjCheckNAdd(21);
-                  else if (curChar == 34)
-                     jjCheckNAddStates(7, 9);
                   else if (curChar == 39)
+                     jjCheckNAddStates(7, 9);
+                  else if (curChar == 34)
                      jjCheckNAddStates(10, 12);
                   break;
                case 29:
@@ -222,33 +221,33 @@ static private int jjMoveNfa_0(int startState, int curPos)
                   jjstateSet[jjnewStateCnt++] = 9;
                   break;
                case 10:
-                  if (curChar == 39)
+                  if (curChar == 34)
                      jjCheckNAddStates(10, 12);
                   break;
                case 12:
                   jjCheckNAddStates(10, 12);
                   break;
                case 13:
-                  if ((0xffffff7fffffffffL & l) != 0L)
+                  if ((0xfffffffbffffffffL & l) != 0L)
                      jjCheckNAddStates(10, 12);
                   break;
                case 14:
-                  if (curChar == 39 && kind > 9)
+                  if (curChar == 34 && kind > 9)
                      kind = 9;
                   break;
                case 15:
-                  if (curChar == 34)
+                  if (curChar == 39)
                      jjCheckNAddStates(7, 9);
                   break;
                case 17:
                   jjCheckNAddStates(7, 9);
                   break;
                case 18:
-                  if ((0xfffffffbffffffffL & l) != 0L)
+                  if ((0xffffff7fffffffffL & l) != 0L)
                      jjCheckNAddStates(7, 9);
                   break;
                case 19:
-                  if (curChar == 34 && kind > 9)
+                  if (curChar == 39 && kind > 9)
                      kind = 9;
                   break;
                case 20:
@@ -372,16 +371,22 @@ static private int jjMoveNfa_0(int startState, int curPos)
                      jjstateSet[jjnewStateCnt++] = 12;
                   break;
                case 12:
-               case 13:
                   jjCheckNAddStates(10, 12);
+                  break;
+               case 13:
+                  if ((0xffffffffefffffffL & l) != 0L)
+                     jjCheckNAddStates(10, 12);
                   break;
                case 16:
                   if (curChar == 92)
                      jjstateSet[jjnewStateCnt++] = 17;
                   break;
                case 17:
-               case 18:
                   jjCheckNAddStates(7, 9);
+                  break;
+               case 18:
+                  if ((0xffffffffefffffffL & l) != 0L)
+                     jjCheckNAddStates(7, 9);
                   break;
                default : break;
             }
