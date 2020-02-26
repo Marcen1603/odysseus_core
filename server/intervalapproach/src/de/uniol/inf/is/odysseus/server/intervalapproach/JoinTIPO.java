@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
@@ -93,7 +94,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	 * For implementations that set the SweepAreas from outside with the setAreas
 	 * method and cannot set the names.
 	 */
-	protected boolean useInstanceInseadOfName = false;
+	protected boolean useInstanceInsteadOfName = false;
 	/**
 	 * This object will be used as fallback grouping key.
 	 */
@@ -164,7 +165,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 
 		// If this method is used we need to copy instead of use the SweepAreaRegistry
-		this.useInstanceInseadOfName = true;
+		this.useInstanceInsteadOfName = true;
 	}
 
 	public void setOptions(OptionMap options) {
@@ -199,7 +200,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public void setSweepAreaName(String port0, String port1) {
 		this.sweepAreaName[0] = port0;
 		this.sweepAreaName[1] = port1;
-		this.useInstanceInseadOfName = false;
+		this.useInstanceInsteadOfName = false;
 	}
 
 	public void setKeepEndTimestamp(boolean keepEndTimestamp) {
@@ -217,7 +218,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public void setSweepAreaName(String both) {
 		this.sweepAreaName[0] = both;
 		this.sweepAreaName[1] = both;
-		this.useInstanceInseadOfName = false;
+		this.useInstanceInsteadOfName = false;
 	}
 
 	public String getSweepAreaName(int port) {
@@ -428,7 +429,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		try {
 			ITimeIntervalSweepArea<T> sa = groups.get(port).get(groupKey);
 			if (sa == null) {
-				if (this.useInstanceInseadOfName) {
+				if (this.useInstanceInsteadOfName) {
 					/*
 					 * We need to copy it by ourself as we did not get the name but the instance we
 					 * shall use or the type of SweepArea cannot be created using the registry.
@@ -441,7 +442,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 								"Cannot use a SweepArea from a different type than ITimeIntervalSweepArea.");
 					}
 				} else {
-					sa = (ITimeIntervalSweepArea<T>) SweepAreaRegistry.getSweepArea(this.sweepAreaName[port], getOptions());
+					SDFSchema ownSchema = port==0?getInputSchema(0):getInputSchema(1);
+					SDFSchema otherSchema = port==1?getInputSchema(1):getInputSchema(0);
+					sa = (ITimeIntervalSweepArea<T>) SweepAreaRegistry.getSweepArea(this.sweepAreaName[port], getOptions(), ownSchema, otherSchema, getJoinPredicate(), card);
 				}
 				sa.setQueryPredicate(this.joinPredicate.clone());
 				sa.setAreaName(this.sweepAreaName[port]);
@@ -495,7 +498,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	@Override
 	protected void process_open() {
 
-		if (this.useInstanceInseadOfName) {
+		if (this.useInstanceInsteadOfName) {
 			// We cannot throw away our default SweepAreas
 			ITimeIntervalSweepArea<T> defaultSweepAreaPort0 = this.groups.get(0).get(DEFAULT_GROUPING_KEY);
 			defaultSweepAreaPort0.clear();
