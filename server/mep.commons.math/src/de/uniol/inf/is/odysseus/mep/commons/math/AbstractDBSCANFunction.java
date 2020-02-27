@@ -31,6 +31,11 @@ public abstract class AbstractDBSCANFunction extends AbstractFunction<List<?>> {
 		List<Cluster<TuplePoint>> cluster = clusterer.cluster(points);
 		List<List<Tuple<?>>> returnCluster = unwrappTuples(cluster);
 		if (addOutliers) {
+			// Could be the case, that there are only outliers
+			// in this case, an empty list must be added
+			if (returnCluster.isEmpty()) {
+				returnCluster.add(new ArrayList<Tuple<?>>());
+			}
 			List<Tuple<?>> outliers;
 			if (determineOutliers) {
 				outliers = determineOutliers(points, cluster);
