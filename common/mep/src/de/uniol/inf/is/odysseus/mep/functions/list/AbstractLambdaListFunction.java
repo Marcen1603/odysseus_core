@@ -75,6 +75,7 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 		try {
 			expression = new SDFExpression(expr, attributeResolver, MEP.getInstance());
 		}catch(Exception e) {
+			e.printStackTrace();
 			throw new ParseException("Error parsing "+expr);
 		}
 	}

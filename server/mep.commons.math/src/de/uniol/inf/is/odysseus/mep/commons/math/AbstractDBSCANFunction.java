@@ -17,30 +17,55 @@ public abstract class AbstractDBSCANFunction extends AbstractFunction<List<?>> {
 
 	private static final long serialVersionUID = 6393096253899372011L;
 
-	public AbstractDBSCANFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
-		super(symbol, arity, acceptedTypes, returnType, false);
+	public AbstractDBSCANFunction(int arity, SDFDatatype[][] acceptedTypes) {
+		super("DBScan", arity, acceptedTypes, SDFDatatype.LIST, false);
 	}
-	
-	protected List<List<Tuple<?>>> calcClustering(List<Tuple<?>> input, double eps, Long minPts, String restrictTo) {
+
+	protected List<List<Tuple<?>>> calcClustering(List<Tuple<?>> input, double eps, Long minPts, String restrictTo,
+			boolean addOutliers, boolean determineOutliers) {
 		// https://commons.apache.org/proper/commons-math/javadocs/api-3.6/org/apache/commons/math3/ml/clustering/DBSCANClusterer.html
-		
+
 		DBSCANClusterer<TuplePoint> clusterer = new DBSCANClusterer<>(eps, minPts.intValue());
-				
+
 		Collection<TuplePoint> points = wrappTuples(input, restrictTo);
 		List<Cluster<TuplePoint>> cluster = clusterer.cluster(points);
 		List<List<Tuple<?>>> returnCluster = unwrappTuples(cluster);
-
-		// TODO: What about not clustered elements?
-		
+		if (addOutliers) {
+			List<Tuple<?>> outliers;
+			if (determineOutliers) {
+				outliers = determineOutliers(points, cluster);
+			} else {
+				outliers = new ArrayList<Tuple<?>>();
+			}
+			returnCluster.add(0, outliers);
+		}
 		return returnCluster;
+	}
+
+	private List<Tuple<?>> determineOutliers(Collection<TuplePoint> points, List<Cluster<TuplePoint>> cluster) {
+		List<Tuple<?>> returnList = new ArrayList<Tuple<?>>();
+
+		for (TuplePoint p : points) {
+			boolean found = false;
+			for (int i = 0; i < cluster.size() && !found; i++) {
+				if (cluster.get(i).getPoints().contains(p)) {
+					found = true;
+				}
+			}
+			if (!found) {
+				returnList.add(p.tuple);
+			}
+		}
+
+		return returnList;
 	}
 
 	private List<List<Tuple<?>>> unwrappTuples(List<Cluster<TuplePoint>> cluster) {
 		List<List<Tuple<?>>> returnCluster = new ArrayList<>();
-		for (Cluster<TuplePoint> c: cluster) {
+		for (Cluster<TuplePoint> c : cluster) {
 			List<Tuple<?>> clusteredPoints = new ArrayList<>();
 			returnCluster.add(clusteredPoints);
-			for (TuplePoint t:c.getPoints()) {
+			for (TuplePoint t : c.getPoints()) {
 				clusteredPoints.add(t.tuple);
 			}
 		}
@@ -51,13 +76,13 @@ public abstract class AbstractDBSCANFunction extends AbstractFunction<List<?>> {
 		Collection<TuplePoint> points = new ArrayList<>();
 		if (restrictTo != null && restrictTo.length() > 0) {
 			int[] restrictList = calcRestrictList(restrictTo);
-			for(Tuple<?>t:input) {
+			for (Tuple<?> t : input) {
 				points.add(new TuplePoint(t, restrictList));
 			}
-		}else {
-			for(Tuple<?>t:input) {
+		} else {
+			for (Tuple<?> t : input) {
 				points.add(new TuplePoint(t));
-			}		
+			}
 		}
 		return points;
 	}
@@ -65,7 +90,7 @@ public abstract class AbstractDBSCANFunction extends AbstractFunction<List<?>> {
 	protected int[] calcRestrictList(String restrictTo) {
 		String[] pos = restrictTo.split(",");
 		int[] ret = new int[pos.length];
-		for (int i=0;i<ret.length;i++) {
+		for (int i = 0; i < ret.length; i++) {
 			ret[i] = Integer.parseInt(pos[i]);
 		}
 		return ret;
@@ -89,7 +114,7 @@ class TuplePoint implements Clusterable {
 	public TuplePoint(Tuple<?> tuple, int[] restrictList) {
 		this.tuple = tuple;
 		points = new double[restrictList.length];
-		for (int i=0;i<restrictList.length;i++) {
+		for (int i = 0; i < restrictList.length; i++) {
 			points[i] = tuple.getAttribute(restrictList[i]);
 		}
 	}

@@ -13,7 +13,7 @@ public class DBSCANFunction extends AbstractDBSCANFunction {
 			{ SDFDatatype.DOUBLE }, SDFDatatype.DISCRETE_NUMBERS };
 
 	public DBSCANFunction() {
-		super("DBSCAN", 3, accTypes, SDFDatatype.LIST);
+		super(3, accTypes);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class DBSCANFunction extends AbstractDBSCANFunction {
 		List<Tuple<?>> input = getInputValue(0);
 		double eps = getInputValue(1);
 		Long minPts = getInputValue(2);
-		return calcClustering(input, eps, minPts, null);
+		return calcClustering(input, eps, minPts, null, false, false);
 	}
 }
 
