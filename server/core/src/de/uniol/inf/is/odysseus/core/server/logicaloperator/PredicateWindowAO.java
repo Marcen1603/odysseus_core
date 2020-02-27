@@ -10,12 +10,15 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
@@ -63,6 +66,11 @@ public class PredicateWindowAO extends AbstractPartionedWindowAO implements ISta
 		super.setClearCondition(clearCondition);
 	}
 
+	@Parameter(type = NamedExpressionParameter.class, name = "ClearUntil", optional = true, doc = "If clear condition is true, this expression must contain a timestamp until the elements are removed from the window.")
+	public void setClearUntil2(NamedExpression clearUntil) {
+		super.setClearUntil(clearUntil.expression);
+	}
+	
 	@Override
 	@Parameter(type = PredicateParameter.class, name = "ADVANCEWHEN", optional = true)
 	public void setAdvanceCondition(IPredicate<?> advanceCondition) {

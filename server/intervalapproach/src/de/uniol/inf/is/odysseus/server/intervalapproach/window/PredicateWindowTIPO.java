@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 
@@ -61,6 +63,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	private final IPredicate<? super T> end;
 	private final IPredicate<? super T> advance;
 	private final IPredicate<? super T> clear;
+	//private final SDFExpression clearUntil;
 	private final int advanceSize;
 	private final long maxWindowTime;
 	private final boolean sameStarttime;
@@ -97,6 +100,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		} else {
 			this.clear = null;
 		}
+//		if (windowao.getClearUntil() != null) {
+//			this.clearUntil = (SDFExpression) windowao.getClearUntil().clone();
+//		}else {
+//			this.clearUntil = null;
+//		}
 		if (windowao.getAdvanceCondition() != null) {
 			this.advance = (IPredicate<? super T>) windowao.getAdvanceCondition().clone();
 		} else {
@@ -158,7 +166,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 		// check, if buffer needs to be cleared
 		if (clear != null && evaluateClearCondition(object, buffer)) {
-			buffer.clear();
+			clearUntil(buffer, evaluateClearUntilCondition(object,buffer));
+			
 		}
 
 		// Test if elements need to be written
@@ -210,6 +219,22 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		}
 
 		ping();
+	}
+	
+	private void clearUntil(List<T> buffer, Number clearUntil) {
+		if (clearUntil.longValue() < 0) {
+			buffer.clear();
+		}else {
+			PointInTime before = new PointInTime(clearUntil.longValue());
+			Iterator<T> iter =  buffer.iterator();
+			while (iter.hasNext()) {
+				T next = iter.next();
+				if (next.getMetadata().getStart().before(before)) {
+					iter.remove();
+				}
+			}
+		}
+
 	}
 
 	private void processMaxWindowTime(PointInTime now) {
@@ -309,6 +334,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 
 	protected Boolean evaluateAdvanceCondition(T object, List<T> buffer) {
 		return advance.evaluate(object);
+	}
+	
+	protected Number evaluateClearUntilCondition(T object, List<T> buffer) {
+		throw new IllegalArgumentException("This condition cannot be used with this kind of objects");
 	}
 
 	private void appendData(T object, Object bufferId, List<T> buffer) {

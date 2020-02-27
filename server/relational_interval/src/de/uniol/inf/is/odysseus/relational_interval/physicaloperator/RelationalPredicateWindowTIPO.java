@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -18,6 +19,8 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 	private RelationalStateExpression<ITimeInterval> end;
 	private RelationalStateExpression<ITimeInterval> advance;
 	private RelationalStateExpression<ITimeInterval> clear;
+	private RelationalStateExpression<ITimeInterval> clearUntil;
+	
 	
 
 	public RelationalPredicateWindowTIPO(AbstractWindowAO windowao) {
@@ -34,6 +37,9 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 		if (windowao.getClearCondition() != null) {
 			this.clear = initCondition(windowao.getClearCondition(), windowao.getInputSchema());
 		}
+		if (windowao.getClearUntil() != null) {
+			this.clearUntil = initCondition(windowao.getClearUntil(), windowao.getInputSchema());
+		}
 		
 	}
 	
@@ -41,6 +47,13 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 	private RelationalStateExpression<ITimeInterval> initCondition(IPredicate<?> condition, SDFSchema schema ) {
 		RelationalStateExpression<ITimeInterval> relCondition  = new RelationalStateExpression<>(
 				((RelationalExpression<ITimeInterval>) condition).getExpression().clone());
+		relCondition.initVars(schema);
+		return relCondition;
+	}
+
+	private RelationalStateExpression<ITimeInterval> initCondition(SDFExpression condition, SDFSchema schema ) {
+		RelationalStateExpression<ITimeInterval> relCondition  = new RelationalStateExpression<>(
+				condition.clone());
 		relCondition.initVars(schema);
 		return relCondition;
 	}
@@ -71,6 +84,11 @@ public class RelationalPredicateWindowTIPO extends PredicateWindowTIPO<Tuple<ITi
 		}catch(NullPointerException npe) {
 			return false;
 		}
+	}
+	
+	@Override
+	protected Number evaluateClearUntilCondition(Tuple<ITimeInterval> object, List<Tuple<ITimeInterval>> buffer) {
+		return (Number) clearUntil.evaluate(object, (List<ISession>) null, buffer);
 	}
 
 	@Override

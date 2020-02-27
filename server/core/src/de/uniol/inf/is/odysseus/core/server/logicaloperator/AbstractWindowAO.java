@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -42,8 +43,9 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private IPredicate<?> startCondition;
 	private IPredicate<?> endCondition;
 	private IPredicate<?> advanceCondition;
-	private IPredicate<?> clearCondition;
 	private int advanceSize;
+	private IPredicate<?> clearCondition;
+	private SDFExpression clearUntil;
 	private boolean sameStarttime;
 	private boolean keepEndElement;
 	private boolean nesting;
@@ -88,6 +90,9 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		}
 		if (windowAO.advanceCondition != null) {
 			this.advanceCondition = windowAO.advanceCondition.clone();
+		}
+		if (windowAO.clearUntil != null) {
+			this.clearUntil = windowAO.clearUntil.clone();
 		}
 		// TODO: Maybe this is the same as windowAdvance?
 		this.advanceSize = windowAO.advanceSize;
@@ -195,6 +200,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	
 	public IPredicate<?> getClearCondition() {
 		return clearCondition;
+	}
+	
+	public void setClearUntil(SDFExpression clearUntil) {
+		this.clearUntil = clearUntil;
+	}
+	
+	public SDFExpression getClearUntil() {
+		return clearUntil;
 	}
 	
 	public void setAdvanceCondition(IPredicate<?> advanceCondition) {
