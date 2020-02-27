@@ -103,7 +103,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 	}
 	
 	protected void setSweepArea(JoinTIPO joinPO, JoinAO joinAO) {
-		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
+		joinPO.setSweepAreaName(joinAO.getLeftSweepAreaName(), joinAO.getRightSweepAreaName());
 	}
 
 	protected void setJoinPredicate(JoinTIPO joinPO, JoinAO joinAO) {

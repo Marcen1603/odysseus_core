@@ -57,7 +57,8 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	private Boolean assureOrder = null;
 
 	private IPredicate<?> predicate;
-	private String sweepAreaName;
+	private String leftSweepAreaName;
+	private String rightSweepAreaName;
 	
 	// For the internal element window
 	private int elementSizePort0 = -1;
@@ -77,7 +78,8 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 			this.predicate = joinAO.predicate.clone();
 		}
 		this.assureOrder = joinAO.assureOrder;
-		this.sweepAreaName = joinAO.sweepAreaName;
+		this.leftSweepAreaName = joinAO.leftSweepAreaName;
+		this.rightSweepAreaName = joinAO.rightSweepAreaName;
 		
 		this.elementSizePort0 = joinAO.elementSizePort0;
 		this.elementSizePort1 = joinAO.elementSizePort1;
@@ -97,13 +99,22 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		return card;
 	}
 
-	@Parameter(type = StringParameter.class, optional = true, doc = "Overwrite the sweep area")
-	public void setSweepAreaName(String sweepAreaName) {
-		this.sweepAreaName = sweepAreaName;
+	@Parameter(name="SweepAreaName", type = StringParameter.class, optional = true, aliasname = "leftSweepArea", doc = "Overwrite the left sweep area.")
+	public void setLeftSweepAreaName(String sweepAreaName) {
+		this.leftSweepAreaName = sweepAreaName;
 	}
 	
-	public String getSweepAreaName() {
-		return sweepAreaName;
+	public String getLeftSweepAreaName() {
+		return leftSweepAreaName;
+	}
+	
+	@Parameter(type = StringParameter.class, optional = true, name = "rightSweepArea", doc = "Overwrite the right sweep area. If not set, the same value as left sweep area will be used.")
+	public void setRightSweepAreaName(String rightSweepAreaName) {
+		this.rightSweepAreaName = rightSweepAreaName;
+	}
+	
+	public String getRightSweepAreaName() {
+		return rightSweepAreaName;
 	}
 	
 	@Override

@@ -32,9 +32,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.predicate.PredicateHelper;
-import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
-import de.uniol.inf.is.odysseus.persistentqueries.UnaryOuterJoinSweepArea;
-import de.uniol.inf.is.odysseus.persistentqueries.UnaryOuterJoinSweepArea2;
+import de.uniol.inf.is.odysseus.server.intervalapproach.HashJoinSweepArea;
+import de.uniol.inf.is.odysseus.server.intervalapproach.UnaryOuterJoinSweepArea;
+import de.uniol.inf.is.odysseus.server.intervalapproach.UnaryOuterJoinSweepArea2;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 

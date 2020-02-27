@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.persistentqueries;
+package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IProvidesMetadata;

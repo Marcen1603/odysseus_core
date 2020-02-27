@@ -15,14 +15,20 @@
   */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import com.google.common.base.Strings;
+
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
@@ -32,8 +38,6 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
-	private static final String HASH_JOIN_SA = "HashJoinSA";
-
 	@Override
 	public int getPriority() {
 		return 0;
@@ -41,80 +45,54 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	@Override
 	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) throws RuleException {
-		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 
-		// check, which sweep area to use
-		// if the join is an equi join
-		// and there is not window in one
-		// path to the source, use
-		// a hash sweep area
-		// otherwise use a JoinTISweepArea
-		// IPredicate pred = joinPO.getJoinPredicate();
-
-		String areaName = "";
-
-		if (joinPO.getSweepAreaName() != null) {
-			areaName = joinPO.getSweepAreaName();
-		}
-
-		SDFSchema ownSchema = joinPO.getSubscribedToSource(0).getSchema();
-		SDFSchema otherSchema = joinPO.getSubscribedToSource(1).getSchema();
+		SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
+		SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
 		IPredicate predicate = joinPO.getPredicate();
-
-		// Attention: side effect, areas are filled!
-		boolean check = JoinTransformationHelper.canBeUsedWithHashJoin(predicate, ownSchema, otherSchema, areas);
-
-		// Automatically set HashJoinSA if predicate is pure equals predicate
-		if (areaName.isEmpty() && check) {
-			areaName = HASH_JOIN_SA;
-		}
-
-		// TMP-Hack
-		if (areaName.equalsIgnoreCase(HASH_JOIN_SA)) {
-			if (check == false) {
-				throw new TransformationException("Cannot use " + areaName + " with this predicate "
-						+ joinPO.getPredicate() + ". Only equals predicates are possible!");
-			}
-		} else {
-			// The user does not want to use a HashSweepArea but something else. As the
-			// areas are already created, we will remove them here
-			areas[0] = null;
-			areas[1] = null;
-		}
 		
-		if(areaName.equalsIgnoreCase("UnaryOuterJoinSA")) {
-			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, ownSchema, otherSchema, areas, false, joinPO.getCardinalities());
-		} else if (areaName.equalsIgnoreCase("UnaryOuterJoinSA2")) {
-			JoinTransformationHelper.useUnaryOuterJoinSA2(predicate, ownSchema, otherSchema, areas);
-		} else if(areaName.equals("UnaryOuterJoinRndSA")) {
-			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, ownSchema, otherSchema, areas, true, joinPO.getCardinalities());
-		}
+		String leftAreaName = joinPO.getSweepAreaName(0);
+		String rightAreaName= joinPO.getSweepAreaName(1);
+		
+		ITimeIntervalSweepArea[] areas = null;
 
-		if (areas[0] == null || areas[1] == null) {
-			if (areaName == null || areaName.isEmpty()) {
-				areaName = "TIJoinSA";
+		if (!Strings.isNullOrEmpty(leftAreaName)) {
+			// Attention: side effect, areas are filled!
+			areas = handleSpecialCased(joinPO, leftAreaName, leftSchema, rightSchema, predicate);
+		}
+		// if special cases did not find a solution, use the generic one
+		if (isEmpty(areas)) {
+
+			// First try, if a hash join can be used
+			if (Strings.isNullOrEmpty(leftAreaName)) {
+				areas = createSweepAreas(HashJoinSweepArea.NAME, HashJoinSweepArea.NAME, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
+				if (!isEmpty(areas)) {
+					leftAreaName = HashJoinSweepArea.NAME;
+					rightAreaName = HashJoinSweepArea.NAME;
+				}
 			}
-			try {
-				areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions());
-				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName, joinPO.getOptions());
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new TransformationException("Cannot find sweep area of type " + areaName);
+	
+			// When creation of HASH_JOIN_SA does not work (e.g. the predicate is no equals predicate), the areas are empty
+			if (isEmpty(areas)) {
+				// In case of not given areaName try JoinArea
+				if (Strings.isNullOrEmpty(leftAreaName)) {
+					leftAreaName = JoinTISweepArea.NAME;
+				}
+
+				if (Strings.isNullOrEmpty(rightAreaName)) {
+					rightAreaName = leftAreaName;
+				}
+
+				areas = createSweepAreas(leftAreaName, rightAreaName, joinPO.getOptions(), leftSchema, rightSchema, predicate, joinPO.getCardinalities());
 			}
-			;
 		}
 
-		if (areas[0] == null || areas[1] == null) {
-			throw new TransformationException("Cannot find sweep area of type " + areaName);
+		if (isEmpty(areas)) {
+			throw new TransformationException("Cannot find sweep area of types " + leftAreaName+"/"+rightAreaName);
 		}
 
+		joinPO.setSweepAreaName(leftAreaName, rightAreaName);
 		joinPO.setAreas(areas);
-		if (!areaName.equals(HASH_JOIN_SA)) {
-			/*
-			 * The hash join sa cannot be created by the SweepAreaRegistry so don't use the
-			 * name to create new instances.
-			 */
-			joinPO.setSweepAreaName(areaName);
-		}
+		
 		/*
 		 * # no update, because otherwise # other rules may overwrite this rule #
 		 * example: rule with priority 5 setting the areas has been # processed, update
@@ -126,6 +104,36 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		 * also, because # other fields of the object should still be modified
 		 */
 
+	}
+
+	private boolean isEmpty(ITimeIntervalSweepArea[] areas) {
+		return areas == null || areas[0] == null || areas[1] == null;
+	}
+
+	private ITimeIntervalSweepArea[] createSweepAreas(String leftAreaName, String rightAreaName, OptionMap options, SDFSchema leftSchema,
+			SDFSchema rightSchema, IPredicate predicate, Cardinalities cardinalities) {
+		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+		try {
+			areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(leftAreaName, options, leftSchema, rightSchema, predicate, cardinalities);
+			areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(rightAreaName, options, rightSchema, leftSchema, predicate, cardinalities);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace(); // TODO: Ignore later
+		}
+		return areas;
+	}
+
+	private ITimeIntervalSweepArea[] handleSpecialCased(JoinTIPO joinPO, String areaName, SDFSchema leftSchema,
+			SDFSchema rightSchema, IPredicate predicate) {
+		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+		// TODO: Can this be moved somewhere else to be used in SweepAreaRegistry?
+		if(areaName.equalsIgnoreCase("UnaryOuterJoinSA")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, false, joinPO.getCardinalities());
+		} else if (areaName.equalsIgnoreCase("UnaryOuterJoinSA2")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA2(predicate, leftSchema, rightSchema, areas);
+		} else if(areaName.equals("UnaryOuterJoinRndSA")) {
+			JoinTransformationHelper.useUnaryOuterJoinSA(predicate, leftSchema, rightSchema, areas, true, joinPO.getCardinalities());
+		}
+		return areas;
 	}
 
 	@Override
