@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -33,6 +34,11 @@ public class OutputConnectorAO extends AbstractLogicalOperator {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new OutputConnectorAO(this);
+	}
+	
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
 	}
 
 }
