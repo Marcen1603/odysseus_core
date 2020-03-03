@@ -9,7 +9,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -93,8 +97,14 @@ public class TSubQueryAORule extends AbstractTransformationRule<SubQueryAO> {
 			IServerExecutor executor) {
 		IPhysicalQuery pquery;
 		final String queryText = getQueryText(operator);
+		Context context = config.getContext().copy();
+		OptionMap options = operator.getOptionsMap();
+		for (String key: options.getOptions().keySet()) {
+			context.putOrReplace(key, options.getValue(key));
+		}
+	
 		Collection<Integer> q = executor.addQuery(queryText, operator.getQueryParser(), getCaller(),
-				config.getContext());
+				context);
 		if (q.size() != 1) {
 			for (Integer queryId : q) {
 				executor.removeQuery(queryId, getCaller());
