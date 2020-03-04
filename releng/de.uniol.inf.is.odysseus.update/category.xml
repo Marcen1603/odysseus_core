@@ -209,4 +209,8 @@
 	<category-def name="monolithic" label="monolithic">
 		<category name="odysseus_core"/>
 	</category-def>
+   <feature id="de.uniol.inf.is.odysseus.aggregation.feature">
+      <category name="aggregation"/>
+   </feature>
+   <category-def name="aggregation" label="aggregation"/>
 </site>

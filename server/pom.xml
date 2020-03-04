@@ -12,7 +12,9 @@
 	</parent>
 
 	<modules>
-		<module>autostart</module>
+    <module>aggregation.feature</module>
+    <module>aggregation</module>
+    <module>autostart</module>
 		<module>cache</module>
 		<module>cache.feature</module>
 		<module>core</module>
