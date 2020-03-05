@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -68,17 +69,26 @@ public class ScriptRunner {
 		try {
 			URLConnection con = fileURL.openConnection();
 			inputStream = con.getInputStream();
-
-			readAndRunScript(user, executor, inputStream);
+			Optional<URL> path;
+			if (fileURL.getProtocol().equalsIgnoreCase("file")) {
+				path = Optional.of(fileURL);
+			}else {
+				path = Optional.empty();
+			}
+			readAndRunScript(user, executor, inputStream, path);
 		} catch (Exception e) {
 
 		}
 	}
 
-	private static void readAndRunScript(ISession user, IExecutor executor, InputStream inputStream) {
+	private static void readAndRunScript(ISession user, IExecutor executor, InputStream inputStream, Optional<URL> path) {
 		String query = readFileLines(inputStream);
-
+		
 		if (query.length() > 0) {
+			if (path.isPresent()) {
+				query.replace("${BUNDLE-ROOT}", path.get().getPath());
+			}
+			
 			ScriptExecuteThread t = new ScriptExecuteThread(executor, query.toString(), user);
 			t.start();
 		}
