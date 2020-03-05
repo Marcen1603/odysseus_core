@@ -86,12 +86,16 @@ public class ScriptRunner {
 		
 		if (query.length() > 0) {
 			if (fileUrl.isPresent()) {
-				query.replace("${BUNDLE-ROOT}", fileUrl.get().getPath());
+				replaceRootPathInFile(query, fileUrl.get().getPath());
 			}
 			
 			ScriptExecuteThread t = new ScriptExecuteThread(executor, query.toString(), user);
 			t.start();
 		}
+	}
+	
+	private static String replaceRootPathInFile(String queryFileStr, String rootPath) {
+		return queryFileStr.replace("${BUNDLE-ROOT}", rootPath);
 	}
 
 	private static String readFileLines(InputStream inputStream) {
