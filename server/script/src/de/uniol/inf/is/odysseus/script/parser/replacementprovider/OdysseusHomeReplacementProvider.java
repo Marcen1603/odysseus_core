@@ -12,14 +12,12 @@ public class OdysseusHomeReplacementProvider implements IReplacementProvider {
 
 	private Map<String, String> replacements;
 	private static final String ODYSSEUS_HOME = "odysseusHome";
-	private static final String ODYSSEUS_AUTOSTART_DIRECTORY = "odysseusAutostartDirectory";
-	private static final String ODYSSEUS_AUTOSTART_FILE = "odysseusAutostartFile";
+	private static final String ODYSSEUS_HOME_AUTOSTART_ROOT = "odysseusHomeAutostartRoot";
 
 	public OdysseusHomeReplacementProvider() {
 		replacements = new HashMap<String, String>(2);
 		replacements.put(ODYSSEUS_HOME.toUpperCase(), OdysseusConfiguration.instance.getHomeDir());
-		replacements.put(ODYSSEUS_AUTOSTART_DIRECTORY.toUpperCase(), Autostart.getAutostartDirectoryPath());
-		replacements.put(ODYSSEUS_AUTOSTART_FILE.toUpperCase(), Autostart.getAutostartQueryFilePath());
+		replacements.put(ODYSSEUS_HOME_AUTOSTART_ROOT.toUpperCase(), Autostart.getAutostartDirectoryPath());
 	}
 
 	@Override
