@@ -81,12 +81,12 @@ public class ScriptRunner {
 		}
 	}
 
-	private static void readAndRunScript(ISession user, IExecutor executor, InputStream inputStream, Optional<URL> path) {
+	private static void readAndRunScript(ISession user, IExecutor executor, InputStream inputStream, Optional<URL> fileUrl) {
 		String query = readFileLines(inputStream);
 		
 		if (query.length() > 0) {
-			if (path.isPresent()) {
-				query.replace("${BUNDLE-ROOT}", path.get().getPath());
+			if (fileUrl.isPresent()) {
+				query.replace("${BUNDLE-ROOT}", fileUrl.get().getPath());
 			}
 			
 			ScriptExecuteThread t = new ScriptExecuteThread(executor, query.toString(), user);
