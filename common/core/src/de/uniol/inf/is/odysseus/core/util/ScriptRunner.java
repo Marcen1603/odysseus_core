@@ -69,9 +69,11 @@ public class ScriptRunner {
 		try {
 			URLConnection con = fileURL.openConnection();
 			inputStream = con.getInputStream();
-			Optional<URL> path;
+			Optional<String> path;
 			if (fileURL.getProtocol().equalsIgnoreCase("file")) {
-				path = Optional.of(fileURL);
+				path = Optional.of(getBasePath(fileURL.getPath()));
+			}else if (fileURL.getProtocol().startsWith("bundle")) {
+				path = Optional.of(getBasePath(fileURL.getFile()));
 			}else {
 				path = Optional.empty();
 			}
@@ -81,12 +83,16 @@ public class ScriptRunner {
 		}
 	}
 
-	private static void readAndRunScript(ISession user, IExecutor executor, InputStream inputStream, Optional<URL> fileUrl) {
+	private static String getBasePath(String fileURL) {
+		return fileURL.substring(0, fileURL.lastIndexOf("/")+1);
+	}
+
+	private static void readAndRunScript(ISession user, IExecutor executor, InputStream inputStream, Optional<String> fileUrl) {
 		String query = readFileLines(inputStream);
 		
 		if (query.length() > 0) {
 			if (!fileUrl.isEmpty()) {
-				query = replaceRootPathInFile(query, fileUrl.get().getPath());
+				query = replaceRootPathInFile(query, fileUrl.get());
 			}
 			
 			ScriptExecuteThread t = new ScriptExecuteThread(executor, query.toString(), user);
