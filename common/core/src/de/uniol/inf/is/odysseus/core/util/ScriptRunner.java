@@ -85,8 +85,8 @@ public class ScriptRunner {
 		String query = readFileLines(inputStream);
 		
 		if (query.length() > 0) {
-			if (fileUrl.isPresent()) {
-				replaceRootPathInFile(query, fileUrl.get().getPath());
+			if (!fileUrl.isEmpty()) {
+				query = replaceRootPathInFile(query, fileUrl.get().getPath());
 			}
 			
 			ScriptExecuteThread t = new ScriptExecuteThread(executor, query.toString(), user);
