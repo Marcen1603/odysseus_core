@@ -35,6 +35,8 @@ public class TInsertReorderAORule extends AbstractTransformationRule<ILogicalOpe
 					&& !subscription.getSchema().isInOrder()) {
 
 				ReOrderAO reorder = new ReOrderAO();
+				reorder.setTransformationHint(ADDED_IN_TRANSFORMATION, true);
+				
 				Collection<ILogicalOperator> toUpdate = LogicalPlan.insertOperator(reorder, operator,
 						subscription.getSinkInPort(), 0, subscription.getSourceOutPort());
 				

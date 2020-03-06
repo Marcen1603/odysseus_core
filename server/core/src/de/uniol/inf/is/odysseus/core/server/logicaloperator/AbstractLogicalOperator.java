@@ -84,10 +84,11 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private String uniqueIdentifier = null;
 	private boolean suppressPunctuation = false;
 
-	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
+	private Map<Integer, SDFSchema> outputSchema = new HashMap<>();
 	private TimeUnit baseTimeUnit = null;
 	
 	private final Optional<ILogicalOperator> clonedFrom;
+	private Map<String, Object> transformationHints = new HashMap<>();
 
 	/**
 	 * Contains a value, if {@link #determineBaseTimeUnit()} has been called once;
@@ -118,7 +119,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		if (op.optionsList != null) {
 			this.optionsList = new ArrayList<>(op.optionsList);
 		}
-
+		this.transformationHints = new HashMap<String, Object>(op.transformationHints);
 	}
 
 	public AbstractLogicalOperator() {
@@ -811,6 +812,17 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	public OptionMap getOptionsMap() {
 		return optionsMap;
+	}
+	
+	@Override
+	public void setTransformationHint(String key, Object value) {
+		this.transformationHints.put(key, value);
+	}
+	
+	@Override
+	public Optional<Object> getTransformationHint(String key) {
+		Object val = transformationHints.get(key);
+		return val != null?Optional.of(val):Optional.empty();
 	}
 
 }

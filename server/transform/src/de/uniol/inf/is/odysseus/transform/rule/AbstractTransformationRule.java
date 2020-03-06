@@ -50,6 +50,8 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 
 	public static final String OPERATOR_IDS_SET = "OperatorIDsSet";
 	public static final String ACCESS_AOS_SET = "AccessAOsSet";
+	
+	public static final String ADDED_IN_TRANSFORMATION = "addedInTransformation";
 
 	final static Logger LOG = LoggerFactory.getLogger(AbstractTransformationRule.class);
 

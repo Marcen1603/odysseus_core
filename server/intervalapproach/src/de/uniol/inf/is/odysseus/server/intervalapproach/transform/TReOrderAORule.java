@@ -45,14 +45,6 @@ public class TReOrderAORule extends AbstractIntervalTransformationRule<ReOrderAO
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public String getName() {
-		return "ReOrderAO -> AssureOrderPO";
-	}
-
-	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
 	 */
 	@Override

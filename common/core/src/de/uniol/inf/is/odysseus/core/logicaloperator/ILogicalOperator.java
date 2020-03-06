@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.collection.AnyTypeAdapter;
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -294,6 +295,21 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @return
 	 */
 	Optional<ILogicalOperator> getClonedFrom();
+	
+	/**
+	 * Allow to add some information for the transformation engine
+	 * 
+	 * @param key The key of the hint 
+	 * @param value The value of the hint
+	 */
+	void setTransformationHint(String key, Object value);
+	
+	/**
+	 * Retrieves an transformation hint for this operator. 
+	 * @param key The key for the hint
+	 * @return An optional that could contain the hint if available
+	 */
+	Optional<Object> getTransformationHint(String key);
 
 
 	
