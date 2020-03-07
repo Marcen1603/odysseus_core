@@ -373,7 +373,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			}
 			
 			// We can produce tuple with no validity --> Do not send them
-			if (endTS.after(toTransfer.getMetadata().getStart()) || (allowSameStartAndEndTS || endTS.equals(toTransfer.getMetadata().getStart()))) {
+			if (endTS.after(toTransfer.getMetadata().getStart()) || (allowSameStartAndEndTS && endTS.equals(toTransfer.getMetadata().getStart()))) {
 				toTransfer.getMetadata().setEnd(endTS);
 				if (nesting) {
 					nestedElements.add(toTransfer);
