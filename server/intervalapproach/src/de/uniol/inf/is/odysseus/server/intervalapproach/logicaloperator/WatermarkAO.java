@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
@@ -37,6 +38,8 @@ public class WatermarkAO extends UnaryLogicalOp {
 
 	private TimeValueItem timeParameter = null;
 
+	private boolean removeOutdated = true;
+	
 	/**
 	 * Default constructor.
 	 */
@@ -61,6 +64,15 @@ public class WatermarkAO extends UnaryLogicalOp {
 		return timeParameter;
 	}
 
+	@Parameter(type = BooleanParameter.class, name = "removeOutdated", optional = true, doc = "By default, all elements older than the last send watermark are remove. Use this flag to send all element.")
+	public void setRemoveOutdated(boolean removeOutdated) {
+		this.removeOutdated = removeOutdated;
+	}
+	
+	public boolean isRemoveOutdated() {
+		return removeOutdated;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

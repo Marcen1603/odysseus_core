@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -39,43 +42,52 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * 11:50 because it is guaranteed that no element will arrive earlier (later
  * incoming out-of-order elements could for example be dropped).
  * 
- * @author Cornelius Ludmann, Tobias Brandt
+ * @author Cornelius Ludmann, Tobias Brandt, Marco Grawunder
  *
  */
 public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, R> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(WatermarkPO.class);
 
 	// The time span to lag behind the application time
 	private final long timespan;
 
 	// The current watermark -> the current time minus the timespan
-	private long watermark;
+	private long watermark = 0;
 
+	// If set to true, all elements that are older than any send watermark will be removed
+	private final boolean removeOutdated;
+	
 	/**
 	 * Creates a new watermark operator.
 	 * 
-	 * @param timespan
-	 *            The time span the watermarkt / heartbeats have to lag behind
+	 * @param timespan The time span the watermarkt / heartbeats have to lag behind
 	 */
-	public WatermarkPO(TimeValueItem dragBegindTime, TimeUnit baseTimeUnit) {
+	public WatermarkPO(TimeValueItem dragBegindTime, TimeUnit baseTimeUnit, boolean removeOutdated) {
 		long timeValue = dragBegindTime.getTime();
 		TimeUnit unit = dragBegindTime.getUnit();
 		this.timespan = baseTimeUnit.convert(timeValue, unit);
+		this.removeOutdated = removeOutdated;
 	}
 
 	@Override
 	protected void process_next(R object, int port) {
-		transfer(object, port);
-
-		// Send a water mark that lags behind the given amount of time
-		sendWatermarkHeartbeat(object.getMetadata().getStart(), port);
+		if (removeOutdated && object.getMetadata().getStart().getMainPoint() < watermark) {
+			if (LOG.isWarnEnabled()) {
+				LOG.warn("Removed outdated element " + object);
+			}
+		}else {
+			transfer(object, port);
+			// Send a water mark that lags behind the given amount of time
+			sendWatermarkHeartbeat(object.getMetadata().getStart(), port);
+		} 
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		/*
-		 * do not redirect other heartbeats directly that would disturb the
-		 * subsequent operators that use the heardbeats produced by this
-		 * operator
+		 * do not redirect other heartbeats directly that would disturb the subsequent
+		 * operators that use the heardbeats produced by this operator
 		 */
 		if (!punctuation.isHeartbeat()) {
 			sendPunctuation(punctuation, port);
@@ -86,17 +98,14 @@ public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	/**
 	 * Send a heartbeat that is the globally defined timespan behind
 	 * 
-	 * @param time
-	 *            current time, e.g. from another heartbeat or a tuple
-	 * @param port
-	 *            the port from which the input came is used for the output as
-	 *            well
+	 * @param time current time, e.g. from another heartbeat or a tuple
+	 * @param port the port from which the input came is used for the output as well
 	 */
 	private synchronized void sendWatermarkHeartbeat(PointInTime time, int port) {
 		/*
-		 * if the new element minus the timespan is older than our last
-		 * watermark (out of order) we will use the watermark as we guarantee
-		 * that the watermark is in order
+		 * if the new element minus the timespan is older than our last watermark (out
+		 * of order) we will use the watermark as we guarantee that the watermark is in
+		 * order
 		 */
 
 		long max = Math.max(time.getMainPoint() - timespan, watermark);
