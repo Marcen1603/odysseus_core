@@ -40,7 +40,7 @@ public class TWatermarkAORule extends AbstractIntervalTransformationRule<Waterma
 	@Override
 	public void execute(WatermarkAO operator, TransformationConfiguration config) throws RuleException {
 		WatermarkPO<IStreamObject<? extends ITimeInterval>> po = new WatermarkPO<>(operator.getTimeParameter(),
-				operator.getBaseTimeUnit());
+				operator.getBaseTimeUnit(), operator.isRemoveOutdated());
 		defaultExecute(operator, po, config, true, true);
 	}
 
