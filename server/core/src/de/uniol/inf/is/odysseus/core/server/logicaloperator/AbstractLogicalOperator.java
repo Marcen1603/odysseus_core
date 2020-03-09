@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -99,6 +100,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private final OptionMap optionsMap = new OptionMap();
 
 	private List<Option> optionsList;
+	
+	private InputOrderRequirement inputOrderRequirement = InputOrderRequirement.STRICT;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 //		for (IPredicate<?> pred : op.predicates) {
@@ -120,6 +123,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 			this.optionsList = new ArrayList<>(op.optionsList);
 		}
 		this.transformationHints = new HashMap<String, Object>(op.transformationHints);
+		this.inputOrderRequirement = op.inputOrderRequirement;
 	}
 
 	public AbstractLogicalOperator() {
@@ -767,6 +771,16 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		return OperatorStateType.UNKNOWN;
 	}
 
+	@Parameter(type = EnumParameter.class, name ="inputOrderRequirement", optional = true, possibleValues = "getInputOrderRequirementValues")
+	public void setInputOrderRequirement(InputOrderRequirement inputOrderRequirement) {
+		this.inputOrderRequirement = inputOrderRequirement;
+	}
+	
+	@SuppressWarnings("unused")
+	private InputOrderRequirement[] getInputOrderRequirementValues(){
+		return InputOrderRequirement.values();
+	}
+	
 	/**
 	 * Requirements for input. In most cases this is STRICT. Could be overwritten in
 	 * subclasses
@@ -774,7 +788,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 */
 	@Override
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
-		return InputOrderRequirement.STRICT;
+		return inputOrderRequirement;
 	}
 
 	// ---------------------------------------------------------------------------------------------------
