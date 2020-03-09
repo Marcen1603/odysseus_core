@@ -14,7 +14,6 @@ public class ParserClientUtil {
 		IProject project = file.getProject();
 		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
         File parent = file.getLocation().makeAbsolute().toFile().getParentFile();
-        String projectName = project.getName();
         Context context = Context.empty();
         context.put("FILE", file.getName());
         context.put("FILEPATH", file.getFullPath().toString());
@@ -37,7 +36,7 @@ public class ParserClientUtil {
 		context.put("WORKSPACEPROJECT\\", project.getLocation().toOSString() + File.separator);
 		context.put("WORKSPACEPROJECT/", project.getLocation().toOSString() + File.separator);
 		// this is used to run tests inside of studio
-		context.put("BUNDLE-ROOT", localRootLocation + File.separator + projectName);
+		context.put("BUNDLE-ROOT", project.getLocation().toOSString() + File.separator);
 		context.put("\\", File.separator);
 		context.put("/", File.separator);
 		
