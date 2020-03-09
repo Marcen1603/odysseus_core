@@ -108,11 +108,19 @@ public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		 * order
 		 */
 
-		long max = Math.max(time.getMainPoint() - timespan, watermark);
-		if (max > watermark) {
-			watermark = max;
+		if (currentElementExpandsWatermark(time, watermark)) {
+			watermark = calculateWatermarkFromCurrentElement(time);
 			sendPunctuation(Heartbeat.createNewHeartbeat(watermark), port);
 		}
+	}
+	
+	private boolean currentElementExpandsWatermark(PointInTime currentTime, long watermark) {
+		long watermarkFromCurrentElement = calculateWatermarkFromCurrentElement(currentTime);
+		return watermarkFromCurrentElement > watermark;
+	}
+	
+	private long calculateWatermarkFromCurrentElement(PointInTime currentTime) {
+		return currentTime.getMainPoint() - timespan;
 	}
 
 	@Override
