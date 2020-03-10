@@ -51,7 +51,7 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// Punctuations cannot be send, update PO may change timestamps
+		sendPunctuation(punctuation, port);
 	}
 		
 	@Override

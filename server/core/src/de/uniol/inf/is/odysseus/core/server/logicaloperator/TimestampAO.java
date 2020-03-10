@@ -72,7 +72,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	private boolean clearEnd;
 
 	public TimestampAO(TimestampAO ao) {
-		super(ao);
+		super(ao);		
 		// setStartTimestamp(ao.startTimestamp);
 		// setEndTimestamp(ao.endTimestamp);
 		setClearEnd(ao.clearEnd);
@@ -102,6 +102,8 @@ public class TimestampAO extends UnaryLogicalOp {
 		isUsingSystemTime = true;
 		isUsingNoTime = false;
 		clearEnd = false;
+		// per default punctuations should be suppressed, can be release by parameter
+		setSuppressPunctuations(true);
 	}
 
 	@Override
@@ -109,22 +111,6 @@ public class TimestampAO extends UnaryLogicalOp {
 		return new TimestampAO(this);
 	}
 
-	// public SDFAttribute getStartTimestamp() {
-	// return startTimestamp;
-	// }
-	//
-	// @Parameter(type = ResolvedSDFAttributeParameter.class, name = "START", isList
-	// = false, optional = true, doc="The name of the attribute for the start
-	// timestamp for application time")
-	// public void setStartTimestamp(SDFAttribute startTimestamp) {
-	// this.startTimestamp = startTimestamp;
-	// addParameterInfoIfNeeded("START", startTimestamp);
-	// if (this.startTimestamp == null) {
-	// this.isUsingSystemTime = true;
-	// } else {
-	// this.isUsingSystemTime = false;
-	// }
-	// }
 
 	@Parameter(type = NamedExpressionParameter.class, name = "START", aliasname = "StartExpression", optional = true, doc = "Expression to calculate the start time. Could be an attribute, too.")
 	public void setStartExpression2(NamedExpression expression) {
@@ -135,18 +121,6 @@ public class TimestampAO extends UnaryLogicalOp {
 	public SDFExpression getStartExpression() {
 		return startExpression;
 	}
-
-	// public SDFAttribute getEndTimestamp() {
-	// return endTimestamp;
-	// }
-
-	// @Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList =
-	// false, optional = true, doc="The name of the attribute for the end timestamp
-	// for application time")
-	// public void setEndTimestamp(SDFAttribute endTimestamp) {
-	// this.endTimestamp = endTimestamp;
-	// addParameterInfoIfNeeded("END", endTimestamp);
-	// }
 
 	@Parameter(type = NamedExpressionParameter.class, name = "END", aliasname = "EndExpression", optional = true, doc = "Expression to calculate the start time. Could be an attribute, too.")
 	public void setEndExpression2(NamedExpression expression) {
@@ -377,18 +351,5 @@ public class TimestampAO extends UnaryLogicalOp {
 				AggregateFunctionBuilderRegistry.getAggregatePattern()));
 	}
 
-	// @Override
-	// public boolean isValid() {
-	// if (this.startExpression != null && this.startTimestamp != null) {
-	// addError("You cannot use start and startExpression at the same time!");
-	// return false;
-	// }
-	// if (this.endExpression != null && this.endTimestamp != null) {
-	// addError("You cannot use end and endExpression at the same time!");
-	// return false;
-	// }
-	//
-	// return true;
-	// }
 
 }
