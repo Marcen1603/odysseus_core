@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mep.functions.transform;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringObjectInputFunction;
 
 /**
  * Converts a {@link SDFDatatype} STRING value into a {@link SDFDatatype} DOUBLE
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringInputFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ToDoubleFromStringFunction extends AbstractUnaryStringInputFunction<Double> {
+public class ToDoubleFromStringFunction extends AbstractUnaryStringObjectInputFunction<Double> {
 
 	/**
 	 * 
@@ -56,9 +56,9 @@ public class ToDoubleFromStringFunction extends AbstractUnaryStringInputFunction
 			return null;
 		}
 		if (Boolean.TRUE.toString().equalsIgnoreCase(input)) {
-			return new Double(1.0);
+			return Double.valueOf(1.0);
 		} else if (Boolean.FALSE.toString().equalsIgnoreCase(input)) {
-			return new Double(0.0);
+			return Double.valueOf(0.0);
 		}
 		return Double.valueOf(input.toString());
 	}
