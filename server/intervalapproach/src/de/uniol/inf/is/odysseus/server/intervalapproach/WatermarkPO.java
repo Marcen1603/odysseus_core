@@ -72,7 +72,7 @@ public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> exten
 
 	@Override
 	protected void process_next(R object, int port) {
-		if (removeOutdated && object.getMetadata().getStart().getMainPoint() < watermark) {
+		if (removeOutdated && elementIsOlderThanWatermark(object)) {
 			if (LOG.isWarnEnabled()) {
 				LOG.warn("Removed outdated element " + object);
 			}
@@ -81,6 +81,10 @@ public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> exten
 			// Send a water mark that lags behind the given amount of time
 			sendWatermarkHeartbeat(object.getMetadata().getStart(), port);
 		} 
+	}
+
+	private boolean elementIsOlderThanWatermark(R object) {
+		return object.getMetadata().getStart().getMainPoint() < watermark;
 	}
 
 	@Override
@@ -108,11 +112,19 @@ public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		 * order
 		 */
 
-		long max = Math.max(time.getMainPoint() - timespan, watermark);
-		if (max > watermark) {
-			watermark = max;
+		if (currentElementExpandsWatermark(time, watermark)) {
+			watermark = calculateWatermarkFromCurrentElement(time);
 			sendPunctuation(Heartbeat.createNewHeartbeat(watermark), port);
 		}
+	}
+	
+	private boolean currentElementExpandsWatermark(PointInTime currentTime, long watermark) {
+		long watermarkFromCurrentElement = calculateWatermarkFromCurrentElement(currentTime);
+		return watermarkFromCurrentElement > watermark;
+	}
+	
+	private long calculateWatermarkFromCurrentElement(PointInTime currentTime) {
+		return currentTime.getMainPoint() - timespan;
 	}
 
 	@Override
