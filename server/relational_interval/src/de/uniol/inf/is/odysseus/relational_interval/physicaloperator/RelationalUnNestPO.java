@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.List;
 
@@ -21,22 +21,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
+ * @author marco grawunder
  */
-public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
+public class RelationalUnNestPO<T extends ITimeInterval> extends AbstractPipe<Tuple<T>, Tuple<T>> {
     @SuppressWarnings("unused")
 	private static Logger   LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
     protected final int       nestedAttributePos;
     private final SDFSchema inputSchema;
-
     private final boolean   isMultiValue;
+    
+    private final boolean sendHeartbeatAtEndOfUnnest = true;
 
     /**
      * @param inputSchema The input schema
@@ -78,6 +81,9 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
     @Override
     protected void process_next(final Tuple<T> tuple, final int port) {
         unnestTuple(tuple);
+        if (sendHeartbeatAtEndOfUnnest) {
+        	sendPunctuation(Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart()));
+        }
     }
     
     protected void unnestTuple(Tuple<T> tuple) {
