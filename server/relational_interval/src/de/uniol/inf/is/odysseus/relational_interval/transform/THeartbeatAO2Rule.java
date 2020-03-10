@@ -37,8 +37,15 @@ public class THeartbeatAO2Rule extends AbstractRelationalIntervalTransformationR
 		RelationalExpression<ITimeInterval> timeExpression = new RelationalExpression<ITimeInterval>(
 				operator.getTimeExpression());
 		timeExpression.initVars(operator.getInputSchema());
+
+		RelationalExpression<ITimeInterval> createWhenCondition = null;
+		if (operator.getFireOn() != null) {
+			createWhenCondition = new RelationalExpression<>(operator.getFireOn());
+			createWhenCondition.initVars(operator.getInputSchema());
+		}
+
 		final RelationalHeartbeatPO<ITimeInterval> po = new RelationalHeartbeatPO<ITimeInterval>(timeExpression,
-				operator.isCreateOnHeartbeat());
+				createWhenCondition, operator.isCreateOnHeartbeat());
 
 		defaultExecute(operator, po, config, true, true);
 	}

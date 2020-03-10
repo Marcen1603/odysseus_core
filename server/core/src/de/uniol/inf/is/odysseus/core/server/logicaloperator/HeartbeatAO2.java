@@ -23,7 +23,7 @@ public class HeartbeatAO2 extends UnaryLogicalOp {
 
 	private boolean createOnHeartbeat;
 	private SDFExpression timeExpression;
-	//private IPredicate createWhen;
+	private SDFExpression fireOn;
 	
 	public HeartbeatAO2() {
 	}
@@ -32,7 +32,9 @@ public class HeartbeatAO2 extends UnaryLogicalOp {
 		super(other);
 		this.createOnHeartbeat = other.createOnHeartbeat;
 		this.timeExpression = other.timeExpression.clone();
-		//this.createWhen = other.createWhen.clone();
+		if (other.fireOn != null) {
+			this.fireOn = other.fireOn.clone();
+		}
 	}
 
 	@Parameter(type = BooleanParameter.class, optional = true, doc ="If set to true, for every new incomming heartbeat the will be a new heartbeat with the value of the current time parameter.")
@@ -51,6 +53,15 @@ public class HeartbeatAO2 extends UnaryLogicalOp {
 	
 	public SDFExpression getTimeExpression() {
 		return timeExpression;
+	}
+	
+	public SDFExpression getFireOn() {
+		return fireOn;
+	}
+	
+	@Parameter(name = "fireOn", type = NamedExpressionParameter.class, optional = true, doc = "If this expression is evaluated to true, a heartbeat with the value of the current time parameter ist send.")
+	public void setFireOn2(NamedExpression createWhen) {
+		this.fireOn = createWhen.expression;
 	}
 	
 	@Override
