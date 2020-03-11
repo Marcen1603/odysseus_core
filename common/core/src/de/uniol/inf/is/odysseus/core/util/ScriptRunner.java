@@ -88,22 +88,13 @@ public class ScriptRunner {
 	}
 
 	private static void readAndRunScript(ISession user, IExecutor executor, InputStream inputStream, Optional<String> fileUrl) {
-		String query = readFileLines(inputStream);
-		
-		if (query.length() > 0) {
-			if (fileUrl.isPresent()) {
-				query = replaceRootPathInFile(query, fileUrl.get());
-			}
-			
-			ScriptExecuteThread t = new ScriptExecuteThread(executor, query.toString(), user);
+		String query = readFileLines(inputStream);	
+		if (query.length() > 0) {			
+			ScriptExecuteThread t = new ScriptExecuteThread(executor, query.toString(), user, fileUrl);
 			t.start();
 		}
 	}
 	
-	private static String replaceRootPathInFile(String queryFileStr, String rootPath) {
-		return queryFileStr.replace("${BUNDLE-ROOT}", rootPath);
-	}
-
 	private static String readFileLines(InputStream inputStream) {
 		BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
 		String inputLine = null;
