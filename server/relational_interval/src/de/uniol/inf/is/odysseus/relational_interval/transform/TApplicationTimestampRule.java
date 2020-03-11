@@ -103,6 +103,7 @@ public class TApplicationTimestampRule extends AbstractRelationalIntervalTransfo
 			defaultExecute(timestampAO, source, transformConfig, true, false, false);
 		} else {
 			MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<ITimeInterval, Tuple<? extends ITimeInterval>>(mUpdater);
+			po.setSuppressPunctuations(timestampAO.isSuppressPunctuations());
 			defaultExecute(timestampAO, po, transformConfig, true, true);
 		}
 	}

@@ -19,8 +19,18 @@ public class Autostart implements BundleActivator {
 	private static IExecutor executor;
 	private static boolean autostartExecuted = false;
 
-	private static String[] PATHES = { "/autostart/autostart.qry",
-			OdysseusConfiguration.instance.getHomeDir() + "/autostart" + File.separator + "autostart.qry" };
+	private static final String ODYSSEUS_AUTOSTART_DIRECTORY = OdysseusConfiguration.instance.getHomeDir() + File.separator + "autostart";
+
+	private final static String[] PATHES = { "/autostart/autostart.qry",
+			ODYSSEUS_AUTOSTART_DIRECTORY + File.separator + "autostart.qry" };
+
+	public static String getAutostartQueryFilePath() {
+		return PATHES[1];
+	}
+	
+	public static String getAutostartDirectoryPath() {
+		return ODYSSEUS_AUTOSTART_DIRECTORY;
+	}
 
 	// called by OSGi-DS
 	public void unbindExecutor(IExecutor exec) {
@@ -50,7 +60,6 @@ public class Autostart implements BundleActivator {
 				autostartExecuted = ScriptRunner.runScripts(context, executor, PATHES, user);
 			}
 		}
-
 	}
 
 	@Override

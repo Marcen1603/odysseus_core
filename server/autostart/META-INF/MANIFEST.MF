@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Bundle-Activator: de.uniol.inf.is.odysseus.server.autostart.Autostart
 Automatic-Module-Name: de.uniol.inf.is.odysseus.server.autostart
 Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.server.autostart
