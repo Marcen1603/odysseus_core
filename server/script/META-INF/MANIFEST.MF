@@ -18,11 +18,13 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.osgi.framework
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- com.google.guava;bundle-version="18.0.0", de.uniol.inf.is.odysseus.slf4j
+ com.google.guava;bundle-version="18.0.0",
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.server.autostart
 Export-Package: de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.script.parser.keyword,
  de.uniol.inf.is.odysseus.script.parser.parameter
 Service-Component: OSGI-INF/PreParserKeywordProvider.xml, OSGI-INF/OdysseusScriptParser.xml,OSGI-INF/Executor.xml,OSGI-INF/odysseusScriptConfig.xml,OSGI-INF/querySharingConfigSetting.xml,OSGI-INF/distributeConfigSetting.xml,OSGI-INF/ReplacementProviderManager.xml,OSGI-INF/SystemPropertyReplacementProvider.xml,OSGI-INF/OdysseusScriptConsole.xml,
- OSGI-INF/RecoveryConfigKeyword.xml, OSGI-INF/RecursionSinkConnectSetting.xml
+ OSGI-INF/RecoveryConfigKeyword.xml, OSGI-INF/RecursionSinkConnectSetting.xml,OSGI-INF/OdysseusHomeReplacementProvider.xml
 Automatic-Module-Name: de.uniol.inf.is.odysseus.script.parser
 Bundle-ActivationPolicy: lazy
