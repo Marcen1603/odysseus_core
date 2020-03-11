@@ -18,11 +18,22 @@ public class SystemPropertyReplacementProvider implements IReplacementProvider {
 	
 	private static Collection<String> determineSystemPropertyKeys() {
 		Collection<String> keys = Lists.newArrayList();
+		addSystemProperties(keys);
+		addSystemEnvironment(keys);
+		return keys;
+	}
+
+	private static void addSystemEnvironment(Collection<String> keys) {
+		for (String environmentKey : System.getenv().keySet()) {
+			keys.add(KEY_PREFIX + environmentKey);
+		}
+	}
+
+	private static void addSystemProperties(Collection<String> keys) {
 		for( Object key : System.getProperties().keySet()) {
 			String keyStr = key.toString();
 			keys.add(KEY_PREFIX + keyStr);
 		}
-		return keys;
 	}
 
 	@Override
@@ -37,9 +48,13 @@ public class SystemPropertyReplacementProvider implements IReplacementProvider {
 		}
 		
 		String realKey = key.substring(1);
-		String value = System.getProperty(realKey.toLowerCase());
 		
-		return value != null ? value : "";
+		if ( System.getProperties().keySet().contains(realKey)) {
+			return System.getProperty(realKey.toLowerCase());			
+		} else if (System.getenv().containsKey(realKey)) {
+			return System.getenv(realKey);
+		}
+		return "";
 	}
 
 }
