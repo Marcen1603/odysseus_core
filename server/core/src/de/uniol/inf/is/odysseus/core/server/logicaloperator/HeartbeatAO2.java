@@ -24,7 +24,8 @@ public class HeartbeatAO2 extends UnaryLogicalOp {
 	private boolean createOnHeartbeat;
 	private SDFExpression timeExpression;
 	private SDFExpression fireOn;
-	
+	private boolean suppressFireOnElement = false;
+
 	public HeartbeatAO2() {
 	}
 
@@ -35,13 +36,14 @@ public class HeartbeatAO2 extends UnaryLogicalOp {
 		if (other.fireOn != null) {
 			this.fireOn = other.fireOn.clone();
 		}
+		this.suppressFireOnElement = other.suppressFireOnElement;
 	}
 
-	@Parameter(type = BooleanParameter.class, optional = true, doc ="If set to true, for every new incomming heartbeat the will be a new heartbeat with the value of the current time parameter.")
+	@Parameter(type = BooleanParameter.class, optional = true, doc = "If set to true, for every new incomming heartbeat the will be a new heartbeat with the value of the current time parameter.")
 	public void setCreateOnHeartbeat(boolean createOnHeartbeat) {
 		this.createOnHeartbeat = createOnHeartbeat;
 	}
-	
+
 	public boolean isCreateOnHeartbeat() {
 		return createOnHeartbeat;
 	}
@@ -50,20 +52,29 @@ public class HeartbeatAO2 extends UnaryLogicalOp {
 	public void setTimeExpression2(NamedExpression timeExpression) {
 		this.timeExpression = timeExpression.expression;
 	}
-	
+
 	public SDFExpression getTimeExpression() {
 		return timeExpression;
 	}
-	
+
 	public SDFExpression getFireOn() {
 		return fireOn;
 	}
-	
+
 	@Parameter(name = "fireOn", type = NamedExpressionParameter.class, optional = true, doc = "If this expression is evaluated to true, a heartbeat with the value of the current time parameter ist send.")
 	public void setFireOn2(NamedExpression createWhen) {
 		this.fireOn = createWhen.expression;
 	}
-	
+
+	public boolean isSuppressFireOnElement() {
+		return suppressFireOnElement;
+	}
+
+	@Parameter(name = "suppressFireOnElement", type = BooleanParameter.class, optional = true, doc = "Typically, all read elements are written to output. Set this flag to false to suppres those elements that trigger the heartbeat")
+	public void setSuppressFireOnElement(boolean suppressFireOnElement) {
+		this.suppressFireOnElement = suppressFireOnElement;
+	}
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new HeartbeatAO2(this);
@@ -73,7 +84,5 @@ public class HeartbeatAO2 extends UnaryLogicalOp {
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
 		return InputOrderRequirement.NONE;
 	}
-
-
 
 }

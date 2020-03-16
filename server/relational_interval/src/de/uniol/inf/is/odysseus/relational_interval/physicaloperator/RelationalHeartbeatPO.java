@@ -14,21 +14,30 @@ public class RelationalHeartbeatPO<T extends ITimeInterval> extends AbstractPipe
 	private final RelationalExpression<T> timeExpression;
 	private final boolean createOnHeartbeat;
 	private final RelationalExpression<T> sendHeartbeatExpression;
+	private final boolean suppressFireOnElement;
 
 	private PointInTime lastTS = null;
 	
-	public RelationalHeartbeatPO(RelationalExpression<T> timeExpression, RelationalExpression<T> sendHeartbeatExpression, boolean createOnHeartbeat) {
+	public RelationalHeartbeatPO(RelationalExpression<T> timeExpression, RelationalExpression<T> sendHeartbeatExpression, boolean createOnHeartbeat, boolean suppressFireOnElement) {
 		this.timeExpression = timeExpression;
 		this.createOnHeartbeat = createOnHeartbeat;
 		this.sendHeartbeatExpression = sendHeartbeatExpression;		
+		this.suppressFireOnElement = suppressFireOnElement;
 	}
 	
 	@Override
 	protected void process_next(Tuple<T> object, int port) {
 		evaluateTimeExpression(object);
-		evaluateHeartbeatExpression(object);		
+		boolean heartBeatExpression = evaluateHeartbeatExpression(object);		
 		
-		transfer(object);
+		if (!heartBeatExpression) {
+			transfer(object);
+		}else {
+			if (!suppressFireOnElement) {
+				transfer(object);
+			}
+		}
+		
 	}
 	
 	@Override
@@ -40,10 +49,12 @@ public class RelationalHeartbeatPO<T extends ITimeInterval> extends AbstractPipe
 		}		
 	}
 	
-	private void evaluateHeartbeatExpression(Tuple<T> object) {
+	private boolean evaluateHeartbeatExpression(Tuple<T> object) {
 		if (sendHeartbeatExpression != null && sendHeartbeatExpression.evaluate(object)){
 			sendHeartbeat();
+			return true;
 		}
+		return false;
 	}
 
 	private void evaluateTimeExpression(Tuple<T> object) {
