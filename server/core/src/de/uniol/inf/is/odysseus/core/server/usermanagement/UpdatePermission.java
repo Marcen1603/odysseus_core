@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.usermanagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 
 public enum UpdatePermission implements IPermission {
-	UPDATE, INSTALL, REMOVE, LIST, CONFIGURE;	
+	UPDATE, INSTALL, REMOVE, LIST, CONFIGURE, SHUTDOWN;	
 
 	public final static String objectURI = "updating";
 

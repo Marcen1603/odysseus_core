@@ -18,11 +18,13 @@ package de.uniol.inf.is.odysseus.script.executor;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.misc.ShutdownCommand;
 import de.uniol.inf.is.odysseus.script.executor.permission.GrantPermissionPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.executor.permission.GrantRolesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.executor.permission.RevokePermissionPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.executor.permission.RevokeRolesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.RunCommandPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.ShutdownPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SleepPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.configuration.ActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.configuration.BufferPlacementPreParserKeyword;
@@ -123,6 +125,8 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(GrantPermissionPreParserKeyword.NAME, GrantPermissionPreParserKeyword.class);
 		keywords.put(RevokePermissionPreParserKeyword.NAME, RevokePermissionPreParserKeyword.class);
 		keywords.put(RevokeRolesPreParserKeyword.NAME, RevokeRolesPreParserKeyword.class);
+		
+		keywords.put(ShutdownPreParserKeyword.NAME, ShutdownPreParserKeyword.class);
 		
 		return keywords;
 	}
