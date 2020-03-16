@@ -63,7 +63,12 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		boolean wrap = false;
+		if (wrap) {
+			text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		}else {
+			text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		}
 		text.setEditable(false);
 		text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
