@@ -38,6 +38,10 @@ public class IsEmptyFunction extends AbstractFunction<Boolean> {
     @Override
     public Boolean getValue() {
         List<?> list = (List<?>) getInputValue(0);
-        return new Boolean(list.isEmpty());
+        if (list != null) {
+        	return Boolean.valueOf(list.isEmpty());
+        }else {
+        	return null;
+        }
     }
 }
