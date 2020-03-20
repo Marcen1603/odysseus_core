@@ -17,12 +17,14 @@ package de.uniol.inf.is.odysseus.datatype.interval.datatype;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.IClone;
+
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalDouble implements Serializable, Cloneable, Comparable<IntervalDouble> {
+public class IntervalDouble implements Serializable, IClone, Comparable<IntervalDouble> {
 
 	/**
 	 * 
@@ -39,8 +41,16 @@ public class IntervalDouble implements Serializable, Cloneable, Comparable<Inter
 	public double inf() {
 		return this.inf;
 	}
+	
+	public double getLeft() {
+		return this.inf;
+	}
 
 	public double sup() {
+		return this.sup;
+	}
+	
+	public double getRight() {
 		return this.sup;
 	}
 
