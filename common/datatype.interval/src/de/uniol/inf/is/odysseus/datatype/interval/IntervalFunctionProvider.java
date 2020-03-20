@@ -33,6 +33,15 @@ import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPlusOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPowerOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalUnionFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.function.ToIntervalFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.ToIntervalFunction2;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.AfterFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.BeforeFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.ContainsFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.DuringFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.FinishesFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.MeetsFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.OverlapsFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.relation.StartsFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -64,10 +73,20 @@ public class IntervalFunctionProvider implements IFunctionProvider {
         functions.add(new IntervalDifferenceFunction());
 
         functions.add(new ToIntervalFunction());
+        functions.add(new ToIntervalFunction2());
         functions.add(new IntervalIsNaNFunction());
-        // ProbabilisticFunctionProvider.LOG.info(String.format(
-        // "Register functions: %s", functions));
-
+        
+        functions.add(new AfterFunction());
+        functions.add(new BeforeFunction());
+        functions.add(new ContainsFunction());
+        functions.add(new DuringFunction());
+        functions.add(new FinishesFunction());
+        functions.add(new MeetsFunction());
+        functions.add(new OverlapsFunction());
+        functions.add(new StartsFunction());
+        
+        
+        
         return functions;
     }
 }
