@@ -59,11 +59,16 @@ public class CloseStreamPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 	protected void process_next(T object, int port) {
 		if (!isDone()) {
 			try {
-				if (maxCount > 0 && count >= maxCount || (predicate != null && predicate.evaluate(object))) {
+				if (predicate != null && predicate.evaluate(object)) {
 					propagateDone();
 				} else {
 					count++;
 					transfer(object);
+					
+					/// for use of counting, the close condition may be reached now
+					if(maxCount > 0 && count >= maxCount) {
+						propagateDone();
+					}
 				}
 			} catch (Exception e) {
 				infoService.warning("Cannot evaluate " + predicate + " predicate with input " + object, e);
