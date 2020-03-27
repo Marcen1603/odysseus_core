@@ -46,8 +46,8 @@ public class ClientConnectionContribution implements ILoginContribution {
 		host = savedConfig.get("server.host");
 		instance = savedConfig.get("server.instance");
 
-		port = port != null ? port : "9669";
-		host = host != null ? host : "localhost";
+		port = port != null ? port : "8888";
+		host = host != null ? host : "http://localhost";
 		instance = instance != null ? instance : "odysseus";
 
 	}
@@ -172,9 +172,20 @@ public class ClientConnectionContribution implements ILoginContribution {
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		ISession session = null;
 		if (executor instanceof IClientExecutor) {
+			String hostname = host;
 			session = ((IClientExecutor) executor).login(username, password.getBytes(), tenantname, host, Integer.parseInt(port), instance);
+			// try with http(s) if connection cannot be established
+			if (session == null && !host.startsWith("http")) {
+				host = "https://"+hostname;
+				session = ((IClientExecutor) executor).login(username, password.getBytes(), tenantname, host, Integer.parseInt(port), instance);
+				if (session == null) {
+					host = "http://"+hostname;
+					session = ((IClientExecutor) executor).login(username, password.getBytes(), tenantname, host, Integer.parseInt(port), instance);
+				}
+			}
 		}
-
+		
+		
 		if (session != null) {
 			StatusBarManager.getInstance().setMessage("Automatically connected to " + host+":"+port);
 			// TODO Store session for every connection
